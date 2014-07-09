@@ -1,0 +1,472 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8D219645196D26080044616A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219644196D26080044616A /* Foundation.framework */; };
+		8D219647196D26080044616A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219646196D26080044616A /* CoreGraphics.framework */; };
+		8D219649196D26080044616A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219648196D26080044616A /* UIKit.framework */; };
+		8D21964F196D26080044616A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D21964D196D26080044616A /* InfoPlist.strings */; };
+		8D219651196D26080044616A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219650196D26080044616A /* main.m */; };
+		8D219655196D26080044616A /* ARLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219654196D26080044616A /* ARLAppDelegate.m */; };
+		8D219658196D26080044616A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D219656196D26080044616A /* Main.storyboard */; };
+		8D21965B196D26080044616A /* ARLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21965A196D26080044616A /* ARLViewController.m */; };
+		8D21965D196D26080044616A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D21965C196D26080044616A /* Images.xcassets */; };
+		8D219664196D26080044616A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219663196D26080044616A /* XCTest.framework */; };
+		8D219665196D26080044616A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219644196D26080044616A /* Foundation.framework */; };
+		8D219666196D26080044616A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219648196D26080044616A /* UIKit.framework */; };
+		8D21966E196D26080044616A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D21966C196D26080044616A /* InfoPlist.strings */; };
+		8D219670196D26080044616A /* ARLearnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21966F196D26080044616A /* ARLearnTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8D219667196D26080044616A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D219639196D26080044616A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D219640196D26080044616A;
+			remoteInfo = ARLearn;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		8D219641196D26080044616A /* ARLearn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLearn.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D219644196D26080044616A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		8D219646196D26080044616A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		8D219648196D26080044616A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		8D21964C196D26080044616A /* ARLearn-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ARLearn-Info.plist"; sourceTree = "<group>"; };
+		8D21964E196D26080044616A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8D219650196D26080044616A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8D219652196D26080044616A /* ARLearn-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARLearn-Prefix.pch"; sourceTree = "<group>"; };
+		8D219653196D26080044616A /* ARLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARLAppDelegate.h; sourceTree = "<group>"; };
+		8D219654196D26080044616A /* ARLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARLAppDelegate.m; sourceTree = "<group>"; };
+		8D219657196D26080044616A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8D219659196D26080044616A /* ARLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARLViewController.h; sourceTree = "<group>"; };
+		8D21965A196D26080044616A /* ARLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARLViewController.m; sourceTree = "<group>"; };
+		8D21965C196D26080044616A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		8D219662196D26080044616A /* ARLearnTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ARLearnTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D219663196D26080044616A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		8D21966B196D26080044616A /* ARLearnTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ARLearnTests-Info.plist"; sourceTree = "<group>"; };
+		8D21966D196D26080044616A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8D21966F196D26080044616A /* ARLearnTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARLearnTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D21963E196D26080044616A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D219647196D26080044616A /* CoreGraphics.framework in Frameworks */,
+				8D219649196D26080044616A /* UIKit.framework in Frameworks */,
+				8D219645196D26080044616A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D21965F196D26080044616A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D219664196D26080044616A /* XCTest.framework in Frameworks */,
+				8D219666196D26080044616A /* UIKit.framework in Frameworks */,
+				8D219665196D26080044616A /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8D219638196D26080044616A = {
+			isa = PBXGroup;
+			children = (
+				8D21964A196D26080044616A /* ARLearn */,
+				8D219669196D26080044616A /* ARLearnTests */,
+				8D219643196D26080044616A /* Frameworks */,
+				8D219642196D26080044616A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8D219642196D26080044616A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D219641196D26080044616A /* ARLearn.app */,
+				8D219662196D26080044616A /* ARLearnTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8D219643196D26080044616A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8D219644196D26080044616A /* Foundation.framework */,
+				8D219646196D26080044616A /* CoreGraphics.framework */,
+				8D219648196D26080044616A /* UIKit.framework */,
+				8D219663196D26080044616A /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8D21964A196D26080044616A /* ARLearn */ = {
+			isa = PBXGroup;
+			children = (
+				8D219653196D26080044616A /* ARLAppDelegate.h */,
+				8D219654196D26080044616A /* ARLAppDelegate.m */,
+				8D219656196D26080044616A /* Main.storyboard */,
+				8D219659196D26080044616A /* ARLViewController.h */,
+				8D21965A196D26080044616A /* ARLViewController.m */,
+				8D21965C196D26080044616A /* Images.xcassets */,
+				8D21964B196D26080044616A /* Supporting Files */,
+			);
+			path = ARLearn;
+			sourceTree = "<group>";
+		};
+		8D21964B196D26080044616A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8D21964C196D26080044616A /* ARLearn-Info.plist */,
+				8D21964D196D26080044616A /* InfoPlist.strings */,
+				8D219650196D26080044616A /* main.m */,
+				8D219652196D26080044616A /* ARLearn-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8D219669196D26080044616A /* ARLearnTests */ = {
+			isa = PBXGroup;
+			children = (
+				8D21966F196D26080044616A /* ARLearnTests.m */,
+				8D21966A196D26080044616A /* Supporting Files */,
+			);
+			path = ARLearnTests;
+			sourceTree = "<group>";
+		};
+		8D21966A196D26080044616A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8D21966B196D26080044616A /* ARLearnTests-Info.plist */,
+				8D21966C196D26080044616A /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D219640196D26080044616A /* ARLearn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D219673196D26080044616A /* Build configuration list for PBXNativeTarget "ARLearn" */;
+			buildPhases = (
+				8D21963D196D26080044616A /* Sources */,
+				8D21963E196D26080044616A /* Frameworks */,
+				8D21963F196D26080044616A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ARLearn;
+			productName = ARLearn;
+			productReference = 8D219641196D26080044616A /* ARLearn.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8D219661196D26080044616A /* ARLearnTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D219676196D26080044616A /* Build configuration list for PBXNativeTarget "ARLearnTests" */;
+			buildPhases = (
+				8D21965E196D26080044616A /* Sources */,
+				8D21965F196D26080044616A /* Frameworks */,
+				8D219660196D26080044616A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8D219668196D26080044616A /* PBXTargetDependency */,
+			);
+			name = ARLearnTests;
+			productName = ARLearnTests;
+			productReference = 8D219662196D26080044616A /* ARLearnTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8D219639196D26080044616A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = ARL;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Open University of the Netherlands";
+				TargetAttributes = {
+					8D219661196D26080044616A = {
+						TestTargetID = 8D219640196D26080044616A;
+					};
+				};
+			};
+			buildConfigurationList = 8D21963C196D26080044616A /* Build configuration list for PBXProject "ARLearn" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8D219638196D26080044616A;
+			productRefGroup = 8D219642196D26080044616A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D219640196D26080044616A /* ARLearn */,
+				8D219661196D26080044616A /* ARLearnTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D21963F196D26080044616A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D21965D196D26080044616A /* Images.xcassets in Resources */,
+				8D21964F196D26080044616A /* InfoPlist.strings in Resources */,
+				8D219658196D26080044616A /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D219660196D26080044616A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D21966E196D26080044616A /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D21963D196D26080044616A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
+				8D219651196D26080044616A /* main.m in Sources */,
+				8D21965B196D26080044616A /* ARLViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D21965E196D26080044616A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D219670196D26080044616A /* ARLearnTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8D219668196D26080044616A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D219640196D26080044616A /* ARLearn */;
+			targetProxy = 8D219667196D26080044616A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8D21964D196D26080044616A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8D21964E196D26080044616A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		8D219656196D26080044616A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8D219657196D26080044616A /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8D21966C196D26080044616A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8D21966D196D26080044616A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8D219671196D26080044616A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		8D219672196D26080044616A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8D219674196D26080044616A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ARLearn/ARLearn-Prefix.pch";
+				INFOPLIST_FILE = "ARLearn/ARLearn-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		8D219675196D26080044616A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ARLearn/ARLearn-Prefix.pch";
+				INFOPLIST_FILE = "ARLearn/ARLearn-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		8D219677196D26080044616A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ARLearn.app/ARLearn";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ARLearn/ARLearn-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ARLearnTests/ARLearnTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		8D219678196D26080044616A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ARLearn.app/ARLearn";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ARLearn/ARLearn-Prefix.pch";
+				INFOPLIST_FILE = "ARLearnTests/ARLearnTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8D21963C196D26080044616A /* Build configuration list for PBXProject "ARLearn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D219671196D26080044616A /* Debug */,
+				8D219672196D26080044616A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D219673196D26080044616A /* Build configuration list for PBXNativeTarget "ARLearn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D219674196D26080044616A /* Debug */,
+				8D219675196D26080044616A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		8D219676196D26080044616A /* Build configuration list for PBXNativeTarget "ARLearnTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D219677196D26080044616A /* Debug */,
+				8D219678196D26080044616A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8D219639196D26080044616A /* Project object */;
+}
