@@ -1,0 +1,28 @@
+/* 
+  Strings.strings
+  ARLearn
+
+  Created by Wim van der Vegt on 7/9/14.
+  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
+*/
+
+/* Error */
+"Error" = "Error";
+
+/* Notice */
+"Notice" = "Notice";
+
+/* Info */
+"Info" = "Info";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* OK */
+"OK" = "OK";
+
+/* NO */
+"NO" = "NO";
+
+/* YES */
+"YES" = "YES";

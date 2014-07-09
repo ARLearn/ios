@@ -13,6 +13,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+#warning veg: Register and Process APN's found in the launchOptions.
+    [ARLUtils LogGitInfo];
+    
     return YES;
 }
 							

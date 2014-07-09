@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import "CoreData+MagicalRecord.h"
+
+#import "ARLUtils.h"
+
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;

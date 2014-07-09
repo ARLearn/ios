@@ -1,0 +1,17 @@
+TODO 
+
+ 1) Register for APN.
+ 2) Process APN at Startup
+ 3) Process APN when running.
+ 4) Add Key<->Property Name lookup to ARLUtils.
+ 5) Add Reachablity.
+ 6) Test NSOperation.NSOperationQueue (maybe subclass to add context there).
+ 7) Test MagicalRecord.
+ 9) Add Preferences to plist.
+
+TEST
+ 8) Add ShowAbortMessage code.
+10) Add translation string lists.
+
+DONE
+11) Test GitHash etc.
