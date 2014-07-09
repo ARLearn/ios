@@ -1,0 +1,35 @@
+# OS X
+.DS_Store
+
+# Project Private Data.
+**/PrivateData.h
+
+# Xcode
+/gwt-unitCache
+/lib
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+profile
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+UserInterfaceState.xcuserstate
+Appengine/.gwt/.gwt-log
+.idea
+/idea/*
+*.iml
+.settings
+**/*.pbxuser
+
+# CocoaPods
+Pods
