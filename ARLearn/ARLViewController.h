@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ARLViewController : UIViewController
+#import "ARLAppDelegate.h"
+
+#warning TEST CODE AHEAD.
+#import "TestAccount+Lazy.h"
+
+@interface ARLViewController : UITableViewController <UITableViewDataSource>
 
 @end

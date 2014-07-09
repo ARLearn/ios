@@ -270,4 +270,14 @@ static NSCondition *_theAbortLock;
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
+- (void)saveContext {
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+        if (success) {
+            Log(@"You successfully saved your context.");
+        } else if (error) {
+            Log(@"Error saving context: %@", error.description);
+        }
+    }];
+}
+
 @end

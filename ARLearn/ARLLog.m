@@ -28,7 +28,7 @@ static BOOL _logOn = YES;
 
 + (BOOL *)LogOn {
     _logOn = [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING];
-    return _logOn;
+    return &_logOn;
 }
 
 @end

@@ -13,7 +13,6 @@
 		8D21964F196D26080044616A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D21964D196D26080044616A /* InfoPlist.strings */; };
 		8D219651196D26080044616A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219650196D26080044616A /* main.m */; };
 		8D219655196D26080044616A /* ARLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219654196D26080044616A /* ARLAppDelegate.m */; };
-		8D219658196D26080044616A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D219656196D26080044616A /* Main.storyboard */; };
 		8D21965B196D26080044616A /* ARLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21965A196D26080044616A /* ARLViewController.m */; };
 		8D21965D196D26080044616A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D21965C196D26080044616A /* Images.xcassets */; };
 		8D219664196D26080044616A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219663196D26080044616A /* XCTest.framework */; };
@@ -79,7 +78,6 @@
 		8D219652196D26080044616A /* ARLearn-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARLearn-Prefix.pch"; sourceTree = "<group>"; };
 		8D219653196D26080044616A /* ARLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARLAppDelegate.h; sourceTree = "<group>"; };
 		8D219654196D26080044616A /* ARLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARLAppDelegate.m; sourceTree = "<group>"; };
-		8D219657196D26080044616A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8D219659196D26080044616A /* ARLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARLViewController.h; sourceTree = "<group>"; };
 		8D21965A196D26080044616A /* ARLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARLViewController.m; sourceTree = "<group>"; };
 		8D21965C196D26080044616A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -233,7 +231,6 @@
 				8D219659196D26080044616A /* ARLViewController.h */,
 				8D21965A196D26080044616A /* ARLViewController.m */,
 				8D21965C196D26080044616A /* Images.xcassets */,
-				8D219656196D26080044616A /* Main.storyboard */,
 				8D219A22196D2AB30044616A /* Models */,
 				8D219A87196D3AC10044616A /* PrivateData.h */,
 				8D219A15196D27150044616A /* Storyboard.storyboard */,
@@ -478,7 +475,6 @@
 				8D21965D196D26080044616A /* Images.xcassets in Resources */,
 				8D21964F196D26080044616A /* InfoPlist.strings in Resources */,
 				8D3506ED196D40BD0060E808 /* Localizable.strings in Resources */,
-				8D219658196D26080044616A /* Main.storyboard in Resources */,
 				8DC69664196D500E00FA1505 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -591,14 +587,6 @@
 				8D21964E196D26080044616A /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		8D219656196D26080044616A /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8D219657196D26080044616A /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		8D21966C196D26080044616A /* InfoPlist.strings */ = {

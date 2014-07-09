@@ -16,4 +16,11 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
+/*!
+ *  Static read-only Property.
+ *
+ *  @return The NSOperationQueue.
+ */
++(NSOperationQueue *) theOQ;
+
 @end

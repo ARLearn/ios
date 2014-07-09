@@ -10,6 +10,15 @@
 
 @implementation ARLAppDelegate
 
+static NSOperationQueue *_theOQ;
+
++ (NSOperationQueue *) theOQ {
+    if(!_theOQ){
+        _theOQ = [[NSOperationQueue alloc] init];
+    }
+    return _theOQ;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
@@ -17,9 +26,16 @@
 #warning veg: Register and Process APN's found in the launchOptions.
     [ARLUtils LogGitInfo];
     
+    // Setup CoreData with MagicalRecord
+    // Step 1. Setup Core Data Stack with Magical Record
+    // Step 2. Relax. Why not have a beer? Surely all this talk of beer is making you thirsty…
+    
+    //[MagicalRecord setupAutoMigratingCoreDataStack];
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
+    
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -45,6 +61,8 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    
+    [MagicalRecord cleanUp];
 }
 
 @end
