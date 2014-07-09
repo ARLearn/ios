@@ -39,17 +39,19 @@
     [super viewDidAppear:animated];
     
 #warning TEST CODE AHEAD.
-    //    {
-    //        Log(@"%@", [MagicalRecord currentStack]);
-    //
-    //        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-    //            Log(@"saveWithBlockAndWait");
-    //
-    //            TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
-    //            ta.name = @"Wim van der Vegt";
-    //            ta.email = @"wim@vander-vegt.nl";
-    //        }];
-    //    }
+    {
+        Log(@"%@", [MagicalRecord currentStack]);
+
+        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            Log(@"saveWithBlockAndWait");
+
+            [TestAccount MR_truncateAllInContext:localContext];
+            
+            // TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
+            // ta.name = @"Wim van der Vegt";
+            // ta.email = @"wim@vander-vegt.nl";
+        }];
+    }
     
 #warning TEST CODE AHEAD.
     //[[ARLAppDelegate theOQ] addOperationWithBlock:^ {
@@ -73,7 +75,7 @@
             // Note: Operations MUST use localContext or they will not be saved.
             // [TestAccount MR_truncateAllInContext:localContext];
             
-//            [NSThread  sleepForTimeInterval:5.0];
+           [NSThread  sleepForTimeInterval:5.0];
             
             Log(@"Awake again");
             TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
@@ -89,25 +91,18 @@
     
     NSInvocationOperation *foreIV = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(reloadPersons) object:nil];
     
+    // Add dependencies: backBO -> foreBO -> foreIV.
     [foreBO addDependency:backBO];
     [foreIV addDependency:foreBO];
     
+    // Add Operations to the appropriate queues.
+    //
+    // 1) Main Thread Queue
     [[NSOperationQueue mainQueue] addOperation:foreIV];
     [[NSOperationQueue mainQueue] addOperation:foreBO];
-    
+    //
+    // 2) Background Thread Queue
     [[ARLAppDelegate theOQ] addOperation:backBO];
-    
-    //[-[ARLAppDelegate application:didFinishLaunchingWithOptions:]:95]| MainThread <NSThread: 0x8c3cec0>{name = (null), num = 1}
-    //
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_4:74]| justAdding <NSThread: 0x8d5b2c0>{name = (null), num = 2}
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_5:76]| saveWithBlockAndWait <NSThread: 0x8d5b2c0>{name = (null), num = 2}
-    //
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke:52]| backBO <NSThread: 0x8c48c80>{name = (null), num = 3}
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_2:55]| backBO.saveWithBlockAndWait <NSThread: 0x8c48c80>{name = (null), num = 3}
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_2:59]| Awake again
-    //
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_3:67]| foreBO <NSThread: 0x8c3cec0>{name = (null), num = 1}
-    //[__60-[ARLAppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_3:68]| Records:14
     
     Log(@"MainThread %@", [NSThread currentThread]);
     
