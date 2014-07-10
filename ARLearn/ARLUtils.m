@@ -96,9 +96,12 @@ static NSCondition *_theAbortLock;
  *
  *  @return The NSManagedObject that has been created and inserted into Core Data.
  */
-+ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity {
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
+                                       entityName:(NSString *)entity {
     
-    return [ARLUtils ManagedObjectFromDictionary:dict entityName:entity nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+    return [ARLUtils ManagedObjectFromDictionary:dict
+                                      entityName:entity
+                                      nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
 }
 
 /*!
@@ -112,7 +115,9 @@ static NSCondition *_theAbortLock;
  *
  *  @return The NSManagedObject that has been created and inserted into Core Data.
  */
-+ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity nameFixups:(NSDictionary *)fixups {
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
+                                       entityName:(NSString *)entity
+                                       nameFixups:(NSDictionary *)fixups {
     
     // 1) Make sure we can modify object inside the MagicalRecord block.
     __block NSManagedObject *object;
@@ -151,27 +156,48 @@ static NSCondition *_theAbortLock;
  *
  *  @return The NSDictionary containing the data.
  */
-+ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity {
++ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object {
+    return [ARLUtils DictionaryFromManagedObject:object
+                                      nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+}
+
+/*!
+ *  Creates a NSDictionary containing data from a certain NSManagedObject.
+ *
+ *  @param object The NSManagedObject to convert
+ *  @param fixups List of mismatches between dict and NSManagerObject fields.
+ *
+ *  @return The NSDictionary containing the object data
+ */
++ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object
+                                    nameFixups:(NSDictionary *)fixups {
+    // 1) Make sure we can modify object inside the MagicalRecord block.
+    __block NSMutableDictionary *json = [[NSMutableDictionary alloc]  init];
     
-    //    // Get Attributes
-    //    NSDictionary *attributes = [[NSEntityDescription
-    //                                 entityForName:entity
-    //                                 inManagedObjectContext:self.context] attributesByName];
-    //
-    //    NSMutableDictionary *json = [[NSMutableDictionary alloc]  init];
-    //
-    ////TODO: Add Key <-> Property Name Lookup.
-    //
-    //    // Enumarate over Attributes
-    //    for (NSString *attr in attributes) {
-    //        [json setObject:[object valueForKey:attr] forKey:attr];
-    //
-    //        // object setValue:[dict valueForKey:attr] forKey:attr];
-    //    }
-    //    
-    //    return json;
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
     
-    return nil;
+        NSString *entity = [object entity].name;
+        
+         // 3) Get its Attributes
+        NSDictionary *attributes = [[NSEntityDescription entityForName:entity
+                                                inManagedObjectContext:localContext] attributesByName];
+
+        ////TODO: Add Key <-> Property Name Lookup.
+        
+        // 4) Enumerate over Attributes
+        for (NSString *attr in attributes) {
+            if ([object valueForKey:attr]) {
+                if ([fixups valueForKey:attr]) {
+                    [json setObject:[object valueForKey:attr] forKey:[fixups valueForKey:attr]];
+                }else {
+                    [json setObject:[object valueForKey:attr] forKey:attr];
+                }
+            }
+        }
+    }];
+    
+    // 5) Return the result.
+    return json;
 }
 
 /*!
@@ -195,7 +221,8 @@ static NSCondition *_theAbortLock;
  *  @param title   The Title.
  *  @param message The Message.
  */
-+ (void) _ShowAbortMessage: (NSString *) title withMessage:(NSString *) message {
++ (void) _ShowAbortMessage:(NSString *)title
+               withMessage:(NSString *)message {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                     message:message
                                                    delegate:self
@@ -212,7 +239,8 @@ static NSCondition *_theAbortLock;
  *  @param title   The Title
  *  @param message The Message
  */
-+ (void) ShowAbortMessage: (NSString *) title withMessage:(NSString *) message {
++ (void) ShowAbortMessage:(NSString *)title
+              withMessage:(NSString *)message {
 
     // 1) Switch to
     // [ARLUtils.InternalShowAbortMessage:title withMessage:message];
@@ -246,7 +274,8 @@ static NSCondition *_theAbortLock;
  *  @param error The Error to Display
  *  @param func  The Name of the Method requesting this Dialog.
  */
-+ (void) ShowAbortMessage: (NSError *) error fromMethod:(NSString *)func {
++ (void) ShowAbortMessage: (NSError *)error
+               fromMethod:(NSString *)func {
     
     NSString *msg = [NSString stringWithFormat:@"%@\n\nUnresolved error code %d,\n\n%@", func, [error code], [error localizedDescription]];
     
@@ -263,7 +292,6 @@ static NSCondition *_theAbortLock;
 + (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     [ARLUtils.theAbortLock signal];
 }
-
 
 /*!
  *  Returns the Applications Document Directory.

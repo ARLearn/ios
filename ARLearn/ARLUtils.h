@@ -26,7 +26,8 @@
  *  @param title   The Title
  *  @param message The Message
  */
-+ (void) ShowAbortMessage: (NSString *) title withMessage:(NSString *) message;
++ (void) ShowAbortMessage:(NSString *)title
+              withMessage:(NSString *)message;
 
 /*!
  *  Shows an Abort Messages and Waits on the Mainthread until dismissed and then terminates the application.
@@ -34,7 +35,8 @@
  *  @param error The Error to Display
  *  @param func  The Name of the Method requesting this Dialog.
  */
-+ (void) ShowAbortMessage: (NSError *) error fromMethod:(NSString *)func;
++ (void) ShowAbortMessage:(NSError *)error
+               fromMethod:(NSString *)func;
 
 /*!
  *  Returns the Applications Document Directory.
@@ -53,7 +55,8 @@
  *
  *  @return The NSManagedObject that has been created and inserted into Core Data
  */
-+ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity;
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
+                                       entityName:(NSString *)entity;
 
 /*!
  *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
@@ -62,12 +65,14 @@
  *
  *  @param dict   The Dictionary containing the values
  *  @param entity The Entity name to create.
- *  @param fixups List of mismatches between dict and NSManagerObject fields.s
+ *  @param fixups List of mismatches between dict and NSManagerObject fields.
  *
  *  @return The NSManagedObject that has been created and inserted into Core Data
  */
-+ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity nameFixups:(NSDictionary *)fixups;
-    
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
+                                       entityName:(NSString *)entity
+                                       nameFixups:(NSDictionary *)fixups;
+
 /*!
  *  Creates a NSDictionary containing data from a certain NSManagedObject.
  *
@@ -76,6 +81,17 @@
  *
  *  @return The NSDictionary containing the data
  */
-+ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity;
++ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object;
+
+/*!
+ *  Creates a NSDictionary containing data from a certain NSManagedObject.
+ *
+ *  @param object The NSManagedObject to convert
+ *  @param fixups List of mismatches between dict and NSManagerObject fields.
+ *
+ *  @return The NSDictionary containing the object data
+ */
++ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object
+                                    nameFixups:(NSDictionary *)fixups;
 
 @end

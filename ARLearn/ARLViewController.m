@@ -221,9 +221,9 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     
     //TESTCODE: ADD/SAVE A RECORD BY NAME AND FILL WITH A DICTIONARY.
     {
-        //!!!: Note the mismatch between TestAccount.name and _name. See fixups below!
+        //!!!: Note the mismatch between TestAccount.name and xname. See fixups below!
         NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"Wim Slot",          @"_name",
+                              @"Wim Slot",          @"xname",
                               @"Wim",               @"givenName",
                               @"Slot",              @"familyName",
                               @"wim.slot@ou.nl",    @"email",
@@ -235,13 +235,15 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         // Value = JSON Name.
         NSDictionary *fixups = [NSDictionary dictionaryWithObjectsAndKeys:
                                 // Json , CoreData
-                                @"_name", @"name",
+                                @"xname", @"name",
                                 nil];
         
         TestAccount *acc = (TestAccount *)[ARLUtils ManagedObjectFromDictionary:data entityName:@"TestAccount" nameFixups:fixups];
         Log(@"%@ %@", acc.name, acc.email);
         
         [self reloadPersons];
+        
+        Log(@"\n%@", [ARLUtils DictionaryFromManagedObject:acc nameFixups:fixups]);
     }
     
     //TESTCODE: ADD/SAVE A RECORD IN THE BACKGROUND QUEUE AND WAIT.
