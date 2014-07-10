@@ -23,7 +23,7 @@ static NSOperationQueue *_theOQ;
 {
     // Override point for customization after application launch.
     
-#warning veg: Register and Process APN's found in the launchOptions.
+//TODO: Register and Process APN's found in the launchOptions.
     [ARLUtils LogGitInfo];
     
     // Setup CoreData with MagicalRecord

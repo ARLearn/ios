@@ -16,6 +16,21 @@
 
 @property (nonatomic, strong) NSMutableArray *persons;
 
+/*!
+ *  ID's and order of the cells.
+ */
+typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
+    /*!
+     *  Main Group.
+     */
+    MAIN = 0,
+  
+    /*!
+     *  Number of Groups
+     */
+    numARLViewControllerGroups
+};
+
 @end
 
 @implementation ARLViewController
@@ -38,77 +53,13 @@
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-#warning TEST CODE AHEAD.
-    {
-        Log(@"%@", [MagicalRecord currentStack]);
-
-        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            Log(@"saveWithBlockAndWait");
-
-            [TestAccount MR_truncateAllInContext:localContext];
-            
-            // TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
-            // ta.name = @"Wim van der Vegt";
-            // ta.email = @"wim@vander-vegt.nl";
-        }];
-    }
     
-#warning TEST CODE AHEAD.
-    //[[ARLAppDelegate theOQ] addOperationWithBlock:^ {
-    //    Log(@"justAdding %@", [NSThread currentThread]);
-    //    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-    //        Log(@"saveWithBlockAndWait %@", [NSThread currentThread]);
-    //
-    //        TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
-    //        ta.name = @"wim van der Vegt";
-    //        ta.email = @"wim@vander-vegt.nl";
-    //    }];
-    //}];
-    
-#warning TEST CODE AHEAD.
-    NSBlockOperation *backBO =[NSBlockOperation blockOperationWithBlock:^{
-        Log(@"backBO %@", [NSThread currentThread]);
-        
-        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            Log(@"backBO.saveWithBlockAndWait %@", [NSThread currentThread]);
-            
-            // Note: Operations MUST use localContext or they will not be saved.
-            // [TestAccount MR_truncateAllInContext:localContext];
-            
-           [NSThread  sleepForTimeInterval:5.0];
-            
-            Log(@"Awake again");
-            TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
-            ta.name = @"G.W van der Vegt";
-            ta.email = @"wim.vandervegt@ou.nl";
-        }];
-    }];
-    
-    NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
-        Log(@"foreBO %@", [NSThread currentThread]);
-        Log(@"Records:%d", [TestAccount MR_countOfEntities]);
-    }];
-    
-    NSInvocationOperation *foreIV = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(reloadPersons) object:nil];
-    
-    // Add dependencies: backBO -> foreBO -> foreIV.
-    [foreBO addDependency:backBO];
-    [foreIV addDependency:foreBO];
-    
-    // Add Operations to the appropriate queues.
-    //
-    // 1) Main Thread Queue
-    [[NSOperationQueue mainQueue] addOperation:foreIV];
-    [[NSOperationQueue mainQueue] addOperation:foreBO];
-    //
-    // 2) Background Thread Queue
-    [[ARLAppDelegate theOQ] addOperation:backBO];
-    
-    Log(@"MainThread %@", [NSThread currentThread]);
-    
-    [self reloadPersons];
+    [self TestCode];
 }
 
+/*!
+ *  Just clear the stored data.
+ */
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -137,7 +88,14 @@
  */
 -(NSMutableArray *) persons {
     if (_persons == nil) {
-        _persons = [NSMutableArray arrayWithArray:[TestAccount MR_findAll]];
+
+        //!!!: Using Magicalrecord & Faults also seems to work.
+        NSFetchRequest *fr = [TestAccount MR_requestAll];
+        [fr setReturnsObjectsAsFaults:TRUE];
+        _persons = [NSMutableArray arrayWithArray:[TestAccount MR_executeFetchRequest:fr]];
+
+        // _persons = [NSMutableArray arrayWithArray:[TestAccount MR_findAll]];
+
     }
     return  _persons;
 }
@@ -174,39 +132,45 @@
 
 /***************************************************************************************************************/
 
-#warning TODO First time onluy fetch the ID's and store those in the NSMutableArray. They if a NSInteger, load the record if needed to simulate batch size?
+//TODO:First time only fetch the ID's and store those in the NSMutableArray. They if a NSInteger, load the record if needed to simulate batch size?
 
 /*!
  *  Number of Sections of the Table.
  *
- *  @param tableView <#tableView description#>
+ *  @param tableView The TableView
  *
- *  @return <#return value description#>
+ *  @return The number of Groups.
  */
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return numARLViewControllerGroups;
 }
 
 /*!
  *  Number of Tabel Rows in a Section.
  *
- *  @param tableView <#tableView description#>
- *  @param section   <#section description#>
+ *  @param tableView The TableView
+ *  @param section   The Section
  *
- *  @return <#return value description#>
+ *  @return The number of Rows in the Section.
  */
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-   return [self.persons count];
+    switch (section) {
+        case MAIN : {
+            return [self.persons count];
+        }
+    }
+    // Should not happen.
+    return 0;
 }
 
 /*!
  *  Get the Cell for a particular Section and Row.
  *
- *  @param tableView <#tableView description#>
- *  @param indexPath <#indexPath description#>
+ *  @param tableView The TableView
+ *  @param indexPath The Row Requested.
  *
- *  @return <#return value description#>
+ *  @return The UITableViewCell for the requested Row.
  */
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -225,5 +189,119 @@
 
 /***************************************************************************************************************/
 
+- (void)TestCode {
+    
+    //TESTCODE: CLEAR ALL TESTACCOUNT RECORDS.
+    {
+        Log(@"%@", [MagicalRecord currentStack]);
+
+        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            Log(@"saveWithBlockAndWait");
+
+            [TestAccount MR_truncateAllInContext:localContext];
+        }];
+    }
+    
+    //TESTCODE: ADD/SAVE A RECORD IN THE BACKGROUND AND RELOAD DATA.
+    {
+        Log(@"%@", [MagicalRecord currentStack]);
+        
+        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
+            Log(@"saveWithBlockAndWait");
+            
+            TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
+            ta.name = @"Wim van der Vegt";
+            ta.email = @"wim@vander-vegt.nl";
+        } completion:^(BOOL success, NSError *error) {
+            if (success) {
+                [self reloadPersons];
+            }
+        }];
+    }
+    
+    //TESTCODE: ADD/SAVE A RECORD BY NAME AND FILL WITH A DICTIONARY.
+    {
+        //!!!: Note the mismatch between TestAccount.name and _name. See fixups below!
+        NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                              @"Wim Slot",          @"_name",
+                              @"Wim",               @"givenName",
+                              @"Slot",              @"familyName",
+                              @"wim.slot@ou.nl",    @"email",
+                              nil];
+        
+        //TODO: FIXUPS SHOULD BE static and constant if possible.
+        //
+        // Key   = CoreData Name.
+        // Value = JSON Name.
+        NSDictionary *fixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Json , CoreData
+                                @"_name", @"name",
+                                nil];
+        
+        TestAccount *acc = (TestAccount *)[ARLUtils ManagedObjectFromDictionary:data entityName:@"TestAccount" nameFixups:fixups];
+        Log(@"%@ %@", acc.name, acc.email);
+        
+        [self reloadPersons];
+    }
+    
+    //TESTCODE: ADD/SAVE A RECORD IN THE BACKGROUND QUEUE AND WAIT.
+    {
+        //[[ARLAppDelegate theOQ] addOperationWithBlock:^ {
+        //    Log(@"justAdding %@", [NSThread currentThread]);
+        //    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        //        Log(@"saveWithBlockAndWait %@", [NSThread currentThread]);
+        //
+        //        TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
+        //        ta.name = @"wim van der Vegt";
+        //        ta.email = @"wim@vander-vegt.nl";
+        //    }];
+        //}];
+    }
+    
+    //TESTCODE: ADD/SAVE/WAIT (ON) A RECORD. USE DEPENDEND TASKS TO UPDATE THE UI ON THE MAIN THREAD QUEUE.
+    {
+        NSBlockOperation *backBO =[NSBlockOperation blockOperationWithBlock:^{
+            Log(@"backBO %@", [NSThread currentThread]);
+            
+            [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+                Log(@"backBO.saveWithBlockAndWait %@", [NSThread currentThread]);
+                
+                // Note: Operations MUST use localContext or they will not be saved.
+                // [TestAccount MR_truncateAllInContext:localContext];
+                
+                [NSThread  sleepForTimeInterval:5.0];
+                
+                Log(@"Awake again");
+                TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
+                ta.name = @"G.W van der Vegt";
+                ta.email = @"wim.vandervegt@ou.nl";
+            }];
+        }];
+        
+        NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
+            Log(@"foreBO %@", [NSThread currentThread]);
+            Log(@"Records:%d", [TestAccount MR_countOfEntities]);
+        }];
+        
+        NSInvocationOperation *foreIV = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(reloadPersons) object:nil];
+        
+        // Add dependencies: backBO -> foreBO -> foreIV.
+        [foreBO addDependency:backBO];
+        [foreIV addDependency:foreBO];
+        
+        // Add Operations to the appropriate queues.
+        //
+        // 1) Main Thread Queue
+        [[NSOperationQueue mainQueue] addOperation:foreIV];
+        [[NSOperationQueue mainQueue] addOperation:foreBO];
+        //
+        // 2) Background Thread Queue
+        [[ARLAppDelegate theOQ] addOperation:backBO];
+    }
+    
+    Log(@"MainThread %@", [NSThread currentThread]);
+}
+
+/***************************************************************************************************************/
 
 @end

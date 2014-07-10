@@ -12,8 +12,8 @@
 
 @property (nonatomic, readonly) UIImage *lazyPicture;
 
-+ (TestAccount *) retrieveFromDb: (NSDictionary *) giDict withManagedContext: (NSManagedObjectContext *) context;
++ (instancetype) retrieveFromDb: (NSDictionary *) giDict withManagedContext: (NSManagedObjectContext *) context;
 
-+ (TestAccount *) accountWithDictionary: (NSDictionary *) acDict inManagedObjectContext: (NSManagedObjectContext *) context;
++ (instancetype) accountWithDictionary: (NSDictionary *) acDict inManagedObjectContext: (NSManagedObjectContext *) context;
 
 @end

@@ -53,8 +53,21 @@
  *
  *  @return The NSManagedObject that has been created and inserted into Core Data
  */
-- (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity;
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity;
 
+/*!
+ *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
+ *
+ *  See http://stackoverflow.com/questions/2563984/json-to-persistent-data-store-coredata-etc
+ *
+ *  @param dict   The Dictionary containing the values
+ *  @param entity The Entity name to create.
+ *  @param fixups List of mismatches between dict and NSManagerObject fields.s
+ *
+ *  @return The NSManagedObject that has been created and inserted into Core Data
+ */
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity nameFixups:(NSDictionary *)fixups;
+    
 /*!
  *  Creates a NSDictionary containing data from a certain NSManagedObject.
  *
@@ -63,6 +76,6 @@
  *
  *  @return The NSDictionary containing the data
  */
-- (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity;
++ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity;
 
 @end

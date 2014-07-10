@@ -39,7 +39,7 @@ UIImage * cachedPicture;
  *
  *  @return The Account
  */
-+ (TestAccount *) retrieveFromDb: (NSDictionary *) giDict withManagedContext: (NSManagedObjectContext *) context{
++ (instancetype) retrieveFromDb: (NSDictionary *) giDict withManagedContext: (NSManagedObjectContext *) context{
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"TestAccount"];
     
     request.predicate = [NSPredicate predicateWithFormat:@"(localId = %@) AND (accountType = %d)", [giDict objectForKey:@"localId"], [[giDict objectForKey:@"accountType"] intValue]];
@@ -59,7 +59,7 @@ UIImage * cachedPicture;
  *
  *  @return The Account.
  */
-+ (TestAccount *) accountWithDictionary: (NSDictionary *) acDict inManagedObjectContext: (NSManagedObjectContext *) context {
++ (instancetype) accountWithDictionary: (NSDictionary *) acDict inManagedObjectContext: (NSManagedObjectContext *) context {
     TestAccount *account = [self retrieveFromDb:acDict withManagedContext:context];
     
     if (!account) {

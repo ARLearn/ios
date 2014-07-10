@@ -10,29 +10,6 @@
 
 @interface ARLUtils ()
 
-@property (strong, nonatomic) UIManagedDocument *document;
-@property (strong, nonatomic) NSManagedObjectContext *context;
-
-/*!
- *  Convert a Dictionary to a Managed Object.
- *
- *  @param dict       The Dictionary (currently key names have to match model names.
- *  @param entityName The Name of the NSManagedObject to create.
- *
- *  @return The NSManagedObject.
- */
-- (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entityName;
-
-/*!
- *  Convert a Managed Object into a Dictionary (currently key names match model names).
- *
- *  @param object <#object description#>
- *  @param entity <#entity description#>
- *
- *  @return <#return value description#>
- */
-- (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity;
-
 /*!
  *  Static Property containing the gitHash.
  */
@@ -117,27 +94,52 @@ static NSCondition *_theAbortLock;
  *  @param dict   The Dictionary containing the values
  *  @param entity The Entity name to create.
  *
- *  @return The NSManagedObject that has been created and inserted into Core Data
+ *  @return The NSManagedObject that has been created and inserted into Core Data.
  */
-- (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity {
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity {
     
-    // Create an empty NSManagedObject
-    NSManagedObject *object = [NSEntityDescription
-                               insertNewObjectForEntityForName:entity
-                               inManagedObjectContext:self.context];
+    return [ARLUtils ManagedObjectFromDictionary:dict entityName:entity nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+}
+
+/*!
+ *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
+ *
+ *  See http://stackoverflow.com/questions/2563984/json-to-persistent-data-store-coredata-etc
+ *
+ *  @param dict   The Dictionary containing the values
+ *  @param entity The Entity name to create.
+ *  @param fixups List of mismatches between dict and NSManagerObject fields. Keys are CoreData names, Values are dict key names.
+ *
+ *  @return The NSManagedObject that has been created and inserted into Core Data.
+ */
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict entityName:(NSString *)entity nameFixups:(NSDictionary *)fixups {
     
-    // Get its Attributes
-    NSDictionary *attributes = [[NSEntityDescription
-                                 entityForName:entity
-                                 inManagedObjectContext:self.context] attributesByName];
+    // 1) Make sure we can modify object inside the MagicalRecord block.
+    __block NSManagedObject *object;
     
-#warning veg: Add Key <-> Property Name Lookup.
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        // 2) Create a NSManagedObject by Name.
+        object = [NSEntityDescription insertNewObjectForEntityForName:entity inManagedObjectContext:localContext];
+        
+        // 3) Get its Attributes
+        NSDictionary *attributes = [[NSEntityDescription
+                                     entityForName:entity
+                                     inManagedObjectContext:localContext] attributesByName];
+        
+        //TODO: Add Key <-> Property Name Lookup.
+        
+        // 4) Enumerate over Attributes
+        for (NSString *attr in attributes) {
+            if ([fixups valueForKey:attr]) {
+                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
+            }else {
+                [object setValue:[dict valueForKey:attr] forKey:attr];
+            }
+        }
+    }];
     
-    // Enumerate over Attributes
-    for (NSString *attr in attributes) {
-        [object setValue:[dict valueForKey:attr] forKey:attr];
-    }
-    
+    // 5) Return the result.
     return object;
 }
 
@@ -147,27 +149,29 @@ static NSCondition *_theAbortLock;
  *  @param dict   The NSManagedObject to convert
  *  @param entity The Entity name to create.
  *
- *  @return The NSDictionary containing the data
+ *  @return The NSDictionary containing the data.
  */
-- (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity {
++ (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object entityName:(NSString *)entity {
     
-    // Get Attributes
-    NSDictionary *attributes = [[NSEntityDescription
-                                 entityForName:entity
-                                 inManagedObjectContext:self.context] attributesByName];
+    //    // Get Attributes
+    //    NSDictionary *attributes = [[NSEntityDescription
+    //                                 entityForName:entity
+    //                                 inManagedObjectContext:self.context] attributesByName];
+    //
+    //    NSMutableDictionary *json = [[NSMutableDictionary alloc]  init];
+    //
+    ////TODO: Add Key <-> Property Name Lookup.
+    //
+    //    // Enumarate over Attributes
+    //    for (NSString *attr in attributes) {
+    //        [json setObject:[object valueForKey:attr] forKey:attr];
+    //
+    //        // object setValue:[dict valueForKey:attr] forKey:attr];
+    //    }
+    //    
+    //    return json;
     
-    NSMutableDictionary *json = [[NSMutableDictionary alloc]  init];
-    
-#warning veg: Add Key <-> Property Name Lookup.
-    
-    // Enumarate over Attributes
-    for (NSString *attr in attributes) {
-        [json setObject:[object valueForKey:attr] forKey:attr];
-        
-        // object setValue:[dict valueForKey:attr] forKey:attr];
-    }
-    
-    return json;
+    return nil;
 }
 
 /*!
@@ -220,7 +224,7 @@ static NSCondition *_theAbortLock;
     // 2)  Lock the Condition
     [ARLUtils.theAbortLock lock];
     
-    // 2) Only do this if not the MainThread!!!!
+    // 2) Only do this if not the MainThread!
     if (![NSThread isMainThread]) {
         
         // 3) We wait until OK on the UIAlertView is tapped and provides a Signal to continue.
