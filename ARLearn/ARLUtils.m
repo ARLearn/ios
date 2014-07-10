@@ -206,9 +206,12 @@ static NSCondition *_theAbortLock;
  *  @return The NSCondition Lock
  */
 + (NSCondition *) theAbortLock {
-    if(!_theAbortLock){
-        _theAbortLock = [[NSCondition alloc] init];
-        //[_theAbortLock setName:@"Show Abort Condition"];
+    @synchronized(_theAbortLock)
+    {
+        if(!_theAbortLock){
+            _theAbortLock = [[NSCondition alloc] init];
+            //[_theAbortLock setName:@"Show Abort Condition"];
+        }
     }
     return _theAbortLock;
 }

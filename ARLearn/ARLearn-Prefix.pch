@@ -21,4 +21,6 @@
     #import "CoreData+MagicalRecord.h"
 
     #import "ARLLog.h"
+
+    #import "PrivateData.h"
 #endif

@@ -86,7 +86,6 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
  *  @return The list of Persons.
  */
 -(NSMutableArray *) persons {
-    //TODO:SHOULD WE SYNCHRONIZE THE SETTING OF _persons?sy
     @synchronized(self)
     {
         if (_persons == nil) {
@@ -109,7 +108,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
  *  Reload the Persons and Table.
  */
 - (void)reloadPersons {
-    Log(@"reloadPersons %@", [NSThread currentThread]);
+    // Log(@"reloadPersons %@", [NSThread currentThread]);
     
     // Clear Persons backing fields to trigger a reload.
     @synchronized(self)
@@ -197,23 +196,23 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 
 - (void)TestCode {
     
-    //TESTCODE: CLEAR ALL TESTACCOUNT RECORDS.
+    //TESTCODE: Clear all TestAccount records.
     {
-        Log(@"%@", [MagicalRecord currentStack]);
+        // Log(@"%@", [MagicalRecord currentStack]);
 
         [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-            Log(@"saveWithBlockAndWait");
+            // Log(@"saveWithBlockAndWait");
 
             [TestAccount MR_truncateAllInContext:localContext];
         }];
     }
     
-    //TESTCODE: ADD/SAVE A RECORD IN THE BACKGROUND AND RELOAD DATA.
+    //TESTCODE: Add/Save a record in the backgrounnd and reload data.
     {
-        Log(@"%@", [MagicalRecord currentStack]);
+        // Log(@"%@", [MagicalRecord currentStack]);
         
         [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-            Log(@"saveWithBlockAndWait");
+            // Log(@"saveWithBlockAndWait");
             
             TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
             ta.name = @"Wim van der Vegt";
@@ -225,7 +224,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         }];
     }
     
-    //TESTCODE: ADD/SAVE A RECORD BY NAME AND FILL WITH A DICTIONARY.
+    //TESTCODE: Add/Save a record by name and fill it with a NSDictionary.
     {
         //!!!: Note the mismatch between TestAccount.name and xname. See fixups below!
         NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -235,7 +234,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
                               @"wim.slot@ou.nl",    @"email",
                               nil];
         
-        //TODO: FIXUPS SHOULD BE static and constant if possible.
+        //TODO: FIXUPS Should be static and constant if possible.
         //
         // Key   = CoreData Name.
         // Value = JSON Name.
@@ -244,15 +243,16 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
                                 @"xname", @"name",
                                 nil];
         
+        // Uses MagicalRecord for Saving!
         TestAccount *acc = (TestAccount *)[ARLUtils ManagedObjectFromDictionary:data entityName:@"TestAccount" nameFixups:fixups];
-        Log(@"%@ %@", acc.name, acc.email);
+        // Log(@"%@ %@", acc.name, acc.email);
         
         [self reloadPersons];
         
         Log(@"\n%@", [ARLUtils DictionaryFromManagedObject:acc nameFixups:fixups]);
     }
     
-    //TESTCODE: ADD/SAVE A RECORD IN THE BACKGROUND QUEUE AND WAIT.
+    //TESTCODE: Add/Save/Waitfor a record in the background queue.
     {
         //[[ARLAppDelegate theOQ] addOperationWithBlock:^ {
         //    Log(@"justAdding %@", [NSThread currentThread]);
@@ -266,20 +266,20 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         //}];
     }
     
-    //TESTCODE: ADD/SAVE/WAIT (ON) A RECORD. USE DEPENDEND TASKS TO UPDATE THE UI ON THE MAIN THREAD QUEUE.
+    //TESTCODE: Add/Save/Waitfor a record. Use dependend tasks to update the UI using the main thread queue.
     {
         NSBlockOperation *backBO =[NSBlockOperation blockOperationWithBlock:^{
-            Log(@"backBO %@", [NSThread currentThread]);
+            // Log(@"backBO %@", [NSThread currentThread]);
             
             [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-                Log(@"backBO.saveWithBlockAndWait %@", [NSThread currentThread]);
+                // Log(@"backBO.saveWithBlockAndWait %@", [NSThread currentThread]);
                 
                 // Note: Operations MUST use localContext or they will not be saved.
                 // [TestAccount MR_truncateAllInContext:localContext];
                 
                 [NSThread  sleepForTimeInterval:5.0];
                 
-                Log(@"Awake again");
+                // Log(@"Awake again");
                 TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
                 ta.name = @"G.W van der Vegt";
                 ta.email = @"wim.vandervegt@ou.nl";
@@ -287,8 +287,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         }];
         
         NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
-            Log(@"foreBO %@", [NSThread currentThread]);
-            Log(@"Records:%d", [TestAccount MR_countOfEntities]);
+            // Log(@"foreBO %@", [NSThread currentThread]);
+            // Log(@"Records:%d", [TestAccount MR_countOfEntities]);
         }];
         
         NSInvocationOperation *foreIV = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(reloadPersons) object:nil];
@@ -307,7 +307,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         [[ARLAppDelegate theOQ] addOperation:backBO];
     }
     
-    Log(@"MainThread %@", [NSThread currentThread]);
+    // Log(@"MainThread %@", [NSThread currentThread]);
 }
 
 /***************************************************************************************************************/

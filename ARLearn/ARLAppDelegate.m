@@ -10,18 +10,25 @@
 
 @implementation ARLAppDelegate
 
+/***************************************************************************************************************/
+
 static NSOperationQueue *_theOQ;
 
 + (NSOperationQueue *) theOQ {
-    if(!_theOQ){
-        _theOQ = [[NSOperationQueue alloc] init];
+    @synchronized(_theOQ) {
+        if(!_theOQ){
+            _theOQ = [[NSOperationQueue alloc] init];
+        }
     }
     return _theOQ;
 }
 
+/***************************************************************************************************************/
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    Log(@"didFinishLaunchingWithOptions");
     
 //TODO: Register and Process APN's found in the launchOptions.
     [ARLUtils LogGitInfo];
@@ -32,6 +39,15 @@ static NSOperationQueue *_theOQ;
     
     //[MagicalRecord setupAutoMigratingCoreDataStack];
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
+    
+    //TESTCODE: ShowAbortMessage on a non main thread.
+    {
+        //        [[ARLAppDelegate theOQ] addOperationWithBlock:^{
+        //            [ARLUtils ShowAbortMessage:@"TEST" withMessage:@"TEST" ];
+        //        }];
+    }
+    
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
     
     return YES;
 }
@@ -65,4 +81,53 @@ static NSOperationQueue *_theOQ;
     [MagicalRecord cleanUp];
 }
 
+/***************************************************************************************************************/
+
+
+//TESTCODE: Remote notifications registration
+- (void)applicationDidFinishLaunching:(UIApplication *)app {
+//    // other setup tasks here....
+//    Log(@"applicationDidFinishLaunching");
+//    
+//    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+}
+
+//TESTCODE: Remote notifications
+/*!
+ *  Called when receiving a Remote Notification.
+ *
+ *  @param app   <#app description#>
+ *  @param notif <#notif description#>
+ */
+- (void)application:(UIApplication *)app didReceiveRemoteNotification:(UILocalNotification *)notif {
+    //TODO: Implement
+    Log(@"didReceiveRemoteNotification: %@", notif.userInfo);
+    
+    //    NSString *itemName = [notif.userInfo objectForKey:ToDoItemKey];
+    //    [viewController displayItem:itemName];  // custom method
+    //    app.applicationIconBadgeNumber = notification.applicationIconBadgeNumber - 1;
+}
+
+/*!
+ *  Registration Success.
+ *
+ *  @param application The application
+ *  @param deviceToken The Device Token
+ */
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    //TODO: Implement
+    Log(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", deviceToken);
+}
+
+/*!
+ *  Registration Failure (for instance when running in the emulator);
+ *
+ *  @param application The application
+ *  @param error       The error
+ */
+- (void)Implement:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    //TODO: Implement
+    Log(@"didFailToRegisterForRemoteNotificationsWithError: %@", error.description);
+
+}
 @end

@@ -1,12 +1,12 @@
-////
-////  ARLNotificationSubscriber.h
-////  ARLearn
-////
-////  Created by Stefaan Ternier on 1/28/13.
-////  Copyright (c) 2013 Stefaan Ternier. All rights reserved.
-////
 //
-//#import <Foundation/Foundation.h>
+//  ARLNotificationSubscriber.h
+//  ARLearn
+//
+//  Created by Stefaan Ternier on 1/28/13.
+//  Copyright (c) 2013 Stefaan Ternier. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
 //#import "ARLCloudSynchronizer.h"
 //#import "ARLAppDelegate.h"
 //
@@ -17,14 +17,17 @@
 //
 //@end
 //
-//@interface ARLNotificationSubscriber : NSObject
-//
-//+ (ARLNotificationSubscriber *) sharedSingleton;
-//
-//- (void) registerAccount: (NSString* ) fullId;
-//
+
+
+
+@interface ARLNotificationSubscriber : NSObject
+
++ (ARLNotificationSubscriber *) sharedSingleton;
+
+- (void) registerAccount: (NSString* ) fullId;
+
 //- (void) dispatchMessage: (NSDictionary *) message;
 //
 //- (void) addNotificationHandler: (NSString *) notificationType handler:(id <NotificationHandler>) notificationHandler;
 //
-//@end
+@end
