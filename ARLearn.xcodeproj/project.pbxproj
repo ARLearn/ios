@@ -55,6 +55,7 @@
 		8D3506F1196D49860060E808 /* ARLearnTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21966F196D26080044616A /* ARLearnTests.m */; };
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
+		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
@@ -159,6 +160,8 @@
 		8D219A87196D3AC10044616A /* PrivateData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateData.h; sourceTree = "<group>"; };
 		8D4233E1196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
+		8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNotificationSubscriber.h; sourceTree = "<group>"; };
+		8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNotificationSubscriber.m; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -221,6 +224,8 @@
 		8D21964A196D26080044616A /* ARLearn */ = {
 			isa = PBXGroup;
 			children = (
+				8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */,
+				8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */,
 				8D4233DF196E900D007410C3 /* en.lproj */,
 				8D219653196D26080044616A /* ARLAppDelegate.h */,
 				8D219654196D26080044616A /* ARLAppDelegate.m */,
@@ -556,6 +561,7 @@
 				8D219651196D26080044616A /* main.m in Sources */,
 				8D219A78196D31350044616A /* NSManagedObjectContext+MagicalRecord.m in Sources */,
 				8D219A2B196D2E8C0044616A /* ARLLog.m in Sources */,
+				8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */,
 				8D219A82196D31350044616A /* MagicalRecord+Setup.m in Sources */,
 				8D219A6D196D31350044616A /* NSEntityDescription+MagicalDataImport.m in Sources */,
 				8D21965B196D26080044616A /* ARLViewController.m in Sources */,

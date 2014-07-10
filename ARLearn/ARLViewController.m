@@ -53,7 +53,6 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    
     [self TestCode];
 }
 
@@ -87,15 +86,19 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
  *  @return The list of Persons.
  */
 -(NSMutableArray *) persons {
-    if (_persons == nil) {
-
-        //!!!: Using Magicalrecord & Faults also seems to work.
-        NSFetchRequest *fr = [TestAccount MR_requestAll];
-        [fr setReturnsObjectsAsFaults:TRUE];
-        _persons = [NSMutableArray arrayWithArray:[TestAccount MR_executeFetchRequest:fr]];
-
-        // _persons = [NSMutableArray arrayWithArray:[TestAccount MR_findAll]];
-
+    //TODO:SHOULD WE SYNCHRONIZE THE SETTING OF _persons?sy
+    @synchronized(self)
+    {
+        if (_persons == nil) {
+            
+            //!!!: Using Magicalrecord & Faults also seems to work.
+            NSFetchRequest *fr = [TestAccount MR_requestAll];
+            [fr setReturnsObjectsAsFaults:TRUE];
+            _persons = [NSMutableArray arrayWithArray:[TestAccount MR_executeFetchRequest:fr]];
+            
+            // _persons = [NSMutableArray arrayWithArray:[TestAccount MR_findAll]];
+            
+        }
     }
     return  _persons;
 }
@@ -109,7 +112,10 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     Log(@"reloadPersons %@", [NSThread currentThread]);
     
     // Clear Persons backing fields to trigger a reload.
-    _persons = nil;
+    @synchronized(self)
+    {
+        _persons = nil;
+    }
     
     [self.table reloadData];
 }
