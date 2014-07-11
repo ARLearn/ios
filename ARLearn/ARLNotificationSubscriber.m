@@ -66,11 +66,7 @@
                                          deviceToken,                                                       @"deviceToken",
                                          @"net.wespot.PersonalInquiryManager",                              @"bundleIdentifier",
                                          nil];
-    
-    id tmp = [NSJSONSerialization dataWithJSONObject:apnRegistrationBean
-                                             options:0
-                                               error:nil];
-    
+ 
     NSData *postData = [[NSData alloc] initWithData: [NSJSONSerialization dataWithJSONObject:apnRegistrationBean
                                                        options:0
                                                          error:nil]];
