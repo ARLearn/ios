@@ -7,24 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import "ARLCloudSynchronizer.h"
-//#import "ARLAppDelegate.h"
-//
+
+#import "ARLUtils.h"
+
 //@protocol NotificationHandler <NSObject>
 //
 //@required
 //- (void) onNotification : (NSDictionary*) notification;
 //
 //@end
-//
-
-
 
 @interface ARLNotificationSubscriber : NSObject
 
-+ (ARLNotificationSubscriber *) sharedSingleton;
+//+ (ARLNotificationSubscriber *) sharedSingleton;
 
-- (void) registerAccount: (NSString* ) fullId;
++ (void) registerAccount: (NSString* ) fullId;
 
 //- (void) dispatchMessage: (NSDictionary *) message;
 //

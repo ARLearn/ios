@@ -9,28 +9,28 @@
 #import "ARLNotificationSubscriber.h"
 
 @implementation ARLNotificationSubscriber
-{
-    NSMutableDictionary * notDict;
-}
+//{
+//    NSMutableDictionary * notDict;
+//}
 
-static ARLNotificationSubscriber *_sharedSingleton;
+//static ARLNotificationSubscriber *_sharedSingleton;
+//
+//+ (ARLNotificationSubscriber *)sharedSingleton {
+//    @synchronized(_sharedSingleton) {
+//        _sharedSingleton = [[ARLNotificationSubscriber alloc] init];
+//    }
+//    return _sharedSingleton;
+//}
+//
+//- (id) init {
+//    self = [super init];
+//    
+//    notDict = [[NSMutableDictionary alloc] init];
+//    
+//    return self;
+//}
 
-+ (ARLNotificationSubscriber *)sharedSingleton {
-    @synchronized(_sharedSingleton) {
-        _sharedSingleton = [[ARLNotificationSubscriber alloc] init];
-    }
-    return _sharedSingleton;
-}
-
-- (id) init {
-    self = [super init];
-    
-    notDict = [[NSMutableDictionary alloc] init];
-    
-    return self;
-}
-
-- (void) registerAccount: (NSString *) fullId {
++ (void) registerAccount: (NSString *) fullId {
     NSString *deviceUniqueIdentifier = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceUniqueIdentifier"];
     NSString *deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceToken"];
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
@@ -42,7 +42,7 @@ static ARLNotificationSubscriber *_sharedSingleton;
 }
 
 //TODO: Test this code next!
-- (void) registerDevice: (NSString *) deviceToken
++ (void) registerDevice: (NSString *) deviceToken
                 withUID: (NSString *) deviceUniqueIdentifier
             withAccount: (NSString *) account
            withBundleId: (NSString *) bundleIdentifier {
@@ -51,17 +51,29 @@ static ARLNotificationSubscriber *_sharedSingleton;
     //if (!account) return;
     
     //TODO: Hardcode bundleIdentifier/account with values from weSPOT PIM.
+    NSLog(@"bundleIdentifier:       %@",bundleIdentifier);
+    NSLog(@"bundleIdentifier:       %@",@"net.wespot.PersonalInquiryManager");
+    NSLog(@"account:                %@",account);
+    NSLog(@"deviceToken:            %@",deviceToken);
+    NSLog(@"deviceUniqueIdentifier: %@",deviceUniqueIdentifier);
+    
+    // NSString *fullId = [NSString stringWithFormat:@"%@:%@",  [accountDetails objectForKey:@"accountType"], [accountDetails objectForKey:@"localId"]];
     
     NSDictionary *apnRegistrationBean = [[NSDictionary alloc] initWithObjectsAndKeys:
                                          @"org.celstec.arlearn2.beans.notification.APNDeviceDescription",   @"type",
                                          account,                                                           @"account",
                                          deviceUniqueIdentifier,                                            @"deviceUniqueIdentifier",
                                          deviceToken,                                                       @"deviceToken",
-                                         bundleIdentifier,                                                  @"bundleIdentifier",
+                                         @"net.wespot.PersonalInquiryManager",                              @"bundleIdentifier",
                                          nil];
     
-    NSData *postData = [NSJSONSerialization dataWithJSONObject:apnRegistrationBean
-                                                       options:0 error:nil];
+    id tmp = [NSJSONSerialization dataWithJSONObject:apnRegistrationBean
+                                             options:0
+                                               error:nil];
+    
+    NSData *postData = [[NSData alloc] initWithData: [NSJSONSerialization dataWithJSONObject:apnRegistrationBean
+                                                       options:0
+                                                         error:nil]];
     
     [self executeARLearnPOST:@"notifications/apn"
                     postData:postData
@@ -70,23 +82,21 @@ static ARLNotificationSubscriber *_sharedSingleton;
 }
 
 //TODO: Sanitize code (static again)?
-- (NSMutableURLRequest *) prepareRequest: (NSString *)method
++ (NSMutableURLRequest *) prepareRequest: (NSString *)method
                           requestWithUrl: (NSString *) url {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: url]
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:60.0];
-    [request
-     setHTTPMethod:method];
+    [request setHTTPMethod:method];
     
-    [request
-     setValue:applicationjson
-     forHTTPHeaderField:accept];
+    [request setValue:applicationjson
+   forHTTPHeaderField:accept];
     
     return request;
 }
 
 //TODO: Sanitize code (static again)?
-- (id) executeARLearnPOST: (NSString *) path
++ (id) executeARLearnPOST: (NSString *) path
                  postData: (NSData *) data
                withAccept: (NSString *) acceptValue
           withContentType: (NSString *) ctValue
@@ -111,21 +121,28 @@ static ARLNotificationSubscriber *_sharedSingleton;
         [request setValue:acceptValue forHTTPHeaderField:accept];
     }
     
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] init];
+    NSError *error = [[NSError alloc] init];
+
     NSData *jsonData = [ NSURLConnection sendSynchronousRequest:request
-                                              returningResponse: nil
-                                                          error: nil];
+                                              returningResponse:&response
+                                                          error:&error];
    
+    Log(@"Status Code: %d",[response statusCode]);
+    if ([error code]) {
+        ELog(error);
+    }
+    
     if ([acceptValue isEqualToString:textplain]) {
         return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         // return [NSString stringWithUTF8String:[jsonData bytes]];
     }
     
-    // [self dumpJsonData:jsonData url:urlString];
+    [ARLUtils LogJsonData:jsonData url:urlString];
     
-    NSError *error = nil;
     return jsonData ? [NSJSONSerialization JSONObjectWithData:jsonData
                                                       options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
-                                                        error:&error] : @"error";
+                                                        error:nil] : @"error";
 }
 
 //- (void) dispatchMessage: (NSDictionary *) message {

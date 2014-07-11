@@ -16,6 +16,11 @@
 + (void) LogGitInfo;
 
 /*!
+ *  Log Device Version Info.
+ */
++ (void) LogDeviceInfo;
+
+/*!
  *  Register the Default Values for Application Preferences.
  */
 + (void) RegisterDefaultsForPrefences;
@@ -93,5 +98,8 @@
  */
 + (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object
                                     nameFixups:(NSDictionary *)fixups;
+
++(void) LogJsonData: (NSData *)jsonData
+                 url: (NSString *)url;
 
 @end

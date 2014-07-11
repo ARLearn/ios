@@ -47,7 +47,10 @@ static NSOperationQueue *_theOQ;
         //        }];
     }
     
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
+                                                                           UIRemoteNotificationTypeAlert |
+                                                                           UIRemoteNotificationTypeBadge |UIRemoteNotificationTypeSound
+                                                                           )];
     
     return YES;
 }
@@ -116,7 +119,25 @@ static NSOperationQueue *_theOQ;
  */
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     //TODO: Implement
-    Log(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", deviceToken);
+    
+    NSString* newToken = [deviceToken description];
+	newToken = [newToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+	newToken = [newToken stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    // Store DeviceToken
+    [[NSUserDefaults standardUserDefaults] setObject:newToken
+                                              forKey:@"deviceToken"];
+    
+    //!!!: This UID behaves very different on iOS 1-6 and iOS 7.
+    UIDevice *device = [UIDevice currentDevice];
+
+    Log(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", newToken);
+    Log(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", [device.identifierForVendor UUIDString]);
+   
+    [[NSUserDefaults standardUserDefaults] setObject:[device.identifierForVendor UUIDString]
+                                               forKey:@"deviceUniqueIdentifier"];
+    
+    [ARLNotificationSubscriber registerAccount:@"2:wim@vander-vegt.nl"];
 }
 
 /*!
@@ -130,4 +151,5 @@ static NSOperationQueue *_theOQ;
     Log(@"didFailToRegisterForRemoteNotificationsWithError: %@", error.description);
 
 }
+
 @end

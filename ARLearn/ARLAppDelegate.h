@@ -11,6 +11,7 @@
 #import "CoreData+MagicalRecord.h"
 
 #import "ARLUtils.h"
+#import "ARLNotificationSubscriber.h"
 
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate>
 
