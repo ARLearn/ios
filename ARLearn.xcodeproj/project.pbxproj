@@ -56,6 +56,7 @@
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
 		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
+		8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
@@ -162,6 +163,8 @@
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNotificationSubscriber.h; sourceTree = "<group>"; };
 		8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNotificationSubscriber.m; sourceTree = "<group>"; };
+		8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMainViewController.h; sourceTree = "<group>"; };
+		8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMainViewController.m; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -241,6 +244,8 @@
 				8D219A22196D2AB30044616A /* Models */,
 				8D219A87196D3AC10044616A /* PrivateData.h */,
 				8D219A15196D27150044616A /* Storyboard.storyboard */,
+				8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */,
+				8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */,
 				8D21964B196D26080044616A /* Supporting Files */,
 				8D219A85196D341F0044616A /* Todo.txt */,
 			);
@@ -538,6 +543,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D219A73196D31350044616A /* NSManagedObject+MagicalDataImport.m in Sources */,
+				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
 				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,
