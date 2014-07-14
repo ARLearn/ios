@@ -1,10 +1,4 @@
-/* 
-  Strings.strings
-  ARLearn
-
-  Created by Wim van der Vegt on 7/9/14.
-  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
-*/
+/* Localized versions of Localizable.strings keys */
 
 /* Error */
 "Error" = "Error";
@@ -27,3 +21,9 @@
 /* YES */
 "YES" = "YES";
 "TEST" = "Test";
+
+/* ARLMainViewController */
+"MyGames" = "My games";
+"Store" = "Store";
+"ScanQrCode" = "Scan code";
+"NearBy" = "Nearby";

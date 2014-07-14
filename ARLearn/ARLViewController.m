@@ -37,6 +37,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 
 @synthesize persons = _persons;
 
+#pragma mark - ViewController
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -68,6 +70,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     // Clear Persons backing fields to trigger a reload.
     _persons = nil;
 }
+
+#pragma mark - Properties
 
 /*************************************************************************************/
 
@@ -102,6 +106,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     return  _persons;
 }
 
+#pragma mark - Methods
+
 /***************************************************************************************************************/
 
 /*!
@@ -135,9 +141,9 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     [(UIRefreshControl *)sender endRefreshing];
 }
 
-/***************************************************************************************************************/
+#pragma mark - TabelViewController
 
-//TODO:First time only fetch the ID's and store those in the NSMutableArray. They if a NSInteger, load the record if needed to simulate batch size?
+/***************************************************************************************************************/
 
 /*!
  *  Number of Sections of the Table.
@@ -191,6 +197,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     
     return cell;
 }
+
+#pragma mark - Test Code
 
 /***************************************************************************************************************/
 

@@ -3,7 +3,7 @@
 //  ARLearn
 //
 //  Created by Stefaan Ternier on 1/28/13.
-//  Copyright (c) 2013 Stefaan Ternier. All rights reserved.
+//  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

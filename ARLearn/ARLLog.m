@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-
 #import "ARLLog.h"
 #import "ARLAppDelegate.h"
 

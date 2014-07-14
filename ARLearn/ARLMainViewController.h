@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "UIViewController+UI.h"
+
 @interface ARLMainViewController : UIViewController
 
 @end
