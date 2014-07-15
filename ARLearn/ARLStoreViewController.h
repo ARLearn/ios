@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UIButton+UI.h"
+#import "UIViewController+UI.h"
 
 @interface ARLStoreViewController : UIViewController <UIAlertViewDelegate>
 

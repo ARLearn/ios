@@ -107,40 +107,43 @@
     self.QrScanButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.NearByButton.translatesAutoresizingMaskIntoConstraints = NO;
 
+    CGFloat sw = self.screenWidth;
+    CGFloat bw = sw/2 - 3*8.0;
+    
     // Fix Background.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:|[backgroundImage]|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[backgroundImage]|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|[backgroundImage(==%f)]", sw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     
     // Fix Images Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|-[MyGamesButton]-[StoreButton(==MyGamesButton)]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[MyGamesButton(==%f)]-[StoreButton(==%f)]-|", bw, bw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|-[QrScanButton]-[NearByButton(==QrScanButton)]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[QrScanButton(==%f)]-[NearByButton(==%f)]-|", bw, bw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Make Images Square.
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.MyGamesButton
-                                                           attribute:NSLayoutAttributeHeight
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:self.MyGamesButton
-                                                           attribute:NSLayoutAttributeWidth
-                                                          multiplier:1.0
-                                                            constant:0]];
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.MyGamesButton
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:1.0
+                                                           constant:0]];
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.StoreButton
-                                                           attribute:NSLayoutAttributeHeight
-                                                           relatedBy:NSLayoutRelationEqual
-                                                              toItem:self.StoreButton
-                                                           attribute:NSLayoutAttributeWidth
-                                                          multiplier:1.0
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.StoreButton
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:1.0
                                                            constant:0]];
     
     // Fix Top Images Position Vertically.
@@ -177,14 +180,14 @@
 
 - (IBAction)StoreButtonAction:(UIButton *)sender {
     DLog(@"");
-    
-    UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"StoreView"];
-    
-    if (newViewController) {
-        // Move to another UINavigationController or UITabBarController etc.
-        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-        [self.navigationController pushViewController:newViewController animated:YES];
-    }
+//    
+//    UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"StoreView"];
+//    
+//    if (newViewController) {
+//        // Move to another UINavigationController or UITabBarController etc.
+//        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+//        [self.navigationController pushViewController:newViewController animated:YES];
+//    }
 }
 
 - (IBAction)QrScanButtonAction:(UIButton *)sender {

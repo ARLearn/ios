@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="cXa-PM-AH0">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="KGA-tg-SR1">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -12,7 +12,7 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="qQI-xU-NEQ">
+                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="qQI-xU-NEQ">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
@@ -26,6 +26,7 @@
                                 </state>
                                 <connections>
                                     <action selector="StoreButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="QQ6-gC-Jm3"/>
+                                    <segue destination="Gcw-Ml-KzB" kind="push" id="HdW-kC-OOR"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="UYf-Zq-sZ6">
@@ -62,6 +63,7 @@
                                 </state>
                                 <connections>
                                     <action selector="NearByButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="oDc-hj-raY"/>
+                                    <segue destination="A7K-D7-Ua9" kind="push" id="uUE-Vc-p2p"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -72,7 +74,6 @@
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="Phm-hZ-lNq"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="MyGamesButton" destination="UYf-Zq-sZ6" id="ETB-mf-7bo"/>
                         <outlet property="NearByButton" destination="g6q-fE-yQI" id="F6g-PS-Tfw"/>
@@ -83,14 +84,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Ce-I7-sb8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-320" y="-268"/>
+            <point key="canvasLocation" x="-285" y="-268"/>
         </scene>
         <!--View Controller - Persons-->
         <scene sceneID="CWH-2h-TOu">
             <objects>
                 <tableViewController id="A7K-D7-Ua9" customClass="ARLViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="8Hl-Vd-A2E">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -128,7 +129,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pbW-5t-z8S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-320" y="389"/>
+            <point key="canvasLocation" x="-285" y="398"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nHp-Dd-2I6">
@@ -143,7 +144,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
-                        <segue destination="Gcw-Ml-KzB" kind="relationship" relationship="rootViewController" id="YCR-XN-TJV"/>
+                        <segue destination="cXa-PM-AH0" kind="relationship" relationship="rootViewController" id="ZTV-MZ-0DP"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pgd-5e-ngt" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -158,7 +159,7 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="pSZ-Dc-kmx">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="pSZ-Dc-kmx">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="tintColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -231,7 +232,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ECo-mb-Lci" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="158" y="-268"/>
+            <point key="canvasLocation" x="141" y="-268"/>
         </scene>
     </scenes>
     <resources>

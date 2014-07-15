@@ -42,13 +42,18 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view.
+    CGRect r = CGRectMake(self.view.frame.origin.x,
+                          self.view.frame.origin.y,
+                          self.screenWidth,
+                          self.view.frame.size.height);
+
+    self.view.frame = r;
     
     [self applyConstraints];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self.SearchButton makeButtonWithImage:@"Search"
                                      title:NSLocalizedString(@"SearchLabel", @"SearchLabel")
                                 titleColor:[UIColor whiteColor]];
@@ -61,6 +66,11 @@
     [self.NearByButton makeButtonWithImage:@"NearBy"
                                      title:NSLocalizedString(@"NearByLabel", @"NearByLabel")
                                 titleColor:[UIColor whiteColor]];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -88,6 +98,8 @@
 
 - (void) applyConstraints {
     NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.view,             @"view",
+                                     
                                      self.backgroundImage,  @"backgroundImage",
                                      
                                      self.SearchButton,     @"SearchButton",
@@ -104,22 +116,27 @@
     self.TopGamesButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.NearByButton.translatesAutoresizingMaskIntoConstraints = NO;
 
+    CGFloat sw = self.screenWidth;
+    CGFloat bw = sw/2 - 3*8.0;
+    
     // Fix Background.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"V:|[backgroundImage]|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|[backgroundImage]|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|[backgroundImage(==%f)]", sw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     
+
+    
     // Fix Buttons Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|-[SearchButton]-[CategoryButton(==SearchButton)]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[SearchButton(==%f)]-[CategoryButton(==%f)]", bw, bw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat: @"H:|-[TopGamesButton]-[NearByButton(==TopGamesButton)]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[TopGamesButton(==%f)]-[NearByButton(==%f)]", bw, bw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
