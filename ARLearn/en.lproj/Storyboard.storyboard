@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="KGA-tg-SR1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="cXa-PM-AH0">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -7,77 +7,77 @@
         <!--Main View Controller-->
         <scene sceneID="v2U-MZ-IeL">
             <objects>
-                <viewController storyboardIdentifier="MainView" id="cXa-PM-AH0" customClass="ARLMainViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="p6i-mK-UgK">
+                <viewController storyboardIdentifier="MainView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="cXa-PM-AH0" customClass="ARLMainViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="p6i-mK-UgK" customClass="TPKeyboardAvoidingScrollView">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="qQI-xU-NEQ">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="qQI-xU-NEQ">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MyGames" id="smt-eb-drQ">
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="WTo-eZ-5DS">
+                                <rect key="frame" x="180" y="72" width="120" height="120"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Store" image="Store">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="StoreButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="QQ6-gC-Jm3"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="UYf-Zq-sZ6">
                                 <rect key="frame" x="20" y="72" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.12941176470588234" green="0.49411764705882355" blue="0.72941176470588232" alpha="1" colorSpace="calibratedRGB"/>
-                            </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Hfg-cc-FlE">
-                                <rect key="frame" x="20" y="171" width="120" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Store" id="997-nY-9HL">
-                                <rect key="frame" x="180" y="72" width="120" height="120"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.94509803921568625" green="0.32941176470588235" blue="0.23921568627450979" alpha="1" colorSpace="calibratedRGB"/>
-                            </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hdw-XT-cCd">
-                                <rect key="frame" x="180" y="171" width="120" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="QrScan" id="pK1-j3-qzN">
+                                <state key="normal" title="My games" image="MyGames">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="MyGamesButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="J8k-OS-BnQ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Jei-fB-2SK">
                                 <rect key="frame" x="20" y="200" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.16470588235294117" green="0.81176470588235294" blue="0.68235294117647061" alpha="1" colorSpace="calibratedRGB"/>
-                            </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="C9l-Ke-b1n">
-                                <rect key="frame" x="20" y="299" width="120" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="NearBy" id="OdJ-VN-KpR">
+                                <state key="normal" title="Scan code" image="QrScan">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="QrScanButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="J7a-fs-rue"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="g6q-fE-yQI">
                                 <rect key="frame" x="180" y="200" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.20784313725490194" green="0.29411764705882354" blue="0.38039215686274508" alpha="1" colorSpace="calibratedRGB"/>
-                            </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9b0-U4-t3b">
-                                <rect key="frame" x="180" y="299" width="120" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <color key="backgroundColor" red="0.20784313730000001" green="0.29411764709999999" blue="0.3803921569" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Nearby" image="NearBy">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="NearByButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="oDc-hj-raY"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <accessibility key="accessibilityConfiguration">
+                            <accessibilityTraits key="traits" none="YES" button="YES"/>
+                        </accessibility>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="Phm-hZ-lNq"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
-                        <outlet property="MyGamesImage" destination="smt-eb-drQ" id="BWQ-ni-dIm"/>
-                        <outlet property="MyGamesLabel" destination="Hfg-cc-FlE" id="QnD-A9-7M7"/>
-                        <outlet property="NearByImage" destination="OdJ-VN-KpR" id="ywG-K0-gCk"/>
-                        <outlet property="NearByLabel" destination="9b0-U4-t3b" id="MP9-Se-2Pm"/>
-                        <outlet property="QrScanImage" destination="pK1-j3-qzN" id="Zjc-8y-Q9L"/>
-                        <outlet property="QrScanLabel" destination="C9l-Ke-b1n" id="izL-EX-ZLz"/>
-                        <outlet property="StoreImage" destination="997-nY-9HL" id="8Ah-LK-kbi"/>
-                        <outlet property="StoreLabel" destination="hdw-XT-cCd" id="BVf-zr-iKr"/>
+                        <outlet property="MyGamesButton" destination="UYf-Zq-sZ6" id="ETB-mf-7bo"/>
+                        <outlet property="NearByButton" destination="g6q-fE-yQI" id="F6g-PS-Tfw"/>
+                        <outlet property="QrScanButton" destination="Jei-fB-2SK" id="ycx-UK-Lvl"/>
+                        <outlet property="StoreButton" destination="WTo-eZ-5DS" id="oVn-KG-PQA"/>
                         <outlet property="backgroundImage" destination="qQI-xU-NEQ" id="3on-Ux-egx"/>
                     </connections>
                 </viewController>
@@ -134,24 +134,115 @@
         <scene sceneID="nHp-Dd-2I6">
             <objects>
                 <navigationController storyboardIdentifier="RootNavigationController" definesPresentationContext="YES" id="KGA-tg-SR1" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="OIm-ag-GcI">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="OIm-ag-GcI">
+                        <rect key="frame" x="0.0" y="-44" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="L6j-zS-BP4">
+                        <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
-                        <segue destination="cXa-PM-AH0" kind="relationship" relationship="rootViewController" id="dnD-iR-mXc"/>
+                        <segue destination="Gcw-Ml-KzB" kind="relationship" relationship="rootViewController" id="YCR-XN-TJV"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pgd-5e-ngt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-735" y="-268"/>
         </scene>
+        <!--Store View Controller-->
+        <scene sceneID="1xt-N9-f4A">
+            <objects>
+                <viewController storyboardIdentifier="StoreView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Gcw-Ml-KzB" customClass="ARLStoreViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0DS-hJ-jbP" customClass="TPKeyboardAvoidingScrollView">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="pSZ-Dc-kmx">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="tintColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="43E-ef-7sk">
+                                <rect key="frame" x="20" y="20" width="120" height="120"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Search" image="Search">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="SearchButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="F3T-uf-Jc9"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Btb-fg-Lya">
+                                <rect key="frame" x="180" y="20" width="120" height="120"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Category" image="Category">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="CategoryButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="2pt-jj-L0i"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="PsA-Mn-0Cp">
+                                <rect key="frame" x="20" y="148" width="120" height="120"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Top games" image="TopGames">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="TopGamesButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="1LA-HP-PX1"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="HG4-3w-dcd">
+                                <rect key="frame" x="180" y="148" width="120" height="120"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Nearby" image="NearBy">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="NearByButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="duE-Md-WA9"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <accessibility key="accessibilityConfiguration">
+                            <accessibilityTraits key="traits" none="YES" button="YES"/>
+                        </accessibility>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" id="Tfk-Fn-HOc">
+                        <barButtonItem key="backBarButtonItem" title="Home" id="9gV-oF-Uly"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="CategoryButton" destination="Btb-fg-Lya" id="DOx-2Y-DCe"/>
+                        <outlet property="NearByButton" destination="HG4-3w-dcd" id="p1N-Xm-ODw"/>
+                        <outlet property="SearchButton" destination="43E-ef-7sk" id="sR6-AN-hAj"/>
+                        <outlet property="TopGamesButton" destination="PsA-Mn-0Cp" id="0Yx-Rs-75R"/>
+                        <outlet property="backgroundImage" destination="pSZ-Dc-kmx" id="ou6-Xs-lr6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ECo-mb-Lci" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="158" y="-268"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Background" width="640" height="1061"/>
+        <image name="Category" width="152" height="152"/>
         <image name="MyGames" width="152" height="152"/>
         <image name="NearBy" width="152" height="152"/>
         <image name="QrScan" width="152" height="152"/>
+        <image name="Search" width="152" height="152"/>
         <image name="Store" width="152" height="152"/>
+        <image name="TopGames" width="152" height="152"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

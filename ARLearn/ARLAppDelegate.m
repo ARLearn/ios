@@ -47,6 +47,9 @@ static NSOperationQueue *_theOQ;
         //        }];
     }
     
+#warning FORCING LOGGING.
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:TRUE] forKey:ENABLE_LOGGING];
+    
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
                                                                            UIRemoteNotificationTypeAlert |
                                                                            UIRemoteNotificationTypeBadge |UIRemoteNotificationTypeSound
