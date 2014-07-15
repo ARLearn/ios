@@ -107,6 +107,8 @@
     self.QrScanButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.NearByButton.translatesAutoresizingMaskIntoConstraints = NO;
 
+#warning Handle landscape too.
+    
     CGFloat sw = self.screenWidth;
     CGFloat bw = sw/2 - 3*8.0;
     
@@ -115,7 +117,7 @@
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|[backgroundImage(==%f)]", sw]
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|[backgroundImage(==%f)]|", sw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
