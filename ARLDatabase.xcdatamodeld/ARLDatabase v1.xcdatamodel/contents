@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="v1" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="v1" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13E28" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Account" representedClassName="Account" syncable="YES">
         <attribute name="accountLevel" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="accountType" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
@@ -144,7 +144,7 @@
         <element name="GeneralItemVisibility" positionX="-2349" positionY="-918" width="128" height="150"/>
         <element name="Inquiry" positionX="-3314" positionY="-958" width="128" height="163"/>
         <element name="Message" positionX="-2826" positionY="-711" width="128" height="148"/>
-        <element name="Response" positionX="-2189" positionY="-1338" width="128" height="238"/>
+        <element name="Response" positionX="-2189" positionY="-1338" width="128" height="28"/>
         <element name="Run" positionX="-3116" positionY="-1008" width="128" height="223"/>
         <element name="SynchronizationBookKeeping" positionX="-3116" positionY="-1134" width="128" height="90"/>
         <element name="TestAccount" positionX="-2531" positionY="-714" width="128" height="165"/>

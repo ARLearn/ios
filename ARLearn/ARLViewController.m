@@ -158,24 +158,6 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 }
 
 /*!
- *  Number of Tabel Rows in a Section.
- *
- *  @param tableView The TableView
- *  @param section   The Section
- *
- *  @return The number of Rows in the Section.
- */
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    switch (section) {
-        case MAIN : {
-            return [self.persons count];
-        }
-    }
-    // Should not happen.
-    return 0;
-}
-
-/*!
  *  Get the Cell for a particular Section and Row.
  *
  *  @param tableView The TableView

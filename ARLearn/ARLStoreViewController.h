@@ -12,6 +12,8 @@
 #import "UIButton+UI.h"
 #import "UIViewController+UI.h"
 
+#import "ARLNetworking.h"
+
 @interface ARLStoreViewController : UIViewController <UIAlertViewDelegate>
 
 @end

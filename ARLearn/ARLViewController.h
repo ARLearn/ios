@@ -11,7 +11,7 @@
 #import "ARLAppDelegate.h"
 
 //TESTCODE: Include TestAccount Model for testing.
-#import "TestAccount+Lazy.h"
+#import "TestAccount.h"
 
 @interface ARLViewController : UITableViewController <UITableViewDataSource>
 

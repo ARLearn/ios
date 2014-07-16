@@ -20,8 +20,6 @@
 		8D219666196D26080044616A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D219648196D26080044616A /* UIKit.framework */; };
 		8D21966E196D26080044616A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D21966C196D26080044616A /* InfoPlist.strings */; };
 		8D219A1E196D2A2D0044616A /* ARLDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A1B196D2A2D0044616A /* ARLDatabase.xcdatamodeld */; };
-		8D219A21196D2A9D0044616A /* TestAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A20196D2A9D0044616A /* TestAccount.m */; };
-		8D219A25196D2AC50044616A /* TestAccount+Lazy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A24196D2AC50044616A /* TestAccount+Lazy.m */; };
 		8D219A28196D2DBD0044616A /* ARLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A27196D2DBD0044616A /* ARLUtils.m */; };
 		8D219A2B196D2E8C0044616A /* ARLLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A2A196D2E8C0044616A /* ARLLog.m */; };
 		8D219A6B196D31350044616A /* MagicalImportFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A31196D31350044616A /* MagicalImportFunctions.m */; };
@@ -59,12 +57,27 @@
 		8D55B28B1975633600C0A56B /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2851975633600C0A56B /* TPKeyboardAvoidingScrollView.m */; };
 		8D55B28C1975633600C0A56B /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2871975633600C0A56B /* TPKeyboardAvoidingTableView.m */; };
 		8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2891975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
+		8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B28F1976759300C0A56B /* ARLNetworking.m */; };
+		8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2C51976937200C0A56B /* ARLSearchViewController.m */; };
 		8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */; };
 		8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E01974162A001FC6DF /* UIViewController+UI.m */; };
 		8D8B45E219741BD6001FC6DF /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */; };
 		8D8B45E7197517D8001FC6DF /* ARLStoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */; };
 		8D8B45EA19751E72001FC6DF /* UIButton+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E919751E72001FC6DF /* UIButton+UI.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
+		8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */; };
+		8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF231976AAB9007CECB4 /* Inquiry.m */; };
+		8DDECF271976AAB9007CECB4 /* SynchronizationBookKeeping.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF261976AAB9007CECB4 /* SynchronizationBookKeeping.m */; };
+		8DDECF2A1976AAB9007CECB4 /* Action.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF291976AAB9007CECB4 /* Action.m */; };
+		8DDECF2D1976AAB9007CECB4 /* GeneralItemData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF2C1976AAB9007CECB4 /* GeneralItemData.m */; };
+		8DDECF301976AAB9007CECB4 /* TestAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF2F1976AAB9007CECB4 /* TestAccount.m */; };
+		8DDECF331976AAB9007CECB4 /* CurrentItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF321976AAB9007CECB4 /* CurrentItemVisibility.m */; };
+		8DDECF361976AAB9007CECB4 /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF351976AAB9007CECB4 /* Game.m */; };
+		8DDECF391976AAB9007CECB4 /* Run.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF381976AAB9007CECB4 /* Run.m */; };
+		8DDECF3C1976AABA007CECB4 /* GeneralItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF3B1976AABA007CECB4 /* GeneralItem.m */; };
+		8DDECF3F1976AABA007CECB4 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF3E1976AABA007CECB4 /* Response.m */; };
+		8DDECF421976AABA007CECB4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF411976AABA007CECB4 /* Message.m */; };
+		8DDECF451976AABA007CECB4 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF441976AABA007CECB4 /* Account.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,10 +111,6 @@
 		8D21966F196D26080044616A /* ARLearnTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARLearnTests.m; sourceTree = "<group>"; };
 		8D219A1C196D2A2D0044616A /* ARLDatabase v1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ARLDatabase v1.xcdatamodel"; sourceTree = "<group>"; };
 		8D219A1D196D2A2D0044616A /* ARLDatabase v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ARLDatabase v2.xcdatamodel"; sourceTree = "<group>"; };
-		8D219A1F196D2A9D0044616A /* TestAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestAccount.h; path = Models/TestAccount.h; sourceTree = "<group>"; };
-		8D219A20196D2A9D0044616A /* TestAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestAccount.m; path = Models/TestAccount.m; sourceTree = "<group>"; };
-		8D219A23196D2AC50044616A /* TestAccount+Lazy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TestAccount+Lazy.h"; sourceTree = "<group>"; };
-		8D219A24196D2AC50044616A /* TestAccount+Lazy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "TestAccount+Lazy.m"; sourceTree = "<group>"; };
 		8D219A26196D2DBD0044616A /* ARLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLUtils.h; sourceTree = "<group>"; };
 		8D219A27196D2DBD0044616A /* ARLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLUtils.m; sourceTree = "<group>"; };
 		8D219A29196D2E8C0044616A /* ARLLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLLog.h; sourceTree = "<group>"; };
@@ -177,6 +186,10 @@
 		8D55B2871975633600C0A56B /* TPKeyboardAvoidingTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingTableView.m; sourceTree = "<group>"; };
 		8D55B2881975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+TPKeyboardAvoidingAdditions.h"; sourceTree = "<group>"; };
 		8D55B2891975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+TPKeyboardAvoidingAdditions.m"; sourceTree = "<group>"; };
+		8D55B28E1976759300C0A56B /* ARLNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNetworking.h; sourceTree = "<group>"; };
+		8D55B28F1976759300C0A56B /* ARLNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNetworking.m; sourceTree = "<group>"; };
+		8D55B2C41976937200C0A56B /* ARLSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLSearchViewController.h; sourceTree = "<group>"; };
+		8D55B2C51976937200C0A56B /* ARLSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLSearchViewController.m; sourceTree = "<group>"; };
 		8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMainViewController.h; sourceTree = "<group>"; };
 		8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMainViewController.m; sourceTree = "<group>"; };
 		8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+UI.h"; sourceTree = "<group>"; };
@@ -187,6 +200,32 @@
 		8D8B45E819751E72001FC6DF /* UIButton+UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+UI.h"; sourceTree = "<group>"; };
 		8D8B45E919751E72001FC6DF /* UIButton+UI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+UI.m"; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItemVisibility.h; path = Models/GeneralItemVisibility.h; sourceTree = "<group>"; };
+		8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItemVisibility.m; path = Models/GeneralItemVisibility.m; sourceTree = "<group>"; };
+		8DDECF221976AAB9007CECB4 /* Inquiry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Inquiry.h; path = Models/Inquiry.h; sourceTree = "<group>"; };
+		8DDECF231976AAB9007CECB4 /* Inquiry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Inquiry.m; path = Models/Inquiry.m; sourceTree = "<group>"; };
+		8DDECF251976AAB9007CECB4 /* SynchronizationBookKeeping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SynchronizationBookKeeping.h; path = Models/SynchronizationBookKeeping.h; sourceTree = "<group>"; };
+		8DDECF261976AAB9007CECB4 /* SynchronizationBookKeeping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SynchronizationBookKeeping.m; path = Models/SynchronizationBookKeeping.m; sourceTree = "<group>"; };
+		8DDECF281976AAB9007CECB4 /* Action.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Action.h; path = Models/Action.h; sourceTree = "<group>"; };
+		8DDECF291976AAB9007CECB4 /* Action.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Action.m; path = Models/Action.m; sourceTree = "<group>"; };
+		8DDECF2B1976AAB9007CECB4 /* GeneralItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItemData.h; path = Models/GeneralItemData.h; sourceTree = "<group>"; };
+		8DDECF2C1976AAB9007CECB4 /* GeneralItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItemData.m; path = Models/GeneralItemData.m; sourceTree = "<group>"; };
+		8DDECF2E1976AAB9007CECB4 /* TestAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestAccount.h; path = Models/TestAccount.h; sourceTree = "<group>"; };
+		8DDECF2F1976AAB9007CECB4 /* TestAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestAccount.m; path = Models/TestAccount.m; sourceTree = "<group>"; };
+		8DDECF311976AAB9007CECB4 /* CurrentItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurrentItemVisibility.h; path = Models/CurrentItemVisibility.h; sourceTree = "<group>"; };
+		8DDECF321976AAB9007CECB4 /* CurrentItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CurrentItemVisibility.m; path = Models/CurrentItemVisibility.m; sourceTree = "<group>"; };
+		8DDECF341976AAB9007CECB4 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = Models/Game.h; sourceTree = "<group>"; };
+		8DDECF351976AAB9007CECB4 /* Game.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Game.m; path = Models/Game.m; sourceTree = "<group>"; };
+		8DDECF371976AAB9007CECB4 /* Run.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Run.h; path = Models/Run.h; sourceTree = "<group>"; };
+		8DDECF381976AAB9007CECB4 /* Run.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Run.m; path = Models/Run.m; sourceTree = "<group>"; };
+		8DDECF3A1976AABA007CECB4 /* GeneralItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItem.h; path = Models/GeneralItem.h; sourceTree = "<group>"; };
+		8DDECF3B1976AABA007CECB4 /* GeneralItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItem.m; path = Models/GeneralItem.m; sourceTree = "<group>"; };
+		8DDECF3D1976AABA007CECB4 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Response.h; path = Models/Response.h; sourceTree = "<group>"; };
+		8DDECF3E1976AABA007CECB4 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Response.m; path = Models/Response.m; sourceTree = "<group>"; };
+		8DDECF401976AABA007CECB4 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Message.h; path = Models/Message.h; sourceTree = "<group>"; };
+		8DDECF411976AABA007CECB4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Message.m; path = Models/Message.m; sourceTree = "<group>"; };
+		8DDECF431976AABA007CECB4 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Account.h; path = Models/Account.h; sourceTree = "<group>"; };
+		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Account.m; path = Models/Account.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -257,8 +296,12 @@
 				8D219A2A196D2E8C0044616A /* ARLLog.m */,
 				8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */,
 				8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */,
+				8D55B28E1976759300C0A56B /* ARLNetworking.h */,
+				8D55B28F1976759300C0A56B /* ARLNetworking.m */,
 				8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */,
 				8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */,
+				8D55B2C41976937200C0A56B /* ARLSearchViewController.h */,
+				8D55B2C51976937200C0A56B /* ARLSearchViewController.m */,
 				8D8B45E5197517D8001FC6DF /* ARLStoreViewController.h */,
 				8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */,
 				8D219A26196D2DBD0044616A /* ARLUtils.h */,
@@ -312,10 +355,32 @@
 		8D219A22196D2AB30044616A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				8D219A1F196D2A9D0044616A /* TestAccount.h */,
-				8D219A20196D2A9D0044616A /* TestAccount.m */,
-				8D219A23196D2AC50044616A /* TestAccount+Lazy.h */,
-				8D219A24196D2AC50044616A /* TestAccount+Lazy.m */,
+				8DDECF431976AABA007CECB4 /* Account.h */,
+				8DDECF441976AABA007CECB4 /* Account.m */,
+				8DDECF401976AABA007CECB4 /* Message.h */,
+				8DDECF411976AABA007CECB4 /* Message.m */,
+				8DDECF3D1976AABA007CECB4 /* Response.h */,
+				8DDECF3E1976AABA007CECB4 /* Response.m */,
+				8DDECF3A1976AABA007CECB4 /* GeneralItem.h */,
+				8DDECF3B1976AABA007CECB4 /* GeneralItem.m */,
+				8DDECF371976AAB9007CECB4 /* Run.h */,
+				8DDECF381976AAB9007CECB4 /* Run.m */,
+				8DDECF341976AAB9007CECB4 /* Game.h */,
+				8DDECF351976AAB9007CECB4 /* Game.m */,
+				8DDECF311976AAB9007CECB4 /* CurrentItemVisibility.h */,
+				8DDECF321976AAB9007CECB4 /* CurrentItemVisibility.m */,
+				8DDECF2E1976AAB9007CECB4 /* TestAccount.h */,
+				8DDECF2F1976AAB9007CECB4 /* TestAccount.m */,
+				8DDECF2B1976AAB9007CECB4 /* GeneralItemData.h */,
+				8DDECF2C1976AAB9007CECB4 /* GeneralItemData.m */,
+				8DDECF281976AAB9007CECB4 /* Action.h */,
+				8DDECF291976AAB9007CECB4 /* Action.m */,
+				8DDECF251976AAB9007CECB4 /* SynchronizationBookKeeping.h */,
+				8DDECF261976AAB9007CECB4 /* SynchronizationBookKeeping.m */,
+				8DDECF221976AAB9007CECB4 /* Inquiry.h */,
+				8DDECF231976AAB9007CECB4 /* Inquiry.m */,
+				8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */,
+				8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -585,27 +650,38 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8DDECF3C1976AABA007CECB4 /* GeneralItem.m in Sources */,
 				8D219A73196D31350044616A /* NSManagedObject+MagicalDataImport.m in Sources */,
+				8DDECF3F1976AABA007CECB4 /* Response.m in Sources */,
 				8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
+				8DDECF361976AAB9007CECB4 /* Game.m in Sources */,
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
 				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
+				8DDECF451976AABA007CECB4 /* Account.m in Sources */,
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,
+				8DDECF271976AAB9007CECB4 /* SynchronizationBookKeeping.m in Sources */,
 				8D219A7E196D31350044616A /* MagicalRecord+Actions.m in Sources */,
 				8D55B28B1975633600C0A56B /* TPKeyboardAvoidingScrollView.m in Sources */,
 				8D219A79196D31350044616A /* NSManagedObjectContext+MagicalSaves.m in Sources */,
 				8D219A7D196D31350044616A /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
+				8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */,
 				8D55B28C1975633600C0A56B /* TPKeyboardAvoidingTableView.m in Sources */,
-				8D219A21196D2A9D0044616A /* TestAccount.m in Sources */,
+				8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */,
 				8D219A7A196D31350044616A /* NSManagedObjectContext+MagicalThreading.m in Sources */,
+				8DDECF391976AAB9007CECB4 /* Run.m in Sources */,
 				8D55B28A1975633600C0A56B /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				8D219A6F196D31350044616A /* NSObject+MagicalDataImport.m in Sources */,
 				8D219A77196D31350044616A /* NSManagedObjectContext+MagicalObserving.m in Sources */,
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
+				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,
 				8D219A6C196D31350044616A /* NSAttributeDescription+MagicalDataImport.m in Sources */,
 				8D219A76196D31350044616A /* NSManagedObject+MagicalRequests.m in Sources */,
 				8D219A7F196D31350044616A /* MagicalRecord+ErrorHandling.m in Sources */,
+				8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */,
 				8D219A84196D31350044616A /* MagicalRecord.m in Sources */,
+				8DDECF301976AAB9007CECB4 /* TestAccount.m in Sources */,
+				8DDECF331976AAB9007CECB4 /* CurrentItemVisibility.m in Sources */,
 				8D219A81196D31350044616A /* MagicalRecord+Options.m in Sources */,
 				8D219A28196D2DBD0044616A /* ARLUtils.m in Sources */,
 				8D219A72196D31350044616A /* NSManagedObject+MagicalAggregation.m in Sources */,
@@ -614,11 +690,13 @@
 				8D219A1E196D2A2D0044616A /* ARLDatabase.xcdatamodeld in Sources */,
 				8D219A7B196D31350044616A /* NSManagedObjectModel+MagicalRecord.m in Sources */,
 				8D8B45E7197517D8001FC6DF /* ARLStoreViewController.m in Sources */,
-				8D219A25196D2AC50044616A /* TestAccount+Lazy.m in Sources */,
 				8D219651196D26080044616A /* main.m in Sources */,
 				8D219A78196D31350044616A /* NSManagedObjectContext+MagicalRecord.m in Sources */,
+				8DDECF421976AABA007CECB4 /* Message.m in Sources */,
 				8D219A2B196D2E8C0044616A /* ARLLog.m in Sources */,
 				8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */,
+				8DDECF2D1976AAB9007CECB4 /* GeneralItemData.m in Sources */,
+				8DDECF2A1976AAB9007CECB4 /* Action.m in Sources */,
 				8D219A82196D31350044616A /* MagicalRecord+Setup.m in Sources */,
 				8D219A6D196D31350044616A /* NSEntityDescription+MagicalDataImport.m in Sources */,
 				8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */,

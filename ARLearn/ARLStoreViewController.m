@@ -185,19 +185,23 @@
                                                                         views:viewsDictionary]];
 }
 
+#pragma mark - Actions
+
 - (IBAction)SearchButtonAction:(UIButton *)sender {
+    DLog(@"");
+//    
+//    [ARLNetworking sendHTTPPostWithDelegate:self];
+}
+
+- (IBAction)CategoryButtonAction:(UIButton *)sender {
     DLog(@"");
 //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
 //                                                    message:@"Message:"
 //                                                   delegate:self
 //                                          cancelButtonTitle:@"OK1"
 //                                          otherButtonTitles:@"OK2",nil];
-//
+//    
 //    [alert show];
-}
-
-- (IBAction)CategoryButtonAction:(UIButton *)sender {
-    DLog(@"");
 }
 
 - (IBAction)TopGamesButtonAction:(UIButton *)sender {
