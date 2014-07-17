@@ -229,6 +229,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             } else {
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", [dict valueForKey:@"language"]];
             }
+            cell.detailTextLabel.textColor = [UIColor grayColor];
             
             //!!! Save the GameId inside the UITableCell.
             //            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
@@ -282,7 +283,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     switch (indexPath.section) {
             
         case SEARCH : {
-            return 64.0;
+            return self.tableView.rowHeight + 4.0;
         }
             
         case RESULTS: {

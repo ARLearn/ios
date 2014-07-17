@@ -120,6 +120,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
     @synchronized(self)
     {
         _persons = nil;
+
+        // Log(@"Count: %d", [self.persons count]);
     }
     
     [self.table reloadData];
@@ -128,7 +130,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 /*!
  *  Refresh (and Reload) the Table.
  *
- *  @param sender <#sender description#>
+ *  @param sender
  */
 - (void)refresh:(id)sender
 {
@@ -155,6 +157,18 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return numARLViewControllerGroups;
+}
+
+/*!
+ *  Number of Tabel Rows in a Section.
+ *
+ *  @param tableView <#tableView description#>
+ *  @param section   <#section description#>
+ *
+ *  @return <#return value description#>
+ */
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.persons count];
 }
 
 /*!
@@ -278,7 +292,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         
         NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
             // Log(@"foreBO %@", [NSThread currentThread]);
-            // Log(@"Records:%d", [TestAccount MR_countOfEntities]);
+            Log(@"Records:%d", [TestAccount MR_countOfEntities]);
         }];
         
         NSInvocationOperation *foreIV = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(reloadPersons) object:nil];
