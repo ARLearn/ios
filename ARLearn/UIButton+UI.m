@@ -58,39 +58,43 @@ const int kTextTopPadding = 2;
 -(void) layoutSubviews {
     [super layoutSubviews];
 
-    CGSize labelSize =[self.titleLabel.text boundingRectWithSize:CGSizeMake(self.frame.size.width, CGFLOAT_MAX)
-                                                         options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
-                                                      attributes:@{
-                                                                   NSFontAttributeName:self.titleLabel.font
-                                                                   }
-                                                         context:nil].size;
-    // 1) Adjust image size and location.
-    
-    CGRect imageFrame = self.imageView.frame;
-    
-    CGSize fitBoxSize = (CGSize){
-        .height = labelSize.height + kTextTopPadding +  imageFrame.size.height,
-        .width = MAX(imageFrame.size.width, labelSize.width)
-    };
-    
-    CGRect fitBoxRect = CGRectInset(self.bounds,
-                                    2*(self.bounds.size.width - fitBoxSize.width)/3,
-                                    2*(self.bounds.size.height - fitBoxSize.height)/3);
-    
-    imageFrame.origin.y = fitBoxRect.origin.y;
-    imageFrame.origin.x = CGRectGetMidX(fitBoxRect) - (imageFrame.size.width/2);
-    self.imageView.frame = imageFrame;
-    
-    // 2) Adjust the label size to fit the text, and move it below the image
-    
-    CGRect titleLabelFrame = self.titleLabel.frame;
-    
-    titleLabelFrame.size.width = labelSize.width;
-    titleLabelFrame.size.height = labelSize.height;
-    titleLabelFrame.origin.x = (self.frame.size.width / 2) - (labelSize.width / 2);
-    titleLabelFrame.origin.y = fitBoxRect.origin.y + imageFrame.size.height + kTextTopPadding;
-    
-    self.titleLabel.frame = titleLabelFrame;
+    if (self.tag == TILE) {
+        // DLog(@"Layout of Button: %@", self.titleLabel.text);
+        
+        CGSize labelSize =[self.titleLabel.text boundingRectWithSize:CGSizeMake(self.frame.size.width, CGFLOAT_MAX)
+                                                             options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
+                                                          attributes:@{
+                                                                       NSFontAttributeName:self.titleLabel.font
+                                                                       }
+                                                             context:nil].size;
+        // 1) Adjust image size and location.
+        
+        CGRect imageFrame = self.imageView.frame;
+        
+        CGSize fitBoxSize = (CGSize){
+            .height = labelSize.height + kTextTopPadding +  imageFrame.size.height,
+            .width = MAX(imageFrame.size.width, labelSize.width)
+        };
+        
+        CGRect fitBoxRect = CGRectInset(self.bounds,
+                                        2*(self.bounds.size.width - fitBoxSize.width)/3,
+                                        2*(self.bounds.size.height - fitBoxSize.height)/3);
+        
+        imageFrame.origin.y = fitBoxRect.origin.y;
+        imageFrame.origin.x = CGRectGetMidX(fitBoxRect) - (imageFrame.size.width/2);
+        self.imageView.frame = imageFrame;
+        
+        // 2) Adjust the label size to fit the text, and move it below the image
+        
+        CGRect titleLabelFrame = self.titleLabel.frame;
+        
+        titleLabelFrame.size.width = labelSize.width;
+        titleLabelFrame.size.height = labelSize.height;
+        titleLabelFrame.origin.x = (self.frame.size.width / 2) - (labelSize.width / 2);
+        titleLabelFrame.origin.y = fitBoxRect.origin.y + imageFrame.size.height + kTextTopPadding;
+        
+        self.titleLabel.frame = titleLabelFrame;
+    }
 }
 
 /*

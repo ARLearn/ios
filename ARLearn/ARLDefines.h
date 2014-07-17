@@ -24,4 +24,6 @@
  */
 #define APP_VERSION         @"app_version"
 
+#define TILE                1234
+
 #endif

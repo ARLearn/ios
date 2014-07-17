@@ -27,9 +27,14 @@
  */
 typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     /*!
+     *  Search Form.
+     */
+    SEARCH = 0,
+   
+    /*!
      *  Search Results.
      */
-    RESULTS = 0,
+    RESULTS = 1,
     
     /*!
      *  Number of Groups
@@ -52,8 +57,11 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     [super viewDidLoad];
     
 	// Do any additional setup after loading the view, typically from a nib.
+    self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
     
     self.table.dataSource = self;
+    
+    // _query = @"";
     
     [self.table reloadData];
     
@@ -137,6 +145,10 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
  */
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
+        case SEARCH : {
+            return 1;
+        }
+        
         case RESULTS : {
             return [self.results count];
         }
@@ -156,28 +168,87 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
  */
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
-                                                            forIndexPath:indexPath];
-    
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:self.cellIdentifier];
-    }
-    
     switch (indexPath.section) {
+        case SEARCH: {
+            UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:@"aSearchHeader" forIndexPath:indexPath];
+            
+            [headerCell layoutIfNeeded];
+            
+            self.searchField = (UITextField *)[headerCell.contentView viewWithTag:100];
+            self.searchButton = (UIButton *)[headerCell.contentView viewWithTag:200];
+            // self.searchLabel = (UILabel *)[headerCell.contentView viewWithTag:300];
+            
+            //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.text = @"Search";
+            //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.textColor = [UIColor redColor];
+            //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+            //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            
+            //!!! Fix UITextField
+            {
+                self.searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
+                self.searchField.clearsOnBeginEditing = NO;
+                
+                [self.searchField setDelegate:self];
+                
+                [self.searchField addTarget:self
+                                     action:@selector(textFieldDidChange:)
+                           forControlEvents:UIControlEventEditingChanged];
+            }
+            
+            //!!! Fix UIButton
+            {
+                self.searchButton.titleLabel.text= NSLocalizedString(@"SearchButton", @"SearchButton");
+                
+                //Fixup - Somehow the frame is wrong (width not set).
+                self.searchButton.titleLabel.frame = CGRectMake(8.0, 0.0, self.searchButton.frame.size.width - 2*8.0, self.searchButton.frame.size.height);
+                self.searchButton.titleLabel.textColor = [UIColor whiteColor];
+                //        [self.searchButton setTitleColor:[UIColor whiteColor]
+                //                                forState:UIControlStateNormal];
+                
+                [self.searchButton addTarget:self
+                                      action:@selector(searchButtonAction:)
+                            forControlEvents:UIControlEventTouchUpInside];
+            }
+            
+            return headerCell;
+        }
             
         case RESULTS : {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                                    forIndexPath:indexPath];
+            
+            if (cell == nil) {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:self.cellIdentifier];
+            }
+            
             NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
             cell.textLabel.text = [dict valueForKey:@"title"];
+            
+            if ([dict valueForKey:@"lng"] && [dict valueForKey:@"lat"]) {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@] - lat:%@, lng:%@", [dict valueForKey:@"language"],[dict valueForKey:@"lat"],[dict valueForKey:@"lng"]];
+            } else {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", [dict valueForKey:@"language"]];
+            }
+            
+            //!!! Save the GameId inside the UITableCell.
+            //            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
+            //            [nf setNumberStyle:NSNumberFormatterDecimalStyle];
+            //            [[nf numberFromString:[dict valueForKey:@"gameId"]] integerValue];
+            
+            cell.tag = [(NSNumber *)[dict valueForKey:@"gameId"] integerValue];
+
+            return cell;
         }
     }
 
-    return cell;
+    // Shoudl not happen!!
+    return nil;
 }
 
 /*!
  *  Tap on table Row
  *
- *  @param tableView <#tableView description#>
+ *  @param tableView r
  *  @param indexPath <#indexPath description#>
  */
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
@@ -194,72 +265,99 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     //TODO
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     switch (section) {
-            
+        case SEARCH : {
+            return @"Search";
+        }
         case RESULTS : {
-            return 64.0;
+            break;
         }
     }
     
-    // Default value.
-    return 22.0;
+    return @"";
 }
 
--(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    // 1. Dequeue the custom header cell
-    UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:@"aSearchHeader"];
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch (indexPath.section) {
+            
+        case SEARCH : {
+            return 64.0;
+        }
+            
+        case RESULTS: {
+            return self.tableView.rowHeight;
+        }
+    }
     
-    self.searchField = (UITextField *)[headerCell.contentView viewWithTag:100];
-    self.searchButton = (UIButton *)[headerCell.contentView viewWithTag:200];
-    
-    // UILabel *label = (UILabel *)[headerCell.contentView viewWithTag:300];
-    
-    [self.searchButton setBackgroundColor:[UIColor blueColor]];
-    
-    //[button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-
-    //[button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    //[button setTitleColor:[UIColor yellowColor] forState:UIControlStateHighlighted];
-    [self.searchButton setTitle:@"Search" forState:UIControlStateNormal];
-    
-    [self.searchButton addTarget:self
-               action:@selector(searchButtonAction:)
-     forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.searchField  setDelegate:self];
-    
-    [self.searchField  addTarget:self
-                  action:@selector(textFieldDidChange:)
-        forControlEvents:UIControlEventEditingChanged];
-     
-    // [self.searchForm becomeFirstResponder];
-    //    [self.searchForm setAutoresizingMask:UIViewAutoresizingNone];
-    //
-    //    [self.searchField setDelegate:self];
-    //    [self.searchField becomeFirstResponder];
-    //
-    //    [self.searchField setEnabled:YES];
-    //    [self.searchButton setTitleColor:[UIColor whiteColor]
-    //                            forState:UIControlStateNormal];
-    //
-    //    // [self reloadPersons];
-    //    self.searchButton.frame = CGRectMake(self.searchField.frame.origin.x+self.searchField.frame.size.width+8.0,
-    //                                         self.searchField.frame.origin.y,
-    //                                         60.0,
-    //                                         self.searchField.frame.size.height);
-    //    [self.searchButton addTarget:self
-    //                          action:@selector(searchButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    
-    return headerCell;
+    // Shoudl not happen!!
+    return self.tableView.rowHeight;
 }
+
+//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    switch (section) {
+//            
+//        case RESULTS : {
+//            return 64.0;
+//        }
+//    }
+//    
+//    // Default value.
+//    return self.tableView.rowHeight;
+//}
+
+//-(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    // 1. Dequeue the custom header cell
+//    UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:@"aSearchHeader"];
+//    
+//    [headerCell layoutIfNeeded];
+//    
+//    self.searchField = (UITextField *)[headerCell.contentView viewWithTag:100];
+//    self.searchButton = (UIButton *)[headerCell.contentView viewWithTag:200];
+//    // self.searchLabel = (UILabel *)[headerCell.contentView viewWithTag:300];
+//    
+//    //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.text = @"Search";
+//    //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.textColor = [UIColor redColor];
+//    //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+//    //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    
+//    //!!! Fix UITextField
+//    {
+//        self.searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
+//        self.searchField.clearsOnBeginEditing = NO;
+//        
+//        [self.searchField setDelegate:self];
+//        
+//        [self.searchField addTarget:self
+//                             action:@selector(textFieldDidChange:)
+//                   forControlEvents:UIControlEventEditingChanged];
+//    }
+//    
+//    //!!! Fix UIButton
+//    {
+//        DLog(@"Title %@", self.searchButton.titleLabel.text);
+//        self.searchButton.titleLabel.text= NSLocalizedString(@"SearchButton", @"SearchButton");
+//
+//        //Fixup - Somehow the frame is wrong (width not set).
+//        self.searchButton.titleLabel.frame = CGRectMake(8.0, 0.0, self.searchButton.frame.size.width - 2*8.0, self.searchButton.frame.size.height);
+//        self.searchButton.titleLabel.textColor = [UIColor whiteColor];
+////        [self.searchButton setTitleColor:[UIColor whiteColor]
+////                                forState:UIControlStateNormal];
+//        
+//        [self.searchButton addTarget:self
+//                              action:@selector(searchButtonAction:)
+//                    forControlEvents:UIControlEventTouchUpInside];
+//    }
+//    
+//    return headerCell;
+//}
 
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    DLog(@"");
+    DLog(@"Query: %@", self.query);
 
     if ([_query length] != 0 && self.searchField) {
         [self.tableView endEditing:YES];
@@ -269,7 +367,6 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
         if (self.searchButton) {
             [self searchButtonAction:self.searchButton];
         }
-        
     }
     
     return [_query length] != 0;
@@ -335,11 +432,9 @@ didCompleteWithError:(NSError *)error
 #pragma mark - Actions
 
 - (IBAction)searchButtonAction:(id)sender {
-    DLog(@"%@", self.query);
+    DLog(@"Query: %@", self.query);
     
-    if (!self.query || [self.query length]>0) {
-        [ARLNetworking sendHTTPPostWithDelegate:self withBody:self.query];
-    }
+    [ARLNetworking sendHTTPPostWithDelegate:self withBody:(self.query ? self.query : @"")];
 }
 
 @end
