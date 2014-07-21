@@ -51,6 +51,7 @@
                                 </state>
                                 <connections>
                                     <action selector="QrScanButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="J7a-fs-rue"/>
+                                    <segue destination="0ly-fY-awO" kind="push" id="cdk-XR-bAJ"/>
                                 </connections>
                             </button>
                             <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="g6q-fE-yQI">
@@ -85,6 +86,33 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Ce-I7-sb8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-285" y="-268"/>
+        </scene>
+        <!--Scan View Controller-->
+        <scene sceneID="1Iw-kg-vNo">
+            <objects>
+                <viewController id="0ly-fY-awO" customClass="ARLScanViewController" sceneMemberID="viewController">
+                    <view key="view" opaque="NO" contentMode="scaleToFill" id="wAs-Fe-CVR">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Seg-jD-yQc">
+                                <rect key="frame" x="20" y="241" width="280" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" id="Ijg-AB-GgH"/>
+                    <connections>
+                        <outlet property="scannedLabel" destination="Seg-jD-yQc" id="QZa-WX-EYX"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JLa-UY-udg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="247" y="1149"/>
         </scene>
         <!--View Controller - Persons-->
         <scene sceneID="CWH-2h-TOu">

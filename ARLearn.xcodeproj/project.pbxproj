@@ -59,6 +59,8 @@
 		8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2891975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
 		8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B28F1976759300C0A56B /* ARLNetworking.m */; };
 		8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2C51976937200C0A56B /* ARLSearchViewController.m */; };
+		8D7A8D0F197D55BA00B37013 /* ARLScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */; };
+		8D7A8D11197D564800B37013 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D7A8D10197D564800B37013 /* AVFoundation.framework */; };
 		8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */; };
 		8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E01974162A001FC6DF /* UIViewController+UI.m */; };
 		8D8B45E219741BD6001FC6DF /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */; };
@@ -190,6 +192,9 @@
 		8D55B28F1976759300C0A56B /* ARLNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNetworking.m; sourceTree = "<group>"; };
 		8D55B2C41976937200C0A56B /* ARLSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLSearchViewController.h; sourceTree = "<group>"; };
 		8D55B2C51976937200C0A56B /* ARLSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLSearchViewController.m; sourceTree = "<group>"; };
+		8D7A8D0D197D55BA00B37013 /* ARLScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLScanViewController.h; sourceTree = "<group>"; };
+		8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLScanViewController.m; sourceTree = "<group>"; };
+		8D7A8D10197D564800B37013 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMainViewController.h; sourceTree = "<group>"; };
 		8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMainViewController.m; sourceTree = "<group>"; };
 		8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+UI.h"; sourceTree = "<group>"; };
@@ -233,6 +238,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D7A8D11197D564800B37013 /* AVFoundation.framework in Frameworks */,
 				8D219647196D26080044616A /* CoreGraphics.framework in Frameworks */,
 				8D219649196D26080044616A /* UIKit.framework in Frameworks */,
 				8D219645196D26080044616A /* Foundation.framework in Frameworks */,
@@ -277,6 +283,7 @@
 		8D219643196D26080044616A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8D7A8D10197D564800B37013 /* AVFoundation.framework */,
 				8D219644196D26080044616A /* Foundation.framework */,
 				8D219646196D26080044616A /* CoreGraphics.framework */,
 				8D219648196D26080044616A /* UIKit.framework */,
@@ -319,6 +326,8 @@
 				8D8B45E919751E72001FC6DF /* UIButton+UI.m */,
 				8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */,
 				8D8B45E01974162A001FC6DF /* UIViewController+UI.m */,
+				8D7A8D0D197D55BA00B37013 /* ARLScanViewController.h */,
+				8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */,
 			);
 			path = ARLearn;
 			sourceTree = "<group>";
@@ -671,6 +680,7 @@
 				8D219A7A196D31350044616A /* NSManagedObjectContext+MagicalThreading.m in Sources */,
 				8DDECF391976AAB9007CECB4 /* Run.m in Sources */,
 				8D55B28A1975633600C0A56B /* TPKeyboardAvoidingCollectionView.m in Sources */,
+				8D7A8D0F197D55BA00B37013 /* ARLScanViewController.m in Sources */,
 				8D219A6F196D31350044616A /* NSObject+MagicalDataImport.m in Sources */,
 				8D219A77196D31350044616A /* NSManagedObjectContext+MagicalObserving.m in Sources */,
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
