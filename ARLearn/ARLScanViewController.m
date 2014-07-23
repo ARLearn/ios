@@ -17,10 +17,31 @@
 @property (strong, nonatomic) AVCaptureSession *session;
 
 @property (weak, nonatomic) IBOutlet UILabel *scannedLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *torchSwitch;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
+@property (weak, nonatomic) IBOutlet UILabel *torchLabel;
+
+- (IBAction)torchSwitchAction:(UISwitch *)sender;
+
+#define VIDEOSIZE 200.0f
 
 @end
 
+/*!
+ *  See https://gist.github.com/Alex04/6976945
+ *  See http://www.ama-dev.com/iphone-qr-code-library-ios-7/
+ *  See http://stackoverflow.com/questions/5117770/avcapturevideopreviewlayer
+ *  See http://stackoverflow.com/questions/16515921/get-camera-preview-to-avcapturevideopreviewlayer
+ *
+ *  See http://www.qr-code-generator.com
+ *
+ *  TODO Add Constraints.
+ *  TODO Add Focus Button.
+ */
+
 @implementation ARLScanViewController
+
+#pragma mark - ViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil
                bundle:(NSBundle *)nibBundleOrNil
@@ -35,7 +56,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if(![self isCameraAvailable]) {
+    
+    if (![self isCameraAvailable]) {
         [self setupNoCameraView];
     }
 }
@@ -43,86 +65,205 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+  
+    [self setVideoFrame];
     
     [self startScanning];
+    
+    [self applyConstraints];
 }
 
 /*!
- *  See https://gist.github.com/Alex04/6976945
- *  See http://www.ama-dev.com/iphone-qr-code-library-ios-7/
- *  See http://stackoverflow.com/questions/5117770/avcapturevideopreviewlayer
- *  See http://stackoverflow.com/questions/16515921/get-camera-preview-to-avcapturevideopreviewlayer
- *
- *  See http://www.qr-code-generator.com
- * 
- *  TODO Only Landscape/Left works ok. Should change that.
- *  TODO Add Constraints.
- *  TODO Add Focus Button.
- *  TODO Add Torch Button.
+ *  viewDidLoad
  */
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
     
-    [self.view addSubview:backgroundImage];
-    [self.view sendSubviewToBack:backgroundImage];
-    
-//    self.view.layer.contents = (id)[UIImage imageNamed:@"Background"].CGImage;
-    
-    if([self isCameraAvailable]) {
+    if ([self isCameraAvailable]) {
         [self setupScanner];
     }
 }
 
+/*!
+ *  viewWillDisappear
+ *
+ *  @param animated <#animated description#>
+ */
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [self.torchSwitch setOn:NO];
+    
+    [self stopScanning];
+
+}
+
+/*!
+ *  didReceiveMemoryWarning
+ */
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+    
+    [self stopScanning];
+    
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 - (NSUInteger)supportedInterfaceOrientations
 {
-    return UIInterfaceOrientationMaskLandscape;
-}
-
-- (BOOL)shouldAutorotate
-{
-    return (UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]));
+    return UIInterfaceOrientationMaskLandscapeRight | UIInterfaceOrientationMaskPortrait;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    if([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft) {
-        AVCaptureConnection *con = self.preview.connection;
-        con.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
-    } else {
-        AVCaptureConnection *con = self.preview.connection;
-        con.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
+    [self setVideoFrame];
+    
+    [self stopScanning];
+    
+    [self setVideoOrientation];
+
+    [self startScanning];
+}
+
+#pragma mark - Properties
+
+#pragma mark - Methods
+
+- (void) applyConstraints {
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.view,             @"view",
+                                     
+                                     self.backgroundImage,  @"backgroundImage",
+                                     self.scannedLabel,     @"scannedLabel",
+                                     self.torchSwitch,      @"torchSwitch",
+                                     self.torchLabel,       @"torchLabel",
+                                     
+                                     nil];
+    
+    self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    self.scannedLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.torchSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+    self.torchLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // CGFloat bw = sw/2 - 3*8.0;
+    
+    // Fix Background.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(%f)-[scannedLabel]", VIDEOSIZE + 3*8.0f]
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[torchLabel]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[torchSwitch]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[torchLabel]-[torchSwitch]"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[scannedLabel]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+}
+
+#pragma mark - Camera
+
+- (void)setVideoOrientation
+{
+    switch ([[UIDevice currentDevice] orientation]) {
+            //Seems to happen when the home button is on the RIGHT side. Works.
+        case  UIDeviceOrientationLandscapeLeft :
+        {
+            AVCaptureConnection *con = self.preview.connection;
+            con.videoOrientation = AVCaptureVideoOrientationLandscapeRight;
+        }
+            break;
+            
+            //Seems to happen when the home button is on the LEFT side. Works.
+        case UIDeviceOrientationLandscapeRight :
+        {
+            AVCaptureConnection *con = self.preview.connection;
+            con.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
+        }
+            break;
+            
+            //Happens when the home button is on the bottom side. Works.
+        case UIDeviceOrientationPortrait :
+        {
+            AVCaptureConnection *con = self.preview.connection;
+            con.videoOrientation = AVCaptureVideoOrientationPortrait;
+        }
+            break;
+            
+        default:
+            break;
     }
 }
 
-#pragma mark - Methods
+- (void)setVideoFrame
+{
+    CGFloat sw = self.screenWidth;
+    CGFloat sh = self.screenHeight;
+    
+    // NSLog(@"ScreenWidth: %f", sw); //320
+    
+    switch ([[UIDevice currentDevice] orientation]) {
+            //Seems to happen when the home button is on the RIGHT side. Works.
+        case  UIDeviceOrientationLandscapeLeft :
+            self.preview.frame = CGRectMake(sh - VIDEOSIZE - 8.0f, 8.0f, VIDEOSIZE, VIDEOSIZE);
+            self.scannedLabel.textAlignment = NSTextAlignmentRight;
+            break;
+            
+            //Seems to happen when the home button is on the LEFT side. Works.
+        case UIDeviceOrientationLandscapeRight :
+            self.preview.frame = CGRectMake(sh - VIDEOSIZE - 8.0f, 8.0f, VIDEOSIZE, VIDEOSIZE);
+            self.scannedLabel.textAlignment = NSTextAlignmentRight;
+            break;
+            
+            //Happens when the home button is on the bottom side. Works.
+        case UIDeviceOrientationPortrait :
+            self.preview.frame = CGRectMake((sw / 2) - (VIDEOSIZE/2), 8.0f, VIDEOSIZE, VIDEOSIZE);
+            self.scannedLabel.textAlignment = NSTextAlignmentCenter;
+            break;
+            
+        default:
+            break;
+    }
+}
+
 
 - (void) setupNoCameraView
 {
     UILabel *labelNoCam = [[UILabel alloc] init];
+    
     labelNoCam.text = @"No Camera available";
     labelNoCam.textColor = [UIColor blackColor];
     [self.view addSubview:labelNoCam];
+    
     [labelNoCam sizeToFit];
+    
+#warning Set Label at same spot as video inside a rectangle!
+    
     labelNoCam.center = self.view.center;
 }
 
@@ -143,14 +284,14 @@
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    
     //self.preview.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    self.preview.frame = CGRectMake(10, 10, 200, 200);
-                                    
-    AVCaptureConnection *con = self.preview.connection;
     
-    con.videoOrientation = AVCaptureVideoOrientationLandscapeLeft;
-    
-    //[self.view.layer insertSublayer:self.preview atIndex:0];
+    self.preview.frame = CGRectMake(8.0f, 8.0f, self.screenWidth - 2*8.0, 200);
+ 
+    //!!! Replaces the next two lines.
+    [self setVideoOrientation];
+
     [self.view.layer addSublayer:self.preview];
 }
 
@@ -174,32 +315,32 @@
     [device unlockForConfiguration];
 }
 
-- (void) focus:(CGPoint) aPoint
-{
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    if([device isFocusPointOfInterestSupported] &&
-       [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
-        CGRect screenRect = [[UIScreen mainScreen] bounds];
-        double screenWidth = screenRect.size.width;
-        double screenHeight = screenRect.size.height;
-        double focus_x = aPoint.x/screenWidth;
-        double focus_y = aPoint.y/screenHeight;
-        
-        if([device lockForConfiguration:nil]) {
-//            if([self.delegate respondsToSelector:@selector(scanViewController:didTapToFocusOnPoint:)]) {
-//                [self.delegate scanViewController:self didTapToFocusOnPoint:aPoint];
+//- (void) focus:(CGPoint) aPoint
+//{
+//    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+//    if([device isFocusPointOfInterestSupported] &&
+//       [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+//        CGRect screenRect = [[UIScreen mainScreen] bounds];
+//        double screenWidth = screenRect.size.width;
+//        double screenHeight = screenRect.size.height;
+//        double focus_x = aPoint.x/screenWidth;
+//        double focus_y = aPoint.y/screenHeight;
+//        
+//        if([device lockForConfiguration:nil]) {
+////            if([self.delegate respondsToSelector:@selector(scanViewController:didTapToFocusOnPoint:)]) {
+////                [self.delegate scanViewController:self didTapToFocusOnPoint:aPoint];
+////            }
+//            [self scanViewController:self didTapToFocusOnPoint:aPoint];
+//            
+//            [device setFocusPointOfInterest:CGPointMake(focus_x,focus_y)];
+//            [device setFocusMode:AVCaptureFocusModeAutoFocus];
+//            if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]){
+//                [device setExposureMode:AVCaptureExposureModeAutoExpose];
 //            }
-            [self scanViewController:self didTapToFocusOnPoint:aPoint];
-            
-            [device setFocusPointOfInterest:CGPointMake(focus_x,focus_y)];
-            [device setFocusMode:AVCaptureFocusModeAutoFocus];
-            if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]){
-                [device setExposureMode:AVCaptureExposureModeAutoExpose];
-            }
-            [device unlockForConfiguration];
-        }
-    }
-}
+//            [device unlockForConfiguration];
+//        }
+//    }
+//}
 
 - (void)startScanning
 {
@@ -237,9 +378,45 @@
 - (void) scanViewController:(ARLScanViewController *) aCtler
         didSuccessfullyScan:(NSString *) aScannedValue
 {
-   // NSLog(@"%@", aScannedValue);
-    
-    self.scannedLabel.text = aScannedValue;
+    if (![self.scannedLabel.text isEqualToString:aScannedValue]) {
+        self.scannedLabel.text = aScannedValue;
+        
+        // Setup Glow -> Delay -> NoGlow Block Operation Chain.
+        NSBlockOperation *delay = [NSBlockOperation blockOperationWithBlock:^{
+            [NSThread  sleepForTimeInterval:1.0];
+        }];
+        
+        NSBlockOperation *glow = [NSBlockOperation blockOperationWithBlock:^{
+            self.scannedLabel.layer.shadowColor = [[UIColor greenColor] CGColor];
+            self.scannedLabel.layer.shadowRadius = 8.0f;
+            self.scannedLabel.layer.shadowOpacity = .9;
+            //self.scannedLabel.layer.shadowOffset = CGSizeZero;
+            self.scannedLabel.layer.masksToBounds = NO;
+            
+            self.scannedLabel.font = [UIFont boldSystemFontOfSize:self.scannedLabel.font.pointSize];
+        }];
+        
+        NSBlockOperation *noglow = [NSBlockOperation blockOperationWithBlock:^{
+            self.scannedLabel.layer.shadowColor = [[UIColor clearColor] CGColor];
+            self.scannedLabel.layer.shadowRadius = 0.0f;
+            self.scannedLabel.layer.shadowOpacity = 1.0f;
+            //self.scannedLabel.layer.shadowOffset = CGSizeZero;
+            //self.scannedLabel.layer.masksToBounds = NO;
+            self.scannedLabel.font = [UIFont systemFontOfSize:self.scannedLabel.font.pointSize];
+        }];
+        
+        [delay addDependency:glow];
+        [noglow addDependency:delay];
+        
+        [[NSOperationQueue currentQueue] addOperations: @[delay] waitUntilFinished:NO];
+        [[NSOperationQueue mainQueue] addOperations: @[noglow, glow] waitUntilFinished:NO];
+    }
+}
+
+#pragma mark - Actions
+
+- (IBAction)torchSwitchAction:(UISwitch *)sender {
+    [self setTorch:self.torchSwitch.isOn];
 }
 
 @end

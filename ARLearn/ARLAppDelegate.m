@@ -8,22 +8,11 @@
 
 #import "ARLAppDelegate.h"
 
-@implementation ARLAppDelegate
-
-/***************************************************************************************************************/
-
-static NSOperationQueue *_theOQ;
-
-+ (NSOperationQueue *) theOQ {
-    @synchronized(_theOQ) {
-        if(!_theOQ){
-            _theOQ = [[NSOperationQueue alloc] init];
-        }
-    }
-    return _theOQ;
+@implementation ARLAppDelegate {
+      id services_;
 }
 
-/***************************************************************************************************************/
+#pragma mark - AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -48,12 +37,28 @@ static NSOperationQueue *_theOQ;
     }
     
 #warning FORCING LOGGING.
+    
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:TRUE] forKey:ENABLE_LOGGING];
     
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
                                                                            UIRemoteNotificationTypeAlert |
                                                                            UIRemoteNotificationTypeBadge |UIRemoteNotificationTypeSound
                                                                            )];
+    
+    [self startStandardUpdates];
+    
+    //!!! Had to change 'nl.ou.arlearn.${PRODUCT_NAME:rfc1034identifier}' to 'nl.ou.arlearn.ARLearn' in ARLearn-Info.plist!
+    if ([kAPIKey length] == 0) {
+        // Blow up if APIKey has not yet been set.
+        NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
+        NSString *format = @"Configure APIKey inside SDKDemoAPIKey.h for your "
+        @"bundle `%@`, see README.GoogleMapsSDKDemos for more information";
+        @throw [NSException exceptionWithName:@"SDKDemoAppDelegate"
+                                       reason:[NSString stringWithFormat:format, bundleId]
+                                     userInfo:nil];
+    }
+    [GMSServices provideAPIKey:kAPIKey];
+    services_ = [GMSServices sharedServices];
     
     return YES;
 }
@@ -87,9 +92,6 @@ static NSOperationQueue *_theOQ;
     [MagicalRecord cleanUp];
 }
 
-/***************************************************************************************************************/
-
-
 //TESTCODE: Remote notifications registration
 - (void)applicationDidFinishLaunching:(UIApplication *)app {
 //    // other setup tasks here....
@@ -97,6 +99,8 @@ static NSOperationQueue *_theOQ;
 //    
 //    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
 }
+
+#pragma mark - APN
 
 //TESTCODE: Remote notifications
 /*!
@@ -152,7 +156,107 @@ static NSOperationQueue *_theOQ;
 - (void)Implement:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     //TODO: Implement
     Log(@"didFailToRegisterForRemoteNotificationsWithError: %@", error.description);
+}
 
+#pragma mark - Properties
+
+static NSOperationQueue *_theOQ;
+
+/*!
+ *  Returns the Current Location.
+ *
+ *  @return the current location.
+ */
++ (CLLocationCoordinate2D) CurrentLocation {
+    return currentCoordinates;
+}
+
++ (NSOperationQueue *) theOQ {
+    @synchronized(_theOQ) {
+        if(!_theOQ){
+            _theOQ = [[NSOperationQueue alloc] init];
+        }
+    }
+    return _theOQ;
+}
+
+#pragma mark - Methods
+
+static CLLocationManager *locationManager;
+static CLLocationCoordinate2D currentCoordinates;
+
+/*!
+ *  Use GPS to upate location.
+ *
+ *  See https://developer.apple.com/library/mac/documentation/General/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html
+ */
+- (void)startStandardUpdates
+{
+    // Create the location manager if this object does not
+    // already have one.
+    if (nil == locationManager) {
+        locationManager = [[CLLocationManager alloc] init];
+    }
+    
+    if (locationManager && CLLocationManager.locationServicesEnabled) {
+        locationManager.delegate = self;
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        
+        // Set a movement threshold for new events.ß
+        locationManager.distanceFilter = 500; // meters
+        
+        locationManager.pausesLocationUpdatesAutomatically=YES;
+        
+        [locationManager startUpdatingLocation];
+    }
+}
+
+/*!
+ *  Use WiFi to update location.
+ */
+- (void)startSignificantChangeUpdates
+{
+    // Create the location manager if this object does not
+    // already have one.
+    if (nil == locationManager) {
+        locationManager = [[CLLocationManager alloc] init];
+    }
+    
+    if (locationManager && CLLocationManager.locationServicesEnabled) {
+        
+        locationManager.delegate = self;
+        
+        [locationManager startMonitoringSignificantLocationChanges];
+    }
+}
+
+/*!
+ *  Delegate method from the CLLocationManagerDelegate protocol.
+ *
+ *  @param manager   The CLLocationManager
+ *  @param locations The locations to process.
+ */
+- (void)locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray *)locations {
+    
+    // If it's a relatively recent event, turn off updates to save power.
+    CLLocation *location = [locations lastObject];
+    
+    if (location) {
+        NSDate *eventDate = location.timestamp;
+        NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
+        
+        if (abs(howRecent) < 15.0) {
+            // If the event is recent, do something with it.
+            DLog(@"Lat: %+.6f, Long: %+.6f\n",
+                 location.coordinate.latitude,
+                 location.coordinate.longitude);
+        }
+        
+        if (CLLocationCoordinate2DIsValid(location.coordinate)) {
+            currentCoordinates = location.coordinate;
+        }
+    }
 }
 
 @end

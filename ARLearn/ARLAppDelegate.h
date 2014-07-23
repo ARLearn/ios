@@ -10,10 +10,12 @@
 
 #import "CoreData+MagicalRecord.h"
 
+#import <GoogleMaps/GoogleMaps.h>
+
 #import "ARLUtils.h"
 #import "ARLNotificationSubscriber.h"
 
-@interface ARLAppDelegate : UIResponder <UIApplicationDelegate>
+@interface ARLAppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
@@ -23,5 +25,7 @@
  *  @return The NSOperationQueue.
  */
 +(NSOperationQueue *) theOQ;
+
++(CLLocationCoordinate2D) CurrentLocation;
 
 @end

@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#import "UIViewController+UI.h"
+#import "ARLAppDelegate.h"
+
 @protocol AMScanViewControllerDelegate;
 
 @interface ARLScanViewController : UIViewController <AVCaptureMetadataOutputObjectsDelegate>

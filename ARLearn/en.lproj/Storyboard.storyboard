@@ -95,11 +95,28 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Seg-jD-yQc">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="Xd0-cB-0nm">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="nothing scanned yet." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Seg-jD-yQc">
                                 <rect key="frame" x="20" y="241" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="Ffc-W6-PE1">
+                                <rect key="frame" x="70" y="453" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="torchSwitchAction:" destination="0ly-fY-awO" eventType="valueChanged" id="WoM-U5-uOy"/>
+                                </connections>
+                            </switch>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Torch" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Rk-83-sug">
+                                <rect key="frame" x="20" y="463" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -107,12 +124,30 @@
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="Ijg-AB-GgH"/>
                     <connections>
+                        <outlet property="backgroundImage" destination="Xd0-cB-0nm" id="ytM-p4-Rso"/>
                         <outlet property="scannedLabel" destination="Seg-jD-yQc" id="QZa-WX-EYX"/>
+                        <outlet property="torchLabel" destination="2Rk-83-sug" id="SUD-gj-S2X"/>
+                        <outlet property="torchSwitch" destination="Ffc-W6-PE1" id="lRz-0Q-6Lc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JLa-UY-udg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="247" y="1149"/>
+        </scene>
+        <!--Nearby View Controller-->
+        <scene sceneID="y7s-GV-i5G">
+            <objects>
+                <viewController id="5ZG-L2-xcG" customClass="ARLNearbyViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="GR7-82-Ktn">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Nfi-Bs-wve"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ww0-9w-YPB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="247" y="1819"/>
         </scene>
         <!--View Controller - Persons-->
         <scene sceneID="CWH-2h-TOu">
@@ -265,7 +300,6 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="pSZ-Dc-kmx">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="tintColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
                             </imageView>
                             <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="43E-ef-7sk">
                                 <rect key="frame" x="20" y="20" width="120" height="120"/>
@@ -314,6 +348,7 @@
                                 </state>
                                 <connections>
                                     <action selector="NearByButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="duE-Md-WA9"/>
+                                    <segue destination="5ZG-L2-xcG" kind="push" id="PPK-vh-LAj"/>
                                 </connections>
                             </button>
                         </subviews>
