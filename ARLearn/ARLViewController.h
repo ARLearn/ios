@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 #import "ARLAppDelegate.h"
 
 //TESTCODE: Include TestAccount Model for testing.

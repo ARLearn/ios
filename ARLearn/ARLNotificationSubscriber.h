@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 #import "ARLUtils.h"
 
 //@protocol NotificationHandler <NSObject>

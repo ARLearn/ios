@@ -6,9 +6,6 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <Foundation/NSObject.h>
-#import <UIKit/UIKit.h>
-
 #import "ARLDefines.h"
 
 /*!

@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 #import "ARLNetworking.h"
 
 @interface ARLSearchViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate, UITextFieldDelegate>

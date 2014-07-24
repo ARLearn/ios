@@ -47,19 +47,6 @@
     
     [self startStandardUpdates];
     
-    //!!! Had to change 'nl.ou.arlearn.${PRODUCT_NAME:rfc1034identifier}' to 'nl.ou.arlearn.ARLearn' in ARLearn-Info.plist!
-    if ([kAPIKey length] == 0) {
-        // Blow up if APIKey has not yet been set.
-        NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
-        NSString *format = @"Configure APIKey inside SDKDemoAPIKey.h for your "
-        @"bundle `%@`, see README.GoogleMapsSDKDemos for more information";
-        @throw [NSException exceptionWithName:@"SDKDemoAppDelegate"
-                                       reason:[NSString stringWithFormat:format, bundleId]
-                                     userInfo:nil];
-    }
-    [GMSServices provideAPIKey:kAPIKey];
-    services_ = [GMSServices sharedServices];
-    
     return YES;
 }
 
@@ -205,7 +192,7 @@ static CLLocationCoordinate2D currentCoordinates;
         // Set a movement threshold for new events.ß
         locationManager.distanceFilter = 500; // meters
         
-        locationManager.pausesLocationUpdatesAutomatically=YES;
+        // locationManager.pausesLocationUpdatesAutomatically = YES;
         
         [locationManager startUpdatingLocation];
     }
@@ -238,6 +225,8 @@ static CLLocationCoordinate2D currentCoordinates;
  */
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray *)locations {
+    
+    DLog(@"");
     
     // If it's a relatively recent event, turn off updates to save power.
     CLLocation *location = [locations lastObject];

@@ -6,11 +6,7 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 #import "CoreData+MagicalRecord.h"
-
-#import <GoogleMaps/GoogleMaps.h>
 
 #import "ARLUtils.h"
 #import "ARLNotificationSubscriber.h"

@@ -6,9 +6,6 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <AVFoundation/AVFoundation.h>
-
 #import "UIViewController+UI.h"
 #import "ARLAppDelegate.h"
 

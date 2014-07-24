@@ -327,18 +327,21 @@ static NSCondition *_theAbortLock;
 +(void) LogJsonData: (NSData *) jsonData url: (NSString *) url {
     //http://stackoverflow.com/questions/12603047/how-to-convert-nsdata-to-nsdictionary
     //http://stackoverflow.com/questions/7097842/xcode-how-to-nslog-a-json
-    NSError *error = nil;
-    NSDictionary* json = [NSJSONSerialization
-                          JSONObjectWithData:jsonData
-                          options:kNilOptions
-                          error:&error];
-    Log(@"[JSON]");
-    Log(@"URL: %@", url);
-    if (error==nil && json!=nil) {
-        Log(@"JSON:\r%@", json);
-    } else {
-        NSString *errorString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        Log(@"ERROR: %@", errorString);
+    
+    if (jsonData) {
+        NSError *error = nil;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:jsonData
+                              options:kNilOptions
+                              error:&error];
+        Log(@"[JSON]");
+        Log(@"URL: %@", url);
+        if (error==nil && json!=nil) {
+            Log(@"JSON:\r%@", json);
+        } else {
+            NSString *errorString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            Log(@"ERROR: %@", errorString);
+        }
     }
 }
 
