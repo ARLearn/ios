@@ -79,6 +79,7 @@
 		8DDECF3F1976AABA007CECB4 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF3E1976AABA007CECB4 /* Response.m */; };
 		8DDECF421976AABA007CECB4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF411976AABA007CECB4 /* Message.m */; };
 		8DDECF451976AABA007CECB4 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF441976AABA007CECB4 /* Account.m */; };
+		8DEE589819828BFA00C2283F /* ARLGamePin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DEE589719828BFA00C2283F /* ARLGamePin.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -220,6 +221,8 @@
 		8DDECF411976AABA007CECB4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Message.m; path = Models/Message.m; sourceTree = "<group>"; };
 		8DDECF431976AABA007CECB4 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Account.h; path = Models/Account.h; sourceTree = "<group>"; };
 		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Account.m; path = Models/Account.m; sourceTree = "<group>"; };
+		8DEE589619828BFA00C2283F /* ARLGamePin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGamePin.h; sourceTree = "<group>"; };
+		8DEE589719828BFA00C2283F /* ARLGamePin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGamePin.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,6 +284,8 @@
 				8D219654196D26080044616A /* ARLAppDelegate.m */,
 				8D219A1B196D2A2D0044616A /* ARLDatabase.xcdatamodeld */,
 				8D219A2C196D2F160044616A /* ARLDefines.h */,
+				8DEE589619828BFA00C2283F /* ARLGamePin.h */,
+				8DEE589719828BFA00C2283F /* ARLGamePin.m */,
 				8D219A29196D2E8C0044616A /* ARLLog.h */,
 				8D219A2A196D2E8C0044616A /* ARLLog.m */,
 				8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */,
@@ -630,6 +635,7 @@
 				8DDECF301976AAB9007CECB4 /* TestAccount.m in Sources */,
 				8DDECF331976AAB9007CECB4 /* CurrentItemVisibility.m in Sources */,
 				8D219A81196D31350044616A /* MagicalRecord+Options.m in Sources */,
+				8DEE589819828BFA00C2283F /* ARLGamePin.m in Sources */,
 				8D219A28196D2DBD0044616A /* ARLUtils.m in Sources */,
 				8D219A72196D31350044616A /* NSManagedObject+MagicalAggregation.m in Sources */,
 				8D219A71196D31350044616A /* NSString+MagicalDataImport.m in Sources */,

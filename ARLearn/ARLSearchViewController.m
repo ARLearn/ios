@@ -404,6 +404,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     //NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     // NSLog(@"Received String %@",str);
+    [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
     NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     // NSLog(@"%@", json);
@@ -435,7 +436,7 @@ didCompleteWithError:(NSError *)error
 - (IBAction)searchButtonAction:(id)sender {
     DLog(@"Query: %@", self.query);
     
-    [ARLNetworking sendHTTPPostWithDelegate:self withBody:(self.query ? self.query : @"")];
+    [ARLNetworking sendHTTPPostWithDelegate:self withService:@"myGames/search" withBody:(self.query ? self.query : @"")];
 }
 
 @end

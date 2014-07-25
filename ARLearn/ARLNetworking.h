@@ -8,7 +8,7 @@
 
 @interface ARLNetworking : NSObject
 
-+(void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate;
-+(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withBody:(NSString *)body;
++(void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service;
++(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "ARLNetworking.h"
+#import "ARLUtils.h"
 
 @interface ARLSearchViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate, UITextFieldDelegate>
 

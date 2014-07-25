@@ -7,7 +7,10 @@
 //
 
 #import "ARLAppDelegate.h"
+#import "ARLNetworking.h"
+#import "ARLUtils.h"
+#import "ARLGamePin.h"
 
-@interface ARLNearbyViewController : UIViewController <MKMapViewDelegate>
+@interface ARLNearbyViewController : UIViewController <MKMapViewDelegate, NSURLSessionDataDelegate>
 
 @end

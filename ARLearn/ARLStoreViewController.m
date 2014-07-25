@@ -187,8 +187,6 @@
 
 - (IBAction)SearchButtonAction:(UIButton *)sender {
     DLog(@"");
-//    
-//    [ARLNetworking sendHTTPPostWithDelegate:self];
 }
 
 - (IBAction)CategoryButtonAction:(UIButton *)sender {
