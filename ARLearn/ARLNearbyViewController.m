@@ -47,12 +47,9 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view.
-    
     self.mapView.delegate = self;
-   
-    //if ([ARLAppDelegate CurrentLocation]) {
-        [self.mapView setShowsUserLocation:YES];
-    //}
+    
+    [self.mapView setShowsUserLocation:YES];
     
     //??? didFailToLocateUserWithError sometimes called.
     //MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance([ARLAppDelegate CurrentLocation], 1500, 1500);
@@ -63,11 +60,32 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
+    @autoreleasepool {
+        CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
+        
+        _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, 25000];
+        
+        NSString *cacheIdentifier = [ARLNetworking generateGetDescription:self.query];
+        
+        NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+        
+        if (!response) {
+            [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
+        } else {
+            NSLog(@"Using cached query data");
+            [self processData:response];
+        }
+    }
+}
 
-    _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, 25000];
+-(void) viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
     
-    [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
+    self.mapView.delegate = nil;
+    self.mapView = nil;
+
+     _query = nil;
+    _results = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -75,6 +93,8 @@
     [super didReceiveMemoryWarning];
     
     // Dispose of any resources that can be recreated.
+    
+     _results =  nil;
 }
 
 /*
@@ -115,13 +135,10 @@
                                   initWithAnnotation:annotation reuseIdentifier:@"pin"];
    
     NSLog(@"%d %@", [[self.mapView annotations] indexOfObject:annotation], [annotation title]);
-    // First pin is home.
-    //if ([[self.mapView annotations] indexOfObject:annotation] != 0) {
-    if ([annotation isKindOfClass:[ARLGamePin class]]) {
 
+    if ([annotation isKindOfClass:[ARLGamePin class]]) {
         annView.pinColor = (MKPinAnnotationColor)((ARLGamePin *)annotation).pinColor;
     }
-    //}
 
     return annView;
 }
@@ -144,17 +161,13 @@ didReceiveResponse:(NSURLResponse *)response
 {
     NSLog(@"Got HTTP Data");
     
-    //NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    // NSLog(@"Received String %@",str);
-    
-    [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
-    
-    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
 
-    self.results = (NSArray *)[json objectForKey:@"games"];
+    [self processData:data];
     
-    [self reloadMap];
+    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
 }
+
 
 - (void)URLSession:(NSURLSession *)session
               task:(NSURLSessionTask *)task
@@ -177,39 +190,76 @@ didCompleteWithError:(NSError *)error
 
 - (void) reloadMap {
     [self.mapView setShowsUserLocation:NO];
-
-    //games to markers.
-    //bounds around games.
     
-    //Ourselves.
-    {
-        CLLocationCoordinate2D  ctrpoint;
-        ctrpoint.latitude = 50.964428;
-        ctrpoint.longitude = 5.774894;
+    @autoreleasepool {
         
-        ARLGamePin *gp = [[ARLGamePin alloc] initWithCoordinates:ctrpoint
-                                                       placeName:@"me"
-                                                     description:nil
-                                                        pinColor:MKPinAnnotationColorRed];
+        //games to markers.
+        //bounds around games.
         
-        [self.mapView addAnnotation:gp];
-    }
-    
-    for (NSDictionary *game in self.results) {
+        //Ourselves.
         {
             CLLocationCoordinate2D  ctrpoint;
-            ctrpoint.latitude = [[game valueForKey:@"lat"] doubleValue];
-            ctrpoint.longitude =[[game valueForKey:@"lng"] doubleValue];
+            ctrpoint.latitude = 50.964428;
+            ctrpoint.longitude = 5.774894;
             
             ARLGamePin *gp = [[ARLGamePin alloc] initWithCoordinates:ctrpoint
-                                                           placeName:[game valueForKey:@"title"]
-                                                         description:[NSString stringWithFormat:@"[%@]", [game valueForKey:@"language"]]
-                                                            pinColor:MKPinAnnotationColorGreen];
+                                                           placeName:@"me"
+                                                         description:nil
+                                                            pinColor:MKPinAnnotationColorRed];
+            
             [self.mapView addAnnotation:gp];
         }
+        
+        for (NSDictionary *game in self.results) {
+            {
+                CLLocationCoordinate2D  ctrpoint;
+                ctrpoint.latitude = [[game valueForKey:@"lat"] doubleValue];
+                ctrpoint.longitude =[[game valueForKey:@"lng"] doubleValue];
+                
+                ARLGamePin *gp = [[ARLGamePin alloc] initWithCoordinates:ctrpoint
+                                                               placeName:[game valueForKey:@"title"]
+                                                             description:[NSString stringWithFormat:@"[%@]", [game valueForKey:@"language"]]
+                                                                pinColor:MKPinAnnotationColorGreen];
+                [self.mapView addAnnotation:gp];
+            }
+        }
+        
+        [self zoomMapViewToFitAnnotations:self.mapView animated:TRUE];
+    }
+}
+
+- (void)processData:(NSData *)data
+{
+    //Example Data:
+    //
+    //{
+    // "type": "org.celstec.arlearn2.beans.game.GamesList",
+    // "games": [
+    //           {
+    //               "type": "org.celstec.arlearn2.beans.game.Game",
+    //               "gameId": 27766001,
+    //               "title": "Heerlen game met Mark",
+    //               "config": {
+    //                   "type": "org.celstec.arlearn2.beans.game.Config",
+    //                   "mapAvailable": false,
+    //                   "manualItems": [],
+    //                   "locationUpdates": []
+    //               },
+    //               "lng": 5.958768,
+    //               "lat": 50.878495,
+    //               "language": "en"
+    //           },
+    //           ]
+    //}
+    
+    @autoreleasepool {
+        NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        
+        self.results = (NSArray *)[json objectForKey:@"games"];
+        
+        [self reloadMap];
     }
     
-    [self zoomMapViewToFitAnnotations:self.mapView animated:TRUE];
 }
 
 /*!
@@ -225,47 +275,48 @@ didCompleteWithError:(NSError *)error
 #define MINIMUM_ZOOM_ARC                0.014 //approximately 1 miles (1 degree of arc ~= 69 miles)
 #define ANNOTATION_REGION_PAD_FACTOR    1.5
 #define MAX_DEGREES_ARC                 360
-    
-    NSArray *annotations = map.annotations;
-    int count = [map.annotations count];
-    
-    if ( count == 0) { return; } //bail if no annotations
-    
-    //convert NSArray of id <MKAnnotation> into an MKCoordinateRegion that can be used to set the map size
-    //can't use NSArray with MKMapPoint because MKMapPoint is not an id
-    MKMapPoint points[count]; //C array of MKMapPoint struct
-    for( int i=0; i<count; i++ ) //load points C array by converting coordinates to points
-    {
-        CLLocationCoordinate2D coordinate = [(id <MKAnnotation>)[annotations objectAtIndex:i] coordinate];
-        points[i] = MKMapPointForCoordinate(coordinate);
+    @autoreleasepool {
+        NSArray *annotations = map.annotations;
+        int count = [map.annotations count];
+        
+        if (count == 0) { return; } //bail if no annotations
+        
+        //convert NSArray of id <MKAnnotation> into an MKCoordinateRegion that can be used to set the map size
+        //can't use NSArray with MKMapPoint because MKMapPoint is not an id
+        MKMapPoint points[count]; //C array of MKMapPoint struct
+        for (int i=0; i<count; i++) //load points C array by converting coordinates to points
+        {
+            CLLocationCoordinate2D coordinate = [(id <MKAnnotation>)[annotations objectAtIndex:i] coordinate];
+            points[i] = MKMapPointForCoordinate(coordinate);
+        }
+        
+        //create MKMapRect from array of MKMapPoint
+        MKMapRect mapRect = [[MKPolygon polygonWithPoints:points count:count] boundingMapRect];
+        
+        //convert MKCoordinateRegion from MKMapRect
+        MKCoordinateRegion region = MKCoordinateRegionForMapRect(mapRect);
+        
+        //add padding so pins aren't scrunched on the edges
+        region.span.latitudeDelta  *= ANNOTATION_REGION_PAD_FACTOR;
+        region.span.longitudeDelta *= ANNOTATION_REGION_PAD_FACTOR;
+        
+        //but padding can't be bigger than the world
+        if (region.span.latitudeDelta > MAX_DEGREES_ARC) { region.span.latitudeDelta  = MAX_DEGREES_ARC; }
+        if (region.span.longitudeDelta > MAX_DEGREES_ARC){ region.span.longitudeDelta = MAX_DEGREES_ARC; }
+        
+        //and don't zoom in stupid-close on small samples
+        if (region.span.latitudeDelta  < MINIMUM_ZOOM_ARC) { region.span.latitudeDelta  = MINIMUM_ZOOM_ARC; }
+        if (region.span.longitudeDelta < MINIMUM_ZOOM_ARC) { region.span.longitudeDelta = MINIMUM_ZOOM_ARC; }
+        
+        //and if there is a sample of 1 we want the max zoom-in instead of max zoom-out
+        if (count == 1)
+        {
+            region.span.latitudeDelta = MINIMUM_ZOOM_ARC;
+            region.span.longitudeDelta = MINIMUM_ZOOM_ARC;
+        }
+        
+        [mapView setRegion:region animated:animated];
     }
-    
-    //create MKMapRect from array of MKMapPoint
-    MKMapRect mapRect = [[MKPolygon polygonWithPoints:points count:count] boundingMapRect];
-    
-    //convert MKCoordinateRegion from MKMapRect
-    MKCoordinateRegion region = MKCoordinateRegionForMapRect(mapRect);
-    
-    //add padding so pins aren't scrunched on the edges
-    region.span.latitudeDelta  *= ANNOTATION_REGION_PAD_FACTOR;
-    region.span.longitudeDelta *= ANNOTATION_REGION_PAD_FACTOR;
-    
-    //but padding can't be bigger than the world
-    if( region.span.latitudeDelta > MAX_DEGREES_ARC ) { region.span.latitudeDelta  = MAX_DEGREES_ARC; }
-    if( region.span.longitudeDelta > MAX_DEGREES_ARC ){ region.span.longitudeDelta = MAX_DEGREES_ARC; }
-    
-    //and don't zoom in stupid-close on small samples
-    if( region.span.latitudeDelta  < MINIMUM_ZOOM_ARC ) { region.span.latitudeDelta  = MINIMUM_ZOOM_ARC; }
-    if( region.span.longitudeDelta < MINIMUM_ZOOM_ARC ) { region.span.longitudeDelta = MINIMUM_ZOOM_ARC; }
-    
-    //and if there is a sample of 1 we want the max zoom-in instead of max zoom-out
-    if( count == 1 )
-    {
-        region.span.latitudeDelta = MINIMUM_ZOOM_ARC;
-        region.span.longitudeDelta = MINIMUM_ZOOM_ARC;
-    }
-    
-    [mapView setRegion:region animated:animated];
 }
 
 @end

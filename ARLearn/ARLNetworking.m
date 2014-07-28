@@ -39,29 +39,22 @@
     //[urlRequest setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding]];
     
     NSURLSessionDataTask *dataTask = [defaultSession dataTaskWithRequest:urlRequest];
+    
+    dataTask.taskDescription = dataTask.taskDescription = [self generateGetDescription:service];
+    
     [dataTask resume];
-    
-    	//if (token != null) request.setHeader("Authorization", "GoogleLogin auth=" + token); d324aa9b75782d9b7b76372a1f9439bd
-//    request.setHeader("Accept", accept);application/json
-//    equest.setHeader("Content-Type", contentType);application/json
-//    //Content-Type: text/plain; charset=ISO-8859-1
-//    'game' as query (seem,s hardcoded.
-    
-    
-//    
-//    NSURLSessionDataTask *dataTask = [defaultSession dataTaskWithURL:url
-//                                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-//                                                       if(error == nil)
-//                                                       {
-//                                                           NSString * text = [[NSString alloc] initWithData: data
-//                                                                                                   encoding: NSUTF8StringEncoding];
-//                                                           NSLog(@"Data = %@",text);
-//                                                       }
-//                                                       
-//                                                   }];
-    
-//    [dataTask resume];
-    
+}
+
+/*!
+ *  Generate an ID for the Cache Entry.
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return The Cache ID.
+ */
++(NSString *)generateGetDescription:(NSString *)service {
+#pragma warn Replace by MD5 of complete URL?
+    return service;
 }
 
 +(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body
@@ -89,39 +82,23 @@
     [urlRequest setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding]];
     
     NSURLSessionDataTask *dataTask = [defaultSession dataTaskWithRequest:urlRequest];
+    
+    dataTask.taskDescription = [self generatePostDescription:service withBody:body];
+    
     [dataTask resume];
 }
-//{
-// "type": "org.celstec.arlearn2.beans.game.GamesList",
-// "games": [
-//           {
-//               "type": "org.celstec.arlearn2.beans.game.Game",
-//               "gameId": 27766001,
-//               "title": "Heerlen game met Mark",
-//               "config": {
-//                   "type": "org.celstec.arlearn2.beans.game.Config",
-//                   "mapAvailable": false,
-//                   "manualItems": [],
-//                   "locationUpdates": []
-//               },
-//               "lng": 5.958768,
-//               "lat": 50.878495,
-//               "language": "en"
-//           },
-//           {
-//               "type": "org.celstec.arlearn2.beans.game.Game",
-//               "gameId": 3749015,
-//               "title": "Heerlen digitale dagen game",
-//               "config": {
-//                   "type": "org.celstec.arlearn2.beans.game.Config",
-//                   "mapAvailable": false,
-//                   "manualItems": [],
-//                   "locationUpdates": []
-//               },
-//               "lng": 5.958768,
-//               "lat": 50.878495,
-//               "language": "en"
-//           },
-//           ]
-//}
+
+/*!
+ *  Generate an ID for the Cache Entry.
+ *
+ *  @param service The Rest Service Url part.
+ *  @param body    service The Rest POST request Body.
+ *
+ *  @return The Cache ID.
+ */
++(NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body {
+#pragma warn Replace by MD5 of complete URL+BODY?
+    return [[service stringByAppendingString:@"|"] stringByAppendingString:body];
+}
+
 @end

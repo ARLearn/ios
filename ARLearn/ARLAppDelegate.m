@@ -8,9 +8,7 @@
 
 #import "ARLAppDelegate.h"
 
-@implementation ARLAppDelegate {
-      id services_;
-}
+@implementation ARLAppDelegate
 
 #pragma mark - AppDelegate
 
@@ -147,8 +145,6 @@
 
 #pragma mark - Properties
 
-static NSOperationQueue *_theOQ;
-
 /*!
  *  Returns the Current Location.
  *
@@ -159,12 +155,25 @@ static NSOperationQueue *_theOQ;
 }
 
 + (NSOperationQueue *) theOQ {
+    static NSOperationQueue *_theOQ;
+
     @synchronized(_theOQ) {
         if(!_theOQ){
             _theOQ = [[NSOperationQueue alloc] init];
         }
     }
     return _theOQ;
+}
+
++ (ARLQueryCache *) theQueryCache {
+    static ARLQueryCache *_theQueryCache;
+    
+    @synchronized(_theQueryCache) {
+        if(!_theQueryCache){
+            _theQueryCache = [[ARLQueryCache alloc] init];
+        }
+    }
+    return _theQueryCache;
 }
 
 #pragma mark - Methods

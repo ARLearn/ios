@@ -281,7 +281,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
                 // Note: Operations MUST use localContext or they will not be saved.
                 // [TestAccount MR_truncateAllInContext:localContext];
                 
-                [NSThread  sleepForTimeInterval:5.0];
+                [NSThread sleepForTimeInterval:5.0];
                 
                 // Log(@"Awake again");
                 TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];

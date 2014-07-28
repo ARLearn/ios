@@ -69,13 +69,21 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self
                                    action:@selector(dismissKeyboard)];
-    [self.tableView addGestureRecognizer:tap];
-    
+    //[self.tableView addGestureRecognizer:tap];
+    self.tableView.frame  =CGRectMake(self.tableView.frame.origin.x,
+                                      self.tableView.frame.origin.y,
+                                      self.tableView.frame.size.width-20,
+                                      self.tableView.frame.size.height);
     // [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
 }
 
--(void) viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+-(void) viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    // Clear Persons backing fields to trigger a reload.
+    
+//    _query = nil;
+//    _results = nil;
 }
 
 /*!
@@ -99,7 +107,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
  *  @return The Cell Identifier.
  */
 -(NSString *) cellIdentifier {
-    return  @"aSearchResult";
+    return  @"aSearchResults";
 }
 
 /*!
@@ -119,6 +127,37 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
         [self.tableView endEditing:YES];
         [self.tableView reloadData];
     }
+}
+
+- (void)processData:(NSData *)data
+{
+    //Example Data:
+    
+    //{
+    // "type": "org.celstec.arlearn2.beans.game.GamesList",
+    // "games": [
+    //           {
+    //               "type": "org.celstec.arlearn2.beans.game.Game",
+    //               "gameId": 27766001,
+    //               "title": "Heerlen game met Mark",
+    //               "config": {
+    //                   "type": "org.celstec.arlearn2.beans.game.Config",
+    //                   "mapAvailable": false,
+    //                   "manualItems": [],
+    //                   "locationUpdates": []
+    //               },
+    //               "lng": 5.958768,
+    //               "lat": 50.878495,
+    //               "language": "en"
+    //           },
+    //           ]
+    //}
+    
+    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    
+    self.results = (NSArray *)[json objectForKey:@"games"];
+    
+    [self.table reloadData];
 }
 
 #pragma mark - TabelViewController
@@ -170,18 +209,12 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 {
     switch (indexPath.section) {
         case SEARCH: {
-            UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:@"aSearchHeader" forIndexPath:indexPath];
+            UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:self.headerIdentifier forIndexPath:indexPath];
             
             [headerCell layoutIfNeeded];
             
             self.searchField = (UITextField *)[headerCell.contentView viewWithTag:100];
             self.searchButton = (UIButton *)[headerCell.contentView viewWithTag:200];
-            // self.searchLabel = (UILabel *)[headerCell.contentView viewWithTag:300];
-            
-            //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.text = @"Search";
-            //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.textColor = [UIColor redColor];
-            //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
-            //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
             
             //!!! Fix UITextField
             {
@@ -218,7 +251,8 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
                                                                     forIndexPath:indexPath];
             
             if (cell == nil) {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:self.cellIdentifier];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                              reuseIdentifier:self.cellIdentifier];
             }
             
             NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
@@ -231,12 +265,13 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             }
             cell.detailTextLabel.textColor = [UIColor grayColor];
             
-            //!!! Save the GameId inside the UITableCell.
-            //            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
-            //            [nf setNumberStyle:NSNumberFormatterDecimalStyle];
-            //            [[nf numberFromString:[dict valueForKey:@"gameId"]] integerValue];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
+            cell.imageView.image = [UIImage imageNamed:@"MyGames"];
             
             cell.tag = [(NSNumber *)[dict valueForKey:@"gameId"] integerValue];
+            
+            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
 
             return cell;
         }
@@ -253,7 +288,24 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
  *  @param indexPath <#indexPath description#>
  */
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
-    //TODO
+    switch (indexPath.section) {
+        case SEARCH : {
+            // return @"Search";
+            
+            break;
+        }
+        case RESULTS : {
+            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            
+            if (newViewController) {
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+                
+                break;
+            }
+        }
+    }
 }
 
 /*!
@@ -295,65 +347,18 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     return self.tableView.rowHeight;
 }
 
-//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    switch (section) {
-//            
-//        case RESULTS : {
-//            return 64.0;
-//        }
-//    }
-//    
-//    // Default value.
-//    return self.tableView.rowHeight;
-//}
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch (indexPath.section) {
+            
+        case SEARCH :
+            break;
+            
+        case RESULTS:
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            break;
+    }
 
-//-(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    // 1. Dequeue the custom header cell
-//    UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:@"aSearchHeader"];
-//    
-//    [headerCell layoutIfNeeded];
-//    
-//    self.searchField = (UITextField *)[headerCell.contentView viewWithTag:100];
-//    self.searchButton = (UIButton *)[headerCell.contentView viewWithTag:200];
-//    // self.searchLabel = (UILabel *)[headerCell.contentView viewWithTag:300];
-//    
-//    //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.text = @"Search";
-//    //        ((UIButton *)[headerCell.contentView viewWithTag:200]).titleLabel.textColor = [UIColor redColor];
-//    //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
-//    //        [((UIButton *)[headerCell.contentView viewWithTag:200]) setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-//    
-//    //!!! Fix UITextField
-//    {
-//        self.searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
-//        self.searchField.clearsOnBeginEditing = NO;
-//        
-//        [self.searchField setDelegate:self];
-//        
-//        [self.searchField addTarget:self
-//                             action:@selector(textFieldDidChange:)
-//                   forControlEvents:UIControlEventEditingChanged];
-//    }
-//    
-//    //!!! Fix UIButton
-//    {
-//        DLog(@"Title %@", self.searchButton.titleLabel.text);
-//        self.searchButton.titleLabel.text= NSLocalizedString(@"SearchButton", @"SearchButton");
-//
-//        //Fixup - Somehow the frame is wrong (width not set).
-//        self.searchButton.titleLabel.frame = CGRectMake(8.0, 0.0, self.searchButton.frame.size.width - 2*8.0, self.searchButton.frame.size.height);
-//        self.searchButton.titleLabel.textColor = [UIColor whiteColor];
-////        [self.searchButton setTitleColor:[UIColor whiteColor]
-////                                forState:UIControlStateNormal];
-//        
-//        [self.searchButton addTarget:self
-//                              action:@selector(searchButtonAction:)
-//                    forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    
-//    return headerCell;
-//}
+}
 
 #pragma mark - UITextFieldDelegate
 
@@ -402,18 +407,11 @@ didReceiveResponse:(NSURLResponse *)response
 {
     NSLog(@"Got HTTP Data");
     
-    //NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    // NSLog(@"Received String %@",str);
-    [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
+    // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
-    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    // NSLog(@"%@", json);
+    [self processData:data];
     
-    self.results = (NSArray *)[json objectForKey:@"games"];
-    
-    [self.table reloadData];
-
-    //Game *game = (Game *)[ARLUtils ManagedObjectFromDictionary:data entityName:@"Game"]; // nameFixups:fixups
+    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -426,9 +424,9 @@ didCompleteWithError:(NSError *)error
     {
         // Update UI Here?
         NSLog(@"Download is Succesfull");
-    }
-    else
+    } else {
         NSLog(@"Error %@",[error userInfo]);
+    }
 }
 
 #pragma mark - Actions
@@ -436,7 +434,16 @@ didCompleteWithError:(NSError *)error
 - (IBAction)searchButtonAction:(id)sender {
     DLog(@"Query: %@", self.query);
     
-    [ARLNetworking sendHTTPPostWithDelegate:self withService:@"myGames/search" withBody:(self.query ? self.query : @"")];
+    NSString *cacheIdentifier = [ARLNetworking generatePostDescription:@"myGames/search" withBody:(self.query ? self.query : @"")];
+    
+    NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+    
+    if (!response) {
+        [ARLNetworking sendHTTPPostWithDelegate:self withService:@"myGames/search" withBody:(self.query ? self.query : @"")];
+    } else {
+        NSLog(@"Using cached query data");
+        [self processData:response];
+    }
 }
 
 @end

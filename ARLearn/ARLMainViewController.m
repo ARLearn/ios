@@ -12,15 +12,15 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 
-@property (weak, nonatomic) IBOutlet UIButton *MyGamesButton;
-@property (weak, nonatomic) IBOutlet UIButton *StoreButton;
-@property (weak, nonatomic) IBOutlet UIButton *QrScanButton;
-@property (weak, nonatomic) IBOutlet UIButton *NearByButton;
+@property (weak, nonatomic) IBOutlet ARLButton *MyGamesButton;
+@property (weak, nonatomic) IBOutlet ARLButton *StoreButton;
+@property (weak, nonatomic) IBOutlet ARLButton *QrScanButton;
+@property (weak, nonatomic) IBOutlet ARLButton *NearByButton;
 
-- (IBAction)MyGamesButtonAction:(UIButton *)sender;
-- (IBAction)StoreButtonAction:(UIButton *)sender;
-- (IBAction)QrScanButtonAction:(UIButton *)sender;
-- (IBAction)NearByButtonAction:(UIButton *)sender;
+- (IBAction)MyGamesButtonAction:(ARLButton *)sender;
+- (IBAction)StoreButtonAction:(ARLButton *)sender;
+- (IBAction)QrScanButtonAction:(ARLButton *)sender;
+- (IBAction)NearByButtonAction:(ARLButton *)sender;
 
 @end
 
@@ -44,8 +44,6 @@
     // Do any additional setup after loading the view.
     
     [self applyConstraints];
-    
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -176,11 +174,11 @@
                                                                         views:viewsDictionary]];
 }
 
-- (IBAction)MyGamesButtonAction:(UIButton *)sender {
+- (IBAction)MyGamesButtonAction:(ARLButton *)sender {
     DLog(@"");
 }
 
-- (IBAction)StoreButtonAction:(UIButton *)sender {
+- (IBAction)StoreButtonAction:(ARLButton *)sender {
     DLog(@"");
 //    
 //    UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"StoreView"];
@@ -192,11 +190,11 @@
 //    }
 }
 
-- (IBAction)QrScanButtonAction:(UIButton *)sender {
+- (IBAction)QrScanButtonAction:(ARLButton *)sender {
     DLog(@"");
 }
 
-- (IBAction)NearByButtonAction:(UIButton *)sender {
+- (IBAction)NearByButtonAction:(ARLButton *)sender {
     DLog(@"");
 }
 

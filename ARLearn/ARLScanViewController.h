@@ -8,6 +8,7 @@
 
 #import "UIViewController+UI.h"
 #import "ARLAppDelegate.h"
+#import "ARLDelayOperation.h"
 
 @protocol AMScanViewControllerDelegate;
 

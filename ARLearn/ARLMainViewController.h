@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import "UIButton+UI.h"
 #import "UIViewController+UI.h"
+#import "ARLButton.h"
 
 @interface ARLMainViewController : UIViewController <UIAlertViewDelegate>
 

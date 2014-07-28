@@ -60,11 +60,14 @@
 		8D719F861981455000BFD9ED /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F851981455000BFD9ED /* MapKit.framework */; };
 		8D7A8D0F197D55BA00B37013 /* ARLScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */; };
 		8D7A8D2A197EA09B00B37013 /* ARLNearbyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A8D29197EA09B00B37013 /* ARLNearbyViewController.m */; };
+		8D87A50B1986427000842BC6 /* ARLDelayOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D87A50A1986427000842BC6 /* ARLDelayOperation.m */; };
+		8D87A51119864A3C00842BC6 /* ARLQueryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D87A51019864A3C00842BC6 /* ARLQueryCache.m */; };
+		8D87A51419868C3900842BC6 /* ARLGameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D87A51319868C3800842BC6 /* ARLGameViewController.m */; };
+		8D87A51819869CD400842BC6 /* ARLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D87A51719869CD400842BC6 /* ARLButton.m */; };
 		8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */; };
 		8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E01974162A001FC6DF /* UIViewController+UI.m */; };
 		8D8B45E219741BD6001FC6DF /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */; };
 		8D8B45E7197517D8001FC6DF /* ARLStoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */; };
-		8D8B45EA19751E72001FC6DF /* UIButton+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E919751E72001FC6DF /* UIButton+UI.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
 		8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */; };
 		8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF231976AAB9007CECB4 /* Inquiry.m */; };
@@ -185,6 +188,14 @@
 		8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLScanViewController.m; sourceTree = "<group>"; };
 		8D7A8D28197EA09B00B37013 /* ARLNearbyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNearbyViewController.h; sourceTree = "<group>"; };
 		8D7A8D29197EA09B00B37013 /* ARLNearbyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNearbyViewController.m; sourceTree = "<group>"; };
+		8D87A5091986427000842BC6 /* ARLDelayOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLDelayOperation.h; sourceTree = "<group>"; };
+		8D87A50A1986427000842BC6 /* ARLDelayOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLDelayOperation.m; sourceTree = "<group>"; };
+		8D87A50F19864A3C00842BC6 /* ARLQueryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLQueryCache.h; sourceTree = "<group>"; };
+		8D87A51019864A3C00842BC6 /* ARLQueryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLQueryCache.m; sourceTree = "<group>"; };
+		8D87A51219868C3800842BC6 /* ARLGameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGameViewController.h; sourceTree = "<group>"; };
+		8D87A51319868C3800842BC6 /* ARLGameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGameViewController.m; sourceTree = "<group>"; };
+		8D87A51619869CD400842BC6 /* ARLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLButton.h; sourceTree = "<group>"; };
+		8D87A51719869CD400842BC6 /* ARLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLButton.m; sourceTree = "<group>"; };
 		8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMainViewController.h; sourceTree = "<group>"; };
 		8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMainViewController.m; sourceTree = "<group>"; };
 		8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+UI.h"; sourceTree = "<group>"; };
@@ -192,8 +203,6 @@
 		8D8B45E319741BD6001FC6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Storyboard.storyboard; sourceTree = "<group>"; };
 		8D8B45E5197517D8001FC6DF /* ARLStoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLStoreViewController.h; sourceTree = "<group>"; };
 		8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLStoreViewController.m; sourceTree = "<group>"; };
-		8D8B45E819751E72001FC6DF /* UIButton+UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+UI.h"; sourceTree = "<group>"; };
-		8D8B45E919751E72001FC6DF /* UIButton+UI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+UI.m"; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItemVisibility.h; path = Models/GeneralItemVisibility.h; sourceTree = "<group>"; };
 		8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItemVisibility.m; path = Models/GeneralItemVisibility.m; sourceTree = "<group>"; };
@@ -280,20 +289,20 @@
 		8D21964A196D26080044616A /* ARLearn */ = {
 			isa = PBXGroup;
 			children = (
+				8D87A51519869CAE00842BC6 /* SubClasses */,
+				8D87A50E198648F600842BC6 /* Extensions */,
+				8D87A50D198648B500842BC6 /* Utils */,
+				8D87A50C198648A500842BC6 /* Operations */,
 				8D219653196D26080044616A /* ARLAppDelegate.h */,
 				8D219654196D26080044616A /* ARLAppDelegate.m */,
 				8D219A1B196D2A2D0044616A /* ARLDatabase.xcdatamodeld */,
 				8D219A2C196D2F160044616A /* ARLDefines.h */,
 				8DEE589619828BFA00C2283F /* ARLGamePin.h */,
 				8DEE589719828BFA00C2283F /* ARLGamePin.m */,
-				8D219A29196D2E8C0044616A /* ARLLog.h */,
-				8D219A2A196D2E8C0044616A /* ARLLog.m */,
 				8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */,
 				8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */,
 				8D7A8D28197EA09B00B37013 /* ARLNearbyViewController.h */,
 				8D7A8D29197EA09B00B37013 /* ARLNearbyViewController.m */,
-				8D55B28E1976759300C0A56B /* ARLNetworking.h */,
-				8D55B28F1976759300C0A56B /* ARLNetworking.m */,
 				8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */,
 				8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */,
 				8D7A8D0D197D55BA00B37013 /* ARLScanViewController.h */,
@@ -302,8 +311,6 @@
 				8D55B2C51976937200C0A56B /* ARLSearchViewController.m */,
 				8D8B45E5197517D8001FC6DF /* ARLStoreViewController.h */,
 				8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */,
-				8D219A26196D2DBD0044616A /* ARLUtils.h */,
-				8D219A27196D2DBD0044616A /* ARLUtils.m */,
 				8D219659196D26080044616A /* ARLViewController.h */,
 				8D21965A196D26080044616A /* ARLViewController.m */,
 				8D4233DF196E900D007410C3 /* en.lproj */,
@@ -313,10 +320,8 @@
 				8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */,
 				8D21964B196D26080044616A /* Supporting Files */,
 				8D219A85196D341F0044616A /* Todo.txt */,
-				8D8B45E819751E72001FC6DF /* UIButton+UI.h */,
-				8D8B45E919751E72001FC6DF /* UIButton+UI.m */,
-				8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */,
-				8D8B45E01974162A001FC6DF /* UIViewController+UI.m */,
+				8D87A51219868C3800842BC6 /* ARLGameViewController.h */,
+				8D87A51319868C3800842BC6 /* ARLGameViewController.m */,
 			);
 			path = ARLearn;
 			sourceTree = "<group>";
@@ -492,6 +497,48 @@
 			path = TPKeyboardAvoiding;
 			sourceTree = "<group>";
 		};
+		8D87A50C198648A500842BC6 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				8D87A5091986427000842BC6 /* ARLDelayOperation.h */,
+				8D87A50A1986427000842BC6 /* ARLDelayOperation.m */,
+			);
+			name = Operations;
+			sourceTree = "<group>";
+		};
+		8D87A50D198648B500842BC6 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8D219A29196D2E8C0044616A /* ARLLog.h */,
+				8D219A2A196D2E8C0044616A /* ARLLog.m */,
+				8D55B28E1976759300C0A56B /* ARLNetworking.h */,
+				8D55B28F1976759300C0A56B /* ARLNetworking.m */,
+				8D219A26196D2DBD0044616A /* ARLUtils.h */,
+				8D219A27196D2DBD0044616A /* ARLUtils.m */,
+				8D87A50F19864A3C00842BC6 /* ARLQueryCache.h */,
+				8D87A51019864A3C00842BC6 /* ARLQueryCache.m */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		8D87A50E198648F600842BC6 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */,
+				8D8B45E01974162A001FC6DF /* UIViewController+UI.m */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		8D87A51519869CAE00842BC6 /* SubClasses */ = {
+			isa = PBXGroup;
+			children = (
+				8D87A51619869CD400842BC6 /* ARLButton.h */,
+				8D87A51719869CD400842BC6 /* ARLButton.m */,
+			);
+			name = SubClasses;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -605,6 +652,7 @@
 				8DDECF3F1976AABA007CECB4 /* Response.m in Sources */,
 				8D7A8D2A197EA09B00B37013 /* ARLNearbyViewController.m in Sources */,
 				8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
+				8D87A50B1986427000842BC6 /* ARLDelayOperation.m in Sources */,
 				8DDECF361976AAB9007CECB4 /* Game.m in Sources */,
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
@@ -613,9 +661,11 @@
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,
 				8DDECF271976AAB9007CECB4 /* SynchronizationBookKeeping.m in Sources */,
 				8D219A7E196D31350044616A /* MagicalRecord+Actions.m in Sources */,
+				8D87A51119864A3C00842BC6 /* ARLQueryCache.m in Sources */,
 				8D55B28B1975633600C0A56B /* TPKeyboardAvoidingScrollView.m in Sources */,
 				8D219A79196D31350044616A /* NSManagedObjectContext+MagicalSaves.m in Sources */,
 				8D219A7D196D31350044616A /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
+				8D87A51419868C3900842BC6 /* ARLGameViewController.m in Sources */,
 				8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */,
 				8D55B28C1975633600C0A56B /* TPKeyboardAvoidingTableView.m in Sources */,
 				8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */,
@@ -628,6 +678,7 @@
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
 				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,
 				8D219A6C196D31350044616A /* NSAttributeDescription+MagicalDataImport.m in Sources */,
+				8D87A51819869CD400842BC6 /* ARLButton.m in Sources */,
 				8D219A76196D31350044616A /* NSManagedObject+MagicalRequests.m in Sources */,
 				8D219A7F196D31350044616A /* MagicalRecord+ErrorHandling.m in Sources */,
 				8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */,
@@ -657,7 +708,6 @@
 				8D219A6B196D31350044616A /* MagicalImportFunctions.m in Sources */,
 				8D219A74196D31350044616A /* NSManagedObject+MagicalFinders.m in Sources */,
 				8D219A6E196D31350044616A /* NSNumber+MagicalDataImport.m in Sources */,
-				8D8B45EA19751E72001FC6DF /* UIButton+UI.m in Sources */,
 				8D219A7C196D31350044616A /* NSPersistentStore+MagicalRecord.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

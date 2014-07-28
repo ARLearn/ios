@@ -381,11 +381,8 @@
     if (![self.scannedLabel.text isEqualToString:aScannedValue]) {
         self.scannedLabel.text = aScannedValue;
         
-        // Setup Glow -> Delay -> NoGlow Block Operation Chain.
-        NSBlockOperation *delay = [NSBlockOperation blockOperationWithBlock:^{
-            [NSThread  sleepForTimeInterval:1.0];
-        }];
-        
+        NSOperation *delay = [[ARLDelayOperation alloc] initWithDelay:1000];
+    
         NSBlockOperation *glow = [NSBlockOperation blockOperationWithBlock:^{
             self.scannedLabel.layer.shadowColor = [[UIColor greenColor] CGColor];
             self.scannedLabel.layer.shadowRadius = 8.0f;

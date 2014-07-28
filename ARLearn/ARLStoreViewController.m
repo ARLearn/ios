@@ -12,15 +12,15 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 
-@property (weak, nonatomic) IBOutlet UIButton *SearchButton;
-@property (weak, nonatomic) IBOutlet UIButton *CategoryButton;
-@property (weak, nonatomic) IBOutlet UIButton *TopGamesButton;
-@property (weak, nonatomic) IBOutlet UIButton *NearByButton;
+@property (weak, nonatomic) IBOutlet ARLButton *SearchButton;
+@property (weak, nonatomic) IBOutlet ARLButton *CategoryButton;
+@property (weak, nonatomic) IBOutlet ARLButton *TopGamesButton;
+@property (weak, nonatomic) IBOutlet ARLButton *NearByButton;
 
-- (IBAction)SearchButtonAction:(UIButton *)sender;
-- (IBAction)CategoryButtonAction:(UIButton *)sender;
-- (IBAction)TopGamesButtonAction:(UIButton *)sender;
-- (IBAction)NearByButtonAction:(UIButton *)sender;
+- (IBAction)SearchButtonAction:(ARLButton *)sender;
+- (IBAction)CategoryButtonAction:(ARLButton *)sender;
+- (IBAction)TopGamesButtonAction:(ARLButton *)sender;
+- (IBAction)NearByButtonAction:(ARLButton *)sender;
 
 @end
 
@@ -185,11 +185,11 @@
 
 #pragma mark - Actions
 
-- (IBAction)SearchButtonAction:(UIButton *)sender {
+- (IBAction)SearchButtonAction:(ARLButton *)sender {
     DLog(@"");
 }
 
-- (IBAction)CategoryButtonAction:(UIButton *)sender {
+- (IBAction)CategoryButtonAction:(ARLButton *)sender {
     DLog(@"");
 //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
 //                                                    message:@"Message:"
@@ -200,11 +200,11 @@
 //    [alert show];
 }
 
-- (IBAction)TopGamesButtonAction:(UIButton *)sender {
+- (IBAction)TopGamesButtonAction:(ARLButton *)sender {
     DLog(@"");
 }
 
-- (IBAction)NearByButtonAction:(UIButton *)sender {
+- (IBAction)NearByButtonAction:(ARLButton *)sender {
     DLog(@"");
 }
 

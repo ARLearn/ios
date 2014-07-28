@@ -10,6 +10,7 @@
 
 #import "ARLUtils.h"
 #import "ARLNotificationSubscriber.h"
+#import "ARLQueryCache.h"
 
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
 
@@ -23,5 +24,7 @@
 +(NSOperationQueue *) theOQ;
 
 +(CLLocationCoordinate2D) CurrentLocation;
+
++(ARLQueryCache *) theQueryCache;
 
 @end

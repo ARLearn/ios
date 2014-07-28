@@ -16,7 +16,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="WTo-eZ-5DS">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="WTo-eZ-5DS" customClass="ARLButton">
                                 <rect key="frame" x="180" y="20" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -29,7 +29,7 @@
                                     <segue destination="Gcw-Ml-KzB" kind="push" id="HdW-kC-OOR"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="UYf-Zq-sZ6">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="UYf-Zq-sZ6" customClass="ARLButton">
                                 <rect key="frame" x="20" y="20" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.12941176470588234" green="0.49411764705882355" blue="0.72941176470588232" alpha="1" colorSpace="calibratedRGB"/>
@@ -41,7 +41,7 @@
                                     <action selector="MyGamesButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="J8k-OS-BnQ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Jei-fB-2SK">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Jei-fB-2SK" customClass="ARLButton">
                                 <rect key="frame" x="20" y="148" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.16470588235294117" green="0.81176470588235294" blue="0.68235294117647061" alpha="1" colorSpace="calibratedRGB"/>
@@ -54,7 +54,7 @@
                                     <segue destination="0ly-fY-awO" kind="push" id="cdk-XR-bAJ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="g6q-fE-yQI">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="g6q-fE-yQI" customClass="ARLButton">
                                 <rect key="frame" x="180" y="148" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.20784313730000001" green="0.29411764709999999" blue="0.3803921569" alpha="1" colorSpace="calibratedRGB"/>
@@ -207,7 +207,7 @@
             </objects>
             <point key="canvasLocation" x="247" y="482"/>
         </scene>
-        <!--Search View Controller-->
+        <!--Search View Controller - Search-->
         <scene sceneID="Imu-96-6mB">
             <objects>
                 <tableViewController id="dR1-rg-ZyL" customClass="ARLSearchViewController" sceneMemberID="viewController">
@@ -216,11 +216,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell opaque="NO" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="aSearchHeader" rowHeight="48" id="y0k-z9-vAv">
-                                <rect key="frame" x="0.0" y="55" width="320" height="48"/>
+                            <tableViewCell opaque="NO" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="aSearchHeader" rowHeight="47" id="y0k-z9-vAv">
+                                <rect key="frame" x="0.0" y="55" width="320" height="47"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" contentMode="center" tableViewCell="y0k-z9-vAv" id="DMr-Q3-iG2">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="47"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="46"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <textField opaque="NO" clipsSubviews="YES" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="type your query here" minimumFontSize="17" id="QtL-e5-3mF">
@@ -243,25 +243,25 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="aSearchResult" textLabel="oVL-yv-E6G" detailTextLabel="aMN-BJ-dDK" style="IBUITableViewCellStyleSubtitle" id="PXP-NU-0qm">
-                                <rect key="frame" x="0.0" y="103" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="aSearchResults" textLabel="oVL-yv-E6G" detailTextLabel="aMN-BJ-dDK" rowHeight="44" style="IBUITableViewCellStyleValue1" id="PXP-NU-0qm">
+                                <rect key="frame" x="0.0" y="102" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PXP-NU-0qm" id="CzA-2d-E4i">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="273" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="oVL-yv-E6G">
-                                            <rect key="frame" x="15" y="3" width="34" height="22"/>
+                                            <rect key="frame" x="15" y="11" width="33" height="21"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aMN-BJ-dDK">
-                                            <rect key="frame" x="15" y="25" width="43" height="15"/>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aMN-BJ-dDK">
+                                            <rect key="frame" x="214" y="11" width="59" height="21"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -273,7 +273,7 @@
                             <outlet property="delegate" destination="dR1-rg-ZyL" id="IPJ-lu-Ksy"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="XDl-kA-QYf"/>
+                    <navigationItem key="navigationItem" title="Search" id="XDl-kA-QYf"/>
                     <connections>
                         <outlet property="table" destination="PM4-T6-Jcm" id="skd-u3-V9B"/>
                     </connections>
@@ -281,6 +281,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Vv-EK-g9z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="805" y="-268"/>
+        </scene>
+        <!--Game View Controller - Game-->
+        <scene sceneID="jhz-uY-Hl7">
+            <objects>
+                <viewController storyboardIdentifier="GameView" title="Game" id="6kR-8g-QYw" customClass="ARLGameViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="QAB-wZ-zsW">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Pcj-Wk-z6i" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1184" y="-268"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="nHp-Dd-2I6">
@@ -314,7 +329,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="43E-ef-7sk">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="43E-ef-7sk" customClass="ARLButton">
                                 <rect key="frame" x="20" y="20" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -327,7 +342,7 @@
                                     <segue destination="dR1-rg-ZyL" kind="push" id="Tul-Ml-k22"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Btb-fg-Lya">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Btb-fg-Lya" customClass="ARLButton">
                                 <rect key="frame" x="180" y="20" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -339,7 +354,7 @@
                                     <action selector="CategoryButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="2pt-jj-L0i"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="PsA-Mn-0Cp">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="PsA-Mn-0Cp" customClass="ARLButton">
                                 <rect key="frame" x="20" y="148" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -351,7 +366,7 @@
                                     <action selector="TopGamesButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="1LA-HP-PX1"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="HG4-3w-dcd">
+                            <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="HG4-3w-dcd" customClass="ARLButton">
                                 <rect key="frame" x="180" y="148" width="120" height="120"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.94509803920000002" green="0.3294117647" blue="0.23921568630000001" alpha="1" colorSpace="calibratedRGB"/>

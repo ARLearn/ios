@@ -27,4 +27,5 @@
 
     #define TILE                1234
 
+    #define CACHINGTIME         60.0
 #endif
