@@ -52,6 +52,7 @@
     [self.MyGamesButton makeButtonWithImage:@"MyGames"
                                       title:NSLocalizedString(@"MyGames", @"MyGames")
                                  titleColor:[UIColor whiteColor]];
+    
     [self.StoreButton makeButtonWithImage:@"Store"
                                     title:NSLocalizedString(@"Store", @"Store")
                                titleColor:[UIColor whiteColor]];

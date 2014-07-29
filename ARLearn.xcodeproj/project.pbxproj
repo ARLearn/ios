@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8D21964F196D26080044616A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D21964D196D26080044616A /* InfoPlist.strings */; };
 		8D219651196D26080044616A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219650196D26080044616A /* main.m */; };
 		8D219655196D26080044616A /* ARLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219654196D26080044616A /* ARLAppDelegate.m */; };
 		8D21965B196D26080044616A /* ARLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21965A196D26080044616A /* ARLViewController.m */; };
@@ -66,8 +65,9 @@
 		8D87A51819869CD400842BC6 /* ARLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D87A51719869CD400842BC6 /* ARLButton.m */; };
 		8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */; };
 		8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E01974162A001FC6DF /* UIViewController+UI.m */; };
-		8D8B45E219741BD6001FC6DF /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */; };
 		8D8B45E7197517D8001FC6DF /* ARLStoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */; };
+		8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DC418AA19878AF300054466 /* Storyboard.storyboard */; };
+		8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC418AD19878F8000054466 /* QuartzCore.framework */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
 		8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */; };
 		8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF231976AAB9007CECB4 /* Inquiry.m */; };
@@ -88,7 +88,6 @@
 /* Begin PBXFileReference section */
 		8D219641196D26080044616A /* ARLearn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLearn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D21964C196D26080044616A /* ARLearn-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ARLearn-Info.plist"; sourceTree = "<group>"; };
-		8D21964E196D26080044616A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8D219650196D26080044616A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8D219652196D26080044616A /* ARLearn-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARLearn-Prefix.pch"; sourceTree = "<group>"; };
 		8D219653196D26080044616A /* ARLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARLAppDelegate.h; sourceTree = "<group>"; };
@@ -200,36 +199,37 @@
 		8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMainViewController.m; sourceTree = "<group>"; };
 		8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+UI.h"; sourceTree = "<group>"; };
 		8D8B45E01974162A001FC6DF /* UIViewController+UI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+UI.m"; sourceTree = "<group>"; };
-		8D8B45E319741BD6001FC6DF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Storyboard.storyboard; sourceTree = "<group>"; };
 		8D8B45E5197517D8001FC6DF /* ARLStoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLStoreViewController.h; sourceTree = "<group>"; };
 		8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLStoreViewController.m; sourceTree = "<group>"; };
+		8DC418AB19878AF300054466 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		8DC418AD19878F8000054466 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
-		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItemVisibility.h; path = Models/GeneralItemVisibility.h; sourceTree = "<group>"; };
-		8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItemVisibility.m; path = Models/GeneralItemVisibility.m; sourceTree = "<group>"; };
-		8DDECF221976AAB9007CECB4 /* Inquiry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Inquiry.h; path = Models/Inquiry.h; sourceTree = "<group>"; };
-		8DDECF231976AAB9007CECB4 /* Inquiry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Inquiry.m; path = Models/Inquiry.m; sourceTree = "<group>"; };
-		8DDECF251976AAB9007CECB4 /* SynchronizationBookKeeping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SynchronizationBookKeeping.h; path = Models/SynchronizationBookKeeping.h; sourceTree = "<group>"; };
-		8DDECF261976AAB9007CECB4 /* SynchronizationBookKeeping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SynchronizationBookKeeping.m; path = Models/SynchronizationBookKeeping.m; sourceTree = "<group>"; };
-		8DDECF281976AAB9007CECB4 /* Action.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Action.h; path = Models/Action.h; sourceTree = "<group>"; };
-		8DDECF291976AAB9007CECB4 /* Action.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Action.m; path = Models/Action.m; sourceTree = "<group>"; };
-		8DDECF2B1976AAB9007CECB4 /* GeneralItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItemData.h; path = Models/GeneralItemData.h; sourceTree = "<group>"; };
-		8DDECF2C1976AAB9007CECB4 /* GeneralItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItemData.m; path = Models/GeneralItemData.m; sourceTree = "<group>"; };
-		8DDECF2E1976AAB9007CECB4 /* TestAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestAccount.h; path = Models/TestAccount.h; sourceTree = "<group>"; };
-		8DDECF2F1976AAB9007CECB4 /* TestAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestAccount.m; path = Models/TestAccount.m; sourceTree = "<group>"; };
-		8DDECF311976AAB9007CECB4 /* CurrentItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurrentItemVisibility.h; path = Models/CurrentItemVisibility.h; sourceTree = "<group>"; };
-		8DDECF321976AAB9007CECB4 /* CurrentItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CurrentItemVisibility.m; path = Models/CurrentItemVisibility.m; sourceTree = "<group>"; };
-		8DDECF341976AAB9007CECB4 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = Models/Game.h; sourceTree = "<group>"; };
-		8DDECF351976AAB9007CECB4 /* Game.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Game.m; path = Models/Game.m; sourceTree = "<group>"; };
-		8DDECF371976AAB9007CECB4 /* Run.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Run.h; path = Models/Run.h; sourceTree = "<group>"; };
-		8DDECF381976AAB9007CECB4 /* Run.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Run.m; path = Models/Run.m; sourceTree = "<group>"; };
-		8DDECF3A1976AABA007CECB4 /* GeneralItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralItem.h; path = Models/GeneralItem.h; sourceTree = "<group>"; };
-		8DDECF3B1976AABA007CECB4 /* GeneralItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralItem.m; path = Models/GeneralItem.m; sourceTree = "<group>"; };
-		8DDECF3D1976AABA007CECB4 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Response.h; path = Models/Response.h; sourceTree = "<group>"; };
-		8DDECF3E1976AABA007CECB4 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Response.m; path = Models/Response.m; sourceTree = "<group>"; };
-		8DDECF401976AABA007CECB4 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Message.h; path = Models/Message.h; sourceTree = "<group>"; };
-		8DDECF411976AABA007CECB4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Message.m; path = Models/Message.m; sourceTree = "<group>"; };
-		8DDECF431976AABA007CECB4 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Account.h; path = Models/Account.h; sourceTree = "<group>"; };
-		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Account.m; path = Models/Account.m; sourceTree = "<group>"; };
+		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItemVisibility.h; sourceTree = "<group>"; };
+		8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralItemVisibility.m; sourceTree = "<group>"; };
+		8DDECF221976AAB9007CECB4 /* Inquiry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Inquiry.h; sourceTree = "<group>"; };
+		8DDECF231976AAB9007CECB4 /* Inquiry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Inquiry.m; sourceTree = "<group>"; };
+		8DDECF251976AAB9007CECB4 /* SynchronizationBookKeeping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronizationBookKeeping.h; sourceTree = "<group>"; };
+		8DDECF261976AAB9007CECB4 /* SynchronizationBookKeeping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SynchronizationBookKeeping.m; sourceTree = "<group>"; };
+		8DDECF281976AAB9007CECB4 /* Action.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Action.h; sourceTree = "<group>"; };
+		8DDECF291976AAB9007CECB4 /* Action.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Action.m; sourceTree = "<group>"; };
+		8DDECF2B1976AAB9007CECB4 /* GeneralItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItemData.h; sourceTree = "<group>"; };
+		8DDECF2C1976AAB9007CECB4 /* GeneralItemData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralItemData.m; sourceTree = "<group>"; };
+		8DDECF2E1976AAB9007CECB4 /* TestAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAccount.h; sourceTree = "<group>"; };
+		8DDECF2F1976AAB9007CECB4 /* TestAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAccount.m; sourceTree = "<group>"; };
+		8DDECF311976AAB9007CECB4 /* CurrentItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CurrentItemVisibility.h; sourceTree = "<group>"; };
+		8DDECF321976AAB9007CECB4 /* CurrentItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CurrentItemVisibility.m; sourceTree = "<group>"; };
+		8DDECF341976AAB9007CECB4 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		8DDECF351976AAB9007CECB4 /* Game.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Game.m; sourceTree = "<group>"; };
+		8DDECF371976AAB9007CECB4 /* Run.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Run.h; sourceTree = "<group>"; };
+		8DDECF381976AAB9007CECB4 /* Run.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Run.m; sourceTree = "<group>"; };
+		8DDECF3A1976AABA007CECB4 /* GeneralItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItem.h; sourceTree = "<group>"; };
+		8DDECF3B1976AABA007CECB4 /* GeneralItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralItem.m; sourceTree = "<group>"; };
+		8DDECF3D1976AABA007CECB4 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
+		8DDECF3E1976AABA007CECB4 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
+		8DDECF401976AABA007CECB4 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		8DDECF411976AABA007CECB4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		8DDECF431976AABA007CECB4 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Account.h; sourceTree = "<group>"; };
+		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Account.m; sourceTree = "<group>"; };
 		8DEE589619828BFA00C2283F /* ARLGamePin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGamePin.h; sourceTree = "<group>"; };
 		8DEE589719828BFA00C2283F /* ARLGamePin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGamePin.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -239,12 +239,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D719F861981455000BFD9ED /* MapKit.framework in Frameworks */,
-				8D719F841981428B00BFD9ED /* CoreGraphics.framework in Frameworks */,
 				8D719F7619813D9000BFD9ED /* AVFoundation.framework in Frameworks */,
+				8D719F841981428B00BFD9ED /* CoreGraphics.framework in Frameworks */,
 				8D719F7E19813DB700BFD9ED /* CoreData.framework in Frameworks */,
 				8D719F7819813D9700BFD9ED /* CoreLocation.framework in Frameworks */,
 				8D719F7C19813DAE00BFD9ED /* Foundation.framework in Frameworks */,
+				8D719F861981455000BFD9ED /* MapKit.framework in Frameworks */,
+				8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */,
 				8D719F7A19813DA000BFD9ED /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,6 +276,7 @@
 		8D219643196D26080044616A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8DC418AD19878F8000054466 /* QuartzCore.framework */,
 				8D719F851981455000BFD9ED /* MapKit.framework */,
 				8D719F831981428B00BFD9ED /* CoreGraphics.framework */,
 				8D719F7519813D9000BFD9ED /* AVFoundation.framework */,
@@ -317,7 +319,6 @@
 				8D21965C196D26080044616A /* Images.xcassets */,
 				8D219A22196D2AB30044616A /* Models */,
 				8D219A87196D3AC10044616A /* PrivateData.h */,
-				8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */,
 				8D21964B196D26080044616A /* Supporting Files */,
 				8D219A85196D341F0044616A /* Todo.txt */,
 				8D87A51219868C3800842BC6 /* ARLGameViewController.h */,
@@ -329,12 +330,12 @@
 		8D21964B196D26080044616A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8DC418A919878AF300054466 /* en.lproj */,
 				8D21964C196D26080044616A /* ARLearn-Info.plist */,
-				8D21964D196D26080044616A /* InfoPlist.strings */,
 				8D219650196D26080044616A /* main.m */,
 				8D219652196D26080044616A /* ARLearn-Prefix.pch */,
 			);
-			name = "Supporting Files";
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		8D219A22196D2AB30044616A /* Models */ = {
@@ -367,7 +368,7 @@
 				8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */,
 				8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */,
 			);
-			name = Models;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		8D219A2D196D31350044616A /* MagicalRecord */ = {
@@ -503,7 +504,7 @@
 				8D87A5091986427000842BC6 /* ARLDelayOperation.h */,
 				8D87A50A1986427000842BC6 /* ARLDelayOperation.m */,
 			);
-			name = Operations;
+			path = Operations;
 			sourceTree = "<group>";
 		};
 		8D87A50D198648B500842BC6 /* Utils */ = {
@@ -518,7 +519,7 @@
 				8D87A50F19864A3C00842BC6 /* ARLQueryCache.h */,
 				8D87A51019864A3C00842BC6 /* ARLQueryCache.m */,
 			);
-			name = Utils;
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		8D87A50E198648F600842BC6 /* Extensions */ = {
@@ -527,7 +528,7 @@
 				8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */,
 				8D8B45E01974162A001FC6DF /* UIViewController+UI.m */,
 			);
-			name = Extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		8D87A51519869CAE00842BC6 /* SubClasses */ = {
@@ -536,7 +537,15 @@
 				8D87A51619869CD400842BC6 /* ARLButton.h */,
 				8D87A51719869CD400842BC6 /* ARLButton.m */,
 			);
-			name = SubClasses;
+			path = SubClasses;
+			sourceTree = "<group>";
+		};
+		8DC418A919878AF300054466 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				8DC418AA19878AF300054466 /* Storyboard.storyboard */,
+			);
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -601,10 +610,9 @@
 			files = (
 				8D219A86196D341F0044616A /* Todo.txt in Resources */,
 				8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */,
-				8D8B45E219741BD6001FC6DF /* Storyboard.storyboard in Resources */,
 				8D4233E5196E900D007410C3 /* Localizable.strings in Resources */,
 				8D21965D196D26080044616A /* Images.xcassets in Resources */,
-				8D21964F196D26080044616A /* InfoPlist.strings in Resources */,
+				8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */,
 				8DC69664196D500E00FA1505 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -624,7 +632,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\n# See https://gist.github.com/karlvr/c93a98d7000ecb163895\n#\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\n#enable debug output.\nset -x\n\necho set Root.plist version info.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not installed.  Aborting build number update script.\"; exit 0; }\n\n# Alternatively, we could use Xcode's copy of the Git binary,\n# but old Xcodes don't have this.\n#GIT=$(xcrun -find git)\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this build setting [TARGET_BUILD_DIR]. But Run Script build phases that operate on product files of other targets should use “BUILT_PRODUCTS_DIR” instead.\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n#veg 1) Get project's base version number\nPLIST_PATH=$(find . -type f -iname ${TARGETNAME}-Info.plist -d 2)\nPROJECT_TAG=$(/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" $PLIST_PATH)\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\n\n#veg 1) Added project's base version number if tags are missing.\n\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]\nthen COMMIT_COUNT=$(git rev-list --count HEAD)\nLATEST_TAG=\"$PROJECT_TAG.$COMMIT_COUNT\"\nCOMMIT_COUNT_SINCE_TAG=0\nelse\nCOMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..)\nLATEST_TAG=${LATEST_TAG##v} # Remove the \"v\" from the front of the tag\n    fi\n    if [ $COMMIT_COUNT_SINCE_TAG = 0 ]; then\n    SHORT_VERSION=\"$LATEST_TAG\"\n    else\n    # increment final digit of tag and append \"d\" + commit-count-since-tag\n    # e.g. commit after 1.0 is 1.1d1, commit after 1.0.0 is 1.0.1d1\n    # this is the bit that requires /bin/bash\n    OLD_IFS=$IFS\n    IFS=\".\"\n    VERSION_PARTS=($LATEST_TAG)\n    LAST_PART=$((${#VERSION_PARTS[@]}-1))\n        VERSION_PARTS[$LAST_PART]=$((${VERSION_PARTS[${LAST_PART}]}+1))\n        SHORT_VERSION=\"${VERSION_PARTS[*]}d${COMMIT_COUNT_SINCE_TAG}\"\n        IFS=$OLD_IFS\n        fi\n        \n        # Bundle version (commits-on-master[-until-branch \".\" commits-on-branch])\n        # Assumes that two release branches will not diverge from the same commit on master.\n        if [ $(git rev-parse --abbrev-ref HEAD) = \"master\" ]; then\n        MASTER_COMMIT_COUNT=$(git rev-list --count HEAD)\n        BRANCH_COMMIT_COUNT=0\n        BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else\n        MASTER_COMMIT_COUNT=$(git rev-list --count $(git rev-list master.. | tail -n 1)^)\n        BRANCH_COMMIT_COUNT=$(git rev-list --count master..)\n        if [ $BRANCH_COMMIT_COUNT = 0 ]\n        then BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else BUNDLE_VERSION=\"${MASTER_COMMIT_COUNT}.${BRANCH_COMMIT_COUNT}\"\n        fi\n        fi\n        \n        # For debugging:\n        echo \"BUILD VERSION: $BUILD_VERSION\"\n        echo \"LATEST_TAG: $LATEST_TAG\"\n        echo \"COMMIT_COUNT_SINCE_TAG: $COMMIT_COUNT_SINCE_TAG\"\n        echo \"SHORT VERSION: $SHORT_VERSION\"\n        echo \"MASTER_COMMIT_COUNT: $MASTER_COMMIT_COUNT\"\n        echo \"BRANCH_COMMIT_COUNT: $BRANCH_COMMIT_COUNT\"\n        echo \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n        \n        #/usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n        #/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n        #/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"\n        \n        #veg hardcoded indexes.\n        # /usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:1:DefaultValue $SHORT_VERSION\" Settings.bundle/Root.plist\n        #/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:2:DefaultValue $BUILD_VERSION\" Settings.bundle/Root.plist\n        echo \"$SOURCE_ROOT/Settings.bundle/Root.plist\"\n        /usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:1:DefaultValue $SHORT_VERSION\" \"$SOURCE_ROOT/Settings.bundle/Root.plist\"\n        /usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:2:DefaultValue $BUILD_VERSION\" \"$SOURCE_ROOT/Settings.bundle/Root.plist\"\n        \n        touch \"$SOURCE_ROOT/Settings.bundle\"";
+			shellScript = "#!/bin/bash\n\n# See https://gist.github.com/karlvr/c93a98d7000ecb163895\n#\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\n#enable debug output.\nset -x\n\necho set Root.plist version info.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not installed.  Aborting build number update script.\"; exit 0; }\n\n# Alternatively, we could use Xcode's copy of the Git binary,\n# but old Xcodes don't have this.\n#GIT=$(xcrun -find git)\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this build setting [TARGET_BUILD_DIR]. But Run Script build phases that operate on product files of other targets should use “BUILT_PRODUCTS_DIR” instead.\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n#veg 1) Get project's base version number\nPLIST_PATH=$(find . -type f -iname ${TARGETNAME}-Info.plist -d 4)\nPROJECT_TAG=$(/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" $PLIST_PATH)\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\n\n#veg 1) Added project's base version number if tags are missing.\n\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]\nthen COMMIT_COUNT=$(git rev-list --count HEAD)\nLATEST_TAG=\"$PROJECT_TAG.$COMMIT_COUNT\"\nCOMMIT_COUNT_SINCE_TAG=0\nelse\nCOMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..)\nLATEST_TAG=${LATEST_TAG##v} # Remove the \"v\" from the front of the tag\n    fi\n    if [ $COMMIT_COUNT_SINCE_TAG = 0 ]; then\n    SHORT_VERSION=\"$LATEST_TAG\"\n    else\n    # increment final digit of tag and append \"d\" + commit-count-since-tag\n    # e.g. commit after 1.0 is 1.1d1, commit after 1.0.0 is 1.0.1d1\n    # this is the bit that requires /bin/bash\n    OLD_IFS=$IFS\n    IFS=\".\"\n    VERSION_PARTS=($LATEST_TAG)\n    LAST_PART=$((${#VERSION_PARTS[@]}-1))\n        VERSION_PARTS[$LAST_PART]=$((${VERSION_PARTS[${LAST_PART}]}+1))\n        SHORT_VERSION=\"${VERSION_PARTS[*]}d${COMMIT_COUNT_SINCE_TAG}\"\n        IFS=$OLD_IFS\n        fi\n        \n        # Bundle version (commits-on-master[-until-branch \".\" commits-on-branch])\n        # Assumes that two release branches will not diverge from the same commit on master.\n        if [ $(git rev-parse --abbrev-ref HEAD) = \"master\" ]; then\n        MASTER_COMMIT_COUNT=$(git rev-list --count HEAD)\n        BRANCH_COMMIT_COUNT=0\n        BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else\n        MASTER_COMMIT_COUNT=$(git rev-list --count $(git rev-list master.. | tail -n 1)^)\n        BRANCH_COMMIT_COUNT=$(git rev-list --count master..)\n        if [ $BRANCH_COMMIT_COUNT = 0 ]\n        then BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else BUNDLE_VERSION=\"${MASTER_COMMIT_COUNT}.${BRANCH_COMMIT_COUNT}\"\n        fi\n        fi\n        \n        # For debugging:\n        echo \"BUILD VERSION: $BUILD_VERSION\"\n        echo \"LATEST_TAG: $LATEST_TAG\"\n        echo \"COMMIT_COUNT_SINCE_TAG: $COMMIT_COUNT_SINCE_TAG\"\n        echo \"SHORT VERSION: $SHORT_VERSION\"\n        echo \"MASTER_COMMIT_COUNT: $MASTER_COMMIT_COUNT\"\n        echo \"BRANCH_COMMIT_COUNT: $BRANCH_COMMIT_COUNT\"\n        echo \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n        \n        #/usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n        #/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n        #/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"\n        \n        #veg hardcoded indexes.\n        # /usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:1:DefaultValue $SHORT_VERSION\" Settings.bundle/Root.plist\n        #/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:2:DefaultValue $BUILD_VERSION\" Settings.bundle/Root.plist\n        echo \"$SOURCE_ROOT/Settings.bundle/Root.plist\"\n        /usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:1:DefaultValue $SHORT_VERSION\" \"$SOURCE_ROOT/Settings.bundle/Root.plist\"\n        /usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:2:DefaultValue $BUILD_VERSION\" \"$SOURCE_ROOT/Settings.bundle/Root.plist\"\n        \n        touch \"$SOURCE_ROOT/Settings.bundle\"";
 		};
 		8D3506F0196D46750060E808 /* Run Script (update App's info.plist version info) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -638,7 +646,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\n# See https://gist.github.com/karlvr/c93a98d7000ecb163895\n#\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\n#enable debug output.\nset -x\n\necho update App's info.plist version info.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not installed.  Aborting build number update script.\"; exit 0; }\n\n# Alternatively, we could use Xcode's copy of the Git binary,\n# but old Xcodes don't have this.\n#GIT=$(xcrun -find git)\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this build setting [TARGET_BUILD_DIR]. But Run Script build phases that operate on product files of other targets should use “BUILT_PRODUCTS_DIR” instead.\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n#veg 1) Get project's base version number\nPLIST_PATH=$(find . -type f -iname ${TARGETNAME}-Info.plist -d 2)\nPROJECT_TAG=$(/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" $PLIST_PATH)\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\n\n#veg 1) Added project's base version number if tags are missing.\n\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]\nthen COMMIT_COUNT=$(git rev-list --count HEAD)\nLATEST_TAG=\"$PROJECT_TAG.$COMMIT_COUNT\"\nCOMMIT_COUNT_SINCE_TAG=0\nelse\nCOMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..)\nLATEST_TAG=${LATEST_TAG##v} # Remove the \"v\" from the front of the tag\n    fi\n    if [ $COMMIT_COUNT_SINCE_TAG = 0 ]; then\n    SHORT_VERSION=\"$LATEST_TAG\"\n    else\n    # increment final digit of tag and append \"d\" + commit-count-since-tag\n    # e.g. commit after 1.0 is 1.1d1, commit after 1.0.0 is 1.0.1d1\n    # this is the bit that requires /bin/bash\n    OLD_IFS=$IFS\n    IFS=\".\"\n    VERSION_PARTS=($LATEST_TAG)\n    LAST_PART=$((${#VERSION_PARTS[@]}-1))\n        VERSION_PARTS[$LAST_PART]=$((${VERSION_PARTS[${LAST_PART}]}+1))\n        SHORT_VERSION=\"${VERSION_PARTS[*]}d${COMMIT_COUNT_SINCE_TAG}\"\n        IFS=$OLD_IFS\n        fi\n        \n        # Bundle version (commits-on-master[-until-branch \".\" commits-on-branch])\n        # Assumes that two release branches will not diverge from the same commit on master.\n        if [ $(git rev-parse --abbrev-ref HEAD) = \"master\" ]; then\n        MASTER_COMMIT_COUNT=$(git rev-list --count HEAD)\n        BRANCH_COMMIT_COUNT=0\n        BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else\n        MASTER_COMMIT_COUNT=$(git rev-list --count $(git rev-list master.. | tail -n 1)^)\n        BRANCH_COMMIT_COUNT=$(git rev-list --count master..)\n        if [ $BRANCH_COMMIT_COUNT = 0 ]\n        then BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else BUNDLE_VERSION=\"${MASTER_COMMIT_COUNT}.${BRANCH_COMMIT_COUNT}\"\n        fi\n        fi\n        \n        # For debugging:\n        echo \"BUILD VERSION: $BUILD_VERSION\"\n        echo \"LATEST_TAG: $LATEST_TAG\"\n        echo \"COMMIT_COUNT_SINCE_TAG: $COMMIT_COUNT_SINCE_TAG\"\n        echo \"SHORT VERSION: $SHORT_VERSION\"\n        echo \"MASTER_COMMIT_COUNT: $MASTER_COMMIT_COUNT\"\n        echo \"BRANCH_COMMIT_COUNT: $BRANCH_COMMIT_COUNT\"\n        echo \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n        \n        echo \"$INFO_PLIST\"\n        \n        /usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n        /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n        /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"";
+			shellScript = "#!/bin/bash\n\n# See https://gist.github.com/karlvr/c93a98d7000ecb163895\n#\n# This script automatically sets the version and short version string of\n# an Xcode project from the Git repository containing the project.\n#\n# To use this script in Xcode, add the script's path to a \"Run Script\" build\n# phase for your application target.\n\n#enable debug output.\nset -x\n\necho update App's info.plist version info.\n\nset -o errexit\nset -o nounset\n\n# First, check for git in $PATH\nhash git 2>/dev/null || { echo >&2 \"Git required, not installed.  Aborting build number update script.\"; exit 0; }\n\n# Alternatively, we could use Xcode's copy of the Git binary,\n# but old Xcodes don't have this.\n#GIT=$(xcrun -find git)\n\n# Run Script build phases that operate on product files of the target that defines them should use the value of this build setting [TARGET_BUILD_DIR]. But Run Script build phases that operate on product files of other targets should use “BUILT_PRODUCTS_DIR” instead.\nINFO_PLIST=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n\n#veg 1) Get project's base version number\nPLIST_PATH=$(find . -type f -iname ${TARGETNAME}-Info.plist -d 4)\nPROJECT_TAG=$(/usr/libexec/PlistBuddy -c \"Print :CFBundleVersion\" $PLIST_PATH)\n\n# Build version (closest-tag-or-branch \"-\" commits-since-tag \"-\" short-hash dirty-flag)\nBUILD_VERSION=$(git describe --tags --always --dirty=+)\n\n# Use the latest tag for short version (expected tag format \"vn[.n[.n]]\")\n# or if there are no tags, we make up version 0.0.<commit count>\n\n#veg 1) Added project's base version number if tags are missing.\n\nLATEST_TAG=$(git describe --tags --match 'v*' --abbrev=0 2>/dev/null) || LATEST_TAG=\"HEAD\"\nif [ $LATEST_TAG = \"HEAD\" ]\nthen COMMIT_COUNT=$(git rev-list --count HEAD)\nLATEST_TAG=\"$PROJECT_TAG.$COMMIT_COUNT\"\nCOMMIT_COUNT_SINCE_TAG=0\nelse\nCOMMIT_COUNT_SINCE_TAG=$(git rev-list --count ${LATEST_TAG}..)\nLATEST_TAG=${LATEST_TAG##v} # Remove the \"v\" from the front of the tag\n    fi\n    if [ $COMMIT_COUNT_SINCE_TAG = 0 ]; then\n    SHORT_VERSION=\"$LATEST_TAG\"\n    else\n    # increment final digit of tag and append \"d\" + commit-count-since-tag\n    # e.g. commit after 1.0 is 1.1d1, commit after 1.0.0 is 1.0.1d1\n    # this is the bit that requires /bin/bash\n    OLD_IFS=$IFS\n    IFS=\".\"\n    VERSION_PARTS=($LATEST_TAG)\n    LAST_PART=$((${#VERSION_PARTS[@]}-1))\n        VERSION_PARTS[$LAST_PART]=$((${VERSION_PARTS[${LAST_PART}]}+1))\n        SHORT_VERSION=\"${VERSION_PARTS[*]}d${COMMIT_COUNT_SINCE_TAG}\"\n        IFS=$OLD_IFS\n        fi\n        \n        # Bundle version (commits-on-master[-until-branch \".\" commits-on-branch])\n        # Assumes that two release branches will not diverge from the same commit on master.\n        if [ $(git rev-parse --abbrev-ref HEAD) = \"master\" ]; then\n        MASTER_COMMIT_COUNT=$(git rev-list --count HEAD)\n        BRANCH_COMMIT_COUNT=0\n        BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else\n        MASTER_COMMIT_COUNT=$(git rev-list --count $(git rev-list master.. | tail -n 1)^)\n        BRANCH_COMMIT_COUNT=$(git rev-list --count master..)\n        if [ $BRANCH_COMMIT_COUNT = 0 ]\n        then BUNDLE_VERSION=\"$MASTER_COMMIT_COUNT\"\n        else BUNDLE_VERSION=\"${MASTER_COMMIT_COUNT}.${BRANCH_COMMIT_COUNT}\"\n        fi\n        fi\n        \n        # For debugging:\n        echo \"BUILD VERSION: $BUILD_VERSION\"\n        echo \"LATEST_TAG: $LATEST_TAG\"\n        echo \"COMMIT_COUNT_SINCE_TAG: $COMMIT_COUNT_SINCE_TAG\"\n        echo \"SHORT VERSION: $SHORT_VERSION\"\n        echo \"MASTER_COMMIT_COUNT: $MASTER_COMMIT_COUNT\"\n        echo \"BRANCH_COMMIT_COUNT: $BRANCH_COMMIT_COUNT\"\n        echo \"BUNDLE_VERSION: $BUNDLE_VERSION\"\n        \n        echo \"$INFO_PLIST\"\n        \n        /usr/libexec/PlistBuddy -c \"Add :CFBundleBuildVersion string $BUILD_VERSION\" \"$INFO_PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :CFBundleBuildVersion $BUILD_VERSION\" \"$INFO_PLIST\"\n        /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $SHORT_VERSION\" \"$INFO_PLIST\"\n        /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $BUNDLE_VERSION\" \"$INFO_PLIST\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -715,14 +723,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		8D21964D196D26080044616A /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8D21964E196D26080044616A /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		8D4233E0196E900D007410C3 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -739,10 +739,10 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
-		8D8B45E419741BD6001FC6DF /* Storyboard.storyboard */ = {
+		8DC418AA19878AF300054466 /* Storyboard.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8D8B45E319741BD6001FC6DF /* en */,
+				8DC418AB19878AF300054466 /* en */,
 			);
 			name = Storyboard.storyboard;
 			sourceTree = "<group>";
@@ -810,8 +810,8 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ARLearn/ARLearn-Prefix.pch";
-				INFOPLIST_FILE = "ARLearn/ARLearn-Info.plist";
+				GCC_PREFIX_HEADER = "ARLearn/Supporting Files/ARLearn-Prefix.pch";
+				INFOPLIST_FILE = "ARLearn/Supporting Files/ARLearn-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
@@ -832,8 +832,8 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ARLearn/ARLearn-Prefix.pch";
-				INFOPLIST_FILE = "ARLearn/ARLearn-Info.plist";
+				GCC_PREFIX_HEADER = "ARLearn/Supporting Files/ARLearn-Prefix.pch";
+				INFOPLIST_FILE = "ARLearn/Supporting Files/ARLearn-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				VALIDATE_PRODUCT = YES;
@@ -873,8 +873,7 @@
 				8D219A1D196D2A2D0044616A /* ARLDatabase v2.xcdatamodel */,
 			);
 			currentVersion = 8D219A1C196D2A2D0044616A /* ARLDatabase v1.xcdatamodel */;
-			name = ARLDatabase.xcdatamodeld;
-			path = ../ARLDatabase.xcdatamodeld;
+			path = ARLDatabase.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
