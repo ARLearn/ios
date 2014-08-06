@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *torchSwitch;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UILabel *torchLabel;
+@property (weak, nonatomic) IBOutlet UILabel *typeLabel;
 
 - (IBAction)torchSwitchAction:(UISwitch *)sender;
 
@@ -80,6 +81,8 @@
 {
     [super viewDidLoad];
     
+    self.delegate = self;
+
     if ([self isCameraAvailable]) {
         [self setupScanner];
     }
@@ -92,6 +95,8 @@
  */
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    self.delegate = nil;
     
     [self.torchSwitch setOn:NO];
     
@@ -139,6 +144,7 @@
                                      self.scannedLabel,     @"scannedLabel",
                                      self.torchSwitch,      @"torchSwitch",
                                      self.torchLabel,       @"torchLabel",
+                                     self.typeLabel,        @"typeLabel",
                                      
                                      nil];
     
@@ -146,6 +152,7 @@
     self.scannedLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.torchSwitch.translatesAutoresizingMaskIntoConstraints = NO;
     self.torchLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.typeLabel.translatesAutoresizingMaskIntoConstraints = NO;
     
     // CGFloat bw = sw/2 - 3*8.0;
     
@@ -159,7 +166,7 @@
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(%f)-[scannedLabel]", VIDEOSIZE + 3*8.0f]
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(%f)-[scannedLabel]-[typeLabel]", VIDEOSIZE + 3*8.0f - 4.0f]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
@@ -179,8 +186,13 @@
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    
+   
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[scannedLabel]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[typeLabel]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
@@ -232,18 +244,21 @@
         case  UIDeviceOrientationLandscapeLeft :
             self.preview.frame = CGRectMake(sh - VIDEOSIZE - 8.0f, 8.0f, VIDEOSIZE, VIDEOSIZE);
             self.scannedLabel.textAlignment = NSTextAlignmentRight;
+            self.typeLabel.textAlignment = NSTextAlignmentRight;
             break;
             
             //Seems to happen when the home button is on the LEFT side. Works.
         case UIDeviceOrientationLandscapeRight :
             self.preview.frame = CGRectMake(sh - VIDEOSIZE - 8.0f, 8.0f, VIDEOSIZE, VIDEOSIZE);
             self.scannedLabel.textAlignment = NSTextAlignmentRight;
+            self.typeLabel.textAlignment = NSTextAlignmentRight;
             break;
             
             //Happens when the home button is on the bottom side. Works.
         case UIDeviceOrientationPortrait :
             self.preview.frame = CGRectMake((sw / 2) - (VIDEOSIZE/2), 8.0f, VIDEOSIZE, VIDEOSIZE);
             self.scannedLabel.textAlignment = NSTextAlignmentCenter;
+            self.typeLabel.textAlignment = NSTextAlignmentCenter;
             break;
             
         default:
@@ -276,18 +291,30 @@
     self.session = [[AVCaptureSession alloc] init];
     
     self.output = [[AVCaptureMetadataOutput alloc] init];
+    
     [self.session addOutput:self.output];
     [self.session addInput:self.input];
     
     [self.output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
-    self.output.metadataObjectTypes = @[AVMetadataObjectTypeQRCode];
+    self.output.metadataObjectTypes = @[AVMetadataObjectTypeUPCECode,
+                                        AVMetadataObjectTypeCode39Code,
+                                        AVMetadataObjectTypeCode39Mod43Code,
+                                        AVMetadataObjectTypeEAN13Code,
+                                        AVMetadataObjectTypeEAN8Code,
+                                        AVMetadataObjectTypeCode93Code,
+                                        AVMetadataObjectTypeCode128Code,
+                                        AVMetadataObjectTypePDF417Code,
+                                        AVMetadataObjectTypeQRCode,
+                                        AVMetadataObjectTypeAztecCode];
     
     self.preview = [AVCaptureVideoPreviewLayer layerWithSession:self.session];
     self.preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
     
-    //self.preview.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    [self setVideoFrame];
     
-    self.preview.frame = CGRectMake(8.0f, 8.0f, self.screenWidth - 2*8.0, 200);
+    //float margin = (self.screenWidth - VIDEOSIZE)/2.0f;
+    //self.preview.frame = CGRectMake(8.0f, 8.0f, self.screenWidth - 2*8.0, VIDEOSIZE);
+    //self.preview.frame = CGRectMake(margin, 8.0f, VIDEOSIZE, VIDEOSIZE);
  
     //!!! Replaces the next two lines.
     [self setVideoOrientation];
@@ -298,12 +325,14 @@
 - (BOOL) isCameraAvailable
 {
     NSArray *videoDevices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    
     return [videoDevices count] > 0;
 }
 
 -(void) setTorch:(BOOL) aStatus
 {
   	AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    
     [device lockForConfiguration:nil];
     if ( [device hasTorch] ) {
         if ( aStatus ) {
@@ -315,32 +344,37 @@
     [device unlockForConfiguration];
 }
 
-//- (void) focus:(CGPoint) aPoint
-//{
-//    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-//    if([device isFocusPointOfInterestSupported] &&
-//       [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
-//        CGRect screenRect = [[UIScreen mainScreen] bounds];
-//        double screenWidth = screenRect.size.width;
-//        double screenHeight = screenRect.size.height;
-//        double focus_x = aPoint.x/screenWidth;
-//        double focus_y = aPoint.y/screenHeight;
-//        
-//        if([device lockForConfiguration:nil]) {
-////            if([self.delegate respondsToSelector:@selector(scanViewController:didTapToFocusOnPoint:)]) {
-////                [self.delegate scanViewController:self didTapToFocusOnPoint:aPoint];
-////            }
-//            [self scanViewController:self didTapToFocusOnPoint:aPoint];
-//            
-//            [device setFocusPointOfInterest:CGPointMake(focus_x,focus_y)];
-//            [device setFocusMode:AVCaptureFocusModeAutoFocus];
-//            if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]){
-//                [device setExposureMode:AVCaptureExposureModeAutoExpose];
-//            }
-//            [device unlockForConfiguration];
-//        }
-//    }
-//}
+- (void) focus:(CGPoint) aPoint
+{
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    
+    if([device isFocusPointOfInterestSupported] &&
+       [device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        
+        double screenWidth = screenRect.size.width;
+        double screenHeight = screenRect.size.height;
+        double focus_x = aPoint.x/screenWidth;
+        double focus_y = aPoint.y/screenHeight;
+        
+        if([device lockForConfiguration:nil]) {
+            if(self.delegate) {
+                [self.delegate scanViewController:self didTapToFocusOnPoint:aPoint];
+            }
+            
+            [self scanViewController:self didTapToFocusOnPoint:aPoint];
+            
+            [device setFocusPointOfInterest:CGPointMake(focus_x,focus_y)];
+            [device setFocusMode:AVCaptureFocusModeAutoFocus];
+            
+            if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]){
+                [device setExposureMode:AVCaptureExposureModeAutoExpose];
+            }
+            
+            [device unlockForConfiguration];
+        }
+    }
+}
 
 - (void)startScanning
 {
@@ -360,11 +394,13 @@
 {
     for(AVMetadataObject *current in metadataObjects) {
         if([current isKindOfClass:[AVMetadataMachineReadableCodeObject class]]) {
-            //if([self.delegate respondsToSelector:@selector(scanViewController:didSuccessfullyScan:)]) {
+            if(self.delegate) {
                 NSString *scannedValue = [((AVMetadataMachineReadableCodeObject *) current) stringValue];
-                // [self.delegate scanViewController:self didSuccessfullyScan:scannedValue];
-                [self scanViewController:self didSuccessfullyScan:scannedValue];
-            //}
+                NSString *scannedType = [((AVMetadataMachineReadableCodeObject *) current) type];
+                [self.delegate scanViewController:self
+                              didSuccessfullyScan:scannedValue
+                          didSuccessfullyScanType:scannedType];
+            }
         }
     }
 }
@@ -377,10 +413,11 @@
 
 - (void) scanViewController:(ARLScanViewController *) aCtler
         didSuccessfullyScan:(NSString *) aScannedValue
+        didSuccessfullyScanType:(NSString *) aScannedType
 {
     if (![self.scannedLabel.text isEqualToString:aScannedValue]) {
         self.scannedLabel.text = aScannedValue;
-        
+       
         NSOperation *delay = [[ARLDelayOperation alloc] initWithDelay:1000];
     
         NSBlockOperation *glow = [NSBlockOperation blockOperationWithBlock:^{
@@ -408,6 +445,8 @@
         [[NSOperationQueue currentQueue] addOperations: @[delay] waitUntilFinished:NO];
         [[NSOperationQueue mainQueue] addOperations: @[noglow, glow] waitUntilFinished:NO];
     }
+
+    self.typeLabel.text = aScannedType;
 }
 
 #pragma mark - Actions

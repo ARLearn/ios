@@ -46,6 +46,10 @@
 {
     [super viewDidLoad];
     
+//    self.portraitView = self.portrait;
+//    self.landscapeView = self.landscape;
+    // self.view = self.portrait;
+    
     // Do any additional setup after loading the view.
     self.mapView.delegate = self;
     

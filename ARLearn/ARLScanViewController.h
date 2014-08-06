@@ -10,9 +10,32 @@
 #import "ARLAppDelegate.h"
 #import "ARLDelayOperation.h"
 
-@protocol AMScanViewControllerDelegate;
+/*!
+ *  Forward Declaration.
+ */
+@class ARLScanViewController;
 
-@interface ARLScanViewController : UIViewController <AVCaptureMetadataOutputObjectsDelegate>
+
+/*!
+ *  Procol to handle results.
+ */
+@protocol AMScanViewControllerDelegate <NSObject>
+
+@optional
+
+- (void) scanViewController:(ARLScanViewController *) aCtler
+       didTapToFocusOnPoint:(CGPoint) aPoint;
+
+- (void) scanViewController:(ARLScanViewController *) aCtler
+        didSuccessfullyScan:(NSString *) aScannedValue
+    didSuccessfullyScanType:(NSString *) aScannedType;
+
+@end
+
+/*!
+ *  The ViewController.
+ */
+@interface ARLScanViewController : UIViewController <AMScanViewControllerDelegate,AVCaptureMetadataOutputObjectsDelegate>
 
 @property (nonatomic, weak) id<AMScanViewControllerDelegate> delegate;
 
@@ -22,18 +45,6 @@
 - (void) startScanning;
 - (void) stopScanning;
 - (void) setTorch:(BOOL) aStatus;
-
-- (void) scanViewController:(ARLScanViewController *) aCtler
-       didTapToFocusOnPoint:(CGPoint) aPoint;
-
-- (void) scanViewController:(ARLScanViewController *) aCtler
-        didSuccessfullyScan:(NSString *) aScannedValue;
-
-@end
-
-@protocol AMScanViewControllerDelegate <NSObject>
-
-@optional
 
 - (void) scanViewController:(ARLScanViewController *) aCtler
        didTapToFocusOnPoint:(CGPoint) aPoint;

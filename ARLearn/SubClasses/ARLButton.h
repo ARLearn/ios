@@ -12,7 +12,12 @@
 @interface ARLButton : UIButton
 
 -(void)makeButtonWithImage:(NSString *)image
-                     title:(NSString *)title
+                 titleText:(NSString *)title
                 titleColor:(UIColor *)color;
 
+-(void)makeButtonWithImageAndGradient:(NSString *)image
+                            titleText:(NSString *)title
+                           titleColor:(UIColor *)color
+                           startColor:(UIColor *)start
+                             endColor:(UIColor *)end;
 @end

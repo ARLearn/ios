@@ -46,22 +46,32 @@
     [self applyConstraints];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
-    [self.MyGamesButton makeButtonWithImage:@"MyGames"
-                                      title:NSLocalizedString(@"MyGames", @"MyGames")
-                                 titleColor:[UIColor whiteColor]];
+    [self.MyGamesButton makeButtonWithImageAndGradient:@"MyGames"
+                                             titleText:NSLocalizedString(@"MyGames", @"MyGames")
+                                            titleColor:[UIColor whiteColor]
+                                            startColor:UIColorFromRGB(0x419cd7)
+                                              endColor:UIColorFromRGB(0x217eba)];
     
-    [self.StoreButton makeButtonWithImage:@"Store"
-                                    title:NSLocalizedString(@"Store", @"Store")
-                               titleColor:[UIColor whiteColor]];
-    [self.QrScanButton makeButtonWithImage:@"QrScan"
-                                     title:NSLocalizedString(@"ScanQrCode", @"ScanQrCode")
-                                titleColor:[UIColor whiteColor]];
-    [self.NearByButton makeButtonWithImage:@"NearBy"
-                                     title:NSLocalizedString(@"NearBy", @"NearBy")
-                                titleColor:[UIColor whiteColor]];
+    [self.StoreButton makeButtonWithImageAndGradient:@"Store"
+                                           titleText:NSLocalizedString(@"Store", @"Store")
+                                          titleColor:[UIColor whiteColor]
+                                          startColor:UIColorFromRGB(0xff664c)
+                                            endColor:UIColorFromRGB(0xe94a35)];
+    
+    [self.QrScanButton makeButtonWithImageAndGradient:@"QrScan"
+                                            titleText:NSLocalizedString(@"ScanQrCode", @"ScanQrCode")
+                                           titleColor:[UIColor whiteColor]
+                                           startColor:UIColorFromRGB(0x3fd8b7)
+                                             endColor:UIColorFromRGB(0x00bc9c)];
+    
+    [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
+                                            titleText:NSLocalizedString(@"NearBy", @"NearBy")
+                                           titleColor:[UIColor whiteColor]
+                                           startColor:UIColorFromRGB(0x4c6078)
+                                             endColor:UIColorFromRGB(0x33485f)];
 }
 
 - (void)didReceiveMemoryWarning

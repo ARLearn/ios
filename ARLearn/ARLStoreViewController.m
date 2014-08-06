@@ -1,4 +1,4 @@
-//
+ //
 //  ARLCategoryViewController.m
 //  ARLearn
 //
@@ -41,36 +41,35 @@
 {
     [super viewDidLoad];
     
-    // Do any additional setup after loading the view.
-    CGRect r = CGRectMake(self.view.frame.origin.x,
-                          self.view.frame.origin.y,
-                          self.screenWidth,
-                          self.view.frame.size.height);
-
-    self.view.frame = r;
-    
     [self applyConstraints];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.SearchButton makeButtonWithImage:@"Search"
-                                     title:NSLocalizedString(@"SearchLabel", @"SearchLabel")
-                                titleColor:[UIColor whiteColor]];
-    [self.CategoryButton makeButtonWithImage:@"Category"
-                                       title:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
-                                  titleColor:[UIColor whiteColor]];
-    [self.TopGamesButton makeButtonWithImage:@"TopGames"
-                                       title:NSLocalizedString(@"TopGamesLabel", @"TopGamesLabel")
-                                  titleColor:[UIColor whiteColor]];
-    [self.NearByButton makeButtonWithImage:@"NearBy"
-                                     title:NSLocalizedString(@"NearByLabel", @"NearByLabel")
-                                titleColor:[UIColor whiteColor]];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
     
+    [self.SearchButton makeButtonWithImageAndGradient:@"Search"
+                                            titleText:NSLocalizedString(@"SearchLabel", @"SearchLabel")
+                                           titleColor:[UIColor whiteColor]
+                                           startColor:UIColorFromRGB(0xff664c)
+                                             endColor:UIColorFromRGB(0xe94a35)];
+    
+    [self.CategoryButton makeButtonWithImageAndGradient:@"Category"
+                                              titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
+                                             titleColor:[UIColor whiteColor]
+                                             startColor:UIColorFromRGB(0xff664c)
+                                               endColor:UIColorFromRGB(0xe94a35)];
+    
+    [self.TopGamesButton makeButtonWithImageAndGradient:@"TopGames"
+                                              titleText:NSLocalizedString(@"TopGamesLabel", @"TopGamesLabel")
+                                             titleColor:[UIColor whiteColor]
+                                             startColor:UIColorFromRGB(0xff664c)
+                                               endColor:UIColorFromRGB(0xe94a35)];
+    
+    [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
+                                            titleText:NSLocalizedString(@"NearByLabel", @"NearByLabel")
+                                           titleColor:[UIColor whiteColor]
+                                           startColor:UIColorFromRGB(0xff664c)
+                                             endColor:UIColorFromRGB(0xe94a35)];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +77,75 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+//-(void)updateViewConstraints {
+//    [super updateViewConstraints];
+// 
+//    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+//                                     self.view,             @"view",
+//                                     
+//                                     self.backgroundImage,  @"backgroundImage",
+//                                     
+//                                     self.SearchButton,     @"SearchButton",
+//                                     self.CategoryButton,   @"CategoryButton",
+//                                     self.TopGamesButton,   @"TopGamesButton",
+//                                     self.NearByButton,     @"NearByButton",
+//                                     
+//                                     nil];
+//    
+//    self.SearchButton.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.CategoryButton.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.TopGamesButton.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.NearByButton.translatesAutoresizingMaskIntoConstraints = NO;
+//    
+//    // constraints for portrait orientation
+//    // use a property to change a constraint's constant and/or create constraints programmatically, e.g.:
+//    if (!self.layoutConstraintsPortrait) {
+//        float bw = 120.0f;
+//        
+//        self.layoutConstraintsPortrait = [NSArray arrayWithObject:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[SearchButton(==%f)]-[CategoryButton(==%f)]-|", bw, bw]
+//                                                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
+//                                                                                                           metrics:nil
+//                                                                                                             views:viewsDictionary]];
+//        
+//        [self.layoutConstraintsPortrait arrayByAddingObject:       [NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[TopGamesButton(==%f)]-[NearByButton(==%f)]-|", bw, bw]
+//                                                                                                            options:NSLayoutFormatDirectionLeadingToTrailing
+//                                                                                                            metrics:nil
+//                                                                                                              views:viewsDictionary]];
+//    }
+//    
+//    // constraints for landscape orientation
+//    // make sure they don't conflict with and complement the existing constraints
+//    
+////    if (!self.layoutConstraintsLandscape) {
+////        float bw = 80.0f;
+////
+////        self.layoutConstraintsLandscape = [NSArray arrayWithObject:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[SearchButton(==%f)]-[CategoryButton(==%f)]-|", bw, bw]
+////                                                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
+////                                                                                                           metrics:nil
+////                                                                                                             views:viewsDictionary]];
+////        
+////        [self.layoutConstraintsLandscape arrayByAddingObject:       [NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[TopGamesButton(==%f)]-[NearByButton(==%f)]-|", bw, bw]
+////                                                                                                            options:NSLayoutFormatDirectionLeadingToTrailing
+////                                                                                                            metrics:nil
+////                                                                                                              views:viewsDictionary]];
+////    }
+//    
+//    //    BOOL isPortrait = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
+//    //
+//    //    [self.view removeConstraints:isPortrait ? self.layoutConstraintsLandscape : self.layoutConstraintsPortrait];
+//    //    [self.view addConstraints:isPortrait ? self.layoutConstraintsPortrait : self.layoutConstraintsLandscape];
+//    
+//    [self.view addConstraints:self.layoutConstraintsPortrait];
+//    
+//    // [self applyConstraints];
+//}
+//
+//- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+//    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+//    
+//    [self.view setNeedsUpdateConstraints];
+//}
 
 /*
  #pragma mark - Navigation
@@ -108,6 +176,9 @@
                                      self.NearByButton,     @"NearByButton",
                                      
                                      nil];
+    
+    // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     
