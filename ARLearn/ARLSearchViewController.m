@@ -10,6 +10,7 @@
 
 @interface ARLSearchViewController ()
 
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) IBOutlet UITableView *table;
 
 @property (readonly, nonatomic) NSString *cellIdentifier;
@@ -22,7 +23,7 @@
 /*!
  *  ID's and order of the cells.
  */
-typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
+typedef NS_ENUM(NSInteger, ARLSearchViewControllerGrameoups) {
     /*!
      *  Search Results.
      */
@@ -80,6 +81,12 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 
 -(void) viewWillAppear:(BOOL)animated  {
     [self performQuery];
+    
+    [self filterContentForSearchText:self.searchBar.text
+                               scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
+                                      objectAtIndex:[self.searchDisplayController.searchBar
+                                                     selectedScopeButtonIndex]]];
+    
     [self.table reloadData];
 }
 
@@ -170,6 +177,8 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     
     self.results = (NSArray *)[json objectForKey:@"games"];
     
+    self.searchResults = self.results;
+    
     DLog(@"Retrieved %d game(s)", self.results.count);
     
     [self.table reloadData];
@@ -216,11 +225,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case RESULTS : {
-            if (tableView == self.searchDisplayController.searchResultsTableView) {
-                return [self.searchResults count];
-            } else {
-                return [self.results count];
-            }
+            return [self.searchResults count];
         }
     }
     
@@ -239,44 +244,6 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
-//        case SEARCH: {
-//            UITableViewCell* headerCell = [tableView dequeueReusableCellWithIdentifier:self.headerIdentifier forIndexPath:indexPath];
-//            
-//            [headerCell layoutIfNeeded];
-//            
-//            self.searchField = (UITextField *)[headerCell.contentView viewWithTag:100];
-//            self.searchButton = (UIButton *)[headerCell.contentView viewWithTag:200];
-//            
-//            //!!! Fix UITextField
-//            {
-//                self.searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
-//                self.searchField.clearsOnBeginEditing = NO;
-//                
-//                [self.searchField setDelegate:self];
-//                
-//                [self.searchField addTarget:self
-//                                     action:@selector(textFieldDidChange:)
-//                           forControlEvents:UIControlEventEditingChanged];
-//            }
-//            
-//            //!!! Fix UIButton
-//            {
-//                self.searchButton.titleLabel.text= NSLocalizedString(@"SearchButton", @"SearchButton");
-//                
-//                //Fixup - Somehow the frame is wrong (width not set).
-//                self.searchButton.titleLabel.frame = CGRectMake(8.0, 0.0, self.searchButton.frame.size.width - 2*8.0, self.searchButton.frame.size.height);
-//                self.searchButton.titleLabel.textColor = [UIColor whiteColor];
-//                //        [self.searchButton setTitleColor:[UIColor whiteColor]
-//                //                                forState:UIControlStateNormal];
-//                
-//                [self.searchButton addTarget:self
-//                                      action:@selector(searchButtonAction:)
-//                            forControlEvents:UIControlEventTouchUpInside];
-//            }
-//            
-//            return headerCell;
-//        }
-            
         case RESULTS : {
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
             
@@ -285,13 +252,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
                                               reuseIdentifier:self.cellIdentifier];
             }
             
-            NSDictionary *dict;
-            
-            if (tableView == self.searchDisplayController.searchResultsTableView) {
-                dict =  (NSDictionary *)[self.searchResults objectAtIndex:indexPath.row];
-            } else {
-                dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
-            }
+            NSDictionary *dict =  (NSDictionary *)[self.searchResults objectAtIndex:indexPath.row];
             
             cell.textLabel.text = [dict valueForKey:@"title"];
             
@@ -308,7 +269,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             
             cell.tag = [(NSNumber *)[dict valueForKey:@"gameId"] integerValue];
             
-            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
+            // [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
 
             return cell;
         }
@@ -326,11 +287,6 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
  */
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
-//        case SEARCH : {
-//            // return @"Search";
-//            
-//            break;
-//        }
         case RESULTS : {
             UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
@@ -359,72 +315,12 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     switch (section) {
-//        case SEARCH : {
-//            return @"Search";
-//        }
         case RESULTS : {
-            break;
+            return @"Search results";
         }
     }
     
     return @"";
-}
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    switch (indexPath.section) {
-//            
-//        case SEARCH : {
-//            return self.tableView.rowHeight + 4.0;
-//        }
-//            
-//        case RESULTS: {
-//            return self.tableView.rowHeight;
-//        }
-//    }
-//    
-//    // Shoudl not happen!!
-//    return self.tableView.rowHeight;
-//}
-
-//- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-//    switch (indexPath.section) {
-//            
-//        case SEARCH :
-//            break;
-//            
-//        case RESULTS:
-//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//            break;
-//    }
-//}
-
-#pragma mark - UITextFieldDelegate
-
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-//    DLog(@"Query: %@", self.query);
-//
-//    if ([_query length] != 0 && self.searchField) {
-//        [self.tableView endEditing:YES];
-//        [self.tableView reloadData];
-//        
-//        // Search on Return.
-//        if (self.searchButton) {
-//            [self searchButtonAction:self.searchButton];
-//        }
-//    }
-//    
-//    return [_query length] != 0;
-//}
-
-/*!
- *  Capture text entered as the Search Button Tap seems start before ending the edit session!
- *
- *  @param textField The UITextField
- */
--(void)textFieldDidChange :(UITextField *)textField{
-     DLog(@"Query: %@", textField.text);
-    
-    _query = textField.text;
 }
 
 #pragma mark - NSURLSessionDataDelegate
@@ -449,7 +345,11 @@ didReceiveResponse:(NSURLResponse *)response
     
     [self processData:data];
     
-    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+    if ([self.results count] > 0) {
+        [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+    } else {
+        DLog(@"Query %@",dataTask.taskDescription)
+    }
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -458,7 +358,7 @@ didCompleteWithError:(NSError *)error
 {
     NSLog(@"Completed HTTP Task");
     
-    if(error == nil)
+    if (error == nil)
     {
         // Update UI Here?
         NSLog(@"Download is Succesfull");
@@ -466,20 +366,28 @@ didCompleteWithError:(NSError *)error
         NSLog(@"Error %@",[error userInfo]);
     }
 }
-#pragma mark - UISearchDisplayController
+
+#pragma mark - UISearchBar
+
 - (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
 {
-    //    (NSDictionary *)[self.searchResults objectAtIndex:indexPath.row];
-    NSMutableArray *matches = [[NSMutableArray alloc] init];
-    for (NSDictionary *dict in self.results) {
-        NSString *title =  [dict valueForKey:@"title"];
-        
-        if ([title rangeOfString:searchText options:NSCaseInsensitiveSearch].length!=0) {
-            [matches addObject:dict];
-        }
-    }
+    // Do not set self.query here as it will result in another hot to the server and we're looking locally!
+    NSString *search = [searchText stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];;
     
-    self.searchResults = matches;
+    if ([search length] > 0) {
+        NSMutableArray *matches = [[NSMutableArray alloc] init];
+        for (NSDictionary *dict in self.results) {
+            NSString *title = [dict valueForKey:@"title"];
+            
+            if ([title rangeOfString:search options:NSCaseInsensitiveSearch].length!=0) {
+                [matches addObject:dict];
+            }
+        }
+        
+        self.searchResults = [NSArray arrayWithArray:matches];
+    } else {
+        self.searchResults = [NSArray arrayWithArray:self.results];
+    }
     
     DLog(@"Filtered %d game(s)", self.searchResults.count);
     
@@ -488,25 +396,40 @@ didCompleteWithError:(NSError *)error
     //                                    searchText];
     //
     //    self.searchResults = [self.results filteredArrayUsingPredicate:resultPredicate];
+    
+    [self.table reloadData];
 }
 
--(BOOL)searchDisplayController:(UISearchDisplayController *)controller
-shouldReloadTableForSearchString:(NSString *)searchString
-{
-    [self filterContentForSearchText:searchString
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    [self filterContentForSearchText:searchText
                                scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
                                       objectAtIndex:[self.searchDisplayController.searchBar
                                                      selectedScopeButtonIndex]]];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    DLog(@"Cancel clicked");
     
-    return YES;
+    searchBar.text = @"";
+    
+    [self filterContentForSearchText:searchBar.text
+                               scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
+                                      objectAtIndex:[self.searchDisplayController.searchBar
+                                                     selectedScopeButtonIndex]]];
+
+    [searchBar resignFirstResponder];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    DLog(@"Search Clicked");
+    
+    [self filterContentForSearchText:searchBar.text
+                               scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
+                                      objectAtIndex:[self.searchDisplayController.searchBar
+                                                     selectedScopeButtonIndex]]];
+    [searchBar resignFirstResponder];
 }
 
 #pragma mark - Actions
-
-//- (IBAction)searchButtonAction:(id)sender {
-//    DLog(@"Query: %@", self.query);
-//    
-//    [self performQuery];
-//}
 
 @end

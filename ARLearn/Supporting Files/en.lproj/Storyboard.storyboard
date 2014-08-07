@@ -342,15 +342,12 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Type your search here..." id="dJE-0a-iab">
+                        <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Enter your search here..." showsCancelButton="YES" id="lqe-K7-gJF">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <textInputTraits key="textInputTraits"/>
-                            <scopeButtonTitles>
-                                <string>Title</string>
-                            </scopeButtonTitles>
                             <connections>
-                                <outlet property="delegate" destination="Gi4-jw-xvI" id="LEF-CQ-1aL"/>
+                                <outlet property="delegate" destination="Gi4-jw-xvI" id="GC0-lK-YX0"/>
                             </connections>
                         </searchBar>
                         <prototypes>
@@ -386,6 +383,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="43e-J5-tvJ"/>
                     <connections>
+                        <outlet property="searchBar" destination="lqe-K7-gJF" id="lw4-l5-F6C"/>
                         <outlet property="searchDisplayController" destination="rEv-1o-aqU" id="OKJ-5l-PlP"/>
                         <outlet property="table" destination="RNh-m2-XE3" id="FJ1-Mx-gyU"/>
                     </connections>
@@ -394,7 +392,6 @@
                 <searchDisplayController id="rEv-1o-aqU">
                     <connections>
                         <outlet property="delegate" destination="Gi4-jw-xvI" id="fzf-xK-39y"/>
-                        <outlet property="searchBar" destination="dJE-0a-iab" id="5YO-oo-5n3"/>
                         <outlet property="searchContentsController" destination="Gi4-jw-xvI" id="OEl-23-FZn"/>
                         <outlet property="searchResultsDataSource" destination="Gi4-jw-xvI" id="3Rq-lB-WJE"/>
                         <outlet property="searchResultsDelegate" destination="Gi4-jw-xvI" id="SNW-S7-QjX"/>
