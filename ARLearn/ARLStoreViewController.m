@@ -16,6 +16,8 @@
 @property (weak, nonatomic) IBOutlet ARLButton *CategoryButton;
 @property (weak, nonatomic) IBOutlet ARLButton *TopGamesButton;
 @property (weak, nonatomic) IBOutlet ARLButton *NearByButton;
+@property (weak, nonatomic) IBOutlet UILabel *featuredLabel;
+@property (weak, nonatomic) IBOutlet UITableView *featuredable;
 
 - (IBAction)SearchButtonAction:(ARLButton *)sender;
 - (IBAction)CategoryButtonAction:(ARLButton *)sender;
@@ -77,75 +79,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-//-(void)updateViewConstraints {
-//    [super updateViewConstraints];
-// 
-//    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
-//                                     self.view,             @"view",
-//                                     
-//                                     self.backgroundImage,  @"backgroundImage",
-//                                     
-//                                     self.SearchButton,     @"SearchButton",
-//                                     self.CategoryButton,   @"CategoryButton",
-//                                     self.TopGamesButton,   @"TopGamesButton",
-//                                     self.NearByButton,     @"NearByButton",
-//                                     
-//                                     nil];
-//    
-//    self.SearchButton.translatesAutoresizingMaskIntoConstraints = NO;
-//    self.CategoryButton.translatesAutoresizingMaskIntoConstraints = NO;
-//    self.TopGamesButton.translatesAutoresizingMaskIntoConstraints = NO;
-//    self.NearByButton.translatesAutoresizingMaskIntoConstraints = NO;
-//    
-//    // constraints for portrait orientation
-//    // use a property to change a constraint's constant and/or create constraints programmatically, e.g.:
-//    if (!self.layoutConstraintsPortrait) {
-//        float bw = 120.0f;
-//        
-//        self.layoutConstraintsPortrait = [NSArray arrayWithObject:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[SearchButton(==%f)]-[CategoryButton(==%f)]-|", bw, bw]
-//                                                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
-//                                                                                                           metrics:nil
-//                                                                                                             views:viewsDictionary]];
-//        
-//        [self.layoutConstraintsPortrait arrayByAddingObject:       [NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[TopGamesButton(==%f)]-[NearByButton(==%f)]-|", bw, bw]
-//                                                                                                            options:NSLayoutFormatDirectionLeadingToTrailing
-//                                                                                                            metrics:nil
-//                                                                                                              views:viewsDictionary]];
-//    }
-//    
-//    // constraints for landscape orientation
-//    // make sure they don't conflict with and complement the existing constraints
-//    
-////    if (!self.layoutConstraintsLandscape) {
-////        float bw = 80.0f;
-////
-////        self.layoutConstraintsLandscape = [NSArray arrayWithObject:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[SearchButton(==%f)]-[CategoryButton(==%f)]-|", bw, bw]
-////                                                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
-////                                                                                                           metrics:nil
-////                                                                                                             views:viewsDictionary]];
-////        
-////        [self.layoutConstraintsLandscape arrayByAddingObject:       [NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[TopGamesButton(==%f)]-[NearByButton(==%f)]-|", bw, bw]
-////                                                                                                            options:NSLayoutFormatDirectionLeadingToTrailing
-////                                                                                                            metrics:nil
-////                                                                                                              views:viewsDictionary]];
-////    }
-//    
-//    //    BOOL isPortrait = UIInterfaceOrientationIsPortrait(self.interfaceOrientation);
-//    //
-//    //    [self.view removeConstraints:isPortrait ? self.layoutConstraintsLandscape : self.layoutConstraintsPortrait];
-//    //    [self.view addConstraints:isPortrait ? self.layoutConstraintsPortrait : self.layoutConstraintsLandscape];
-//    
-//    [self.view addConstraints:self.layoutConstraintsPortrait];
-//    
-//    // [self applyConstraints];
-//}
-//
-//- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-//    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-//    
-//    [self.view setNeedsUpdateConstraints];
-//}
 
 /*
  #pragma mark - Navigation

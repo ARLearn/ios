@@ -11,6 +11,6 @@
 
 #import "ARLNetworking.h"
 
-@interface ARLStoreViewController : UIViewController <UIAlertViewDelegate>
+@interface ARLStoreViewController : UIViewController <UIAlertViewDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @end
