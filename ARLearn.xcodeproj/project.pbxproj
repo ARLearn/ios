@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */; };
 		8D219651196D26080044616A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219650196D26080044616A /* main.m */; };
 		8D219655196D26080044616A /* ARLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219654196D26080044616A /* ARLAppDelegate.m */; };
 		8D21965B196D26080044616A /* ARLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21965A196D26080044616A /* ARLViewController.m */; };
@@ -89,6 +90,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLCategoriesViewController.h; sourceTree = "<group>"; };
+		8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLCategoriesViewController.m; sourceTree = "<group>"; };
 		8D219641196D26080044616A /* ARLearn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLearn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D21964C196D26080044616A /* ARLearn-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ARLearn-Info.plist"; sourceTree = "<group>"; };
 		8D219650196D26080044616A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -334,6 +337,8 @@
 				8D21964B196D26080044616A /* Supporting Files */,
 				8D219A85196D341F0044616A /* Todo.txt */,
 				8D87A50D198648B500842BC6 /* Utils */,
+				8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */,
+				8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */,
 			);
 			path = ARLearn;
 			sourceTree = "<group>";
@@ -706,6 +711,7 @@
 				8D7A8D0F197D55BA00B37013 /* ARLScanViewController.m in Sources */,
 				8D219A6F196D31350044616A /* NSObject+MagicalDataImport.m in Sources */,
 				8D219A77196D31350044616A /* NSManagedObjectContext+MagicalObserving.m in Sources */,
+				8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */,
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
 				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,
 				8D219A6C196D31350044616A /* NSAttributeDescription+MagicalDataImport.m in Sources */,

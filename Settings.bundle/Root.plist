@@ -12,7 +12,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>$(/usr/libexec/PlistBuddy -c Print :CFBundleVersion $PLIST_PATH).29</string>
+			<string>$(/usr/libexec/PlistBuddy -c Print :CFBundleVersion $PLIST_PATH).31</string>
 			<key>Key</key>
 			<string>app_version</string>
 			<key>Title</key>
@@ -22,7 +22,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>fd5fc35+</string>
+			<string>9b5235d+</string>
 			<key>Key</key>
 			<string>git_hash</string>
 			<key>Title</key>

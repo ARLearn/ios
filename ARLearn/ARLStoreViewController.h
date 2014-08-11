@@ -7,8 +7,8 @@
 //
 
 #import "UIViewController+UI.h"
-#import "ARLButton.h"
 
+#import "ARLButton.h"
 #import "ARLNetworking.h"
 
 @interface ARLStoreViewController : UIViewController <UIAlertViewDelegate, UITableViewDelegate, UITableViewDataSource>

@@ -7,12 +7,13 @@
 //
 
 #import "TPMultiLayoutViewController.h"
+#import "UIViewController+UI.h"
 
 #import "ARLAppDelegate.h"
 #import "ARLNetworking.h"
 #import "ARLUtils.h"
 #import "ARLGamePin.h"
 
-@interface ARLNearbyViewController : TPMultiLayoutViewController <MKMapViewDelegate, NSURLSessionDataDelegate>
+@interface ARLNearbyViewController : UIViewController <MKMapViewDelegate, NSURLSessionDataDelegate, UIAlertViewDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @end

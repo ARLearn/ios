@@ -14,11 +14,30 @@
 
 @interface ARLNearbyViewController ()
 
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (weak, nonatomic) IBOutlet UITableView *nearbyGamesTable;
 
 @property (nonatomic, strong) NSArray *results;
 
 @property (readonly, nonatomic) NSString *query;
+
+@property (readonly, nonatomic) NSString *cellIdentifier;
+
+/*!
+ *  ID's and order of the cells.
+ */
+typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
+    /*!
+     *  NearBy Search Results.
+     */
+    NEARBYRESULTS = 0,
+    
+    /*!
+     *  Number of Groups
+     */
+    numARLNearByViewControllerGroups
+};
 
 @end
 
@@ -59,6 +78,8 @@
     //MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance([ARLAppDelegate CurrentLocation], 1500, 1500);
     
     //[self.mapView setRegion:zoomRegion animated:YES];
+    
+    [self applyConstraints];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -188,7 +209,87 @@ didCompleteWithError:(NSError *)error
         NSLog(@"Error %@",[error userInfo]);
 }
 
+
+#pragma mark - TabelViewController
+
+/*!
+ *  Number of Sections of the Table.
+ *
+ *  @param tableView The TableView
+ *
+ *  @return The number of Groups.
+ */
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return numARLNearByViewControllerGroups;
+}
+
+/*!
+ *  Number of Tabel Rows in a Section.
+ *
+ *  @param tableView The TableView
+ *  @param section   The Section
+ *
+ *  @return The number of Rows in the Section.
+ */
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    switch (section) {
+        case NEARBYRESULTS : {
+            return 2;
+        }
+    }
+    
+    // Should not happen!!
+    return 0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.section) {
+        case NEARBYRESULTS : {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            
+            switch (indexPath.item) {
+                case 0:
+                    cell.textLabel.text = @"Game1";
+                    cell.detailTextLabel.text = @"Starting tomorrow";
+                    break;
+                case 1:
+                    cell.textLabel.text = @"Game2";
+                    cell.detailTextLabel.text = @"Starting now";
+                    break;
+            }
+            cell.imageView.image = [UIImage imageNamed:@"MyGames"];
+            
+            return cell;
+        }
+    }
+    
+    // Should not happen!!
+    return nil;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;{
+    switch (section) {
+        case NEARBYRESULTS : {
+            return @"Nearby games";
+        }
+    }
+    
+    // Should not happen!!
+    return @"";
+}
+
 #pragma mark - Properties
+
+/*!
+ *  Getter
+ *
+ *  @return The Cell Identifier.
+ */
+-(NSString *) cellIdentifier {
+    return  @"aNearByGames";
+}
 
 #pragma mark - Methods
 
@@ -321,6 +422,55 @@ didCompleteWithError:(NSError *)error
         
         [mapView setRegion:region animated:animated];
     }
+}
+
+- (void) applyConstraints {
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.view,             @"view",
+                                     
+                                     self.backgroundImage,  @"backgroundImage",
+                                     
+                                     self.mapView,          @"mapView",
+                                     self.nearbyGamesTable, @"nearbyGamesTable",
+                                     
+                                     nil];
+    
+    // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
+    
+    //    self.view.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    self.mapView.translatesAutoresizingMaskIntoConstraints =NO;
+    self.nearbyGamesTable.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // CGFloat sw = self.screenWidth;
+    // CGFloat bw = sw/2 - 3*8.0;
+    
+    // Fix Background.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    // Fix Map & Table Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[mapView]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[nearbyGamesTable]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+        // Fix Map & Table Vertically.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[mapView]-[nearbyGamesTable(200)]-|"]
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
 }
 
 @end

@@ -13,6 +13,6 @@
 #import "ARLUtils.h"
 #import "ARLQueryCache.h"
 
-@interface ARLSearchViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate, UITextFieldDelegate>
+@interface ARLSearchViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate>
 
 @end

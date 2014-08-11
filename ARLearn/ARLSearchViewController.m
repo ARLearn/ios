@@ -23,7 +23,7 @@
 /*!
  *  ID's and order of the cells.
  */
-typedef NS_ENUM(NSInteger, ARLSearchViewControllerGrameoups) {
+typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     /*!
      *  Search Results.
      */
@@ -275,7 +275,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGrameoups) {
         }
     }
 
-    // Shoudl not happen!!
+    // Should not happen!!
     return nil;
 }
 

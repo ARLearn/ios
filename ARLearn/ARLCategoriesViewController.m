@@ -1,49 +1,30 @@
- //
-//  ARLCategoryViewController.m
+//
+//  ARLCategoriesViewController.m
 //  ARLearn
 //
-//  Created by Wim van der Vegt on 7/15/14.
+//  Created by Wim van der Vegt on 8/7/14.
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import "ARLStoreViewController.h"
+#import "ARLCategoriesViewController.h"
 
-@interface ARLStoreViewController ()
+@interface ARLCategoriesViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 
-@property (weak, nonatomic) IBOutlet ARLButton *SearchButton;
-@property (weak, nonatomic) IBOutlet ARLButton *CategoryButton;
-@property (weak, nonatomic) IBOutlet ARLButton *TopGamesButton;
-@property (weak, nonatomic) IBOutlet ARLButton *NearByButton;
-
-@property (weak, nonatomic) IBOutlet UITableView *featuredTable;
-
-@property (readonly, nonatomic) NSString *cellIdentifier;
+@property (weak, nonatomic) IBOutlet ARLButton *Category1Button;
+@property (weak, nonatomic) IBOutlet ARLButton *Category2Button;
+@property (weak, nonatomic) IBOutlet ARLButton *Category3Button;
+@property (weak, nonatomic) IBOutlet ARLButton *Category4Button;
 
 - (IBAction)SearchButtonAction:(ARLButton *)sender;
 - (IBAction)CategoryButtonAction:(ARLButton *)sender;
 - (IBAction)TopGamesButtonAction:(ARLButton *)sender;
 - (IBAction)NearByButtonAction:(ARLButton *)sender;
 
-/*!
- *  ID's and order of the cells.
- */
-typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
-    /*!
-     *  Search Results.
-     */
-    FEATURED = 0,
-    
-    /*!
-     *  Number of Groups
-     */
-    numARLStoreViewControllerGroups
-};
-
 @end
 
-@implementation ARLStoreViewController
+@implementation ARLCategoriesViewController
 
 #pragma mark - ViewController
 
@@ -66,26 +47,26 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.SearchButton makeButtonWithImageAndGradient:@"Search"
-                                            titleText:NSLocalizedString(@"SearchLabel", @"SearchLabel")
+    [self.Category1Button makeButtonWithImageAndGradient:@"Culture"
+                                            titleText:NSLocalizedString(@"CultureCategoryLabel", @"CultureCategoryLabel")
                                            titleColor:[UIColor whiteColor]
                                            startColor:UIColorFromRGB(0xff664c)
                                              endColor:UIColorFromRGB(0xe94a35)];
     
-    [self.CategoryButton makeButtonWithImageAndGradient:@"Category"
+    [self.Category2Button makeButtonWithImageAndGradient:@"Category"
                                               titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
                                              titleColor:[UIColor whiteColor]
                                              startColor:UIColorFromRGB(0xff664c)
                                                endColor:UIColorFromRGB(0xe94a35)];
     
-    [self.TopGamesButton makeButtonWithImageAndGradient:@"TopGames"
-                                              titleText:NSLocalizedString(@"TopGamesLabel", @"TopGamesLabel")
+    [self.Category3Button makeButtonWithImageAndGradient:@"Category"
+                                              titleText:NSLocalizedString(@"CategoryLabel", @"TopGamesLabel")
                                              titleColor:[UIColor whiteColor]
                                              startColor:UIColorFromRGB(0xff664c)
                                                endColor:UIColorFromRGB(0xe94a35)];
     
-    [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
-                                            titleText:NSLocalizedString(@"NearByLabel", @"NearByLabel")
+    [self.Category4Button makeButtonWithImageAndGradient:@"Category"
+                                            titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
                                            titleColor:[UIColor whiteColor]
                                            startColor:UIColorFromRGB(0xff664c)
                                              endColor:UIColorFromRGB(0xe94a35)];
@@ -98,96 +79,17 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
 }
 
 /*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+#pragma mark - Navigation
 
-#pragma mark - TabelViewController
-
-/*!
- *  Number of Sections of the Table.
- *
- *  @param tableView The TableView
- *
- *  @return The number of Groups.
- */
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    return numARLStoreViewControllerGroups;
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
 }
-
-/*!
- *  Number of Tabel Rows in a Section.
- *
- *  @param tableView The TableView
- *  @param section   The Section
- *
- *  @return The number of Rows in the Section.
- */
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    switch (section) {
-        case FEATURED : {
-            return 2;
-        }
-    }
-    
-    // Should not happen!!
-    return 0;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    switch (indexPath.section) {
-        case FEATURED : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
-            
-            switch (indexPath.item) {
-                case 0:
-                    cell.textLabel.text = @"Game1";
-                    cell.detailTextLabel.text = @"Starting tomorrow";
-                    break;
-                case 1:
-                    cell.textLabel.text = @"Game2";
-                    cell.detailTextLabel.text = @"Starting now";
-                    break;
-            }
-            cell.imageView.image = [UIImage imageNamed:@"MyGames"];
-            
-            return cell;
-        }
-    }
-    
-    // Should not happen!!
-    return nil;
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;{
-    switch (section) {
-        case FEATURED : {
-            return @"Featured";
-        }
-    }
-    
-    // Should not happen!!
-    return @"";
-}
+*/
 
 #pragma mark - Properties
-
-/*!
- *  Getter
- *
- *  @return The Cell Identifier.
- */
--(NSString *) cellIdentifier {
-    return  @"aFeaturedGames";
-}
 
 /*************************************************************************************/
 
@@ -199,28 +101,22 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
                                      
                                      self.backgroundImage,  @"backgroundImage",
                                      
-                                     self.SearchButton,     @"SearchButton",
-                                     self.CategoryButton,   @"CategoryButton",
-                                     self.TopGamesButton,   @"TopGamesButton",
-                                     self.NearByButton,     @"NearByButton",
+                                     self.Category1Button,  @"Category1Button",
+                                     self.Category2Button,  @"Category2Button",
+                                     self.Category3Button,  @"Category3Button",
+                                     self.Category4Button,  @"Category4Button",
                                      
-                                     self.featuredTable,    @"featuredTable",
-
                                      nil];
     
     // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
     // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
     
-    //    self.view.translatesAutoresizingMaskIntoConstraints = NO;
-    
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     
-    self.SearchButton.translatesAutoresizingMaskIntoConstraints = NO;
-    self.CategoryButton.translatesAutoresizingMaskIntoConstraints = NO;
-    self.TopGamesButton.translatesAutoresizingMaskIntoConstraints = NO;
-    self.NearByButton.translatesAutoresizingMaskIntoConstraints = NO;
-
-    self.featuredTable.translatesAutoresizingMaskIntoConstraints = NO;
+    self.Category1Button.translatesAutoresizingMaskIntoConstraints = NO;
+    self.Category2Button.translatesAutoresizingMaskIntoConstraints = NO;
+    self.Category3Button.translatesAutoresizingMaskIntoConstraints = NO;
+    self.Category4Button.translatesAutoresizingMaskIntoConstraints = NO;
     
     CGFloat sw = self.screenWidth;
     CGFloat bw = sw/2 - 3*8.0;
@@ -236,33 +132,33 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
                                                                         views:viewsDictionary]];
     
     // Fix Buttons Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[SearchButton(==%f)]-[CategoryButton(==%f)]", bw, bw]
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[Category1Button(==%f)]-[Category2Button(==%f)]-|", bw, bw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[TopGamesButton(==%f)]-[NearByButton(==%f)]", bw, bw]
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-[Category3Button(==%f)]-[Category4Button(==%f)]-|", bw, bw]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Make Buttons Square.
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.SearchButton
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.Category1Button
                                                           attribute:NSLayoutAttributeHeight
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:self.SearchButton
+                                                             toItem:self.Category1Button
                                                           attribute:NSLayoutAttributeWidth
                                                          multiplier:1.0
                                                            constant:0]];
     
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.CategoryButton
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.Category2Button
                                                           attribute:NSLayoutAttributeHeight
                                                           relatedBy:NSLayoutRelationEqual
-                                                             toItem:self.CategoryButton
+                                                             toItem:self.Category2Button
                                                           attribute:NSLayoutAttributeWidth
                                                          multiplier:1.0
                                                            constant:0]];
     
     // Fix Top Images Position Vertically.
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.SearchButton
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.Category1Button
                                                           attribute:NSLayoutAttributeTop
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.topLayoutGuide
@@ -270,7 +166,7 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
                                                          multiplier:1.0
                                                            constant:10.0]];
     
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.CategoryButton
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.Category2Button
                                                           attribute:NSLayoutAttributeTop
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.topLayoutGuide
@@ -279,22 +175,11 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
                                                            constant:10.0]];
     
     // Fix other Buttons.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[SearchButton]-[TopGamesButton(==SearchButton)]"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[Category1Button]-[Category3Button(==Category1Button)]"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[CategoryButton]-[NearByButton(==CategoryButton)]"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-    
-    // Fix featured
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[NearByButton]-[featuredTable(200)]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[featuredTable]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[Category2Button]-[Category4Button(==Category2Button)]"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
@@ -308,13 +193,13 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
 
 - (IBAction)CategoryButtonAction:(ARLButton *)sender {
     DLog(@"");
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
-//                                                    message:@"Message:"
-//                                                   delegate:self
-//                                          cancelButtonTitle:@"OK1"
-//                                          otherButtonTitles:@"OK2",nil];
-//    
-//    [alert show];
+    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
+    //                                                    message:@"Message:"
+    //                                                   delegate:self
+    //                                          cancelButtonTitle:@"OK1"
+    //                                          otherButtonTitles:@"OK2",nil];
+    //
+    //    [alert show];
 }
 
 - (IBAction)TopGamesButtonAction:(ARLButton *)sender {
