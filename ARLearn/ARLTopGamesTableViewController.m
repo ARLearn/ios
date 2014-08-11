@@ -1,0 +1,146 @@
+//
+//  ARLTopGamesTableViewController.m
+//  ARLearn
+//
+//  Created by Wim van der Vegt on 8/11/14.
+//  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
+//
+
+#import "ARLTopGamesTableViewController.h"
+
+@interface ARLTopGamesTableViewController ()
+
+@property (readonly, nonatomic) NSString *cellIdentifier;
+
+/*!
+ *  ID's and order of the cells.
+ */
+typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
+    /*!
+     *  NearBy Search Results.
+     */
+    TOPGAMES = 0,
+    
+    /*!
+     *  Number of Groups
+     */
+    numARLTopGamesTableViewControllerGroups
+};
+
+@end
+
+@implementation ARLTopGamesTableViewController
+
+#pragma mark - ViewController
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    // Uncomment the following line to preserve selection between presentations.
+    // self.clearsSelectionOnViewWillAppear = NO;
+    
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - TabelViewController
+
+/*!
+ *  Number of Sections of the Table.
+ *
+ *  @param tableView The TableView
+ *
+ *  @return The number of Groups.
+ */
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return numARLTopGamesTableViewControllerGroups;
+}
+
+/*!
+ *  Number of Tabel Rows in a Section.
+ *
+ *  @param tableView The TableView
+ *  @param section   The Section
+ *
+ *  @return The number of Rows in the Section.
+ */
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    switch (section) {
+        case TOPGAMES : {
+            return 2;
+        }
+    }
+    
+    // Should not happen!!
+    return 0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.section) {
+        case TOPGAMES : {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            
+            switch (indexPath.item) {
+                case 0:
+                    cell.textLabel.text = @"Game1";
+                    cell.detailTextLabel.text = @"Starting tomorrow";
+                    break;
+                case 1:
+                    cell.textLabel.text = @"Game2";
+                    cell.detailTextLabel.text = @"Starting now";
+                    break;
+            }
+            cell.imageView.image = [UIImage imageNamed:@"MyGames"];
+            
+            return cell;
+        }
+    }
+    
+    // Should not happen!!
+    return nil;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;{
+    switch (section) {
+        case TOPGAMES : {
+            return @"Top games";
+        }
+    }
+    
+    // Should not happen!!
+    return @"";
+}
+
+#pragma mark - Properties
+
+/*!
+ *  Getter
+ *
+ *  @return The Cell Identifier.
+ */
+-(NSString *) cellIdentifier {
+    return  @"aTopGames";
+}
+
+#pragma mark - Methods
+
+
+@end

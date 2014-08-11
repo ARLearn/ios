@@ -87,6 +87,7 @@
 		8DDECF421976AABA007CECB4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF411976AABA007CECB4 /* Message.m */; };
 		8DDECF451976AABA007CECB4 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF441976AABA007CECB4 /* Account.m */; };
 		8DEE589819828BFA00C2283F /* ARLGamePin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DEE589719828BFA00C2283F /* ARLGamePin.m */; };
+		8DFC0D3B1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -243,6 +244,8 @@
 		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Account.m; sourceTree = "<group>"; };
 		8DEE589619828BFA00C2283F /* ARLGamePin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGamePin.h; sourceTree = "<group>"; };
 		8DEE589719828BFA00C2283F /* ARLGamePin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGamePin.m; sourceTree = "<group>"; };
+		8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLTopGamesTableViewController.h; sourceTree = "<group>"; };
+		8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLTopGamesTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -339,6 +342,8 @@
 				8D87A50D198648B500842BC6 /* Utils */,
 				8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */,
 				8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */,
+				8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */,
+				8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */,
 			);
 			path = ARLearn;
 			sourceTree = "<group>";
@@ -744,6 +749,7 @@
 				8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */,
 				8D21965B196D26080044616A /* ARLViewController.m in Sources */,
 				8D219A6B196D31350044616A /* MagicalImportFunctions.m in Sources */,
+				8DFC0D3B1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m in Sources */,
 				8D219A74196D31350044616A /* NSManagedObject+MagicalFinders.m in Sources */,
 				8D219A6E196D31350044616A /* NSNumber+MagicalDataImport.m in Sources */,
 				8D219A7C196D31350044616A /* NSPersistentStore+MagicalRecord.m in Sources */,

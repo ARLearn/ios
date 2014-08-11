@@ -319,6 +319,7 @@
                                 </state>
                                 <connections>
                                     <action selector="TopGamesButtonAction:" destination="Gcw-Ml-KzB" eventType="touchUpInside" id="1LA-HP-PX1"/>
+                                    <segue destination="2UI-87-7TS" kind="push" id="Vi1-5t-h6I"/>
                                 </connections>
                             </button>
                             <button opaque="NO" tag="1234" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="HG4-3w-dcd" customClass="ARLButton">
@@ -456,7 +457,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="173" y="970"/>
+            <point key="canvasLocation" x="293" y="970"/>
         </scene>
         <!--Categories View Controller-->
         <scene sceneID="gaI-Hk-YIP">
@@ -539,6 +540,35 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VNL-5S-jsH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="980" y="970"/>
+        </scene>
+        <!--Top Games Table View Controller-->
+        <scene sceneID="KxE-pd-8e2">
+            <objects>
+                <tableViewController id="2UI-87-7TS" customClass="ARLTopGamesTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hRK-2b-JOq">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="aTopGames" id="BXh-I2-rHS">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="BXh-I2-rHS" id="eLR-Fd-A7K">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="2UI-87-7TS" id="aTT-Q2-myQ"/>
+                            <outlet property="delegate" destination="2UI-87-7TS" id="bu0-eI-Kp6"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="JBO-Xc-kT6"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5gH-gC-GdK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1332" y="970"/>
         </scene>
     </scenes>
     <resources>
