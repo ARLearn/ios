@@ -308,6 +308,8 @@
 			children = (
 				8D219653196D26080044616A /* ARLAppDelegate.h */,
 				8D219654196D26080044616A /* ARLAppDelegate.m */,
+				8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */,
+				8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */,
 				8D219A1B196D2A2D0044616A /* ARLDatabase.xcdatamodeld */,
 				8D219A2C196D2F160044616A /* ARLDefines.h */,
 				8DEE589619828BFA00C2283F /* ARLGamePin.h */,
@@ -328,6 +330,8 @@
 				8D55B2C51976937200C0A56B /* ARLSearchViewController.m */,
 				8D8B45E5197517D8001FC6DF /* ARLStoreViewController.h */,
 				8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */,
+				8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */,
+				8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */,
 				8D219659196D26080044616A /* ARLViewController.h */,
 				8D21965A196D26080044616A /* ARLViewController.m */,
 				8D4233DF196E900D007410C3 /* en.lproj */,
@@ -340,10 +344,6 @@
 				8D21964B196D26080044616A /* Supporting Files */,
 				8D219A85196D341F0044616A /* Todo.txt */,
 				8D87A50D198648B500842BC6 /* Utils */,
-				8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */,
-				8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */,
-				8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */,
-				8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */,
 			);
 			path = ARLearn;
 			sourceTree = "<group>";

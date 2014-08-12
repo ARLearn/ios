@@ -129,6 +129,31 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
     return @"";
 }
 
+
+/*!
+ *  Tap on table Row
+ *
+ *  @param tableView <#tableView description#>
+ *  @param indexPath <#indexPath description#>
+ */
+- (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+    switch (indexPath.section) {
+        case TOPGAMES: {
+            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            
+            if (newViewController) {
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+                
+                break;
+            }
+            break;
+        }
+    }
+}
+
+//
 #pragma mark - Properties
 
 /*!

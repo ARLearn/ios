@@ -41,9 +41,7 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 
 @end
 
-#pragma mark - ViewController
 
-// See https://developers.google.com/maps/documentation/ios/start
 
 @implementation ARLNearbyViewController
 
@@ -51,6 +49,8 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 
 @synthesize results = _results;
 @synthesize query = _query;
+
+#pragma mark - ViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -65,20 +65,14 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 {
     [super viewDidLoad];
     
-//    self.portraitView = self.portrait;
-//    self.landscapeView = self.landscape;
-    // self.view = self.portrait;
-    
     // Do any additional setup after loading the view.
+
+    // See https://developers.google.com/maps/documentation/ios/start
+    //
     self.mapView.delegate = self;
     
     [self.mapView setShowsUserLocation:YES];
-    
-    //??? didFailToLocateUserWithError sometimes called.
-    //MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance([ARLAppDelegate CurrentLocation], 1500, 1500);
-    
-    //[self.mapView setRegion:zoomRegion animated:YES];
-    
+
     [self applyConstraints];
 }
 
