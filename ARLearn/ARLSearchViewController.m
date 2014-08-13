@@ -80,6 +80,8 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 }
 
 -(void) viewWillAppear:(BOOL)animated  {
+    [super viewWillAppear:animated];
+    
     [self performQuery];
     
     [self filterContentForSearchText:self.searchBar.text
@@ -92,13 +94,14 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 
 -(void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
+    
+    //
 }
 
 /*!
  *  Just clear the stored data.
  */
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
     // Dispose of any resources that can be recreated.
@@ -267,6 +270,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
             
+#warning GameID's to large for for int Tag property.
             cell.tag = [(NSNumber *)[dict valueForKey:@"gameId"] integerValue];
             
             // [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
@@ -291,12 +295,19 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
+                NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
+               
+#warning GameID's to large for for int Tag property.
+                
+                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
+                }
+                
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
                 [self.navigationController pushViewController:newViewController animated:YES];
-                
-                break;
             }
+            break;
         }
     }
 }

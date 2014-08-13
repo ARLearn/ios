@@ -50,6 +50,7 @@
        didTapToFocusOnPoint:(CGPoint) aPoint;
 
 - (void) scanViewController:(ARLScanViewController *) aCtler
-        didSuccessfullyScan:(NSString *) aScannedValue;
+        didSuccessfullyScan:(NSString *) aScannedValue
+    didSuccessfullyScanType:(NSString *) aScannedType;
 
 @end

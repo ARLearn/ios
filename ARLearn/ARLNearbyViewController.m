@@ -79,22 +79,7 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    @autoreleasepool {
-        CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
-        
-        _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, 25000];
-        
-        NSString *cacheIdentifier = [ARLNetworking generateGetDescription:self.query];
-        
-        NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
-        
-        if (!response) {
-            [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
-        } else {
-            NSLog(@"Using cached query data");
-            [self processData:response];
-        }
-    }
+    [self performQuery];
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -228,7 +213,7 @@ didCompleteWithError:(NSError *)error
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case NEARBYRESULTS : {
-            return 2;
+            return self.results.count;
         }
     }
     
@@ -242,17 +227,12 @@ didCompleteWithError:(NSError *)error
         case NEARBYRESULTS : {
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
             
-            switch (indexPath.item) {
-                case 0:
-                    cell.textLabel.text = @"Game1";
-                    cell.detailTextLabel.text = @"Starting tomorrow";
-                    break;
-                case 1:
-                    cell.textLabel.text = @"Game2";
-                    cell.detailTextLabel.text = @"Starting now";
-                    break;
-            }
+            NSDictionary *game = [self.results objectAtIndex:indexPath.item];
+            
+            cell.textLabel.text = [game valueForKey:@"title"];
+            cell.detailTextLabel.text = [game valueForKey:@"language"];
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
+            cell.tag = [[game valueForKey:@"gameId"] intValue];
             
             return cell;
         }
@@ -273,6 +253,33 @@ didCompleteWithError:(NSError *)error
     return @"";
 }
 
+/*!
+ *  Tap on table Row
+ *
+ *  @param tableView <#tableView description#>
+ *  @param indexPath <#indexPath description#>
+ */
+- (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+    switch (indexPath.section) {
+        case NEARBYRESULTS: {
+            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            
+            if (newViewController) {
+                NSDictionary *dict = [self.results objectAtIndex:indexPath.item];
+                
+                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:[[dict objectForKey:@"gameId"] longLongValue]]];
+                }
+                
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+            }
+            break;
+        }
+    }
+}
+
 #pragma mark - Properties
 
 /*!
@@ -285,6 +292,25 @@ didCompleteWithError:(NSError *)error
 }
 
 #pragma mark - Methods
+
+- (void)performQuery {
+    @autoreleasepool {
+        CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
+        
+        _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, 25000];
+        
+        NSString *cacheIdentifier = [ARLNetworking generateGetDescription:self.query];
+        
+        NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+        
+        if (!response) {
+            [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
+        } else {
+            NSLog(@"Using cached query data");
+            [self processData:response];
+        }
+    }
+}
 
 - (void) reloadMap {
     [self.mapView setShowsUserLocation:NO];
@@ -355,9 +381,12 @@ didCompleteWithError:(NSError *)error
         
         self.results = (NSArray *)[json objectForKey:@"games"];
         
+        DLog(@"%d Nearby Games", self.results.count);
+        
         [self reloadMap];
+        
+        [self.nearbyGamesTable reloadData];
     }
-    
 }
 
 /*!
@@ -365,8 +394,9 @@ didCompleteWithError:(NSError *)error
  *
  *  See http://brianreiter.org/2012/03/02/size-an-mkmapview-to-fit-its-annotations-in-ios-without-futzing-with-coordinate-systems/
  *
- *  @param mapView  <#mapView description#>
- *  @param animated <#animated description#>
+ *  @param mapView  ;
+ 
+ *  @param animated l;
  */
 - (void)zoomMapViewToFitAnnotations:(MKMapView *)map animated:(BOOL)animated
 {

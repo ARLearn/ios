@@ -151,10 +151,14 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
                 case 0:
                     cell.textLabel.text = @"Game1";
                     cell.detailTextLabel.text = @"Starting tomorrow";
+#warning GameID's to large for for int Tag property.
+                    cell.tag = 13876002;
                     break;
                 case 1:
                     cell.textLabel.text = @"Game2";
                     cell.detailTextLabel.text = @"Starting now";
+#warning GameID's to large for for int Tag property.
+                    cell.tag = 20536006;
                     break;
             }
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
@@ -176,6 +180,34 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
     
     // Should not happen!!
     return @"";
+}
+
+/*!
+ *  Tap on table Row
+ *
+ *  @param tableView <#tableView description#>
+ *  @param indexPath <#indexPath description#>
+ */
+- (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
+    switch (indexPath.section) {
+        case FEATURED: {
+            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            
+            if (newViewController) {
+                NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
+                
+                #warning GameID's to large for for int Tag property.
+                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
+                }
+                
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+            }
+            break;
+        }
+    }
 }
 
 #pragma mark - Properties

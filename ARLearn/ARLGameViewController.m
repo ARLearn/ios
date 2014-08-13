@@ -23,9 +23,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *releaseLabel;
 
+@property (retain, nonatomic) NSDictionary *game;
+
 @end
 
 @implementation ARLGameViewController
+
+@synthesize game;
 
 #pragma mark - ViewController
 
@@ -42,18 +46,66 @@
 {
     [super viewDidLoad];
     
+    DLog(@"GameID = %@", self.gameId);
+    
     [self applyConstraints];
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self performQuery];
+}
+
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     //
 }
 
-
 -(void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     //
+}
+
+#pragma mark - NSURLSessionDataDelegate
+
+- (void)URLSession:(NSURLSession *)session
+          dataTask:(NSURLSessionDataTask *)dataTask
+didReceiveResponse:(NSURLResponse *)response
+ completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
+{
+    NSLog(@"Got HTTP Response");
+    
+    completionHandler(NSURLSessionResponseAllow);
+}
+
+- (void)URLSession:(NSURLSession *)session
+          dataTask:(NSURLSessionDataTask *)dataTask
+    didReceiveData:(NSData *)data
+{
+    NSLog(@"Got HTTP Data");
+    
+    // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
+    
+    [self processData:data];
+    
+    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+}
+
+- (void)URLSession:(NSURLSession *)session
+              task:(NSURLSessionTask *)task
+didCompleteWithError:(NSError *)error
+{
+    NSLog(@"Completed HTTP Task");
+    
+    if(error == nil)
+    {
+        // Update UI Here?
+        NSLog(@"Download is Succesfull");
+    } else {
+        NSLog(@"Error %@",[error userInfo]);
+    }
 }
 
 #pragma mark - Properties
@@ -148,7 +200,47 @@
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
+}
+
+- (void)processData:(NSData *)data
+{
+    //Example Data:
     
+    //{
+    //    "type": "org.celstec.arlearn2.beans.game.Game",
+    //    "gameId": 10206097,
+    //    "deleted": false,
+    //    "lastModificationDate": 1383575222233,
+    //    "title": "Connect college inquiry",
+    //    "sharing": 1,
+    //    "config": {
+    //        "type": "org.celstec.arlearn2.beans.game.Config",
+    //        "mapAvailable": false,
+    //        "manualItems": [],
+    //        "locationUpdates": []
+    //    },
+    //    "language": "en"
+    //}
+    
+    self.game = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    
+    self.titleLabel.text = [self.game objectForKey:@"title"];
+    self.languageLabel.text = [self.game objectForKey:@"language"];
+}
+
+- (void)performQuery {
+    NSString *query = [NSString stringWithFormat:@"myGames/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
+    
+    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
+    
+    NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+    
+    if (!response) {
+        [ARLNetworking sendHTTPGetWithDelegate:self withService:query];
+    } else {
+        NSLog(@"Using cached query data");
+        [self processData:response];
+    }
 }
 
 @end

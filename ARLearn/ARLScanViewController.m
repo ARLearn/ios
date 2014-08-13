@@ -107,8 +107,7 @@
 /*!
  *  didReceiveMemoryWarning
  */
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
     [self stopScanning];
