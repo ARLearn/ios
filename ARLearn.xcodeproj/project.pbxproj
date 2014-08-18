@@ -70,8 +70,6 @@
 		8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DC418AA19878AF300054466 /* Storyboard.storyboard */; };
 		8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC418AD19878F8000054466 /* QuartzCore.framework */; };
 		8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DC418B01987C14900054466 /* ARLMyGamesViewController.m */; };
-		8DC418CA1987D22000054466 /* TPMultiLayoutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DC418B61987D22000054466 /* TPMultiLayoutViewController.m */; };
-		8DC418D61987DB9A00054466 /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 8DC418D51987DB9A00054466 /* README.markdown */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
 		8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */; };
 		8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF231976AAB9007CECB4 /* Inquiry.m */; };
@@ -212,9 +210,6 @@
 		8DC418AD19878F8000054466 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8DC418AF1987C14900054466 /* ARLMyGamesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMyGamesViewController.h; sourceTree = "<group>"; };
 		8DC418B01987C14900054466 /* ARLMyGamesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMyGamesViewController.m; sourceTree = "<group>"; };
-		8DC418B51987D22000054466 /* TPMultiLayoutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPMultiLayoutViewController.h; sourceTree = "<group>"; };
-		8DC418B61987D22000054466 /* TPMultiLayoutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPMultiLayoutViewController.m; sourceTree = "<group>"; };
-		8DC418D51987DB9A00054466 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItemVisibility.h; sourceTree = "<group>"; };
 		8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralItemVisibility.m; sourceTree = "<group>"; };
@@ -275,7 +270,6 @@
 				8D219A2D196D31350044616A /* MagicalRecord */,
 				8D219642196D26080044616A /* Products */,
 				8DC69663196D500E00FA1505 /* Settings.bundle */,
-				8DC418B21987D22000054466 /* TPMultiLayoutViewController */,
 				8D55B2811975633600C0A56B /* TPKeyboardAvoiding */,
 			);
 			sourceTree = "<group>";
@@ -569,16 +563,6 @@
 			path = en.lproj;
 			sourceTree = "<group>";
 		};
-		8DC418B21987D22000054466 /* TPMultiLayoutViewController */ = {
-			isa = PBXGroup;
-			children = (
-				8DC418D51987DB9A00054466 /* README.markdown */,
-				8DC418B51987D22000054466 /* TPMultiLayoutViewController.h */,
-				8DC418B61987D22000054466 /* TPMultiLayoutViewController.m */,
-			);
-			path = TPMultiLayoutViewController;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -643,7 +627,6 @@
 				8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */,
 				8D4233E5196E900D007410C3 /* Localizable.strings in Resources */,
 				8D21965D196D26080044616A /* Images.xcassets in Resources */,
-				8DC418D61987DB9A00054466 /* README.markdown in Resources */,
 				8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */,
 				8DC69664196D500E00FA1505 /* Settings.bundle in Resources */,
 			);
@@ -724,7 +707,6 @@
 				8D219A76196D31350044616A /* NSManagedObject+MagicalRequests.m in Sources */,
 				8D219A7F196D31350044616A /* MagicalRecord+ErrorHandling.m in Sources */,
 				8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */,
-				8DC418CA1987D22000054466 /* TPMultiLayoutViewController.m in Sources */,
 				8D219A84196D31350044616A /* MagicalRecord.m in Sources */,
 				8DDECF301976AAB9007CECB4 /* TestAccount.m in Sources */,
 				8DDECF331976AAB9007CECB4 /* CurrentItemVisibility.m in Sources */,
