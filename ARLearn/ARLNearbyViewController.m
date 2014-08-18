@@ -24,6 +24,10 @@
 
 @property (readonly, nonatomic) NSString *cellIdentifier;
 
+@property (readonly, nonatomic) CLLocationCoordinate2D NE;
+@property (readonly, nonatomic) CLLocationCoordinate2D SW;
+@property (readonly, nonatomic) CLLocationCoordinate2D Mid;
+
 /*!
  *  ID's and order of the cells.
  */
@@ -41,14 +45,16 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 
 @end
 
-
-
 @implementation ARLNearbyViewController
 
 @synthesize mapView;
 
 @synthesize results = _results;
 @synthesize query = _query;
+
+static const double kDegreesToRadians = M_PI / 180.0;
+static const double kRadiansToDegrees = 180.0 / M_PI;
+static bool initialview = true;
 
 #pragma mark - ViewController
 
@@ -67,6 +73,10 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
     
     // Do any additional setup after loading the view.
 
+#pragma warning Set initial viewport to correct search distance around center point (this removed the initial zoom).
+#pragma warning Set viewport to search distance when moving around.
+#pragma warning Debug why we not always get games in response (search has that issue too).
+    
     // See https://developers.google.com/maps/documentation/ios/start
     //
     self.mapView.delegate = self;
@@ -78,6 +88,10 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+
+    initialview = true;
+    
+    [self.mapView setCenterCoordinate:[ARLAppDelegate CurrentLocation]];
     
     [self performQuery];
 }
@@ -147,6 +161,15 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
     return annView;
 }
 
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    CLLocationDistance kilometers = [self  distanceBetweenCoordinates:self.NE toCoord:self.Mid];
+    
+    DLog(@"-----------------");
+    DLog(@"%f %f - [%f %f] - %f %f (%f0.00 km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
+
+    [self performQuery];
+}
+
 #pragma mark - NSURLSessionDataDelegate
 
 - (void)URLSession:(NSURLSession *)session
@@ -154,8 +177,10 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    NSLog(@"Got HTTP Response");
+    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
+    NSLog(@"Got HTTP Response [%d]", [httpResponse statusCode]);
+
     completionHandler(NSURLSessionResponseAllow);
 }
 
@@ -163,8 +188,8 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    NSLog(@"Got HTTP Data");
-    
+    DLog(@"Got HTTP Data");
+
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
 
     [self processData:data];
@@ -291,13 +316,41 @@ didCompleteWithError:(NSError *)error
     return  @"aNearByGames";
 }
 
+-(CLLocationCoordinate2D) NE {
+    //MKMapRect mRect = self.mapView.visibleMapRect;
+    //MKMapPoint neMapPoint = MKMapPointMake(MKMapRectGetMaxX(mRect), mRect.origin.y);
+    //return MKCoordinateForMapPoint(neMapPoint);
+    
+    CGPoint nePoint = CGPointMake(self.mapView.bounds.origin.x + mapView.bounds.size.width, mapView.bounds.origin.y);
+    
+    return [mapView convertPoint:nePoint toCoordinateFromView:mapView];
+}
+
+-(CLLocationCoordinate2D) SW {
+    //MKMapRect mRect = self.mapView.visibleMapRect;
+    //MKMapPoint swMapPoint = MKMapPointMake(mRect.origin.x, MKMapRectGetMaxY(mRect));
+    //return MKCoordinateForMapPoint(swMapPoint);
+    
+    CGPoint swPoint = CGPointMake((self.mapView.bounds.origin.x), (mapView.bounds.origin.y + mapView.bounds.size.height));
+    return [mapView convertPoint:swPoint toCoordinateFromView:mapView];
+}
+
+-(CLLocationCoordinate2D) Mid {
+    return mapView.centerCoordinate;
+}
+
 #pragma mark - Methods
 
 - (void)performQuery {
     @autoreleasepool {
-        CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
+        CLLocationCoordinate2D location = self.mapView.centerCoordinate;
         
-        _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, 25000];
+        //TODO Distance
+        CLLocationDistance kilometers = ceil([self distanceBetweenCoordinates:self.NE toCoord:self.SW] / 2000.0);
+        
+        DLog(@"%f %f - [%f %f] - %f %f (%f0.00 km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
+        
+        _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, (int)kilometers*1000];
         
         NSString *cacheIdentifier = [ARLNetworking generateGetDescription:self.query];
         
@@ -319,8 +372,10 @@ didCompleteWithError:(NSError *)error
         
         //games to markers.
         //bounds around games.
+        [self.mapView removeAnnotations:self.mapView.annotations];
         
         //Ourselves.
+       // if (initialview)
         {
             CLLocationCoordinate2D  ctrpoint;
             ctrpoint.latitude = 50.964428;
@@ -332,6 +387,8 @@ didCompleteWithError:(NSError *)error
                                                             pinColor:MKPinAnnotationColorRed];
             
             [self.mapView addAnnotation:gp];
+            
+            // initialview = false;
         }
         
         for (NSDictionary *game in self.results) {
@@ -348,7 +405,11 @@ didCompleteWithError:(NSError *)error
             }
         }
         
-        [self zoomMapViewToFitAnnotations:self.mapView animated:TRUE];
+        if (initialview) {
+            [self zoomMapViewToFitAnnotations:self.mapView animated:TRUE];
+            
+            initialview = false;
+        }
     }
 }
 
@@ -494,6 +555,25 @@ didCompleteWithError:(NSError *)error
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
+}
+
+-(CLLocationDistance) distanceBetweenCoordinates:(CLLocationCoordinate2D)fromCoord toCoord:(CLLocationCoordinate2D)toCoord
+{
+    double earthRadius = 6371.01; // Earth's radius in Kilometers
+    
+    // Get the difference between our two points then convert the difference into radians
+    double nDLat = (fromCoord.latitude - toCoord.latitude) * kDegreesToRadians;
+    double nDLon = (fromCoord.longitude - toCoord.longitude) * kDegreesToRadians;
+    
+    double fromLat =  toCoord.latitude * kDegreesToRadians;
+    double toLat =  fromCoord.latitude * kDegreesToRadians;
+    
+    double nA = pow ( sin(nDLat/2), 2 ) + cos(fromLat) * cos(toLat) * pow ( sin(nDLon/2), 2 );
+    
+    double nC = 2 * atan2( sqrt(nA), sqrt( 1 - nA ));
+    double nD = earthRadius * nC;
+    
+    return nD * 1000; // Return our calculated distance in meters
 }
 
 @end
