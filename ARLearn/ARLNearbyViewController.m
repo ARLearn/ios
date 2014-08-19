@@ -28,6 +28,9 @@
 @property (readonly, nonatomic) CLLocationCoordinate2D SW;
 @property (readonly, nonatomic) CLLocationCoordinate2D Mid;
 
+@property (retain, nonatomic) NSMutableData *accumulatedData;
+@property (nonatomic) long long accumulatedSize;
+
 /*!
  *  ID's and order of the cells.
  */
@@ -179,8 +182,11 @@ didReceiveResponse:(NSURLResponse *)response
 {
     NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
-    NSLog(@"Got HTTP Response [%d]", [httpResponse statusCode]);
+    self.accumulatedSize = [response expectedContentLength];
+    self.accumulatedData = [[NSMutableData alloc]init];
 
+    NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    
     completionHandler(NSURLSessionResponseAllow);
 }
 
@@ -188,15 +194,20 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    DLog(@"Got HTTP Data");
-
-    // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
-
-    [self processData:data];
+    NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
-    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+    // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
+    
+    [self.accumulatedData appendData:data];
+    
+    if ([self.accumulatedData length]==self.accumulatedSize) {
+       // [self processData:data];
+        
+       // [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+    }
 }
 
+#pragma mark - NSURLSessionDelegate
 
 - (void)URLSession:(NSURLSession *)session
               task:(NSURLSessionTask *)task
@@ -206,6 +217,10 @@ didCompleteWithError:(NSError *)error
     
     if(error == nil)
     {
+        [self processData:self.accumulatedData];
+        
+        [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
+
         // Update UI Here?
         NSLog(@"Download is Succesfull");
     }

@@ -20,6 +20,9 @@
 
 @property (readonly, nonatomic) NSString *query;
 
+@property (retain, nonatomic) NSMutableData *accumulatedData;
+@property (nonatomic) long long accumulatedSize;
+
 /*!
  *  ID's and order of the cells.
  */
@@ -341,7 +344,12 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    NSLog(@"Got HTTP Response");
+    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+    
+    self.accumulatedSize = [response expectedContentLength];
+    self.accumulatedData = [[NSMutableData alloc]init];
+    
+    NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -350,18 +358,23 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    NSLog(@"Got HTTP Data");
+    NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
-    [self processData:data];
+    [self.accumulatedData appendData:data];
     
-    if ([self.results count] > 0) {
-        [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
-    } else {
-        DLog(@"Query %@",dataTask.taskDescription)
+    if ([self.accumulatedData length]==self.accumulatedSize) {
+        // [self processData:data];
+        //    if ([self.results count] > 0) {
+        //        [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+        //    } else {
+        //        DLog(@"Query %@",dataTask.taskDescription)
+        //    }
     }
 }
+
+#pragma mark - NSURLSessionDelegate
 
 - (void)URLSession:(NSURLSession *)session
               task:(NSURLSessionTask *)task
@@ -371,6 +384,14 @@ didCompleteWithError:(NSError *)error
     
     if (error == nil)
     {
+        [self processData:self.accumulatedData];
+        
+        //        if ([self.results count] > 0) {
+        [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
+        //        } else {
+        //            DLog(@"Query %@",task.taskDescription)
+        //        }
+        
         // Update UI Here?
         NSLog(@"Download is Succesfull");
     } else {
