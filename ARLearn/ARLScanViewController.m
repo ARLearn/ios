@@ -69,9 +69,9 @@
   
     [self setVideoFrame];
     
-    [self startScanning];
+    [self setVideoOrientation];
     
-    [self applyConstraints];
+    [self startScanning];
 }
 
 /*!
@@ -81,6 +81,8 @@
 {
     [super viewDidLoad];
     
+    [self applyConstraints];
+
     self.delegate = self;
 
     if ([self isCameraAvailable]) {
@@ -237,6 +239,8 @@
     CGFloat sh = self.screenHeight;
     
     // NSLog(@"ScreenWidth: %f", sw); //320
+   
+    // UIDeviceOrientation o = [[UIDevice currentDevice] orientation];
     
     switch ([[UIDevice currentDevice] orientation]) {
             //Seems to happen when the home button is on the RIGHT side. Works.
@@ -254,13 +258,14 @@
             break;
             
             //Happens when the home button is on the bottom side. Works.
+        case UIDeviceOrientationUnknown :
         case UIDeviceOrientationPortrait :
+        case UIDeviceOrientationPortraitUpsideDown :
+        case UIDeviceOrientationFaceUp :
+        case UIDeviceOrientationFaceDown :
             self.preview.frame = CGRectMake((sw / 2) - (VIDEOSIZE/2), 8.0f, VIDEOSIZE, VIDEOSIZE);
             self.scannedLabel.textAlignment = NSTextAlignmentCenter;
             self.typeLabel.textAlignment = NSTextAlignmentCenter;
-            break;
-            
-        default:
             break;
     }
 }
