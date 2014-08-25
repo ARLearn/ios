@@ -57,7 +57,7 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 
 static const double kDegreesToRadians = M_PI / 180.0;
 static const double kRadiansToDegrees = 180.0 / M_PI;
-static bool initialview = true;
+//static bool golive = false;
 
 #pragma mark - ViewController
 
@@ -74,6 +74,8 @@ static bool initialview = true;
 {
     [super viewDidLoad];
     
+    //golive = false;
+    
     // Do any additional setup after loading the view.
 
 #pragma warning Set initial viewport to correct search distance around center point (this removed the initial zoom).
@@ -82,21 +84,38 @@ static bool initialview = true;
     
     // See https://developers.google.com/maps/documentation/ios/start
     //
-    self.mapView.delegate = self;
-    
     [self.mapView setShowsUserLocation:YES];
-
+    
     [self applyConstraints];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
+    
+    if (! (location.longitude!=0.0 && location.latitude!=0.0)) {
+        location.latitude = ounl_latitude;
+        location.longitude = ounl_longitude;
+    }
+    
+    [self.mapView setCenterCoordinate:location];
+    
+    MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance(location, initial_km, initial_km);
+    
+    [self.mapView setRegion:zoomRegion animated:NO];
+    
+    // golive = true;
+    
+    [self performQuery:location];
+    
+    self.mapView.delegate = self;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    initialview = true;
-    
-    [self.mapView setCenterCoordinate:[ARLAppDelegate CurrentLocation]];
-    
-    [self performQuery];
+    //
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -134,11 +153,12 @@ static bool initialview = true;
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
     DLog(@"lat: %f, lng: %f", userLocation.coordinate.latitude, userLocation.coordinate.longitude);
 
+    // Create box of 25km around user location.
     CLLocationCoordinate2D newLocation = [userLocation coordinate];
 
-    MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance(newLocation, 250, 250);
+    MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance(newLocation, initial_km, initial_km);
     
-    [self.mapView setRegion:zoomRegion animated:YES];
+    [self.mapView setRegion:zoomRegion animated:NO];
     // [self.mapView regionThatFits:zoomRegion];
 }
 
@@ -165,12 +185,14 @@ static bool initialview = true;
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-    CLLocationDistance kilometers = [self  distanceBetweenCoordinates:self.NE toCoord:self.Mid];
+    CLLocationDistance kilometers = [self distanceBetweenCoordinates:self.NE toCoord:self.Mid];
     
-    DLog(@"-----------------");
-    DLog(@"%f %f - [%f %f] - %f %f (%f0.00 km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
-
-    [self performQuery];
+    if (/*golive &&*/ self.Mid.longitude!=0.0 && self.Mid.latitude!=0.0) {
+        DLog(@"-----------------");
+        DLog(@"%f %f - [%f %f] - %f %f (%0.1f km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
+        
+        [self performQuery:self.Mid];
+    }
 }
 
 #pragma mark - NSURLSessionDataDelegate
@@ -196,7 +218,7 @@ didReceiveResponse:(NSURLResponse *)response
 {
     NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
-    // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
+// [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
     [self.accumulatedData appendData:data];
     
@@ -356,14 +378,14 @@ didCompleteWithError:(NSError *)error
 
 #pragma mark - Methods
 
-- (void)performQuery {
+- (void)performQuery:(CLLocationCoordinate2D)center {
     @autoreleasepool {
-        CLLocationCoordinate2D location = self.mapView.centerCoordinate;
+        CLLocationCoordinate2D location = center;
         
         //TODO Distance
         CLLocationDistance kilometers = ceil([self distanceBetweenCoordinates:self.NE toCoord:self.SW] / 2000.0);
         
-        DLog(@"%f %f - [%f %f] - %f %f (%f0.00 km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
+        DLog(@"%f %f - [%f %f] - %f %f (%0.1f km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
         
         _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, (int)kilometers*1000];
         
@@ -372,7 +394,9 @@ didCompleteWithError:(NSError *)error
         NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
         
         if (!response) {
-            [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
+            if (location.longitude!=0.0 && location.latitude!=0.0) {
+                [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
+            }
         } else {
             NSLog(@"Using cached query data");
             [self processData:response];
@@ -384,26 +408,20 @@ didCompleteWithError:(NSError *)error
     [self.mapView setShowsUserLocation:NO];
     
     @autoreleasepool {
-        
-        //games to markers.
-        //bounds around games.
         [self.mapView removeAnnotations:self.mapView.annotations];
         
         //Ourselves.
-       // if (initialview)
+        CLLocationCoordinate2D  location = [ARLAppDelegate CurrentLocation];
+
+        if (location.longitude!=0.0 && location.latitude!=0.0)
         {
-            CLLocationCoordinate2D  ctrpoint;
-            ctrpoint.latitude = 50.964428;
-            ctrpoint.longitude = 5.774894;
             
-            ARLGamePin *gp = [[ARLGamePin alloc] initWithCoordinates:ctrpoint
+            ARLGamePin *gp = [[ARLGamePin alloc] initWithCoordinates:location
                                                            placeName:@"me"
                                                          description:nil
                                                             pinColor:MKPinAnnotationColorRed];
             
             [self.mapView addAnnotation:gp];
-            
-            // initialview = false;
         }
         
         for (NSDictionary *game in self.results) {
@@ -420,11 +438,11 @@ didCompleteWithError:(NSError *)error
             }
         }
         
-        if (initialview) {
-            [self zoomMapViewToFitAnnotations:self.mapView animated:TRUE];
-            
-            initialview = false;
-        }
+        // if (initialview) {
+        // //[self zoomMapViewToFitAnnotations:self.mapView animated:TRUE];
+        //
+        // initialview = false;
+        // }
     }
 }
 
