@@ -23,6 +23,8 @@
 @property (retain, nonatomic) NSMutableData *accumulatedData;
 @property (nonatomic) long long accumulatedSize;
 
+#define livesearch
+
 /*!
  *  ID's and order of the cells.
  */
@@ -85,14 +87,16 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 -(void) viewWillAppear:(BOOL)animated  {
     [super viewWillAppear:animated];
     
+#ifndef livesearch
     [self performQuery];
-    
+
     [self filterContentForSearchText:self.searchBar.text
                                scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
                                       objectAtIndex:[self.searchDisplayController.searchBar
                                                      selectedScopeButtonIndex]]];
     
     [self.table reloadData];
+#endif //livesearch
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -407,6 +411,8 @@ didCompleteWithError:(NSError *)error
     NSString *search = [searchText stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];;
     
     if ([search length] > 0) {
+#ifdef livesearch
+#else
         NSMutableArray *matches = [[NSMutableArray alloc] init];
         for (NSDictionary *dict in self.results) {
             NSString *title = [dict valueForKey:@"title"];
@@ -417,8 +423,13 @@ didCompleteWithError:(NSError *)error
         }
         
         self.searchResults = [NSArray arrayWithArray:matches];
+#endif //livesearch
     } else {
+        
+#ifdef livesearch
+#else
         self.searchResults = [NSArray arrayWithArray:self.results];
+#endif //livesearch
     }
     
     DLog(@"Filtered %d game(s)", self.searchResults.count);
@@ -433,32 +444,45 @@ didCompleteWithError:(NSError *)error
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+#ifndef livesearch
     [self filterContentForSearchText:searchText
                                scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
                                       objectAtIndex:[self.searchDisplayController.searchBar
                                                      selectedScopeButtonIndex]]];
+#endif //livesearch
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     DLog(@"Cancel clicked");
     
-    searchBar.text = @"";
+    searchBar.text = self.query;
     
+#ifdef livesearch
+//  _query = searchBar.text;
+//  self.searchResults = [[NSArray alloc] init];
+#else
     [self filterContentForSearchText:searchBar.text
                                scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
                                       objectAtIndex:[self.searchDisplayController.searchBar
                                                      selectedScopeButtonIndex]]];
-
+#endif //livesearch
+    
     [searchBar resignFirstResponder];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     DLog(@"Search Clicked");
-    
+
+#ifdef livesearch
+    _query = searchBar.text;
+
+    [self performQuery];
+#else
     [self filterContentForSearchText:searchBar.text
                                scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
                                       objectAtIndex:[self.searchDisplayController.searchBar
                                                      selectedScopeButtonIndex]]];
+#endif //livesearch
     [searchBar resignFirstResponder];
 }
 
