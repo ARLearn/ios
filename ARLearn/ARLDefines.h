@@ -20,6 +20,21 @@
      */
     #define GIT_HASH            @"git_hash"
 
+    #define ounl_latitude       50.878540
+    #define ounl_longitude      5.959414
+
+    #define initial_km          20*1000
+
+    #define serviceUrl          @"http://streetlearn.appspot.com/rest/%@"
+
+    // accept clashes with socket.h when included as precompiled header.
+    #define acceptHeader        @"Accept"
+    #define contenttypeHeader   @"Content-Type"
+
+    #define textplain           @"text/plain"
+    #define applicationjson     @"application/json"
+    #define xwwformurlencode    @"application/x-www-form-urlencoded"
+
     /*!
      *  Key for Showing the App Version in Preferences.
      */
@@ -28,6 +43,9 @@
     #define TILE                1234
 
     #define CACHINGTIME         60.0
+
+    //#define GET                 @"GET"
+    //#define POST                @"POST"
 
     #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
                                                      green:((float)((rgbValue & 0xFF00) >> 8))/255.0 \

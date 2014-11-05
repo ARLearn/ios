@@ -106,6 +106,9 @@ didCompleteWithError:(NSError *)error
     } else {
         NSLog(@"Error %@",[error userInfo]);
     }
+    
+    // Invalidate Session
+    [session finishTasksAndInvalidate];
 }
 
 #pragma mark - Properties

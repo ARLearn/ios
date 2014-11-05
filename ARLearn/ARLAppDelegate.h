@@ -8,9 +8,12 @@
 
 #import "CoreData+MagicalRecord.h"
 
+#import "Reachability.h"
+
 #import "ARLUtils.h"
 #import "ARLNotificationSubscriber.h"
 #import "ARLQueryCache.h"
+#import "ARLNetworking.h"
 
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
 

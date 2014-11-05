@@ -8,7 +8,15 @@
 
 #import "ARLAppDelegate.h"
 
+@interface ARLAppDelegate ()
+
+@property (readonly, strong, nonatomic) NSNumber *networkAvailable;
+
+@end
+
 @implementation ARLAppDelegate
+
+@synthesize networkAvailable = _networkAvailable;
 
 #pragma mark - AppDelegate
 
@@ -19,6 +27,17 @@
     
 //TODO: Register and Process APN's found in the launchOptions.
     [ARLUtils LogGitInfo];
+    
+    // Override point for customization after application launch.
+    _networkAvailable = NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+    
+    Reachability *reach = [Reachability reachabilityWithHostname:serviceUrl];
+
     
     // Setup CoreData with MagicalRecord
     // Step 1. Setup Core Data Stack with Magical Record
@@ -44,6 +63,13 @@
                                                                            )];
     
     [self startStandardUpdates];
+    
+    _networkAvailable = [NSNumber numberWithBool:[self connected] && [self serverok]];
+    
+
+    if (YES) {
+        [ARLNetworking setupOauthInfo];
+    }
     
     return YES;
 }
@@ -255,6 +281,59 @@ static CLLocationCoordinate2D currentCoordinates;
             currentCoordinates = location.coordinate;
         }
     }
+}
+
+#pragma mark Reachability
+
+/*!
+ *  Getter for isLoggedIn property.
+ *
+ *  @return If TRUE the user is logged-in.
+ */
+- (NSNumber *)networkAvailable {
+    // Log(@"networkAvailable: %@", _networkAvailable);
+    
+    return _networkAvailable;
+}
+
+/*!
+ *  Notification Handler for Reachability.
+ *  Sets the networkAvailable property.
+ *
+ *  @param note The Reachability object.
+ */
+-(void)reachabilityChanged:(NSNotification*)note
+{
+    Reachability *reach = [note object];
+    
+    //WARNING: DEBUG LOGGING.
+    
+    DLog(@"Reachability Changed");
+    DLog(@"From: %@", _networkAvailable);
+    
+    _networkAvailable = [NSNumber numberWithBool:[reach isReachable]];
+    
+    DLog(@"To: %@", _networkAvailable);
+    
+    DLog(@" All:  %d", [reach isReachable]);
+    DLog(@" Wifi: %d", [reach isReachableViaWiFi]);
+    DLog(@" WWan: %d", [reach isReachableViaWWAN]);
+}
+
+-(BOOL)connected
+{
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    
+    return !(networkStatus == NotReachable);
+}
+
+-(BOOL)serverok
+{
+    Reachability *reachability = [Reachability reachabilityWithHostname:serviceUrl];
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    
+    return !(networkStatus == NotReachable);
 }
 
 @end

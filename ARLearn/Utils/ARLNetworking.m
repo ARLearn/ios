@@ -10,8 +10,56 @@
 
 @implementation ARLNetworking
 
+static NSString *_facebookLoginString;
+static NSString *_googleLoginString;
+static NSString *_linkedInLoginString;
+static NSString *_twitterLoginString;
+
++ (NSString *) facebookLoginString {
+    return _facebookLoginString;
+}
+
++ (NSString *) googleLoginString {
+    return _googleLoginString;
+}
+
++ (NSString *) linkedInLoginString {
+    return _linkedInLoginString;
+}
+
++ (NSString *) twitterLoginString {
+    return _twitterLoginString;
+}
+
 /*!
+ *  Returns YES if a wifi connection is available.
+ *
+ *  @return YES if wifi is there.
+ */
++ (BOOL) networkAvailable {
+    UIResponder *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSNumber *result = nil;
+    
+    if ([appDelegate respondsToSelector:@selector(networkAvailable)]) {
+        result = [appDelegate performSelector:@selector(networkAvailable) withObject: nil];
+    }
+    
+    if (result && [result boolValue]) {
+        //WARNING: DEBUG CODE (Change to NO for debugging off-line code).
+        return YES;
+    }
+    
+    return NO;
+}
+
+/*!
+ *  GET data with a URL and process it using a delegate
+ *
  *  See http://hayageek.com/ios-nsurlsession-example/
+ *
+ *  @param delegate The delegate to process data.
+ *  @param service  The rest service part of the url.
  */
 +(void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service
 {
@@ -20,9 +68,9 @@
                                                                  delegate: delegate
                                                             delegateQueue: [NSOperationQueue mainQueue]];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrl, service]];
     
-        NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
     // Setup Authorization Token (should not be neccesary for search, but it is!)
     [urlRequest addValue:[NSString stringWithFormat:@"GoogleLogin auth=%@", authtoken] forHTTPHeaderField:@"Authorization"];
@@ -53,10 +101,21 @@
  *  @return The Cache ID.
  */
 +(NSString *)generateGetDescription:(NSString *)service {
+    
 #pragma warn Replace by MD5 of complete URL?
+    
     return service;
 }
 
+/*!
+ *  POST data with a URL and process it using a delegate
+ *
+ *  See http://hayageek.com/ios-nsurlsession-example/
+ *
+ *  @param delegate The delegate to process data.
+ *  @param service  The rest service part of the url.
+ *  @param body     The additional data to OST in the request body.
+ */
 +(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body
 {
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -64,7 +123,7 @@
                                                                  delegate:delegate
                                                             delegateQueue: [NSOperationQueue mainQueue]];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrl, service]];
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
   
     // Setup Authorization Token (should not be neccesary for search, but it is!)
@@ -97,8 +156,83 @@
  *  @return The Cache ID.
  */
 +(NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body {
+    
 #pragma warn Replace by MD5 of complete URL+BODY?
+    
     return [[service stringByAppendingString:@"|"] stringByAppendingString:body];
 }
+
+/*!
+ *  Get a URL's content synchronously
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return the URL's content as NSData.
+ */
++(NSData *)sendHTTPGet:(NSString *) service {
+    NSURLResponse *response = nil;
+    
+//    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+//    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
+
+    NSError *error = nil;
+   
+    NSData *data = [NSURLSession sendSynchronousDataTaskWithURL:url
+                                              returningResponse:&response
+                                                          error:&error];
+    
+    ELog(error);
+    
+    return data;
+}
+
+/**
+ *  Get and process OAUTH Info from ARLearn server.
+ */
++(void) setupOauthInfo {
+    NSData *data = [ARLNetworking sendHTTPGet:@"oauth/getOauthInfo"];
+    
+    NSError *error = nil;
+    
+    NSDictionary* network = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                   options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                     error:&error] : nil;
+    
+    ELog(error);
+    
+    for (NSDictionary* dict in [network objectForKey:@"oauthInfoList"]) {
+        switch ([(NSNumber*)[dict objectForKey:@"providerId"] intValue]) {
+            case FACEBOOK:
+                _facebookLoginString = [NSString stringWithFormat:@"https://graph.facebook.com/oauth/authorize?client_id=%@&display=page&redirect_uri=%@&scope=publish_stream,email", [dict objectForKey:@"clientId"], [dict objectForKey:@"redirectUri"]];
+                break;
+                
+            case GOOGLE:
+                _googleLoginString = [NSString stringWithFormat:@"https://accounts.google.com/o/oauth2/auth?redirect_uri=%@&response_type=code&client_id=%@&approval_prompt=force&scope=profile+email", [dict objectForKey:@"redirectUri"], [dict objectForKey:@"clientId"]];
+                break;
+                
+            case LINKEDIN:
+                _linkedInLoginString = [NSString stringWithFormat:@"https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=%@&scope=r_fullprofile+r_emailaddress+r_network&state=BdhOU9fFb6JcK5BmoDeOZbaY58&redirect_uri=%@", [dict objectForKey:@"clientId"], [dict objectForKey:@"redirectUri"]];
+                break;
+                
+            case TWITTER:
+                _twitterLoginString = [NSString stringWithFormat:@"%@?twitter=init", [dict objectForKey:@"redirectUri"]];
+                break;
+                
+        }
+    }
+    
+    Log(@"%@", self.facebookLoginString);
+    Log(@"%@", self.googleLoginString);
+    Log(@"%@", self.linkedInLoginString);
+    Log(@"%@", self.twitterLoginString);
+}
+
+//+(NSString *) requestAuthToken: (NSString *) username password: (NSString *) password {
+//    NSData *postData = [self stringToData:[NSString stringWithFormat:@"%@\n%@", username, password]];
+//    
+//    return [[self executeARLearnPostWithAuthorization:@"login" postData:postData withContentType:textplain] objectForKey:@"auth"];
+//}
 
 @end

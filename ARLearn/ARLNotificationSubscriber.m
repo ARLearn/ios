@@ -86,7 +86,7 @@
     [request setHTTPMethod:method];
     
     [request setValue:applicationjson
-   forHTTPHeaderField:accept];
+   forHTTPHeaderField:acceptHeader];
     
     return request;
 }
@@ -110,11 +110,11 @@
     [request setHTTPBody:data];
     
     if (ctValue) {
-        [request setValue:ctValue forHTTPHeaderField:contenttype];
+        [request setValue:ctValue forHTTPHeaderField:contenttypeHeader];
     }
     
     if (acceptValue) {
-        [request setValue:acceptValue forHTTPHeaderField:accept];
+        [request setValue:acceptValue forHTTPHeaderField:acceptHeader];
     }
     
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] init];

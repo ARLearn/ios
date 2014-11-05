@@ -246,8 +246,12 @@ didCompleteWithError:(NSError *)error
         // Update UI Here?
         NSLog(@"Download is Succesfull");
     }
-    else
+    else {
         NSLog(@"Error %@",[error userInfo]);
+    }
+    
+    // Invalidate Session
+    [session finishTasksAndInvalidate];
 }
 
 #pragma mark - TabelViewController

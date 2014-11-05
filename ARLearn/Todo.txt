@@ -15,3 +15,5 @@ TEST
 
 DONE
 11) Test GitHash etc.
+
+12) Reachability needs SystemConfiguration.framework

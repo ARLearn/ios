@@ -51,6 +51,8 @@
 		8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2891975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
 		8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B28F1976759300C0A56B /* ARLNetworking.m */; };
 		8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2C51976937200C0A56B /* ARLSearchViewController.m */; };
+		8D6FB70C1A0A43C20085ABA5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6FB70B1A0A43C20085ABA5 /* Reachability.m */; };
+		8D6FB70F1A0A65760085ABA5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */; };
 		8D719F7619813D9000BFD9ED /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F7519813D9000BFD9ED /* AVFoundation.framework */; };
 		8D719F7819813D9700BFD9ED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F7719813D9700BFD9ED /* CoreLocation.framework */; };
 		8D719F7A19813DA000BFD9ED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F7919813DA000BFD9ED /* UIKit.framework */; };
@@ -84,6 +86,7 @@
 		8DDECF3F1976AABA007CECB4 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF3E1976AABA007CECB4 /* Response.m */; };
 		8DDECF421976AABA007CECB4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF411976AABA007CECB4 /* Message.m */; };
 		8DDECF451976AABA007CECB4 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF441976AABA007CECB4 /* Account.m */; };
+		8DE5E5171A0A3B6900A60381 /* NSURLSession+SynchronousTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DE5E5161A0A3B6900A60381 /* NSURLSession+SynchronousTask.m */; };
 		8DEE589819828BFA00C2283F /* ARLGamePin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DEE589719828BFA00C2283F /* ARLGamePin.m */; };
 		8DFC0D3B1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */; };
 /* End PBXBuildFile section */
@@ -181,6 +184,9 @@
 		8D55B28F1976759300C0A56B /* ARLNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNetworking.m; sourceTree = "<group>"; };
 		8D55B2C41976937200C0A56B /* ARLSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLSearchViewController.h; sourceTree = "<group>"; };
 		8D55B2C51976937200C0A56B /* ARLSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLSearchViewController.m; sourceTree = "<group>"; };
+		8D6FB70A1A0A43C20085ABA5 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		8D6FB70B1A0A43C20085ABA5 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8D719F7519813D9000BFD9ED /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8D719F7719813D9700BFD9ED /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8D719F7919813DA000BFD9ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -237,6 +243,8 @@
 		8DDECF411976AABA007CECB4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		8DDECF431976AABA007CECB4 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Account.h; sourceTree = "<group>"; };
 		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Account.m; sourceTree = "<group>"; };
+		8DE5E5151A0A3B6900A60381 /* NSURLSession+SynchronousTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSession+SynchronousTask.h"; sourceTree = "<group>"; };
+		8DE5E5161A0A3B6900A60381 /* NSURLSession+SynchronousTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSession+SynchronousTask.m"; sourceTree = "<group>"; };
 		8DEE589619828BFA00C2283F /* ARLGamePin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGamePin.h; sourceTree = "<group>"; };
 		8DEE589719828BFA00C2283F /* ARLGamePin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGamePin.m; sourceTree = "<group>"; };
 		8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLTopGamesTableViewController.h; sourceTree = "<group>"; };
@@ -248,6 +256,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D6FB70F1A0A65760085ABA5 /* SystemConfiguration.framework in Frameworks */,
 				8D719F7619813D9000BFD9ED /* AVFoundation.framework in Frameworks */,
 				8D719F841981428B00BFD9ED /* CoreGraphics.framework in Frameworks */,
 				8D719F7E19813DB700BFD9ED /* CoreData.framework in Frameworks */,
@@ -266,11 +275,10 @@
 			isa = PBXGroup;
 			children = (
 				8D21964A196D26080044616A /* ARLearn */,
+				8D6FB70D1A0A43CF0085ABA5 /* External */,
 				8D219643196D26080044616A /* Frameworks */,
-				8D219A2D196D31350044616A /* MagicalRecord */,
 				8D219642196D26080044616A /* Products */,
 				8DC69663196D500E00FA1505 /* Settings.bundle */,
-				8D55B2811975633600C0A56B /* TPKeyboardAvoiding */,
 			);
 			sourceTree = "<group>";
 		};
@@ -285,6 +293,7 @@
 		8D219643196D26080044616A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */,
 				8DC418AD19878F8000054466 /* QuartzCore.framework */,
 				8D719F851981455000BFD9ED /* MapKit.framework */,
 				8D719F831981428B00BFD9ED /* CoreGraphics.framework */,
@@ -513,6 +522,26 @@
 			path = TPKeyboardAvoiding;
 			sourceTree = "<group>";
 		};
+		8D6FB7091A0A43C20085ABA5 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				8D6FB70A1A0A43C20085ABA5 /* Reachability.h */,
+				8D6FB70B1A0A43C20085ABA5 /* Reachability.m */,
+			);
+			path = Reachability;
+			sourceTree = "<group>";
+		};
+		8D6FB70D1A0A43CF0085ABA5 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				8DE5E5141A0A3B6900A60381 /* NSURLSession-SynchronousTask */,
+				8D219A2D196D31350044616A /* MagicalRecord */,
+				8D55B2811975633600C0A56B /* TPKeyboardAvoiding */,
+				8D6FB7091A0A43C20085ABA5 /* Reachability */,
+			);
+			name = External;
+			sourceTree = "<group>";
+		};
 		8D87A50C198648A500842BC6 /* Operations */ = {
 			isa = PBXGroup;
 			children = (
@@ -563,6 +592,15 @@
 			path = en.lproj;
 			sourceTree = "<group>";
 		};
+		8DE5E5141A0A3B6900A60381 /* NSURLSession-SynchronousTask */ = {
+			isa = PBXGroup;
+			children = (
+				8DE5E5151A0A3B6900A60381 /* NSURLSession+SynchronousTask.h */,
+				8DE5E5161A0A3B6900A60381 /* NSURLSession+SynchronousTask.m */,
+			);
+			path = "NSURLSession-SynchronousTask";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -592,7 +630,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = ARL;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Open University of the Netherlands";
 				TargetAttributes = {
 					8D219640196D26080044616A = {
@@ -732,8 +770,10 @@
 				8D21965B196D26080044616A /* ARLViewController.m in Sources */,
 				8D219A6B196D31350044616A /* MagicalImportFunctions.m in Sources */,
 				8DFC0D3B1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m in Sources */,
+				8DE5E5171A0A3B6900A60381 /* NSURLSession+SynchronousTask.m in Sources */,
 				8D219A74196D31350044616A /* NSManagedObject+MagicalFinders.m in Sources */,
 				8D219A6E196D31350044616A /* NSNumber+MagicalDataImport.m in Sources */,
+				8D6FB70C1A0A43C20085ABA5 /* Reachability.m in Sources */,
 				8D219A7C196D31350044616A /* NSPersistentStore+MagicalRecord.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -790,6 +830,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
