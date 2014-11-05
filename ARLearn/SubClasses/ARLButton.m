@@ -39,8 +39,22 @@ const int kTextTopPadding = 2;
                  titleText:(NSString *)title
                 titleColor:(UIColor *)color {
     
-    self.titleLabel.text = title;
-    self.titleLabel.textColor = color;
+    // Fails to set the title!
+    // self.titleLabel.text = title;
+    
+    // This however works!
+    [self setTitle:title forState:UIControlStateNormal];
+    // [self setTitle:title forState:UIControlStateSelected];
+    // [self setTitle:title forState:UIControlStateHighlighted];
+    
+    // Fails to set the color!
+    // self.titleLabel.textColor = color;
+    
+    // This however works!
+    [self setTitleColor:color forState:UIControlStateNormal];
+    // [self setTitleColor:color forState:UIControlStateSelected];
+    // [self setTitleColor:color forState:UIControlStateHighlighted];
+    
     self.backgroundColor = [UIColor clearColor];
     
     self.imageView.image = [UIImage imageNamed:image];
@@ -56,18 +70,32 @@ const int kTextTopPadding = 2;
     
     [self makeButtonWithImage:image titleText:title titleColor:color];
     
+    //    for(CALayer* layer in self.layer.sublayers)
+    //    {
+    //        if ([layer isKindOfClass:[CAGradientLayer class]])
+    //        {
+    //            [layer removeFromSuperlayer];
+    //        }
+    //    }
+    
     CAGradientLayer *gradient = [CAGradientLayer layer];
     
     gradient.frame = self.layer.bounds;
     gradient.locations =  [NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:1.0], nil];
     gradient.colors = [NSArray arrayWithObjects:(id)start.CGColor, (id)end.CGColor, nil];
     //BottomLeft
-    gradient.startPoint = CGPointMake(0.0, 0.0);
+    gradient.startPoint = CGPointMake(0, 0);
     //TopRight
-    gradient.endPoint = CGPointMake(1.0, 1.0);
+    gradient.endPoint = CGPointMake(1, 1);
     gradient.cornerRadius = radius;
     
-    [self.layer insertSublayer:gradient atIndex:0];
+    // [self.layer insertSublayer:gradient atIndex:1];
+    if (self.layer.sublayers.count>0)
+    {
+        [self.layer insertSublayer:gradient atIndex:self.layer.sublayers.count-2];
+    } else {
+        [self.layer addSublayer:gradient];
+    }
 }
 
 -(void) layoutSubviews {
