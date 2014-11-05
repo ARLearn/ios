@@ -68,7 +68,7 @@ static NSString *_twitterLoginString;
                                                                  delegate: delegate
                                                             delegateQueue: [NSOperationQueue mainQueue]];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrl, service]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrlFmt, serverUrl, service]];
     
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
@@ -123,7 +123,7 @@ static NSString *_twitterLoginString;
                                                                  delegate:delegate
                                                             delegateQueue: [NSOperationQueue mainQueue]];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrl, service]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrlFmt, serverUrl, service]];
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
   
     // Setup Authorization Token (should not be neccesary for search, but it is!)
@@ -227,6 +227,43 @@ static NSString *_twitterLoginString;
     Log(@"%@", self.googleLoginString);
     Log(@"%@", self.linkedInLoginString);
     Log(@"%@", self.twitterLoginString);
+}
+
++ (void)ShowAbortMessage: (NSString *) title message:(NSString *) message {
+    UIResponder *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    // See http://stackoverflow.com/questions/3753154/make-uialertview-blocking
+    //NSRunLoop *run_loop = [NSRunLoop currentRunLoop];
+    
+    if ([appDelegate respondsToSelector:@selector(ShowAbortMessage:message:)]) {
+        [appDelegate performSelector:@selector(ShowAbortMessage:message:) withObject:title withObject:message];
+    }
+    
+    // Lock the Condition
+    [ARLAppDelegate.theAbortLock lock];
+    
+    //WARNING: Only do this if not the MainThread.
+    if (![NSThread isMainThread]) {
+        
+        // We wait until OK on the UIAlertView is tapped and provides a Signal to continue.
+        [ARLAppDelegate.theAbortLock wait];
+        
+        // Unlock the Condition also when we exit.
+        [ARLAppDelegate.theAbortLock unlock];
+        
+        [NSThread exit];
+    } else {
+        // Unlock the Condition when we're not running on the mainthread.
+        [ARLAppDelegate.theAbortLock unlock];
+    }
+}
+
++ (void)ShowAbortMessage: (NSError *) error func:(NSString *)func {
+    
+    NSString *msg = [NSString stringWithFormat:@"%@\n\nUnresolved error code %d,\n\n%@", func, [error code], [error localizedDescription]];
+    
+    [ARLNetworking ShowAbortMessage:NSLocalizedString(@"Error", @"Error")
+                         message:msg];
 }
 
 //+(NSString *) requestAuthToken: (NSString *) username password: (NSString *) password {

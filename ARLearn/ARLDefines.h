@@ -25,7 +25,9 @@
 
     #define initial_km          20*1000
 
-    #define serviceUrl          @"http://streetlearn.appspot.com/rest/%@"
+    #define serverUrl           @"http://streetlearn.appspot.com"
+
+    #define serviceUrlFmt       @"%@/rest/%@"
 
     // accept clashes with socket.h when included as precompiled header.
     #define acceptHeader        @"Accept"

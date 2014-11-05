@@ -8,6 +8,8 @@
 
 #include "NSURLSession+SynchronousTask.h"
 
+#include "ARLAppDelegate.h"
+
 @interface ARLNetworking : NSObject
 
 /*!

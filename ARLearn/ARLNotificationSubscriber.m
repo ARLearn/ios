@@ -100,9 +100,9 @@
     NSString* urlString;
     
     if ([path hasPrefix:@"/"]) {
-        urlString = [NSString stringWithFormat:@"%@%@", serviceUrl, path];
+        urlString = [NSString stringWithFormat:@"%@%@", serverUrl, path];
     } else {
-        urlString = [NSString stringWithFormat:@"%@/rest/%@", serviceUrl, path];
+        urlString = [NSString stringWithFormat:@"%@/rest/%@", serverUrl, path];
     }
     
     NSMutableURLRequest *request = [self prepareRequest:@"POST" requestWithUrl:urlString];

@@ -30,4 +30,6 @@
 
 +(ARLQueryCache *) theQueryCache;
 
++(NSCondition *) theAbortLock;
+
 @end
