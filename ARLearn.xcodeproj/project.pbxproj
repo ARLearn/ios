@@ -53,6 +53,8 @@
 		8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2C51976937200C0A56B /* ARLSearchViewController.m */; };
 		8D6FB70C1A0A43C20085ABA5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6FB70B1A0A43C20085ABA5 /* Reachability.m */; };
 		8D6FB70F1A0A65760085ABA5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */; };
+		8D6FB7121A1221220085ABA5 /* ARLLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6FB7111A1221220085ABA5 /* ARLLoginViewController.m */; };
+		8D6FB7151A1225AB0085ABA5 /* ARLOauthWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6FB7141A1225AB0085ABA5 /* ARLOauthWebViewController.m */; };
 		8D719F7619813D9000BFD9ED /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F7519813D9000BFD9ED /* AVFoundation.framework */; };
 		8D719F7819813D9700BFD9ED /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F7719813D9700BFD9ED /* CoreLocation.framework */; };
 		8D719F7A19813DA000BFD9ED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D719F7919813DA000BFD9ED /* UIKit.framework */; };
@@ -187,6 +189,10 @@
 		8D6FB70A1A0A43C20085ABA5 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		8D6FB70B1A0A43C20085ABA5 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		8D6FB7101A1221220085ABA5 /* ARLLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLLoginViewController.h; sourceTree = "<group>"; };
+		8D6FB7111A1221220085ABA5 /* ARLLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLLoginViewController.m; sourceTree = "<group>"; };
+		8D6FB7131A1225AB0085ABA5 /* ARLOauthWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLOauthWebViewController.h; sourceTree = "<group>"; };
+		8D6FB7141A1225AB0085ABA5 /* ARLOauthWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLOauthWebViewController.m; sourceTree = "<group>"; };
 		8D719F7519813D9000BFD9ED /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8D719F7719813D9700BFD9ED /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8D719F7919813DA000BFD9ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -319,6 +325,8 @@
 				8DEE589719828BFA00C2283F /* ARLGamePin.m */,
 				8D87A51219868C3800842BC6 /* ARLGameViewController.h */,
 				8D87A51319868C3800842BC6 /* ARLGameViewController.m */,
+				8D6FB7101A1221220085ABA5 /* ARLLoginViewController.h */,
+				8D6FB7111A1221220085ABA5 /* ARLLoginViewController.m */,
 				8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */,
 				8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */,
 				8DC418AF1987C14900054466 /* ARLMyGamesViewController.h */,
@@ -327,6 +335,8 @@
 				8D7A8D29197EA09B00B37013 /* ARLNearbyViewController.m */,
 				8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */,
 				8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */,
+				8D6FB7131A1225AB0085ABA5 /* ARLOauthWebViewController.h */,
+				8D6FB7141A1225AB0085ABA5 /* ARLOauthWebViewController.m */,
 				8D7A8D0D197D55BA00B37013 /* ARLScanViewController.h */,
 				8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */,
 				8D55B2C41976937200C0A56B /* ARLSearchViewController.h */,
@@ -718,6 +728,7 @@
 				8DDECF361976AAB9007CECB4 /* Game.m in Sources */,
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
+				8D6FB7151A1225AB0085ABA5 /* ARLOauthWebViewController.m in Sources */,
 				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
 				8DDECF451976AABA007CECB4 /* Account.m in Sources */,
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,
@@ -774,6 +785,7 @@
 				8D219A74196D31350044616A /* NSManagedObject+MagicalFinders.m in Sources */,
 				8D219A6E196D31350044616A /* NSNumber+MagicalDataImport.m in Sources */,
 				8D6FB70C1A0A43C20085ABA5 /* Reachability.m in Sources */,
+				8D6FB7121A1221220085ABA5 /* ARLLoginViewController.m in Sources */,
 				8D219A7C196D31350044616A /* NSPersistentStore+MagicalRecord.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

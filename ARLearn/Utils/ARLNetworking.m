@@ -15,6 +15,8 @@ static NSString *_googleLoginString;
 static NSString *_linkedInLoginString;
 static NSString *_twitterLoginString;
 
+#pragma mark Properties
+
 + (NSString *) facebookLoginString {
     return _facebookLoginString;
 }
@@ -29,6 +31,19 @@ static NSString *_twitterLoginString;
 
 + (NSString *) twitterLoginString {
     return _twitterLoginString;
+}
+
++ (NSDictionary *) accountDetails {
+    NSData *data = [self sendHTTPGetWithAuthorization:[NSString stringWithFormat:@"account/accountDetails"]];
+    
+    NSError *error = nil;
+    
+    NSDictionary *details = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                   options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                     error:&error] : nil;
+    ELog(error);
+    
+    return details;
 }
 
 /*!
@@ -52,6 +67,40 @@ static NSString *_twitterLoginString;
     
     return NO;
 }
+
+/*!
+ *  Returns YES if logged-in.
+ *
+ *  @return YES if logged-in.
+ */
++ (BOOL)isLoggedIn {
+    UIResponder *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    Account *account = ARLNetworking.CurrentAccount;
+    
+    if (account && [appDelegate respondsToSelector:@selector(isLoggedIn)]) {
+        return [appDelegate performSelector:@selector(isLoggedIn) withObject: nil]== [NSNumber numberWithBool:YES];
+    }
+    
+    return NO;
+}
+
+/*!
+ *  Returns the current account (or nil).
+ *
+ *  @return the current account.
+ */
++ (Account *) CurrentAccount {
+    UIResponder *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    if ([appDelegate respondsToSelector:@selector(CurrentAccount)]) {
+        return [appDelegate performSelector:@selector(CurrentAccount) withObject:nil];
+    }
+    
+    return nil;
+}
+
+#pragma mark Methods
 
 /*!
  *  GET data with a URL and process it using a delegate
@@ -188,6 +237,39 @@ static NSString *_twitterLoginString;
     return data;
 }
 
+/*!
+ *  Get a URL's content synchronously
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return the URL's content as NSData.
+ */
++(NSData *)sendHTTPGetWithAuthorization:(NSString *) service {
+    NSURLResponse *response = nil;
+    
+    //    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
+    
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
+    
+    // Setup Authorization Token (should not be neccesary for search, but it is!)
+    NSString *authorizationString = [NSString stringWithFormat:@"GoogleLogin auth=%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"auth"]];
+    [urlRequest setValue:authorizationString
+      forHTTPHeaderField:@"Authorization"];
+    
+    NSError *error = nil;
+    
+    NSData *data = [NSURLSession sendSynchronousDataTaskWithRequest:urlRequest
+                                                  returningResponse:&response
+                                                              error:&error];
+    
+    ELog(error);
+    
+    return data;
+}
+
 /**
  *  Get and process OAUTH Info from ARLearn server.
  */
@@ -228,6 +310,8 @@ static NSString *_twitterLoginString;
     Log(@"%@", self.linkedInLoginString);
     Log(@"%@", self.twitterLoginString);
 }
+
+#pragma mark AbortMessage
 
 + (void)ShowAbortMessage: (NSString *) title message:(NSString *) message {
     UIResponder *appDelegate = [[UIApplication sharedApplication] delegate];

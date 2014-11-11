@@ -10,12 +10,16 @@
 
 @interface ARLAppDelegate ()
 
+@property (readonly, strong, nonatomic) NSNumber *isLoggedIn;
 @property (readonly, strong, nonatomic) NSNumber *networkAvailable;
+@property (readonly, strong, nonatomic) Account *CurrentAccount;
 
 @end
 
 @implementation ARLAppDelegate
 
+@synthesize isLoggedIn = _isLoggedIn;
+@synthesize CurrentAccount = _CurrentAccount;
 @synthesize networkAvailable = _networkAvailable;
 
 static NSCondition *_theAbortLock;
@@ -55,6 +59,8 @@ static NSCondition *_theAbortLock;
     
     //[MagicalRecord setupAutoMigratingCoreDataStack];
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
+    
+    DLog(@"%@", [MagicalRecord currentStack]);
     
     //TESTCODE: ShowAbortMessage on a non main thread.
     {
@@ -235,6 +241,36 @@ static NSCondition *_theAbortLock;
         }
     }
     return _theQueryCache;
+}
+
+/*!
+ *  Getter for CurrentAccount.
+ *
+ *  Note: we need to cache the account because retrieving it
+ *        in a different context or in the main ui thread might cause deadlock.
+ *  Note: because IsLoggedIn is also a rad-only property we need to update the
+ *        backing field.
+ *  @return The Current Account.
+ */
+- (Account *) CurrentAccount {
+    if (!_CurrentAccount) {
+        
+        DLog(@"accountLocalId: %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"accountLocalId"]);
+        DLog(@"accountType: %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"]);
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(localId = %@) AND (accountType = %@)",
+                                  [[NSUserDefaults standardUserDefaults] objectForKey:@"accountLocalId"],
+                                  [[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"]];
+        
+        NSArray *results = [Account MR_findAllWithPredicate:predicate];
+        if ([results count]) {
+            _CurrentAccount =  [results objectAtIndex:0];
+        }
+    }
+    
+    _isLoggedIn = [NSNumber numberWithBool:(_CurrentAccount)?YES:NO];
+    
+    return _CurrentAccount;
 }
 
 #pragma mark - Methods

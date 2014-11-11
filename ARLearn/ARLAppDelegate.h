@@ -15,6 +15,8 @@
 #import "ARLQueryCache.h"
 #import "ARLNetworking.h"
 
+#import "Account.h"
+
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
@@ -31,5 +33,9 @@
 +(ARLQueryCache *) theQueryCache;
 
 +(NSCondition *) theAbortLock;
+
+//@property (readonly, strong, nonatomic) NSNumber *isLoggedIn;
+//@property (readonly, strong, nonatomic) NSNumber *networkAvailable;
+//@property (readonly, strong, nonatomic) Account *CurrentAccount;
 
 @end

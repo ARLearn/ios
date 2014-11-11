@@ -10,6 +10,8 @@
 
 #include "ARLAppDelegate.h"
 
+#include "Account.h"
+
 @interface ARLNetworking : NSObject
 
 /*!
@@ -55,19 +57,22 @@ typedef NS_ENUM(NSInteger, services) {
 };
 
 
-+(void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service;
-+(NSString *)generateGetDescription:(NSString *)service;
++ (void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service;
++ (NSString *)generateGetDescription:(NSString *)service;
 
-+(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body;
-+(NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body;
++ (void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body;
++ (NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body;
 
-+(void) setupOauthInfo;
-
-@property (readonly, strong, nonatomic) NSString *facebookLoginString;
-@property (readonly, strong, nonatomic) NSString *googleLoginString;
-@property (readonly, strong, nonatomic) NSString *linkedInLoginString;
-@property (readonly, strong, nonatomic) NSString *twitterLoginString;
++ (void) setupOauthInfo;
 
 + (BOOL)networkAvailable;
++ (BOOL)isLoggedIn;
+
++ (NSString *) facebookLoginString;
++ (NSString *) googleLoginString;
++ (NSString *) linkedInLoginString;
++ (NSString *) twitterLoginString;
+
++ (NSDictionary *) accountDetails;
 
 @end
