@@ -137,6 +137,9 @@
 
 #pragma mark - Methods
 
+/*!
+ *  Add Visual Constraints.
+ */
 - (void) applyConstraints {
     NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
                                      self.view,             @"view",
@@ -201,6 +204,9 @@
 
 #pragma mark - Camera
 
+/*!
+ *  Set the scanners video orientation to match the device orientation.
+ */
 - (void)setVideoOrientation
 {
     switch ([[UIDevice currentDevice] orientation]) {
@@ -233,6 +239,9 @@
     }
 }
 
+/*!
+ *  Position the scanner's video image to match the device orientation.
+ */
 - (void)setVideoFrame
 {
     CGFloat sw = self.screenWidth;
@@ -270,7 +279,9 @@
     }
 }
 
-
+/*!
+ *  Change UI to refect that there are no camera's present/detected.
+ */
 - (void) setupNoCameraView
 {
     UILabel *labelNoCam = [[UILabel alloc] init];
@@ -284,8 +295,15 @@
 #warning Set Label at same spot as video inside a rectangle!
     
     labelNoCam.center = self.view.center;
+    
+    [self.scannedLabel setHidden:YES];
+    [self.torchLabel setHidden:YES];
+    [self.torchSwitch setHidden:YES];
 }
 
+/*!
+ *  Setup the scanner for all kinds of code including QRCode and various BarCodes.
+ */
 - (void) setupScanner
 {
     self.device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -326,6 +344,11 @@
     [self.view.layer addSublayer:self.preview];
 }
 
+/*!
+ *  Check if there is a camera available for use.
+ *
+ *  @return <#return value description#>
+ */
 - (BOOL) isCameraAvailable
 {
     NSArray *videoDevices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
@@ -333,6 +356,11 @@
     return [videoDevices count] > 0;
 }
 
+/*!
+ *  Turn the Torch.FlashLight on or off.
+ *
+ *  @param aStatus <#aStatus description#>
+ */
 -(void) setTorch:(BOOL) aStatus
 {
   	AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -348,6 +376,11 @@
     [device unlockForConfiguration];
 }
 
+/*!
+ *  Focus at a point (does not seem to work).
+ *
+ *  @param aPoint <#aPoint description#>
+ */
 - (void) focus:(CGPoint) aPoint
 {
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -380,12 +413,18 @@
     }
 }
 
+/*!
+ *  Start scanning for codes.
+ */
 - (void)startScanning
 {
     [self.session startRunning];
     
 }
 
+/*!
+ *  Stop scanning for codes.
+ */
 - (void) stopScanning
 {
     [self.session stopRunning];
@@ -455,6 +494,11 @@
 
 #pragma mark - Actions
 
+/*!
+ *  Action for the Torch button.
+ *
+ *  @param sender <#sender description#>
+ */
 - (IBAction)torchSwitchAction:(UISwitch *)sender {
     [self setTorch:self.torchSwitch.isOn];
 }
