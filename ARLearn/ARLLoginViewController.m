@@ -16,6 +16,8 @@
 - (IBAction)linkinButtonAction:(UIButton *)sender;
 - (IBAction)twitterButtonAction:(UIButton *)sender;
 
+- (IBAction)backButtonAction:(UIBarButtonItem *)sender;
+
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UIButton *wespotButton;
 @property (weak, nonatomic) IBOutlet UILabel *orLabel;
@@ -28,25 +30,59 @@
 
 @implementation ARLLoginViewController
 
+#pragma mark - ViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    // Hide buttons until we're sure we need to use them.
+    [self.wespotButton setHidden:YES];
+    [self.orLabel setHidden:YES];
+    [self.googleButton setHidden:YES];
+    [self.facebookButton setHidden:YES];
+    [self.linkedinButton setHidden:YES];
+    [self.twitterButton setHidden:YES];
+    
     if (ARLNetworking.isLoggedIn) {
-        UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"MyGamesView"];
+        UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthenticatedNavigation"];
         
         if (newViewController) {
             // Move to another UINavigationController or UITabBarController etc.
             // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+            
+#warning loggged in part via another navigationcontroller.
+            
             [self.navigationController presentViewController:newViewController animated:NO completion:nil];
+            
+            DLog(@"LOGGED IN, JUMPING TO MYGAMES");
             
             newViewController = nil;
         }
+        
+        return;
     }
+    
+    // Show buttons now we're sure we need to use them.
+    [self.orLabel setHidden:NO];
+    [self.googleButton setHidden:NO];
+    [self.facebookButton setHidden:NO];
+    
+#warning TODO Reset Tables when not logged in.
     
     //! Clear Account bound data in tables, if any left.
     // ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
     // [ARLAccountDelegator resetAccount:appDelegate.managedObjectContext];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -230,7 +266,7 @@
  */
 - (void)navigateBack {
     if (ARLNetworking.isLoggedIn) {
-        UIViewController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"MainNavigation"];
+        UIViewController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"RootNavigationController"];
         
         if (ARLNetworking.isLoggedIn) {
             //            UIResponder *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -242,7 +278,7 @@
         [self.navigationController presentViewController:mvc animated:YES completion:nil];
         
     } else {
-        [self.navigationController presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"SplashNavigation"] animated:YES  completion:nil];
+        [self.navigationController presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"] animated:YES  completion:nil];
     }
 }
 
@@ -256,7 +292,7 @@
     
     ARLOauthWebViewController* oauthService = [self.storyboard instantiateViewControllerWithIdentifier:@"oauthWebView"];
     
-    oauthService.NavigationAfterClose = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginChoice"];
+    oauthService.NavigationAfterClose = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
     
     [self.navigationController pushViewController:oauthService animated:YES];
     
@@ -311,6 +347,14 @@
 
 - (IBAction)twitterButtonAction:(UIButton *)sender {
     [self performLogin:TWITTER];
+}
+
+- (IBAction)backButtonAction:(UIBarButtonItem *)sender {
+    UINavigationController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
+    
+    if (mvc) {
+        [self.navigationController pushViewController:mvc animated:YES];
+    }
 }
 
 @end

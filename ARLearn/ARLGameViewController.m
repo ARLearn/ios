@@ -54,6 +54,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    self.navigationController.navigationBarHidden=NO;
+    self.navigationController.toolbarHidden=NO;
+    
     [self performQuery];
 }
 
@@ -191,7 +194,7 @@ didCompleteWithError:(NSError *)error
                                                                         views:viewsDictionary]];
     
     // FFix Image, Labels and Button vertically
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[iconImage(100)]-[barOne(36)]-[summaryText]-[barTwo(58)]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[iconImage(100)]-[barOne(36)]-[summaryText]-[barTwo(36)]-(8)-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
@@ -203,7 +206,48 @@ didCompleteWithError:(NSError *)error
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-}
+    
+    // Position control on barOne.
+    [self.barOne addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[ratingControl]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    [self.barOne addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[languageLabel]-|"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];
+
+    [self.barOne addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(16)-[ratingControl]"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];
+
+    [self.barOne addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[languageLabel]-(16)-|"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];
+
+    // Position control on barOne.
+    [self.barTwo addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[versionLabel]-|"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];
+    
+    [self.barTwo addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[releaseLabel]-|"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];
+    
+    [self.barTwo addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(16)-[versionLabel]"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];
+    
+    [self.barTwo addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[releaseLabel]-(16)-|"
+                                                                        options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                        metrics:nil
+                                                                          views:viewsDictionary]];}
 
 - (void)processData:(NSData *)data
 {

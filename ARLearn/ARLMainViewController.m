@@ -187,6 +187,10 @@
 
 - (IBAction)MyGamesButtonAction:(ARLButton *)sender {
     DLog(@"");
+    
+    UIViewController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
+    
+    [self.navigationController presentViewController:mvc animated:YES completion:nil];
 }
 
 - (IBAction)StoreButtonAction:(ARLButton *)sender {

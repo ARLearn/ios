@@ -34,6 +34,8 @@
 
 +(NSCondition *) theAbortLock;
 
+- (void) LogOut;
+
 //@property (readonly, strong, nonatomic) NSNumber *isLoggedIn;
 //@property (readonly, strong, nonatomic) NSNumber *networkAvailable;
 //@property (readonly, strong, nonatomic) Account *CurrentAccount;

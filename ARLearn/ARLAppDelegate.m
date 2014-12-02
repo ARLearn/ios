@@ -275,6 +275,38 @@ static NSCondition *_theAbortLock;
 
 #pragma mark - Methods
 
+/*!
+ *  Because CurrentAccount is a read-only property
+ *  we need to reset the backing field when doing a logout.
+ */
+- (void) LogOut {
+    // ARLAppDelegate.SyncAllowed = NO;
+    
+    [ARLAppDelegate deleteCurrentAccount];
+    
+    _CurrentAccount = nil;
+    _isLoggedIn = FALSE;
+}
+
+/*!
+ *  Remove all accounts and associated data.
+ *
+ *  Do not call this method directly  but use ARLAppDelegate.LogOut instead.
+ *
+ *  @param context The NSManagedObjectContext
+ */
++ (void) deleteCurrentAccount {
+    // Delete only the current account.
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(localId = %@) AND (accountType = %d)",
+                              [[NSUserDefaults standardUserDefaults] objectForKey:@"accountLocalId"],
+                              [[[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"]   intValue]];
+    
+    [Account MR_deleteAllMatchingPredicate:predicate];
+    
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+
 static CLLocationManager *locationManager;
 static CLLocationCoordinate2D currentCoordinates;
 
@@ -391,6 +423,12 @@ static CLLocationCoordinate2D currentCoordinates;
     DLog(@" WWan: %d", [reach isReachableViaWWAN]);
 }
 
+
+/*!
+ *  Check if an internet connection exists.
+ *
+ *  @return <#return value description#>
+ */
 -(BOOL)connected
 {
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
@@ -399,6 +437,11 @@ static CLLocationCoordinate2D currentCoordinates;
     return !(networkStatus == NotReachable);
 }
 
+/*!
+ *  Check if the arlearn server is reachable.
+ *
+ *  @return <#return value description#>
+ */
 -(BOOL)serverok
 {
     Reachability *reachability = [Reachability reachabilityWithHostname:serverUrl];

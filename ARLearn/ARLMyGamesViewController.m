@@ -11,8 +11,14 @@
 @interface ARLMyGamesViewController ()
 
 @property (strong, nonatomic) IBOutlet UITableView *table;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *logoutButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
 
 @property (nonatomic, strong) NSArray *results;
+
+- (IBAction)logoutButtonAction:(UIBarButtonItem *)sender;
+- (IBAction)backButtonAction:(UIBarButtonItem *)sender;
+
 
 /*!
  *  ID's and order of the cells.
@@ -44,13 +50,16 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     return self;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     
+    DLog(@"MYGAMES");
+      
     // Do any additional setup after loading the view.
     
-    // Do any additional setup after loading the view, typically from a nib.
+    self.navigationController.navigationBarHidden = NO;
+    self.navigationController.toolbarHidden = NO;
+    
     self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
     
     self.table.dataSource = self;
@@ -59,12 +68,14 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     
     [self.table reloadData];
 
-    [self.refreshControl addTarget:self
-                            action:@selector(refresh:)
-                  forControlEvents:UIControlEventValueChanged];
+    //[self.refreshControl addTarget:self
+    //                        action:@selector(refresh:)
+      //            forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     [self performQuery];
 }
 
@@ -259,8 +270,9 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
             if (newViewController) {
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                [self.navigationController pushViewController:newViewController animated:YES];
-                
+      
+                [self.navigationController pushViewController:newViewController animated:NO];
+      
                 break;
             }
             break;
@@ -321,6 +333,54 @@ didCompleteWithError:(NSError *)error
     
     // Invalidate Session
     [session finishTasksAndInvalidate];
+}
+
+#pragma mark Actions
+
+- (IBAction)logoutButtonAction:(UIBarButtonItem *)sender {
+    UIViewController *newViewController;
+    
+    if (ARLNetworking.isLoggedIn) {
+        ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
+        [appDelegate LogOut];
+        
+        //#warning not enough to toggle isLoggedIn.
+        // [self adjustLoginButton];
+        
+        if (ARLNetworking.isLoggedIn) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info") message:NSLocalizedString(@"Could not log-out",@"Could not log-out") delegate:self cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
+            [alert show];
+        } else {
+            DLog(@"->RootNavigationController");
+            
+            newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"RootNavigationController"];
+        }
+    } else {
+        newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
+    }
+    
+    if (newViewController) {
+        // Move to another UINavigationController or UITabBarController etc.
+        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+        [self.navigationController presentViewController:newViewController animated:NO completion:nil];
+        
+        newViewController = nil;
+    }
+}
+
+- (IBAction)backButtonAction:(UIBarButtonItem *)sender {
+    UIViewController *newViewController;
+    
+    newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"RootNavigationController"];
+    
+    if (newViewController) {
+        // Move to another UINavigationController or UITabBarController etc.
+        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+        [self.navigationController presentViewController:newViewController animated:NO completion:nil];
+        
+        newViewController = nil;
+    }
+
 }
 
 @end

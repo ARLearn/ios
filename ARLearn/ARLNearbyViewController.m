@@ -57,7 +57,6 @@ typedef NS_ENUM(NSInteger, ARLNearbyViewControllerGroups) {
 
 static const double kDegreesToRadians = M_PI / 180.0;
 static const double kRadiansToDegrees = 180.0 / M_PI;
-//static bool golive = false;
 
 #pragma mark - ViewController
 
@@ -74,8 +73,6 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 {
     [super viewDidLoad];
     
-    //golive = false;
-    
     // Do any additional setup after loading the view.
 
 #pragma warning Set initial viewport to correct search distance around center point (this removed the initial zoom).
@@ -83,7 +80,7 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 #pragma warning Debug why we not always get games in response (search has that issue too).
     
     // See https://developers.google.com/maps/documentation/ios/start
-    //
+
     [self.mapView setShowsUserLocation:YES];
     
     [self applyConstraints];
@@ -91,7 +88,7 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+
     CLLocationCoordinate2D location = [ARLAppDelegate CurrentLocation];
     
     if (! (location.longitude!=0.0 && location.latitude!=0.0)) {
@@ -104,25 +101,23 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
     MKCoordinateRegion zoomRegion = MKCoordinateRegionMakeWithDistance(location, initial_km, initial_km);
     
     [self.mapView setRegion:zoomRegion animated:NO];
-    
-    // golive = true;
-    
-    [self performQuery:location];
-    
-    self.mapView.delegate = self;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    //
+    self.mapView.delegate = self;
+    
+    [self locateNearbyGames];
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     
     self.mapView.delegate = nil;
-    self.mapView = nil;
+    
+    //! nilling the mapView wll result in loss of table updates.
+    // self.mapView = nil;
 
      _query = nil;
     _results = nil;
@@ -185,14 +180,7 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-    CLLocationDistance kilometers = [self distanceBetweenCoordinates:self.NE toCoord:self.Mid];
-    
-    if (/*golive &&*/ self.Mid.longitude!=0.0 && self.Mid.latitude!=0.0) {
-        DLog(@"-----------------");
-        DLog(@"%f %f - [%f %f] - %f %f (%0.1f km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
-        
-        [self performQuery:self.Mid];
-    }
+    [self locateNearbyGames];
 }
 
 #pragma mark - NSURLSessionDataDelegate
@@ -382,13 +370,20 @@ didCompleteWithError:(NSError *)error
 
 #pragma mark - Methods
 
+- (void)locateNearbyGames {
+    if (self.Mid.longitude!=0.0 && self.Mid.latitude!=0.0) {
+        [self performQuery:self.Mid];
+    }
+}
+
 - (void)performQuery:(CLLocationCoordinate2D)center {
     @autoreleasepool {
         CLLocationCoordinate2D location = center;
         
         //TODO Distance
-        CLLocationDistance kilometers = ceil([self distanceBetweenCoordinates:self.NE toCoord:self.SW] / 2000.0);
+        CLLocationDistance kilometers = ceil([self distanceBetweenCoordinates:self.NE toCoord:self.SW] / (2.0*1000.0));
         
+        DLog(@"-----------------");
         DLog(@"%f %f - [%f %f] - %f %f (%0.1f km)", self.NE.longitude, self.NE.latitude, self.Mid.longitude, self.Mid.latitude, self.SW.longitude, self.SW.latitude, kilometers);
         
         _query = [NSString stringWithFormat:@"myGames/search/lat/%f/lng/%f/distance/%d", location.latitude, location.longitude, (int)kilometers*1000];
