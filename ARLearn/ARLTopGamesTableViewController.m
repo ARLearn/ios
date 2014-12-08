@@ -148,7 +148,7 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
             if (newViewController) {
                 NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
                 
-       #warning GameID's to large for for int Tag property.
+            #warning GameID's to large for for int Tag property.
                 if ([newViewController respondsToSelector:@selector(setGameId:)]) {
                     [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
                 }

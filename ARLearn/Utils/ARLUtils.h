@@ -100,4 +100,14 @@
 +(void) LogJsonData: (NSData *)jsonData
                  url: (NSString *)url;
 
+/*!
+ *  Download a GameFile.
+ *
+ *  @param gameId   The GameId
+ *  @param gameFile The GameFile description as NSDictionary.
+ *
+ *  @return The MD5 or NULL.
+ */
++(NSString *) DownloadResource:(NSNumber *)gameId gameFile:(NSDictionary *)gameFile;
+
 @end

@@ -380,7 +380,6 @@ didCompleteWithError:(NSError *)error
         
         newViewController = nil;
     }
-
 }
 
 @end

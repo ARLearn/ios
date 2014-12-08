@@ -56,12 +56,35 @@ typedef NS_ENUM(NSInteger, services) {
     numServices
 };
 
-
+/*!
+ *  Asynchronous.
+ *
+ *  @param delegate <#delegate description#>
+ *  @param service  <#service description#>
+ */
 + (void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service;
+
 + (NSString *)generateGetDescription:(NSString *)service;
 
+/*!
+ *  Asynchronous.
+ *
+ *  @param delegate <#delegate description#>
+ *  @param service  <#service description#>
+ *  @param body     <#body description#>
+ */
 + (void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body;
+
 + (NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body;
+
+/*!
+ *  Synchronous.
+ *
+ *  @param service <#service description#>
+ *
+ *  @return <#return value description#>
+ */
++ (NSData *)sendHTTPGetWithAuthorization:(NSString *) service;
 
 + (void) setupOauthInfo;
 

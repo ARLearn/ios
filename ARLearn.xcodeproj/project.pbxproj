@@ -45,6 +45,8 @@
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
 		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
+		8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53D8181A35A75800A869B0 /* NSString+MD5.m */; };
+		8D53D81C1A35A77C00A869B0 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53D81B1A35A77C00A869B0 /* NSData+MD5.m */; };
 		8D55B28A1975633600C0A56B /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2831975633600C0A56B /* TPKeyboardAvoidingCollectionView.m */; };
 		8D55B28B1975633600C0A56B /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2851975633600C0A56B /* TPKeyboardAvoidingScrollView.m */; };
 		8D55B28C1975633600C0A56B /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2871975633600C0A56B /* TPKeyboardAvoidingTableView.m */; };
@@ -75,6 +77,7 @@
 		8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC418AD19878F8000054466 /* QuartzCore.framework */; };
 		8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DC418B01987C14900054466 /* ARLMyGamesViewController.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
+		8DDD7E481A324506004D501B /* ARLDownloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDD7E471A324506004D501B /* ARLDownloadViewController.m */; };
 		8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */; };
 		8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF231976AAB9007CECB4 /* Inquiry.m */; };
 		8DDECF271976AAB9007CECB4 /* SynchronizationBookKeeping.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF261976AAB9007CECB4 /* SynchronizationBookKeeping.m */; };
@@ -174,6 +177,10 @@
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNotificationSubscriber.h; sourceTree = "<group>"; };
 		8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNotificationSubscriber.m; sourceTree = "<group>"; };
+		8D53D8171A35A75800A869B0 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		8D53D8181A35A75800A869B0 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
+		8D53D81A1A35A77C00A869B0 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
+		8D53D81B1A35A77C00A869B0 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8D55B2821975633600C0A56B /* TPKeyboardAvoidingCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingCollectionView.h; sourceTree = "<group>"; };
 		8D55B2831975633600C0A56B /* TPKeyboardAvoidingCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingCollectionView.m; sourceTree = "<group>"; };
 		8D55B2841975633600C0A56B /* TPKeyboardAvoidingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingScrollView.h; sourceTree = "<group>"; };
@@ -223,6 +230,8 @@
 		8DC418AF1987C14900054466 /* ARLMyGamesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMyGamesViewController.h; sourceTree = "<group>"; };
 		8DC418B01987C14900054466 /* ARLMyGamesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMyGamesViewController.m; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		8DDD7E461A324506004D501B /* ARLDownloadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLDownloadViewController.h; sourceTree = "<group>"; };
+		8DDD7E471A324506004D501B /* ARLDownloadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLDownloadViewController.m; sourceTree = "<group>"; };
 		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItemVisibility.h; sourceTree = "<group>"; };
 		8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralItemVisibility.m; sourceTree = "<group>"; };
 		8DDECF221976AAB9007CECB4 /* Inquiry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Inquiry.h; sourceTree = "<group>"; };
@@ -321,6 +330,8 @@
 				8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */,
 				8D219A1B196D2A2D0044616A /* ARLDatabase.xcdatamodeld */,
 				8D219A2C196D2F160044616A /* ARLDefines.h */,
+				8DDD7E461A324506004D501B /* ARLDownloadViewController.h */,
+				8DDD7E471A324506004D501B /* ARLDownloadViewController.m */,
 				8DEE589619828BFA00C2283F /* ARLGamePin.h */,
 				8DEE589719828BFA00C2283F /* ARLGamePin.m */,
 				8D87A51219868C3800842BC6 /* ARLGameViewController.h */,
@@ -581,6 +592,10 @@
 			children = (
 				8D8B45DF1974162A001FC6DF /* UIViewController+UI.h */,
 				8D8B45E01974162A001FC6DF /* UIViewController+UI.m */,
+				8D53D8171A35A75800A869B0 /* NSString+MD5.h */,
+				8D53D8181A35A75800A869B0 /* NSString+MD5.m */,
+				8D53D81A1A35A77C00A869B0 /* NSData+MD5.h */,
+				8D53D81B1A35A77C00A869B0 /* NSData+MD5.m */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -724,6 +739,7 @@
 				8D7A8D2A197EA09B00B37013 /* ARLNearbyViewController.m in Sources */,
 				8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				8D87A50B1986427000842BC6 /* ARLDelayOperation.m in Sources */,
+				8DDD7E481A324506004D501B /* ARLDownloadViewController.m in Sources */,
 				8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */,
 				8DDECF361976AAB9007CECB4 /* Game.m in Sources */,
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
@@ -736,6 +752,7 @@
 				8D219A7E196D31350044616A /* MagicalRecord+Actions.m in Sources */,
 				8D87A51119864A3C00842BC6 /* ARLQueryCache.m in Sources */,
 				8D55B28B1975633600C0A56B /* TPKeyboardAvoidingScrollView.m in Sources */,
+				8D53D81C1A35A77C00A869B0 /* NSData+MD5.m in Sources */,
 				8D219A79196D31350044616A /* NSManagedObjectContext+MagicalSaves.m in Sources */,
 				8D219A7D196D31350044616A /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
 				8D87A51419868C3900842BC6 /* ARLGameViewController.m in Sources */,
@@ -750,6 +767,7 @@
 				8D219A77196D31350044616A /* NSManagedObjectContext+MagicalObserving.m in Sources */,
 				8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */,
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
+				8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */,
 				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,
 				8D219A6C196D31350044616A /* NSAttributeDescription+MagicalDataImport.m in Sources */,
 				8D87A51819869CD400842BC6 /* ARLButton.m in Sources */,

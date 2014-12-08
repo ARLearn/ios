@@ -23,6 +23,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *releaseLabel;
 
+- (IBAction)downloadButtonAction:(UIButton *)sender;
+
 @property (retain, nonatomic) NSDictionary *game;
 
 @end
@@ -287,6 +289,44 @@ didCompleteWithError:(NSError *)error
     } else {
         NSLog(@"Using cached query data");
         [self processData:response];
+    }
+}
+
+- (IBAction)downloadButtonAction:(UIButton *)sender {
+    NSString *query = [NSString stringWithFormat:@"myGames/gameContent/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
+    
+    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
+    
+    NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+    
+    if (!response) {
+        response = [ARLNetworking sendHTTPGetWithAuthorization:query];
+    }
+    
+    if (response && response.length != 0) {
+        NSDictionary *gameContent = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:response options:0 error:nil];
+        UIViewController *newViewController;
+        
+        [ARLUtils LogJsonData:response url:query];
+        
+        newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
+        
+        if (newViewController) {
+            NSArray *gameFiles = (NSArray *)[gameContent objectForKey:@"gameFiles"];
+            
+            if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+                [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
+            }
+            if ([newViewController respondsToSelector:@selector(setGameFiles:)]) {
+                [newViewController performSelector:@selector(setGameFiles:) withObject:gameFiles];
+            }
+            
+            // Move to another UINavigationController or UITabBarController etc.
+            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+            [self.navigationController pushViewController:newViewController animated:NO];
+            
+            newViewController = nil;
+        }
     }
 }
 

@@ -8,6 +8,8 @@
 
 #import "ARLUtils.h"
 
+#import "NSData+MD5.h"
+
 @interface ARLUtils ()
 
 /*!
@@ -30,6 +32,8 @@
 @implementation ARLUtils
 
 static NSCondition *_theAbortLock;
+
+#pragma mark - Properties
 
 /*!
  *  Getter for gitHash property.
@@ -57,6 +61,8 @@ static NSCondition *_theAbortLock;
 +(NSString *)appBuild {
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
 }
+
+#pragma mark - Methods
 
 /*!
  *  Log GIT Version Info.
@@ -324,7 +330,7 @@ static NSCondition *_theAbortLock;
     }];
 }
 
-+(void) LogJsonData: (NSData *) jsonData url: (NSString *) url {
++(void)LogJsonData: (NSData *) jsonData url: (NSString *) url {
     //http://stackoverflow.com/questions/12603047/how-to-convert-nsdata-to-nsdictionary
     //http://stackoverflow.com/questions/7097842/xcode-how-to-nslog-a-json
     
@@ -343,6 +349,88 @@ static NSCondition *_theAbortLock;
             Log(@"ERROR: %@", errorString);
         }
     }
+}
+
+/*!
+ *
+ *  Download a GameFile.
+ *
+ *  See http://stackoverflow.com/questions/5323427/how-do-i-download-and-save-a-file-locally-on-ios-using-objective-c
+ *  See http://stackoverflow.com/questions/1567134/how-can-i-get-a-writable-path-on-the-iphone
+ *  See http://stackoverflow.com/questions/5903157/ios-parse-a-url-into-segments
+ *
+ *
+ *  http://streetlearn.appspot.com/game/<gameid>/<gamefilepath>
+ *
+ *  Example:
+ *
+ *  http://streetlearn.appspot.com/game/13876002/gameSplashScreen
+ *
+ *  @param gameId   The GameId
+ *  @param gameFile The GameFile description as NSDictionary.
+ *
+ *  @return The MD5 or NULL.
+ */
++(NSString *) DownloadResource:(NSNumber *)gameId gameFile:(NSDictionary *)gameFile
+{
+        //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        //NSString *documentsDirectory = [paths objectAtIndex:0];
+        
+        // Note: NSCachesDirectory needs to be re-created when accessed (to be safe).
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        
+        NSString *cachePath = [paths objectAtIndex:0];
+    
+    {
+        BOOL isDir = NO;
+        NSError *error;
+        if (! [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir] && isDir == NO) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:&error];
+            
+            ELog(error);
+        }
+    }
+    
+    // NSString *fileName = [[url pathComponents] lastObject];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@", cachePath, [gameFile objectForKey:@"id"]];
+    
+    if ([[NSFileManager defaultManager] isReadableFileAtPath:filePath]) {
+        
+        NSError *error;
+        
+        unsigned long long remoteSize = [[gameFile objectForKey:@"size"] longLongValue];
+        unsigned long long localSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:&error] fileSize];
+        
+        ELog(error);
+
+        if (remoteSize == localSize) {
+            
+            NSString *localMD5 = [NSData MD5:filePath];
+            NSString *remoteMD5 = [gameFile objectForKey:@"md5Hash"];
+            
+            if ([remoteMD5 isEqualToString:localMD5]) {
+                DLog(@"MD5Hash Match, Skipping Download of GameFile: %@", [gameFile objectForKey:@"path"]);
+                return localMD5;
+            } else {
+                DLog(@"MD5Hash Mismatch, Re-downloading GameFile: %@", [gameFile objectForKey:@"path"]);
+            }
+        } else {
+            DLog(@"FileSize Mismatch, Re-downloading GameFile: %@", [gameFile objectForKey:@"path"]);
+        }
+    } else {
+        DLog(@"Downloading GameFile: %@", [gameFile objectForKey:@"path"]);
+    }
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/game/%@%@", gameId, [gameFile objectForKey:@"path"]]];
+    
+    NSData *urlData = [NSData dataWithContentsOfURL:url];
+    
+    if (urlData)
+    {
+        [urlData writeToFile:filePath atomically:YES];
+    }
+    
+    return [urlData MD5];
 }
 
 @end

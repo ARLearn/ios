@@ -221,11 +221,13 @@ static NSString *_twitterLoginString;
 +(NSData *)sendHTTPGet:(NSString *) service {
     NSURLResponse *response = nil;
     
-//    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-//    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
+// NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+// NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
     
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
 
+    DLog(@"URL: %@", url);
+    
     NSError *error = nil;
    
     NSData *data = [NSURLSession sendSynchronousDataTaskWithURL:url
@@ -252,6 +254,8 @@ static NSString *_twitterLoginString;
     
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
     
+    DLog(@"URL: %@", url);
+
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
     // Setup Authorization Token (should not be neccesary for search, but it is!)
