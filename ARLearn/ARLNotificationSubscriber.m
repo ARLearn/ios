@@ -21,7 +21,7 @@
 //    }
 //    return _sharedSingleton;
 //}
-//
+
 //- (id) init {
 //    self = [super init];
 //    
@@ -30,6 +30,11 @@
 //    return self;
 //}
 
+/*!
+ *  Register a APN Notification Account.
+ *
+ *  @param fullId <#fullId description#>
+ */
 + (void) registerAccount: (NSString *) fullId {
     NSString *deviceUniqueIdentifier = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceUniqueIdentifier"];
     NSString *deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceToken"];
@@ -41,7 +46,14 @@
             withBundleId:bundleIdentifier];
 }
 
-//TODO: Test this code next!
+/*!
+ *  Register a device for APN Notifications.
+ *
+ *  @param deviceToken            <#deviceToken description#>
+ *  @param deviceUniqueIdentifier <#deviceUniqueIdentifier description#>
+ *  @param account                <#account description#>
+ *  @param bundleIdentifier       <#bundleIdentifier description#>
+ */
 + (void) registerDevice: (NSString *) deviceToken
                 withUID: (NSString *) deviceUniqueIdentifier
             withAccount: (NSString *) account
@@ -77,7 +89,14 @@
              withContentType:applicationjson];
 }
 
-//TODO: Sanitize code (static again)?
+/*!
+ *  Prepare a HTTP Request.
+ *
+ *  @param method <#method description#>
+ *  @param url    <#url description#>
+ *
+ *  @return <#return value description#>
+ */
 + (NSMutableURLRequest *) prepareRequest: (NSString *)method
                           requestWithUrl: (NSString *) url {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: url]
@@ -91,7 +110,16 @@
     return request;
 }
 
-//TODO: Sanitize code (static again)?
+/*!
+ *  Perform a sync http POST call.
+ *
+ *  @param path        <#path description#>
+ *  @param data        <#data description#>
+ *  @param acceptValue <#acceptValue description#>
+ *  @param ctValue     <#ctValue description#>
+ *
+ *  @return <#return value description#>
+ */
 + (id) executeARLearnPOST: (NSString *) path
                  postData: (NSData *) data
                withAccept: (NSString *) acceptValue

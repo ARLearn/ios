@@ -258,6 +258,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         
         // Uses MagicalRecord for Saving!
         TestAccount *acc = (TestAccount *)[ARLUtils ManagedObjectFromDictionary:data entityName:@"TestAccount" nameFixups:fixups];
+        
         // Log(@"%@ %@", acc.name, acc.email);
         
         [self reloadPersons];

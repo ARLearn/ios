@@ -116,7 +116,8 @@ static NSCondition *_theAbortLock;
     
     return [ARLUtils ManagedObjectFromDictionary:dict
                                       entityName:entity
-                                      nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+                                      nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
 }
 
 /*!
@@ -132,11 +133,35 @@ static NSCondition *_theAbortLock;
  */
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
                                        entityName:(NSString *)entity
-                                       nameFixups:(NSDictionary *)fixups {
+                                       nameFixups:(NSDictionary *)fixups
+{
+    
+    return [ARLUtils ManagedObjectFromDictionary:dict
+                                      entityName:entity
+                                      nameFixups:fixups
+                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+}
+
+/*!
+ *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
+ *
+ *  See http://stackoverflow.com/questions/2563984/json-to-persistent-data-store-coredata-etc
+ *
+ *  @param dict   The Dictionary containing the values
+ *  @param entity The Entity name to create.
+ *  @param fixups List of mismatches between dict and NSManagerObject fields. Keys are CoreData names, Values are dict key names.
+ *  @param data   List of mismatches between dict and NSManagerObject fields. Keys are CoreData names, Values are dict key names.
+ *
+ *  @return The NSManagedObject that has been created and inserted into Core Data.
+ */
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
+                                       entityName:(NSString *)entity
+                                       nameFixups:(NSDictionary *)fixups
+                                       dataFixups:(NSDictionary *)data {
     
     // 1) Make sure we can modify object inside the MagicalRecord block.
     __block NSManagedObject *object;
-    
+
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
         
         // 2) Create a NSManagedObject by Name.
@@ -147,20 +172,75 @@ static NSCondition *_theAbortLock;
                                      entityForName:entity
                                      inManagedObjectContext:localContext] attributesByName];
         
+        // 4) Enumerate over Attributes
+        for (NSString *attr in attributes) {
+            if ([fixups valueForKey:attr]) {
+                // 4a) Name Mapping.
+                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
+            } else if ([data valueForKey:attr]) {
+                // 4b) Foreign Data.
+                [object setValue:[data valueForKey:attr] forKey:attr];
+            } else {
+                // 4c) 1:1 Mapping & Data.
+                [object setValue:[dict valueForKey:attr] forKey:attr];
+            }
+        }
+    }];
+
+    // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
+    return [object MR_inContext:[NSManagedObjectContext MR_defaultContext]];
+}
+
+/*!
+ *  Updates a NSManagedObject with date from a NSDictionary.
+ *
+ *  See http://stackoverflow.com/questions/2563984/json-to-persistent-data-store-coredata-etc
+ *
+ *  @param dict          The Dictionary containing the values
+ *  @param managedobject The NSManagedObject to updated.
+ *  @param fixups        List of mismatches between dict and NSManagerObject fields. Keys are CoreData names, Values are dict key names.
+ *  @param data          List of fields and their data to populate with non dict data.
+ *
+ *  @return The NSManagedObject that has been updated in Core Data.
+ */
++ (NSManagedObject *) UpdateManagedObjectFromDictionary:(NSDictionary *)dict
+                                          managedobject:(NSManagedObject *)managedobject
+                                             nameFixups:(NSDictionary *)fixups
+                                             dataFixups:(NSDictionary *)data {
+    
+    
+    //    // 1) Make sure we can modify object inside the MagicalRecord block.
+    __block NSManagedObject *object;
+    
+    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        
+        // 2) Create a NSManagedObject by Name.
+        object = [managedobject MR_inContext:localContext];
+        
+        // 3) Get its Attributes
+        NSDictionary *attributes = [[NSEntityDescription
+                                     entityForName:[[object entity] name]
+                                     inManagedObjectContext:localContext] attributesByName];
+        
         //TODO: Add Key <-> Property Name Lookup.
         
         // 4) Enumerate over Attributes
         for (NSString *attr in attributes) {
             if ([fixups valueForKey:attr]) {
+                // 4a) Name Mapping.
                 [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
-            }else {
+            } else if ([data valueForKey:attr]) {
+                // 4b) Foreign Data.
+                [object setValue:[data valueForKey:attr] forKey:attr];
+            } else {
+                // 4c) 1:1 Mapping & Data.
                 [object setValue:[dict valueForKey:attr] forKey:attr];
             }
         }
     }];
     
-    // 5) Return the result.
-    return object;
+    // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
+    return [object MR_inContext:[NSManagedObjectContext MR_defaultContext]];
 }
 
 /*!
@@ -186,6 +266,7 @@ static NSCondition *_theAbortLock;
  */
 + (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object
                                     nameFixups:(NSDictionary *)fixups {
+    
     // 1) Make sure we can modify object inside the MagicalRecord block.
     __block NSMutableDictionary *json = [[NSMutableDictionary alloc]  init];
     
@@ -330,7 +411,14 @@ static NSCondition *_theAbortLock;
     }];
 }
 
-+(void)LogJsonData: (NSData *) jsonData url: (NSString *) url {
+/*!
+ *  Pretty Print json data to the log.
+ *
+ *  @param jsonData json as NSData
+ *  @param url      the json url used.
+ */
++(void)LogJsonData: (NSData *) jsonData
+               url: (NSString *) url {
     //http://stackoverflow.com/questions/12603047/how-to-convert-nsdata-to-nsdictionary
     //http://stackoverflow.com/questions/7097842/xcode-how-to-nslog-a-json
     
@@ -341,13 +429,35 @@ static NSCondition *_theAbortLock;
                               options:kNilOptions
                               error:&error];
         Log(@"[JSON]");
-        Log(@"URL: %@", url);
+        if (url) {
+            Log(@"URL: %@", url);
+        }
         if (error==nil && json!=nil) {
             Log(@"JSON:\r%@", json);
         } else {
             NSString *errorString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             Log(@"ERROR: %@", errorString);
         }
+    }
+}
+
+/*!
+ *  Pretty Print json data to the log.
+ *
+ *  @param jsonDictionary json as NSDictionary
+ *  @param url            the json url used.
+ */
++(void)LogJsonDictionary: (NSDictionary *) jsonDictionary
+                     url: (NSString *) url {
+    //http://stackoverflow.com/questions/12603047/how-to-convert-nsdata-to-nsdictionary
+    //http://stackoverflow.com/questions/7097842/xcode-how-to-nslog-a-json
+    
+    if (jsonDictionary) {
+        Log(@"[JSON]");
+        if (url) {
+            Log(@"URL: %@", url);
+        }
+        Log(@"JSON:\r%@", jsonDictionary);
     }
 }
 
@@ -369,23 +479,23 @@ static NSCondition *_theAbortLock;
  *  @param gameId   The GameId
  *  @param gameFile The GameFile description as NSDictionary.
  *
- *  @return The MD5 or NULL.
+ *  @return The Local Path to the File.
  */
-+(NSString *) DownloadResource:(NSNumber *)gameId gameFile:(NSDictionary *)gameFile
-{
-        //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        //NSString *documentsDirectory = [paths objectAtIndex:0];
-        
-        // Note: NSCachesDirectory needs to be re-created when accessed (to be safe).
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        
-        NSString *cachePath = [paths objectAtIndex:0];
++(NSString *) DownloadResource:(NSNumber *)gameId
+                      gameFile:(NSDictionary *)gameFile {
+    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    //NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    // Note: NSCachesDirectory needs to be re-created when accessed (to be safe).
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", [paths objectAtIndex:0], gameId];
     
     {
         BOOL isDir = NO;
         NSError *error;
         if (! [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir] && isDir == NO) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:NO attributes:nil error:&error];
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:&error];
             
             ELog(error);
         }
@@ -393,6 +503,7 @@ static NSCondition *_theAbortLock;
     
     // NSString *fileName = [[url pathComponents] lastObject];
     NSString *filePath = [NSString stringWithFormat:@"%@/%@", cachePath, [gameFile objectForKey:@"id"]];
+    NSString *path = [gameFile objectForKey:@"path"];
     
     if ([[NSFileManager defaultManager] isReadableFileAtPath:filePath]) {
         
@@ -409,19 +520,20 @@ static NSCondition *_theAbortLock;
             NSString *remoteMD5 = [gameFile objectForKey:@"md5Hash"];
             
             if ([remoteMD5 isEqualToString:localMD5]) {
-                DLog(@"MD5Hash Match, Skipping Download of GameFile: %@", [gameFile objectForKey:@"path"]);
-                return localMD5;
+                DLog(@"MD5Hash Match, Skipping Download of GameFile: %@", path);
+                
+                return filePath;
             } else {
-                DLog(@"MD5Hash Mismatch, Re-downloading GameFile: %@", [gameFile objectForKey:@"path"]);
+                DLog(@"MD5Hash Mismatch, Re-downloading GameFile: %@", path);
             }
         } else {
-            DLog(@"FileSize Mismatch, Re-downloading GameFile: %@", [gameFile objectForKey:@"path"]);
+            DLog(@"FileSize Mismatch, Re-downloading GameFile: %@", path);
         }
     } else {
-        DLog(@"Downloading GameFile: %@", [gameFile objectForKey:@"path"]);
+        DLog(@"Downloading GameFile: %@", path);
     }
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/game/%@%@", gameId, [gameFile objectForKey:@"path"]]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/game/%@%@", gameId, path]];
     
     NSData *urlData = [NSData dataWithContentsOfURL:url];
     
@@ -430,7 +542,7 @@ static NSCondition *_theAbortLock;
         [urlData writeToFile:filePath atomically:YES];
     }
     
-    return [urlData MD5];
+    return filePath;
 }
 
 @end

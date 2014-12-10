@@ -961,7 +961,7 @@
 				8D219A1C196D2A2D0044616A /* ARLDatabase v1.xcdatamodel */,
 				8D219A1D196D2A2D0044616A /* ARLDatabase v2.xcdatamodel */,
 			);
-			currentVersion = 8D219A1C196D2A2D0044616A /* ARLDatabase v1.xcdatamodel */;
+			currentVersion = 8D219A1D196D2A2D0044616A /* ARLDatabase v2.xcdatamodel */;
 			path = ARLDatabase.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -9,6 +9,8 @@
 #import "ARLAppDelegate.h"
 #import "ARLNetworking.h"
 
+#import "GeneralItem.h"
+
 @interface ARLDownloadViewController : UIViewController
 
 @property (strong, nonatomic) NSNumber *gameId;

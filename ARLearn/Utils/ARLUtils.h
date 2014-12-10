@@ -77,6 +77,41 @@
                                        nameFixups:(NSDictionary *)fixups;
 
 /*!
+ *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
+ *
+ *  See http://stackoverflow.com/questions/2563984/json-to-persistent-data-store-coredata-etc
+ *
+ *  @param dict   The Dictionary containing the values
+ *  @param entity The Entity name to create.
+ *  @param fixups List of mismatches between dict and NSManagerObject fields.
+ *  @param data   List of fields and their data to populate with non dict data.
+ *
+ *  @return The NSManagedObject that has been created and inserted into Core Data
+ */
+
++ (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
+                                       entityName:(NSString *)entity
+                                       nameFixups:(NSDictionary *)fixups
+                                       dataFixups:(NSDictionary *)data;
+
+/*!
+ *  Updates a NSManagedObject with date from a NSDictionary.
+ *
+ *  See http://stackoverflow.com/questions/2563984/json-to-persistent-data-store-coredata-etc
+ *
+ *  @param dict          The Dictionary containing the values
+ *  @param managedobject The NSManagedObject to updated.
+ *  @param fixups        List of mismatches between dict and NSManagerObject fields. Keys are CoreData names, Values are dict key names.
+ *  @param data          List of fields and their data to populate with non dict data.
+ *
+ *  @return The NSManagedObject that has been updayed in Core Data.
+ */
++ (NSManagedObject *) UpdateManagedObjectFromDictionary:(NSDictionary *)dict
+                                          managedobject:(NSManagedObject *)managedobject
+                                             nameFixups:(NSDictionary *)fixups
+                                             dataFixups:(NSDictionary *)data;
+
+/*!
  *  Creates a NSDictionary containing data from a certain NSManagedObject.
  *
  *  @param dict   The NSManagedObject to convert
@@ -97,8 +132,23 @@
 + (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object
                                     nameFixups:(NSDictionary *)fixups;
 
+/*!
+ *  Pretty Print json data to the log.
+ *
+ *  @param jsonData json as NSData
+ *  @param url      the json url used.
+ */
 +(void) LogJsonData: (NSData *)jsonData
                  url: (NSString *)url;
+
+/*!
+ *  Pretty Print json data to the log.
+ *
+ *  @param jsonDictionary json as NSDictionary
+ *  @param url            the json url used.
+ */
++(void)LogJsonDictionary: (NSDictionary *) jsonDictionary
+                     url: (NSString *) url;
 
 /*!
  *  Download a GameFile.
@@ -106,7 +156,7 @@
  *  @param gameId   The GameId
  *  @param gameFile The GameFile description as NSDictionary.
  *
- *  @return The MD5 or NULL.
+ *  @return The Local Path to the File.
  */
 +(NSString *) DownloadResource:(NSNumber *)gameId gameFile:(NSDictionary *)gameFile;
 
