@@ -292,41 +292,23 @@ didCompleteWithError:(NSError *)error
     }
 }
 
+#pragma mark - Actions
+
 - (IBAction)downloadButtonAction:(UIButton *)sender {
-    NSString *query = [NSString stringWithFormat:@"myGames/gameContent/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
+    ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
     
-    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
-    
-    NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
-    
-    if (!response) {
-        response = [ARLNetworking sendHTTPGetWithAuthorization:query];
-    }
-    
-    if (response && response.length != 0) {
-        NSDictionary *gameContent = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:response options:0 error:nil];
-        UIViewController *newViewController;
+    if (newViewController) {
+        // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+        //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
+        // }
         
-        [ARLUtils LogJsonData:response url:query];
+        newViewController.gameId = self.gameId;
         
-        newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
+        // Move to another UINavigationController or UITabBarController etc.
+        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+        [self.navigationController pushViewController:newViewController animated:NO];
         
-        if (newViewController) {
-            NSArray *gameFiles = (NSArray *)[gameContent objectForKey:@"gameFiles"];
-            
-            if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-                [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
-            }
-            if ([newViewController respondsToSelector:@selector(setGameFiles:)]) {
-                [newViewController performSelector:@selector(setGameFiles:) withObject:gameFiles];
-            }
-            
-            // Move to another UINavigationController or UITabBarController etc.
-            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-            [self.navigationController pushViewController:newViewController animated:NO];
-            
-            newViewController = nil;
-        }
+        newViewController = nil;
     }
 }
 

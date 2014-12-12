@@ -160,4 +160,13 @@
  */
 +(NSString *) DownloadResource:(NSNumber *)gameId gameFile:(NSDictionary *)gameFile;
 
+/*!
+ *  Convert bytes to a readable string.
+ *
+ *  @param value <#value description#>
+ *
+ *  @return <#return value description#>
+ */
++ (NSString *)bytestoString:(NSNumber *)value;
+
 @end

@@ -545,4 +545,30 @@ static NSCondition *_theAbortLock;
     return filePath;
 }
 
+/*!
+ *  Convert bytes to a readable string.
+ *
+ *  See http://stackoverflow.com/questions/7846495/how-to-get-file-size-properly-and-convert-it-to-mb-gb-in-cocoa
+ *
+ *  @param value <#value description#>
+ *
+ *  @return <#return value description#>
+ */
++ (NSString *)bytestoString:(NSNumber *) value
+{
+    return [NSByteCountFormatter stringFromByteCount:[value longLongValue] countStyle:NSByteCountFormatterCountStyleFile];
+    
+    //    double convertedValue = [value doubleValue];
+    //    int multiplyFactor = 0;
+    //
+    //    NSArray *tokens = [NSArray arrayWithObjects:@"bytes",@"KB",@"MB",@"GB",@"TB",nil];
+    //
+    //    while (convertedValue > 1024) {
+    //        convertedValue /= 1024;
+    //        multiplyFactor++;
+    //    }
+    //
+    //    return [NSString stringWithFormat:@"%4.2f %@",convertedValue, [tokens objectAtIndex:multiplyFactor]];
+}
+
 @end

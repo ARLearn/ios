@@ -191,15 +191,16 @@ typedef NS_ENUM(NSInteger, ARLStoreViewControllerGroups) {
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case FEATURED: {
-            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
                 NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
                 
-                #warning GameID's to large for for int Tag property.
-                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
-                }
+#warning GameID's to large for for int Tag property.
+                // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+                //    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
+                // }
+                newViewController.gameId = [NSNumber numberWithLongLong:gid];
                 
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6

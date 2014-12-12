@@ -103,12 +103,14 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
                 case 0:
                     cell.textLabel.text = @"Game1";
                     cell.detailTextLabel.text = @"Starting tomorrow";
+#warning Hardcoded Value.
 #warning GameID's to large for for int Tag property.
                     cell.tag = 10206097;
                     break;
                 case 1:
                     cell.textLabel.text = @"Game2";
                     cell.detailTextLabel.text = @"Starting now";
+#warning Hardcoded Value.
 #warning GameID's to large for for int Tag property.
                     cell.tag = 20536006;
                     break;
@@ -143,15 +145,17 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case TOPGAMES: {
-            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
                 NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
                 
-            #warning GameID's to large for for int Tag property.
-                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
-                }
+#warning GameID's to large for for int Tag property.
+                // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+                //      [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
+                // }
+                
+                newViewController.gameId = [NSNumber numberWithLongLong:gid];
                 
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6

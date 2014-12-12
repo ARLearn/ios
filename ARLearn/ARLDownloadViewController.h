@@ -11,9 +11,8 @@
 
 #import "GeneralItem.h"
 
-@interface ARLDownloadViewController : UIViewController
+@interface ARLDownloadViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) NSNumber *gameId;
-@property (strong, nonatomic) NSArray *gameFiles;
 
 @end

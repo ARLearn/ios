@@ -11,6 +11,8 @@
 #import "ARLButton.h"
 #import "ARLNetworking.h"
 
+#import "ARLGameViewController.h"
+
 @interface ARLStoreViewController : UIViewController <UIAlertViewDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @end

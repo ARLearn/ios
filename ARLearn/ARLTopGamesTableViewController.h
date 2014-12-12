@@ -6,7 +6,9 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+// #import <UIKit/UIKit.h>
+
+#import "ARLGameViewController.h"
 
 @interface ARLTopGamesTableViewController : UITableViewController
 
