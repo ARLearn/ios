@@ -306,7 +306,7 @@ didCompleteWithError:(NSError *)error
         
         // Move to another UINavigationController or UITabBarController etc.
         // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-        [self.navigationController pushViewController:newViewController animated:NO];
+        [self.navigationController pushViewController:newViewController animated:YES];
         
         newViewController = nil;
     }

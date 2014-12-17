@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8D04D2721A41B0A40071582E /* ARLOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D04D2711A41B0A40071582E /* ARLOperations.m */; };
 		8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */; };
 		8D219651196D26080044616A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219650196D26080044616A /* main.m */; };
 		8D219655196D26080044616A /* ARLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219654196D26080044616A /* ARLAppDelegate.m */; };
@@ -97,6 +98,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8D04D2701A41B0A40071582E /* ARLOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLOperations.h; sourceTree = "<group>"; };
+		8D04D2711A41B0A40071582E /* ARLOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLOperations.m; sourceTree = "<group>"; };
 		8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLCategoriesViewController.h; sourceTree = "<group>"; };
 		8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLCategoriesViewController.m; sourceTree = "<group>"; };
 		8D219641196D26080044616A /* ARLearn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLearn.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -583,6 +586,8 @@
 				8D219A27196D2DBD0044616A /* ARLUtils.m */,
 				8D87A50F19864A3C00842BC6 /* ARLQueryCache.h */,
 				8D87A51019864A3C00842BC6 /* ARLQueryCache.m */,
+				8D04D2701A41B0A40071582E /* ARLOperations.h */,
+				8D04D2711A41B0A40071582E /* ARLOperations.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -766,6 +771,7 @@
 				8D219A6F196D31350044616A /* NSObject+MagicalDataImport.m in Sources */,
 				8D219A77196D31350044616A /* NSManagedObjectContext+MagicalObserving.m in Sources */,
 				8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */,
+				8D04D2721A41B0A40071582E /* ARLOperations.m in Sources */,
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
 				8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */,
 				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,

@@ -112,7 +112,8 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
                     cell.detailTextLabel.text = @"Starting now";
 #warning Hardcoded Value.
 #warning GameID's to large for for int Tag property.
-                    cell.tag = 20536006;
+#error prevent compilation
+                    cell.tag = 5248241780129792;
                     break;
             }
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
