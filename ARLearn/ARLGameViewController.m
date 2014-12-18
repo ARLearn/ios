@@ -275,6 +275,8 @@ didCompleteWithError:(NSError *)error
     
     self.titleLabel.text = [self.game objectForKey:@"title"];
     self.languageLabel.text = [self.game objectForKey:@"language"];
+    
+    Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
 }
 
 - (void)performQuery {

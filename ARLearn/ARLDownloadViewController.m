@@ -40,6 +40,8 @@
     
     [self.navigationController setNavigationBarHidden:YES];
     [self.navigationController setToolbarHidden:YES];
+    
+    [self.tableView setHidden:YES];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -56,35 +58,10 @@
     
     NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadSplashScreen];
-        
-        //        for (NSDictionary *gameFile in self.gameFiles) {
-        //            NSString *path = [gameFile valueForKey:@"path"];
-        //
-        //            if ([path isEqualToString:@"/gameSplashScreen"]) {
-        //                NSString *local = [ARLUtils DownloadResource:self.gameId gameFile:gameFile];
-        //
-        //                [self.background performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
-        //
-        //                [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE] forKey: path];
-        //
-        //                [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        //                
-        //                break;
-        //            }
-        //        }
     }];
 
     NSBlockOperation *backBO2 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGameFiles];
-        //        for (NSDictionary *gameFile in self.gameFiles) {
-        //            NSString *path = [gameFile valueForKey:@"path"];
-        //
-        //            [ARLUtils DownloadResource:self.gameId gameFile:gameFile];
-        //
-        //            [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE] forKey: path];
-        //
-        //            [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        //        }
     }];
     
     NSBlockOperation *backBO3 =[NSBlockOperation blockOperationWithBlock:^{
@@ -92,13 +69,11 @@
     }];
     
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
-        [NSTimer scheduledTimerWithTimeInterval:2.5
+        [NSTimer scheduledTimerWithTimeInterval:(self.gameFiles.count==0 ? 0.1 : 2.5)
                                          target:self
                                        selector:@selector(splashDone:)
                                        userInfo:nil
                                         repeats:NO];
-        
-        // [self.tableView reloadData];
     }];
     
     // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> foreBO.
@@ -162,10 +137,12 @@
                       valueForKey:@"size"];
     
     cell.textLabel.text = [parts lastObject];
-    cell.detailTextLabel.text =[ARLUtils bytestoString:size];
     
-    if ([self.downloadStatus valueForKey:path]) {
+    if ([[self.downloadStatus valueForKey:path] boolValue]) {
+        cell.detailTextLabel.text = @"";
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        cell.detailTextLabel.text =[ARLUtils bytestoString:size];
     }
     
     return cell;
@@ -211,15 +188,23 @@
         for (NSDictionary *gameFile in self.gameFiles) {
             NSString *path = [gameFile valueForKey:@"path"];
             
-            [dict setValue:FALSE forKey:path];
+            [dict setValue:[NSNumber numberWithBool:FALSE] forKey:path];
         }
         
         self.downloadStatus = dict;
         
-        [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        if (self.gameFiles.count>0) {
+            [self.tableView performSelectorOnMainThread:@selector(setHidden:) withObject:NO waitUntilDone:NO];
+            [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        }
     }
 }
 
+/*!
+ *  Downloads the splashscreen if present (and not already downloaded & unmodified).
+ *
+ *  Runs in a background thread.
+ */
 -(void) DownloadSplashScreen {
     for (NSDictionary *gameFile in self.gameFiles) {
         NSString *path = [gameFile valueForKey:@"path"];
@@ -238,6 +223,11 @@
     }
 }
 
+/*!
+ *  Downloads the remaining game files if present (and not already downloaded & unmodified).
+ *
+ *  Runs in a background thread.
+ */
 -(void) DownloadGameFiles {
     for (NSDictionary *gameFile in self.gameFiles) {
         NSString *path = [gameFile valueForKey:@"path"];
@@ -250,6 +240,11 @@
     }
 }
 
+/*!
+ *  Downloads the general items and stores/update or deletes them in/from the database.
+ *
+ *  Runs in a background thread.
+ */
 -(void) DownloadGeneralItems {
     NSString *service = [NSString stringWithFormat:@"generalItems/gameId/%@", self.gameId];
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];

@@ -144,12 +144,25 @@ static NSCondition *_theAbortLock;
     [MagicalRecord cleanUp];
 }
 
-//TESTCODE: Remote notifications registration
+/*!
+ *  See http://stackoverflow.com/questions/24485681/registerforremotenotifications-method-not-being-called-properly
+ *
+ *  @param app <#app description#>
+ */
 - (void)applicationDidFinishLaunching:(UIApplication *)app {
 //    // other setup tasks here....
 //    Log(@"applicationDidFinishLaunching");
-//    
-//    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+//
+#ifdef __IPHONE_8_0
+    //Right, that is the point
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeBadge
+                                                                                         |UIRemoteNotificationTypeSound) categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+#else
+    //register to receive notifications
+    UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound;
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:myTypes];
+#endif
 }
 
 #pragma mark - APN
@@ -198,6 +211,32 @@ static NSCondition *_theAbortLock;
     
     [ARLNotificationSubscriber registerAccount:@"2:wim@vander-vegt.nl"];
 }
+
+#ifdef __IPHONE_8_0
+/*!
+ *  See http://stackoverflow.com/questions/24485681/registerforremotenotifications-method-not-being-called-properly
+ *
+ *  @param application          <#application description#>
+ *  @param notificationSettings <#notificationSettings description#>
+ */
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+    Log(@"didRegisterUserNotificationSettings");
+    
+    // Register to receive notifications
+    [application registerForRemoteNotifications];
+}
+
+//- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void(^)())completionHandler
+//{
+//    //handle the actions
+//    if ([identifier isEqualToString:@"declineAction"]){
+//    }
+//    else if ([identifier isEqualToString:@"answerAction"]){
+//    }
+//}
+#endif
+
 
 /*!
  *  Registration Failure (for instance when running in the emulator);

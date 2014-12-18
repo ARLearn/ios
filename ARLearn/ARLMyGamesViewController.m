@@ -244,8 +244,6 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
             
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
             
-            cell.tag = [(NSNumber *)[dict valueForKey:@"gameId"] integerValue];
-            
             [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
             
             return cell;
@@ -265,12 +263,15 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case MYGAMES: {
-            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
+                NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+                
+                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+                
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-      
                 [self.navigationController pushViewController:newViewController animated:NO];
       
                 break;

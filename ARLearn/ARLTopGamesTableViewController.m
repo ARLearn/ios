@@ -12,6 +12,7 @@
 
 @property (readonly, nonatomic) NSString *cellIdentifier;
 
+
 /*!
  *  ID's and order of the cells.
  */
@@ -31,6 +32,8 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
 
 @implementation ARLTopGamesTableViewController
 
+NSArray *ids;
+
 #pragma mark - ViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -45,6 +48,9 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+#warning Hardcoded Value.
+    ids = [NSArray arrayWithObjects: [NSNumber numberWithLongLong:10206097], [NSNumber numberWithLongLong:5248241780129792], nil];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -103,17 +109,10 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
                 case 0:
                     cell.textLabel.text = @"Game1";
                     cell.detailTextLabel.text = @"Starting tomorrow";
-#warning Hardcoded Value.
-#warning GameID's to large for for int Tag property.
-                    cell.tag = 10206097;
                     break;
                 case 1:
                     cell.textLabel.text = @"Game2";
                     cell.detailTextLabel.text = @"Starting now";
-#warning Hardcoded Value.
-#warning GameID's to large for for int Tag property.
-#error prevent compilation
-                    cell.tag = 5248241780129792;
                     break;
             }
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
@@ -149,14 +148,7 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
             ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
-                NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
-                
-#warning GameID's to large for for int Tag property.
-                // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-                //      [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
-                // }
-                
-                newViewController.gameId = [NSNumber numberWithLongLong:gid];
+                newViewController.gameId = (NSNumber *)[ids objectAtIndex:indexPath.row];
                 
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
@@ -167,7 +159,6 @@ typedef NS_ENUM(NSInteger, ARLTopGamesTableViewControllerGroups) {
     }
 }
 
-//
 #pragma mark - Properties
 
 /*!

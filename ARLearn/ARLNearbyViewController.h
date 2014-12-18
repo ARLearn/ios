@@ -11,6 +11,7 @@
 #import "ARLNetworking.h"
 #import "ARLUtils.h"
 #import "ARLGamePin.h"
+#import "ARLGameViewController.h"
 
 @interface ARLNearbyViewController : UIViewController <MKMapViewDelegate, NSURLSessionDataDelegate, UIAlertViewDelegate, UITableViewDelegate, UITableViewDataSource>
 

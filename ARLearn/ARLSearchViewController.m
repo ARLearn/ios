@@ -277,11 +277,6 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
             
-#warning GameID's to large for for int Tag property.
-            cell.tag = [(NSNumber *)[dict valueForKey:@"gameId"] integerValue];
-            
-            // [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
-
             return cell;
         }
     }
@@ -299,16 +294,12 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case RESULTS : {
-            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
-                NSInteger gid = [tableView cellForRowAtIndexPath:indexPath].tag;
-               
-#warning GameID's to large for for int Tag property.
+                NSDictionary *dict =  (NSDictionary *)[self.searchResults objectAtIndex:indexPath.row];
                 
-                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:gid]];
-                }
+                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
                 
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6

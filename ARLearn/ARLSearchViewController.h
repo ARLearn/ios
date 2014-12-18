@@ -12,6 +12,7 @@
 #import "ARLNetworking.h"
 #import "ARLUtils.h"
 #import "ARLQueryCache.h"
+#import "ARLGameViewController.h"
 
 @interface ARLSearchViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate>
 

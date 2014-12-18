@@ -286,7 +286,6 @@ didCompleteWithError:(NSError *)error
             cell.textLabel.text = [game valueForKey:@"title"];
             cell.detailTextLabel.text = [game valueForKey:@"language"];
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
-            cell.tag = [[game valueForKey:@"gameId"] intValue];
             
             return cell;
         }
@@ -316,14 +315,12 @@ didCompleteWithError:(NSError *)error
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case NEARBYRESULTS: {
-            UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
-                NSDictionary *dict = [self.results objectAtIndex:indexPath.item];
+                NSDictionary *game = [self.results objectAtIndex:indexPath.item];
                 
-                if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-                    [newViewController performSelector:@selector(setGameId:) withObject:[NSNumber numberWithLongLong:[[dict objectForKey:@"gameId"] longLongValue]]];
-                }
+                newViewController.gameId = (NSNumber *)[game valueForKey:@"gameId"];
                 
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
