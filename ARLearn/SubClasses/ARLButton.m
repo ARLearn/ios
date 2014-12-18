@@ -44,6 +44,7 @@ const int kTextTopPadding = 2;
     
     // This however works!
     [self setTitle:title forState:UIControlStateNormal];
+    [self setTitle:title forState:UIControlStateDisabled];
     // [self setTitle:title forState:UIControlStateSelected];
     // [self setTitle:title forState:UIControlStateHighlighted];
     
@@ -52,12 +53,16 @@ const int kTextTopPadding = 2;
     
     // This however works!
     [self setTitleColor:color forState:UIControlStateNormal];
+    [self setTitleColor:color forState:UIControlStateDisabled];
     // [self setTitleColor:color forState:UIControlStateSelected];
     // [self setTitleColor:color forState:UIControlStateHighlighted];
     
     self.backgroundColor = [UIColor clearColor];
     
-    self.imageView.image = [UIImage imageNamed:image];
+    [self setImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+    [self setImage:[ARLUtils grayishImage:[UIImage imageNamed:image]] forState:UIControlStateDisabled];
+    //[ARLUtils grayishImage:[UIImage imageNamed:image]]
+    // self.imageView.image = [UIImage imageNamed:image];
     
     [self.imageView setContentMode:UIViewContentModeScaleAspectFill];
 }

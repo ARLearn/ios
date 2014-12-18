@@ -8,6 +8,7 @@
 
 #import "UIViewController+UI.h"
 #import "ARLButton.h"
+#import "ARLNetworking.h"
 
 @interface ARLMainViewController : UIViewController <UIAlertViewDelegate>
 

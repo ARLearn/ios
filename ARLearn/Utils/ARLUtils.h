@@ -169,4 +169,15 @@
  */
 + (NSString *)bytestoString:(NSNumber *)value;
 
+/*!
+ *  Transform the image in grayscale, while keeping its transparency.
+ *
+ *  See http://stackoverflow.com/questions/1298867/convert-image-to-grayscale
+ *
+ *  @param inputImage The Image to be grayed.
+ *
+ *  @return The GrayScale Image.
+ */
++ (UIImage *)grayishImage:(UIImage *)inputImage;
+
 @end

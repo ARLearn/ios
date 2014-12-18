@@ -571,4 +571,39 @@ static NSCondition *_theAbortLock;
     //    return [NSString stringWithFormat:@"%4.2f %@",convertedValue, [tokens objectAtIndex:multiplyFactor]];
 }
 
+/*!
+ *  Transform the image in grayscale, while keeping its transparency.
+ *
+ *  See http://stackoverflow.com/questions/1298867/convert-image-to-grayscale
+ *
+ *  @param inputImage The Image to be grayed.
+ *
+ *  @return The GrayScale Image.
+ */
++ (UIImage *)grayishImage:(UIImage *)inputImage {
+    UIGraphicsBeginImageContextWithOptions(inputImage.size, NO, inputImage.scale);
+    
+    @autoreleasepool {
+        CGRect imageRect = CGRectMake(0.0f, 0.0f, inputImage.size.width, inputImage.size.height);
+        
+        CGContextRef ctx = UIGraphicsGetCurrentContext();
+        
+        // Draw a white background
+        CGContextSetRGBFillColor(ctx, 1.0f, 1.0f, 1.0f, 1.0f);
+        CGContextFillRect(ctx, imageRect);
+        
+        // Draw the luminosity on top of the white background to get grayscale
+        [inputImage drawInRect:imageRect blendMode:kCGBlendModeLuminosity alpha:1.0f];
+        
+        // Apply the source image's alpha
+        [inputImage drawInRect:imageRect blendMode:kCGBlendModeDestinationIn alpha:1.0f];
+        
+    }
+    
+    UIImage* grayscaleImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return grayscaleImage;
+}
+
 @end

@@ -43,6 +43,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     // Do any additional setup after loading the view.
     
     // Hide buttons until we're sure we need to use them.
@@ -53,6 +54,40 @@
     [self.linkedinButton setHidden:YES];
     [self.twitterButton setHidden:YES];
     
+//    if (ARLNetworking.isLoggedIn) {
+//        UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthenticatedNavigation"];
+//        
+//        if (newViewController) {
+//            // Move to another UINavigationController or UITabBarController etc.
+//            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+//            
+//#warning loggged in part via another navigationcontroller.
+//            // Beware we cnnot have a chain of two animated view transitions.
+//            
+//            [self.navigationController presentViewController:newViewController animated:YES completion:nil];
+//            
+//            DLog(@"LOGGED IN, JUMPING TO MYGAMES");
+//            
+//            newViewController = nil;
+//        }
+//        
+//        return;
+//    }
+    
+#warning TODO Reset Tables when not logged in.
+    
+    //! Clear Account bound data in tables, if any left.
+    // ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
+    // [ARLAccountDelegator resetAccount:appDelegate.managedObjectContext];
+}
+
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self.navigationController setToolbarHidden:YES];
+    
+    [self addConstraints];
+    
     if (ARLNetworking.isLoggedIn) {
         UIViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"AuthenticatedNavigation"];
         
@@ -61,8 +96,9 @@
             // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
             
 #warning loggged in part via another navigationcontroller.
+            // Beware we cnnot have a chain of two animated view transitions.
             
-            [self.navigationController presentViewController:newViewController animated:NO completion:nil];
+            [self.navigationController presentViewController:newViewController animated:YES completion:nil];
             
             DLog(@"LOGGED IN, JUMPING TO MYGAMES");
             
@@ -76,25 +112,11 @@
     [self.orLabel setHidden:NO];
     [self.googleButton setHidden:NO];
     [self.facebookButton setHidden:NO];
-    
-#warning TODO Reset Tables when not logged in.
-    
-    //! Clear Account bound data in tables, if any left.
-    // ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
-    // [ARLAccountDelegator resetAccount:appDelegate.managedObjectContext];
-    
-}
-
--(void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    [self.navigationController setToolbarHidden:YES];
-    
-    [self addConstraints];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+    
     // Dispose of any resources that can be recreated.
 }
 

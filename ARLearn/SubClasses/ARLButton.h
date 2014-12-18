@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <QuartzCore/QuartzCore.h>
+//#import <UIKit/UIKit.h>
+//#import <QuartzCore/QuartzCore.h>
+
+#import "ARLUtils.h"
 
 @interface ARLButton : UIButton
 

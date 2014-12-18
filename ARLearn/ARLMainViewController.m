@@ -190,7 +190,8 @@
     
     UIViewController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
     
-    [self.navigationController presentViewController:mvc animated:YES completion:nil];
+    // If animated we get an error about unfinished animations in the ARLLOginViewController when is silently jumps to ARLMyGameSViewController.
+    [self.navigationController presentViewController:mvc animated:ARLNetworking.isLoggedIn ? NO : YES completion:nil];
 }
 
 - (IBAction)StoreButtonAction:(ARLButton *)sender {

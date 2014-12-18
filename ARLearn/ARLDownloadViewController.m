@@ -350,7 +350,7 @@
         } else {
             if ([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) {
                 // Skip creating deleted records.
-                DLog(@"Skipping: %@", [generalItem valueForKey:@"name"])
+                DLog(@"Skipping deleted: %@", [generalItem valueForKey:@"name"])
             }else {
                 // Uses MagicalRecord for Creation and Saving!
                 DLog(@"Creating: %@", [generalItem valueForKey:@"name"])

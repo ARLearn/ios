@@ -154,8 +154,8 @@ NSArray *ids;
             
             switch (indexPath.item) {
                 case 0:
-                    cell.textLabel.text = @"Game1";
-                    cell.detailTextLabel.text = @"Starting tomorrow";
+                    cell.textLabel.text = @"Florence";
+                    cell.detailTextLabel.text = @"Excursie Curltuurwetenschappen";
                   break;
                 case 1:
                     cell.textLabel.text = @"Game2";

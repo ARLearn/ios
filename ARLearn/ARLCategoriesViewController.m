@@ -46,30 +46,35 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    [self.Category1Button makeButtonWithImageAndGradient:@"Culture"
-                                            titleText:NSLocalizedString(@"CultureCategoryLabel", @"CultureCategoryLabel")
-                                           titleColor:[UIColor whiteColor]
-                                           startColor:UIColorFromRGB(0xff664c)
-                                             endColor:UIColorFromRGB(0xe94a35)];
+
+#warning Wrong UIImage used.
+    [self.Category1Button makeButtonWithImageAndGradient:@"Search"
+                                               titleText:NSLocalizedString(@"CultureCategoryLabel", @"CultureCategoryLabel")
+                                              titleColor:[UIColor whiteColor]
+                                              startColor:UIColorFromRGB(0xff664c)
+                                                endColor:UIColorFromRGB(0xe94a35)];
+    [self.Category1Button setEnabled:NO];
     
     [self.Category2Button makeButtonWithImageAndGradient:@"Category"
                                               titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
                                              titleColor:[UIColor whiteColor]
                                              startColor:UIColorFromRGB(0xff664c)
                                                endColor:UIColorFromRGB(0xe94a35)];
+    [self.Category2Button setEnabled:NO];
     
     [self.Category3Button makeButtonWithImageAndGradient:@"Category"
                                               titleText:NSLocalizedString(@"CategoryLabel", @"TopGamesLabel")
                                              titleColor:[UIColor whiteColor]
                                              startColor:UIColorFromRGB(0xff664c)
                                                endColor:UIColorFromRGB(0xe94a35)];
+    [self.Category3Button setEnabled:NO];
     
     [self.Category4Button makeButtonWithImageAndGradient:@"Category"
                                             titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
                                            titleColor:[UIColor whiteColor]
                                            startColor:UIColorFromRGB(0xff664c)
                                              endColor:UIColorFromRGB(0xe94a35)];
+    [self.Category4Button setEnabled:NO];
 }
 
 - (void)didReceiveMemoryWarning
