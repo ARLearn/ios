@@ -24,6 +24,11 @@
 
 static NSCondition *_theAbortLock;
 
+/*!
+ *  The Lock for the AbortDialog Code (wait until dismissed before continuing code).
+ *
+ *  @return <#return value description#>
+ */
 + (NSCondition *) theAbortLock {
     if(!_theAbortLock){
         _theAbortLock = [[NSCondition alloc] init];
@@ -34,15 +39,23 @@ static NSCondition *_theAbortLock;
 
 #pragma mark - AppDelegate
 
+/*!
+ *  Override point for customization after application launch.
+ *
+ *  @param application   <#application description#>
+ *  @param launchOptions <#launchOptions description#>
+ *
+ *  @return <#return value description#>
+ */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
     Log(@"didFinishLaunchingWithOptions");
     
-//TODO: Register and Process APN's found in the launchOptions.
+    //TODO: Register and Process APN's found in the launchOptions.
+    
     [ARLUtils LogGitInfo];
     
-    // Override point for customization after application launch.
     _networkAvailable = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -90,6 +103,13 @@ static NSCondition *_theAbortLock;
     return YES;
 }
 
+/*!
+ *  Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions 
+ *  (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+ *  Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+ *
+ *  @param application <#application description#>
+ */
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -100,6 +120,13 @@ static NSCondition *_theAbortLock;
     // TODO Save Database.
 }
 
+/*!
+ *   Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore 
+ *   your application to its current state in case it is terminated later.
+ *   If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+ *
+ *  @param application <#application description#>
+ */
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
@@ -112,6 +139,11 @@ static NSCondition *_theAbortLock;
     [MagicalRecord cleanUp];
 }
 
+/*!
+ *  Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+ *
+ *  @param application <#application description#>
+ */
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
@@ -124,6 +156,13 @@ static NSCondition *_theAbortLock;
     }
 }
 
+/*!
+ *  Restart any tasks that were paused (or not yet started) while the application was inactive. 
+ *  If the application was previously in the background, optionally refresh the user interface.
+ *
+ *  @param application <#application description#>
+ */
+
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
@@ -135,6 +174,11 @@ static NSCondition *_theAbortLock;
 
 }
 
+/*!
+ *  Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+ *
+ *  @param application <#application description#>
+ */
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
@@ -150,9 +194,9 @@ static NSCondition *_theAbortLock;
  *  @param app <#app description#>
  */
 - (void)applicationDidFinishLaunching:(UIApplication *)app {
-//    // other setup tasks here....
-//    Log(@"applicationDidFinishLaunching");
-//
+    // other setup tasks here....
+    Log(@"applicationDidFinishLaunching");
+    
 #ifdef __IPHONE_8_0
     //Right, that is the point
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeBadge
@@ -190,9 +234,8 @@ static NSCondition *_theAbortLock;
  *  @param deviceToken The Device Token
  */
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    //TODO: Implement
-    
     NSString* newToken = [deviceToken description];
+    
 	newToken = [newToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
 	newToken = [newToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     
@@ -260,6 +303,11 @@ static NSCondition *_theAbortLock;
     return currentCoordinates;
 }
 
+/*!
+ *  Retrn the Background Operations Qeueu
+ *
+ *  @return <#return value description#>
+ */
 + (NSOperationQueue *) theOQ {
     static NSOperationQueue *_theOQ;
 
@@ -271,6 +319,11 @@ static NSCondition *_theAbortLock;
     return _theOQ;
 }
 
+/*!
+ *  Return the Query Cache.
+ *
+ *  @return <#return value description#>
+ */
 + (ARLQueryCache *) theQueryCache {
     static ARLQueryCache *_theQueryCache;
     
