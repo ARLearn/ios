@@ -43,6 +43,8 @@
 		8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A64196D31350044616A /* MagicalRecord+ShorthandSupport.m */; };
 		8D219A84196D31350044616A /* MagicalRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219A66196D31350044616A /* MagicalRecord.m */; };
 		8D219A86196D341F0044616A /* Todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8D219A85196D341F0044616A /* Todo.txt */; };
+		8D2F959B1A5AA70E00B57C8B /* GeneralItems.json in Resources */ = {isa = PBXBuildFile; fileRef = 8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */; };
+		8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */; };
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
 		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
@@ -176,6 +178,9 @@
 		8D219A6A196D31350044616A /* CoreData+MagicalRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CoreData+MagicalRecord.h"; sourceTree = "<group>"; };
 		8D219A85196D341F0044616A /* Todo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Todo.txt; sourceTree = "<group>"; };
 		8D219A87196D3AC10044616A /* PrivateData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateData.h; sourceTree = "<group>"; };
+		8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = GeneralItems.json; sourceTree = "<group>"; };
+		8D2F959C1A5AC90D00B57C8B /* ARLPlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLPlayViewController.h; sourceTree = "<group>"; };
+		8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLPlayViewController.m; sourceTree = "<group>"; };
 		8D4233E1196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNotificationSubscriber.h; sourceTree = "<group>"; };
@@ -351,6 +356,8 @@
 				8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */,
 				8D6FB7131A1225AB0085ABA5 /* ARLOauthWebViewController.h */,
 				8D6FB7141A1225AB0085ABA5 /* ARLOauthWebViewController.m */,
+				8D2F959C1A5AC90D00B57C8B /* ARLPlayViewController.h */,
+				8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */,
 				8D7A8D0D197D55BA00B37013 /* ARLScanViewController.h */,
 				8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */,
 				8D55B2C41976937200C0A56B /* ARLSearchViewController.h */,
@@ -363,6 +370,7 @@
 				8D21965A196D26080044616A /* ARLViewController.m */,
 				8D4233DF196E900D007410C3 /* en.lproj */,
 				8D87A50E198648F600842BC6 /* Extensions */,
+				8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */,
 				8D21965C196D26080044616A /* Images.xcassets */,
 				8D219A22196D2AB30044616A /* Models */,
 				8D87A50C198648A500842BC6 /* Operations */,
@@ -695,6 +703,7 @@
 				8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */,
 				8D4233E5196E900D007410C3 /* Localizable.strings in Resources */,
 				8D21965D196D26080044616A /* Images.xcassets in Resources */,
+				8D2F959B1A5AA70E00B57C8B /* GeneralItems.json in Resources */,
 				8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */,
 				8DC69664196D500E00FA1505 /* Settings.bundle in Resources */,
 			);
@@ -750,6 +759,7 @@
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
 				8D6FB7151A1225AB0085ABA5 /* ARLOauthWebViewController.m in Sources */,
+				8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */,
 				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
 				8DDECF451976AABA007CECB4 /* Account.m in Sources */,
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,

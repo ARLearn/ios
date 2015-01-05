@@ -1,0 +1,376 @@
+{
+    generalItems =     (
+                        {
+                        autoLaunch = 0;
+                        deleted = 0;
+                        dependsOn =             {
+                        lat = "51.22182818142593";
+                        lng = "6.805556677490245";
+                        radius = 1000;
+                        type = "org.celstec.arlearn2.beans.dependencies.ProximityDependency";
+                        };
+                        description = "";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 13876003;
+                        lastModificationDate = 1385113739048;
+                        lat = "51.21817260455731";
+                        lng = "6.804355047851573";
+                        name = "Welcome at MDH Stefaan";
+                        richText = "";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "o2rg.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        answers =             (
+                                               {
+                                               answer = boring;
+                                               id = Xd07MTYNbBwQioy;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "not so boring...";
+                                               id = 3xrHNMQECVa81yh;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = interesting;
+                                               id = 3nPYWc2gzqQvWlJ;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               }
+                                               );
+                        autoLaunch = 0;
+                        deleted = 0;
+                        description = "Tell me what you think of this lecture so far";
+                        fileReferences =             (
+                                                      {
+                                                      fileReference = "http://streetlearn.appspot.com/game/13876002/generalItems/13946007/audio";
+                                                      key = audio;
+                                                      type = "org.celstec.arlearn2.beans.generalItem.FileReference";
+                                                      }
+                                                      );
+                        gameId = 13876002;
+                        id = 13946007;
+                        lastModificationDate = 1417180691530;
+                        name = "This lecture is...";
+                        richText = "Tell me what you think of this lecture so far";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.SingleChoiceTest";
+                        },
+                        {
+                        autoLaunch = 0;
+                        deleted = 0;
+                        dependsOn =             {
+                        action = "answer_Xd07MTYNbBwQioy";
+                        generalItemId = 13946007;
+                        scope = 0;
+                        type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
+                        };
+                        description = "You selected boring?\nWhat is boring about this lecture.\nExplain with audio or video";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 13966004;
+                        lastModificationDate = 1410946658466;
+                        name = "boring?";
+                        openQuestion =             {
+                        textDescription = text;
+                        type = "org.celstec.arlearn2.beans.generalItem.OpenQuestion";
+                        valueDescription = number;
+                        withAudio = 1;
+                        withPicture = 1;
+                        withText = 1;
+                        withValue = 1;
+                        withVideo = 1;
+                        };
+                        richText = "You selected boring?<div><br></div><div>What is boring about this lecture.</div><div><br></div><div>Explain with audio or video</div>";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        autoLaunch = 0;
+                        deleted = 0;
+                        description = "this message will self destroy...";
+                        disappearOn =             {
+                        offset =                 {
+                        action = read;
+                        generalItemId = 13976003;
+                        scope = 0;
+                        type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
+                        };
+                        timeDelta = 60000;
+                        type = "org.celstec.arlearn2.beans.dependencies.TimeDependency";
+                        };
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 13976003;
+                        lastModificationDate = 1417441880683;
+                        name = "mission impossible";
+                        openQuestion =             {
+                        textDescription = "";
+                        type = "org.celstec.arlearn2.beans.generalItem.OpenQuestion";
+                        valueDescription = "";
+                        withAudio = 1;
+                        withPicture = 1;
+                        withText = 1;
+                        withValue = 1;
+                        withVideo = 1;
+                        };
+                        richText = "this message will self destroy...";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 1;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        autoLaunch = 0;
+                        deleted = 0;
+                        dependsOn =             {
+                        lat = "50.87906483114769";
+                        lng = "5.958004377770976";
+                        radius = 50;
+                        type = "org.celstec.arlearn2.beans.dependencies.ProximityDependency";
+                        };
+                        description = "";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        iconUrl = "http://streetlearn.appspot.com/game/13876002/generalItems/17136036/audio";
+                        id = 17136036;
+                        lastModificationDate = 1417182589825;
+                        lat = "50.87906483114769";
+                        lng = "5.958004377770976";
+                        name = Emurgency;
+                        richText = "";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        autoLaunch = 0;
+                        deleted = 0;
+                        description = "Here is an aed device testje";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        iconUrl = "http://streetlearn.appspot.com/game/13876002/generalItems/17186025/icon";
+                        id = 17186025;
+                        lastModificationDate = 1417182546465;
+                        lat = "50.87778538580597";
+                        lng = "5.958680294442729";
+                        name = AED;
+                        openQuestion =             {
+                        textDescription = "";
+                        type = "org.celstec.arlearn2.beans.generalItem.OpenQuestion";
+                        valueDescription = "";
+                        withAudio = 1;
+                        withPicture = 0;
+                        withText = 0;
+                        withValue = 1;
+                        withVideo = 0;
+                        };
+                        richText = "Here is an aed device testje";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        autoLaunch = 0;
+                        autoLaunchQrReader = 1;
+                        deleted = 0;
+                        description = something;
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5238649759203328;
+                        lastModificationDate = 1411131006240;
+                        name = scan;
+                        richText = something;
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.ScanTag";
+                        },
+                        {
+                        deleted = 1;
+                        description = "";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5302507618172928;
+                        lastModificationDate = 1418119986741;
+                        name = dummy;
+                        scope = user;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        answers =             (
+                                               {
+                                               answer = "Read from your medical notes as you have written them?";
+                                               id = tNP9MpMeCe7QR5Y;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "Ask your receptionist to make the phone call?";
+                                               id = 5ogsXvHvJ8kfJmi;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "Ask your patient to make the phone call?";
+                                               id = lQKCWClD3pnx2D7;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "Use ISBAR for structured communication?";
+                                               id = cFTT2ABGaRQsAt7;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               }
+                                               );
+                        autoLaunch = 0;
+                        deleted = 0;
+                        description = "Which is the optimal way to ...";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5322433481408512;
+                        lastModificationDate = 1418120145353;
+                        name = "Multi-Select";
+                        richText = "Which is the optimal way to ...";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceTest";
+                        },
+                        {
+                        answers =             (
+                                               {
+                                               answer = "Read from your medical notes as you have written them?";
+                                               id = vFLyDlkeAnFEQWZ;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "Ask your receptionist to make the phone call?";
+                                               id = NYCH1RmZcqh18tj;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "Ask your patient to make the phone call?";
+                                               id = dbbDz9ajKaJbmLC;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               },
+                                               {
+                                               answer = "Use ISBAR for structured communication?";
+                                               id = qyM8jCSdFXOQX7e;
+                                               isCorrect = 0;
+                                               type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+                                               }
+                                               );
+                        autoLaunch = 0;
+                        deleted = 0;
+                        description = "Which is the optimal way to structure your...";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5684785242439680;
+                        lastModificationDate = 1418120097381;
+                        name = "Single Select";
+                        richText = "Which is the optimal way to structure your...";
+                        roles =             (
+                        );
+                        scope = user;
+                        showCountDown = 0;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.SingleChoiceTest";
+                        },
+                        {
+                        deleted = 1;
+                        description = "";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5774686373806080;
+                        lastModificationDate = 1411128828450;
+                        name = dummy;
+                        scope = user;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        audioFeed = "http://streetlearn.appspot.com/game/13876002/generalItems/5778960537354240/audio";
+                        autoPlay = 0;
+                        deleted = 0;
+                        description = "test audio";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5778960537354240;
+                        lastModificationDate = 1411126435035;
+                        name = "Audio file";
+                        richText = "test audio";
+                        scope = user;
+                        sortKey = 0;
+                        type = "org.celstec.arlearn2.beans.generalItem.AudioObject";
+                        },
+                        {
+                        deleted = 1;
+                        description = "";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5838069538226176;
+                        lastModificationDate = 1418120022189;
+                        name = dummy;
+                        scope = user;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        },
+                        {
+                        deleted = 1;
+                        description = "";
+                        fileReferences =             (
+                        );
+                        gameId = 13876002;
+                        id = 5873766840139776;
+                        lastModificationDate = 1411130987929;
+                        name = dummy;
+                        scope = user;
+                        type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                        }
+                        );
+    serverTime = 1420455598482;
+    type = "org.celstec.arlearn2.beans.generalItem.GeneralItemList";
+}

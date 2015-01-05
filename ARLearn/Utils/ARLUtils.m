@@ -170,16 +170,18 @@ static NSCondition *_theAbortLock;
         // 3) Get its Attributes
         NSDictionary *attributes = [[NSEntityDescription
                                      entityForName:entity
-                                     inManagedObjectContext:localContext] attributesByName];
+                                     inManagedObjectContext:localContext]  attributesByName /*propertiesByName*/];
         
+        // propertiesByName also returns relations but they proof hard to do here as contexts are mixed, so do them at the caller.
+
         // 4) Enumerate over Attributes
         for (NSString *attr in attributes) {
-            if ([fixups valueForKey:attr]) {
-                // 4a) Name Mapping.
-                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
-            } else if ([data valueForKey:attr]) {
-                // 4b) Foreign Data.
+            if ([data valueForKey:attr]) {
+                // 4a) Foreign Data (must come first).
                 [object setValue:[data valueForKey:attr] forKey:attr];
+            } else if ([fixups valueForKey:attr]) {
+                // 4b) Name Mapping.
+                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
             } else {
                 // 4c) 1:1 Mapping & Data.
                 [object setValue:[dict valueForKey:attr] forKey:attr];
@@ -220,18 +222,20 @@ static NSCondition *_theAbortLock;
         // 3) Get its Attributes
         NSDictionary *attributes = [[NSEntityDescription
                                      entityForName:[[object entity] name]
-                                     inManagedObjectContext:localContext] attributesByName];
+                                     inManagedObjectContext:localContext] attributesByName /*propertiesByName*/];
+
+        // propertiesByName also returns relations but they proof hard to do here as contexts are mixed, so do them at the caller.
         
         //TODO: Add Key <-> Property Name Lookup.
         
         // 4) Enumerate over Attributes
         for (NSString *attr in attributes) {
-            if ([fixups valueForKey:attr]) {
-                // 4a) Name Mapping.
-                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
-            } else if ([data valueForKey:attr]) {
-                // 4b) Foreign Data.
+            if ([data valueForKey:attr]) {
+                // 4a) Foreign Data (must come first).
                 [object setValue:[data valueForKey:attr] forKey:attr];
+            } else if ([fixups valueForKey:attr]) {
+                // 4b) Name Mapping.
+                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
             } else {
                 // 4c) 1:1 Mapping & Data.
                 [object setValue:[dict valueForKey:attr] forKey:attr];
@@ -285,7 +289,7 @@ static NSCondition *_theAbortLock;
             if ([object valueForKey:attr]) {
                 if ([fixups valueForKey:attr]) {
                     [json setObject:[object valueForKey:attr] forKey:[fixups valueForKey:attr]];
-                }else {
+                } else {
                     [json setObject:[object valueForKey:attr] forKey:attr];
                 }
             }
@@ -433,7 +437,7 @@ static NSCondition *_theAbortLock;
             Log(@"URL: %@", url);
         }
         if (error==nil && json!=nil) {
-            Log(@"JSON:\r%@", json);
+            Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
         } else {
             NSString *errorString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             Log(@"ERROR: %@", errorString);
@@ -457,7 +461,19 @@ static NSCondition *_theAbortLock;
         if (url) {
             Log(@"URL: %@", url);
         }
-        Log(@"JSON:\r%@", jsonDictionary);
+        // Log(@"JSON:\r%@", jsonDictionary);
+        
+        NSError *error = nil;
+        NSData* jsonData = [NSJSONSerialization
+                            dataWithJSONObject:jsonDictionary
+                            options:kNilOptions
+                            error:&error];
+        
+        if (error==nil) {
+            Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+        } else {
+            Log(@"ERROR:\r%@", jsonDictionary);
+        }
     }
 }
 

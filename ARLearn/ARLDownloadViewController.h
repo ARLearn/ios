@@ -8,8 +8,11 @@
 
 #import "ARLAppDelegate.h"
 #import "ARLNetworking.h"
+#import "ARLPlayViewController.h"
 
 #import "GeneralItem.h"
+#import "Run.h"
+#import "Game.h"
 
 @interface ARLDownloadViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 

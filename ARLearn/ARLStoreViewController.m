@@ -63,7 +63,11 @@ NSArray *ids;
     [super viewDidLoad];
     
 #warning Hardcoded Value.
-    ids = [NSArray arrayWithObjects: [NSNumber numberWithLongLong:13876002], [NSNumber numberWithLongLong:20536006], nil];
+    ids = [NSArray arrayWithObjects:
+           [NSNumber numberWithLongLong:13876002],
+           [NSNumber numberWithLongLong:20536006],
+           [NSNumber numberWithLongLong:5248241780129792],
+           nil];
     
     [self applyConstraints];
 }
@@ -138,7 +142,7 @@ NSArray *ids;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case FEATURED : {
-            return 2;
+            return [ids count];
         }
     }
     
@@ -152,15 +156,21 @@ NSArray *ids;
         case FEATURED : {
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
             
+#warning Hardcoded Values.
+            
             switch (indexPath.item) {
                 case 0:
                     cell.textLabel.text = @"Florence";
-                    cell.detailTextLabel.text = @"Excursie Curltuurwetenschappen";
+                    cell.detailTextLabel.text = @"Excursie Cultuurwetenschappen";
                   break;
                 case 1:
                     cell.textLabel.text = @"Game2";
                     cell.detailTextLabel.text = @"Starting now";
                     break;
+                case 2:
+                    cell.textLabel.text = @"B opdrachten bij bronzen deuren - voor wim";
+                    cell.detailTextLabel.text = @"Starting now";
+                   break;
             }
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
             

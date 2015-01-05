@@ -12,6 +12,9 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *background;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *playButton;
+
+- (IBAction)playButtonAction:(UIBarButtonItem *)sender;
 
 @property (readonly, nonatomic) NSString *cellIdentifier;
 
@@ -53,21 +56,29 @@
     
     //TODO: The Operation below does not update the table every change!
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
+        [self DownloadGame];
+    }];
+
+    NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
          [self DownloadGameContent];
     }];
     
-    NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
+    NSBlockOperation *backBO2 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadSplashScreen];
     }];
 
-    NSBlockOperation *backBO2 =[NSBlockOperation blockOperationWithBlock:^{
+    NSBlockOperation *backBO3 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGameFiles];
     }];
     
-    NSBlockOperation *backBO3 =[NSBlockOperation blockOperationWithBlock:^{
+    NSBlockOperation *backBO4 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGeneralItems];
     }];
     
+    NSBlockOperation *backBO5 =[NSBlockOperation blockOperationWithBlock:^{
+        [self DownloadRuns];
+    }];
+
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
         [NSTimer scheduledTimerWithTimeInterval:(self.gameFiles.count==0 ? 0.1 : 2.5)
                                          target:self
@@ -76,15 +87,19 @@
                                         repeats:NO];
     }];
     
-    // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> foreBO.
+    // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> back04 -> back05 -> foreBO.
     [backBO1 addDependency:backBO0];
     [backBO2 addDependency:backBO1];
     [backBO3 addDependency:backBO2];
+    [backBO4 addDependency:backBO3];
+    [backBO5 addDependency:backBO4];
     
-    [foreBO  addDependency:backBO3];
+    [foreBO  addDependency:backBO5];
     
     [[NSOperationQueue mainQueue] addOperation:foreBO];
     
+    [[ARLAppDelegate theOQ] addOperation:backBO5];
+    [[ARLAppDelegate theOQ] addOperation:backBO4];
     [[ARLAppDelegate theOQ] addOperation:backBO3];
     [[ARLAppDelegate theOQ] addOperation:backBO2];
     [[ARLAppDelegate theOQ] addOperation:backBO1];
@@ -154,16 +169,80 @@
 
 #pragma mark - Properties
 
-/*!
- *  Getter
- *
- *  @return The Cell Identifier.
- */
 -(NSString *) cellIdentifier {
     return  @"DownloadItem";
 }
 
 #pragma mark - Methods
+
+/*!
+ *  Downloads teh Game we're participating in.
+ *
+ *  Runs in a background thread.
+ */
+-(void) DownloadGame {
+    NSString *service = [NSString stringWithFormat:@"myGames/gameId/%@", self.gameId];
+    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
+    
+    NSError *error = nil;
+    
+    NSDictionary *game = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                      error:&error] : nil;
+    ELog(error);
+    
+#pragma warn Debug Code
+    [ARLUtils LogJsonDictionary:game url:service];
+    
+    //    @property (nonatomic, retain) NSString * creator;
+    //    @property (nonatomic, retain) NSNumber * gameId;                  mapped
+    //    @property (nonatomic, retain) NSNumber * hasMap;
+    //    @property (nonatomic, retain) NSString * owner;
+    //    @property (nonatomic, retain) NSString * richTextDescription;
+    //    @property (nonatomic, retain) NSString * title;                   mapped
+    //    @property (nonatomic, retain) NSSet *correspondingRuns;
+    //    @property (nonatomic, retain) NSSet *hasItems;
+    
+    NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Json,                        CoreData
+                                @"dscription",                  @"richTextDescription",
+                                nil];
+    
+    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Data,                                                        CoreData
+                                nil];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", self.gameId];
+    Game *item = [Game MR_findFirstWithPredicate: predicate];
+    
+    if (item) {
+        if ([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) {
+            DLog(@"Deleting Game: %@", [game valueForKey:@"title"])
+            [item MR_deleteEntity];
+        } else {
+            DLog(@"Updating Game: %@", [game valueForKey:@"title"])
+            item = (Game *)[ARLUtils UpdateManagedObjectFromDictionary:game
+                                                         managedobject:item
+                                                            nameFixups:namefixups
+                                                            dataFixups:datafixups];
+        }
+    } else {
+        if ([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) {
+            // Skip creating deleted records.
+            DLog(@"Skipping deleted Game: %@", [game valueForKey:@"title"])
+        } else {
+            // Uses MagicalRecord for Creation and Saving!
+            DLog(@"Creating Game: %@", [game valueForKey:@"title"])
+            item = (Game *)[ARLUtils ManagedObjectFromDictionary:game
+                                                      entityName:@"Game"
+                                                      nameFixups:namefixups
+                                                      dataFixups:datafixups];
+        }
+    }
+    
+    // Saves any modification made after ManagedObjectFromDictionary.
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
 
 -(void) DownloadGameContent {
     NSString *query = [NSString stringWithFormat:@"myGames/gameContent/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
@@ -241,6 +320,96 @@
 }
 
 /*!
+ *  Downloads Runs we're participating in.
+ *
+ *  Runs in a background thread.
+ */
+-(void) DownloadRuns {
+    NSString *service = @"myRuns/participate";
+    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
+    
+    NSError *error = nil;
+    
+    NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                      error:&error] : nil;
+    ELog(error);
+    
+#pragma warn Debug Code
+    [ARLUtils LogJsonDictionary:response url:service];
+    
+    NSDictionary *runs = [response objectForKey:@"runs"];
+    
+    for (NSDictionary *run in runs) {
+        //        @property (nonatomic, retain) NSNumber * deleted;         handled
+        //        @property (nonatomic, retain) NSNumber * gameId;          mapped
+        //        @property (nonatomic, retain) NSString * owner;
+        //        @property (nonatomic, retain) NSNumber * runId;           mapped
+        //        @property (nonatomic, retain) NSString * title;           mapped
+        //        @property (nonatomic, retain) NSSet *actions;
+        //        @property (nonatomic, retain) NSSet *currentVisibility;
+        //        @property (nonatomic, retain) Game *game;                     relation      ( relation).
+        //        @property (nonatomic, retain) Inquiry *inquiry;
+        //        @property (nonatomic, retain) NSSet *itemVisibilityRules;
+        //        @property (nonatomic, retain) NSSet *messages;
+        //        @property (nonatomic, retain) NSSet *responses;
+        
+        if ([(NSNumber *)[run valueForKey:@"gameId"] longLongValue] == [self.gameId longLongValue])
+        {
+            NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        // Json,                         CoreData
+                                        nil];
+            
+            NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        // Data,                                                        CoreData
+                                        // Relations cannot be done here easily due to context changes.
+                                        // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
+                                        nil];
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && runId==%@", self.gameId, [run valueForKey:@"runId"]];
+            Run *item = [Run MR_findFirstWithPredicate: predicate];
+            
+            if (item) {
+                if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
+                    DLog(@"Deleting Run: %@", [run valueForKey:@"title"])
+                    [item MR_deleteEntity];
+                } else {
+                    DLog(@"Updating Run: %@", [run valueForKey:@"title"])
+                    item = (Run *)[ARLUtils UpdateManagedObjectFromDictionary:run
+                                                                managedobject:item
+                                                                   nameFixups:namefixups
+                                                                   dataFixups:datafixups];
+
+                    // We can only update if both objects share the same context.
+                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
+                    [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+
+                }
+            } else {
+                if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
+                    // Skip creating deleted records.
+                    DLog(@"Skipping deleted Run: %@", [run valueForKey:@"title"])
+                } else {
+                    // Uses MagicalRecord for Creation and Saving!
+                    DLog(@"Creating Run: %@", [run valueForKey:@"title"])
+                    item = (Run *)[ARLUtils ManagedObjectFromDictionary:run
+                                                             entityName:@"Run"
+                                                             nameFixups:namefixups
+                                                             dataFixups:datafixups];
+
+                    // We can only update if both objects share the same context.
+                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
+                    [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+                }
+            }
+        }
+    }
+    
+    // Saves any modification made after ManagedObjectFromDictionary.
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+
+/*!
  *  Downloads the general items and stores/update or deletes them in/from the database.
  *
  *  Runs in a background thread.
@@ -264,30 +433,32 @@
 #pragma warn Debug Code
     //TODO: Delete either all generalItems beloging to a game or use updates.
     
-    //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", self.gameId];
-    //    [GeneralItem MR_deleteAllMatchingPredicate: predicate];
-    //    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    // NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", self.gameId];
+    // [GeneralItem MR_deleteAllMatchingPredicate: predicate];
+    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     NSDictionary *generalItems = [response objectForKey:@"generalItems"];
     
     for (NSDictionary *generalItem in generalItems) {
         // [ARLUtils LogJsonDictionary:generalItem url:NULL];
         
-        // @property (nonatomic, retain) NSString * descriptionText;                 fixup ( description, cannot rename field as descrition is reserved ).
+        // @property (nonatomic, retain) NSNumber * deleted;                     handled
+        
+        // @property (nonatomic, retain) NSString * descriptionText;                fixup ( description, cannot rename field as descrition is reserved ).
         // @property (nonatomic, retain) NSNumber * gameId;                      mapped    ( same as ownerGame )?
-        // @property (nonatomic, retain) NSNumber * generalItemId;                   fixup ( id).
-        // @property (nonatomic, retain) NSData * json;                              fixup ( generalItem as json).
+        // @property (nonatomic, retain) NSNumber * generalItemId;                  fixup ( id).
+        // @property (nonatomic, retain) NSData * json;                             fixup ( generalItem as json).
         // @property (nonatomic, retain) NSNumber * lat;                         mapped
         // @property (nonatomic, retain) NSNumber * lng;                         mapped
         // @property (nonatomic, retain) NSString * name;                        mapped
         // @property (nonatomic, retain) NSString * richText;                    mapped
-        // @property (nonatomic, retain) NSNumber * sortKey;                         todo  ( ??? ).
+        // @property (nonatomic, retain) NSNumber * sortKey;                        todo  ( ??? ).
         // @property (nonatomic, retain) NSString * type;                        mapped
         
         // @property (nonatomic, retain) NSSet *actions;                             todo  ( relation ).
         // @property (nonatomic, retain) NSSet *currentVisibility;                   todo  ( relation ).
         // @property (nonatomic, retain) NSSet *data;                                todo  ( relation ).
-        // @property (nonatomic, retain) Game *ownerGame;                        manual    ( see gameId ).
+        // @property (nonatomic, retain) Game *ownerGame;                           manual ( relation ).
         // @property (nonatomic, retain) NSSet *responses;                           todo  ( relation ).
         // @property (nonatomic, retain) NSSet *visibility;                          todo  ( relation ).
         
@@ -326,38 +497,47 @@
                                     nil];
         
         NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    // Data,                                                    CoreData
-                                    [NSKeyedArchiver archivedDataWithRootObject:generalItem],   @"json",
+                                    // Data,                                                        CoreData
+                                    [NSKeyedArchiver archivedDataWithRootObject:generalItem],       @"json",
+                                    // Relations cannot be done here easily due to context changes.
+                                    // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"ownerGame",
                                     nil];
         
-        
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && generalItemId==%@", self.gameId, [generalItem valueForKey:@"id"]];
-        GeneralItem *generalitem = [GeneralItem MR_findFirstWithPredicate: predicate];
+        GeneralItem *item = [GeneralItem MR_findFirstWithPredicate: predicate];
         
         //DONE: Test record deletion.
         //TODO: Find out what to do with linked records in other tables (like GeneralItemVisibility).
-        if (generalitem) {
+        if (item) {
             if ([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) {
-                DLog(@"Deleting: %@", [generalItem valueForKey:@"name"])
-                [generalitem MR_deleteEntity];
+                DLog(@"Deleting GeneralItem: %@", [generalItem valueForKey:@"name"])
+                [item MR_deleteEntity];
             } else {
-                DLog(@"Updating: %@", [generalItem valueForKey:@"name"])
-                generalitem = (GeneralItem *)[ARLUtils UpdateManagedObjectFromDictionary:generalItem
-                                                                           managedobject:generalitem
-                                                                              nameFixups:namefixups
-                                                                              dataFixups:datafixups];
+                DLog(@"Updating GeneralItem: %@", [generalItem valueForKey:@"name"])
+                item = (GeneralItem *)[ARLUtils UpdateManagedObjectFromDictionary:generalItem
+                                                                    managedobject:item
+                                                                       nameFixups:namefixups
+                                                                       dataFixups:datafixups];
+
+                // We can only update if both objects share the same context.
+                Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
+                [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].ownerGame = game;
             }
         } else {
             if ([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) {
                 // Skip creating deleted records.
-                DLog(@"Skipping deleted: %@", [generalItem valueForKey:@"name"])
+                DLog(@"Skipping deleted GeneralItem: %@", [generalItem valueForKey:@"name"])
             }else {
                 // Uses MagicalRecord for Creation and Saving!
-                DLog(@"Creating: %@", [generalItem valueForKey:@"name"])
-                generalitem = (GeneralItem *)[ARLUtils ManagedObjectFromDictionary:generalItem
-                                                                        entityName:@"GeneralItem"
-                                                                        nameFixups:namefixups
-                                                                        dataFixups:datafixups];
+                DLog(@"Creating GeneralItem: %@", [generalItem valueForKey:@"name"])
+                item = (GeneralItem *)[ARLUtils ManagedObjectFromDictionary:generalItem
+                                                                 entityName:@"GeneralItem"
+                                                                 nameFixups:namefixups
+                                                                 dataFixups:datafixups];
+
+                // We can only update if both objects share the same context.
+                Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
+                [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].ownerGame = game;
             }
         }
         
@@ -429,6 +609,31 @@
     [self.tableView setHidden:YES];
     
     [timer invalidate];
+}
+
+#pragma mark - Actions
+
+/*!
+ *  Getter
+ *
+ *  @return The Cell Identifier.
+ */
+- (IBAction)playButtonAction:(UIBarButtonItem *)sender {
+    ARLPlayViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlayView"];
+    
+    if (newViewController) {
+        // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+        //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
+        // }
+        
+        newViewController.gameId = self.gameId;
+        
+        // Move to another UINavigationController or UITabBarController etc.
+        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+        [self.navigationController pushViewController:newViewController animated:YES];
+        
+        newViewController = nil;
+    }
 }
 
 @end

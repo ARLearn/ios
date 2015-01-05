@@ -75,12 +75,13 @@ static NSCondition *_theAbortLock;
     
     DLog(@"%@", [MagicalRecord currentStack]);
     
-    //TESTCODE: ShowAbortMessage on a non main thread.
-    {
-        //        [[ARLAppDelegate theOQ] addOperationWithBlock:^{
-        //            [ARLUtils ShowAbortMessage:@"TEST" withMessage:@"TEST" ];
-        //        }];
-    }
+    
+#warning DEBUG Code (Delete all records handled sofar)
+    
+    [Game MR_truncateAll];
+    [Run MR_truncateAll];
+    [GeneralItem MR_truncateAll];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
 #warning FORCING LOGGING.
     

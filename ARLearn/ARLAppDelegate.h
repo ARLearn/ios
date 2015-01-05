@@ -17,6 +17,11 @@
 
 #import "Account.h"
 
+#warning DEBUG Code (Delete all records handled sofar)
+#import "GeneralItem.h"
+#import "Game.h"
+#import "Run.h"
+
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
