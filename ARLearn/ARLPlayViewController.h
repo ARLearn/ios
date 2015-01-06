@@ -7,6 +7,7 @@
 //
 
 #import "GeneralItem.h"
+#import "ARLBeanNames.h"
 
 @interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 

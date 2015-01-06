@@ -18,4 +18,6 @@
 
 @property (strong, nonatomic) NSNumber *gameId;
 
+@property (strong, nonatomic) NSNumber *runId;
+
 @end

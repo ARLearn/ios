@@ -73,7 +73,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 {
     switch (section) {
         case GENERALITEM : {
-            
             return self.items.count;
         }
     }
@@ -92,8 +91,25 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             GeneralItem *item = (GeneralItem *)[self.items objectAtIndex:indexPath.item];
             
             cell.textLabel.text = item.name;
-            cell.detailTextLabel.text = item.type;
             
+#error either data is stored incorrectly or this code just fails to retrieve JSON.
+            
+            NSData *data = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
+            
+            NSError *error = nil;
+            NSDictionary* json = [NSJSONSerialization
+                                  JSONObjectWithData:data
+                                  options:kNilOptions
+                                  error:&error];
+            if ([json valueForKey:@"dependsOn"]) {
+                NSDictionary* dependsOn = [json valueForKey:@"dependsOn"];
+                
+                
+                BeanIds bid = [ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d", bid];
+            } else {
+                cell.detailTextLabel.text = @"Visible";
+            }
             return cell;
         }
     }

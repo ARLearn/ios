@@ -437,7 +437,8 @@ static NSCondition *_theAbortLock;
             Log(@"URL: %@", url);
         }
         if (error==nil && json!=nil) {
-            Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+            Log(@"JSON:\r%@", json);
+            // Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
         } else {
             NSString *errorString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             Log(@"ERROR: %@", errorString);
@@ -470,7 +471,8 @@ static NSCondition *_theAbortLock;
                             error:&error];
         
         if (error==nil) {
-            Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+            Log(@"JSON:\r%@", jsonDictionary);
+            // Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
         } else {
             Log(@"ERROR:\r%@", jsonDictionary);
         }

@@ -27,6 +27,7 @@
 @implementation ARLDownloadViewController
 
 @synthesize gameId;
+@synthesize runId;
 
 #pragma mark - ViewController
 
@@ -78,7 +79,11 @@
     NSBlockOperation *backBO5 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadRuns];
     }];
-
+    
+    NSBlockOperation *backBO6 =[NSBlockOperation blockOperationWithBlock:^{
+        [self DownloadActions];
+    }];
+    
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
         [NSTimer scheduledTimerWithTimeInterval:(self.gameFiles.count==0 ? 0.1 : 2.5)
                                          target:self
@@ -87,17 +92,19 @@
                                         repeats:NO];
     }];
     
-    // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> back04 -> back05 -> foreBO.
+    // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> back04 -> back05 -> back06 -> foreBO.
     [backBO1 addDependency:backBO0];
     [backBO2 addDependency:backBO1];
     [backBO3 addDependency:backBO2];
     [backBO4 addDependency:backBO3];
     [backBO5 addDependency:backBO4];
+    [backBO6 addDependency:backBO5];
     
-    [foreBO  addDependency:backBO5];
+    [foreBO  addDependency:backBO6];
     
     [[NSOperationQueue mainQueue] addOperation:foreBO];
     
+    [[ARLAppDelegate theOQ] addOperation:backBO6];
     [[ARLAppDelegate theOQ] addOperation:backBO5];
     [[ARLAppDelegate theOQ] addOperation:backBO4];
     [[ARLAppDelegate theOQ] addOperation:backBO3];
@@ -383,7 +390,8 @@
                     // We can only update if both objects share the same context.
                     Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
                     [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
-
+                    
+                    self.runId = item.runId;
                 }
             } else {
                 if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
@@ -400,6 +408,8 @@
                     // We can only update if both objects share the same context.
                     Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
                     [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+
+                    self.runId = item.runId;
                 }
             }
         }
@@ -408,6 +418,97 @@
     // Saves any modification made after ManagedObjectFromDictionary.
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
+
+/*!
+ *  Downloads Actions of the Run we're participating in.
+ *
+ *  Runs in a background thread.
+ */
+-(void) DownloadActions {
+    if (self.runId) {
+        NSString *service = [NSString stringWithFormat:@"actions/runId/%@", self.runId];
+        NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
+        
+        NSError *error = nil;
+        
+        NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                        options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                          error:&error] : nil;
+        ELog(error);
+        
+#pragma warn Debug Code
+        [ARLUtils LogJsonDictionary:response url:service];
+        
+        NSDictionary *actions = [response objectForKey:@"actions"];
+        
+        for (NSDictionary *action in actions) {
+            //            @property (nonatomic, retain) NSString * action;
+            //            @property (nonatomic, retain) NSNumber * synchronized;
+            //            @property (nonatomic, retain) NSNumber * time;
+            
+            //            @property (nonatomic, retain) Account *account;
+            //            @property (nonatomic, retain) GeneralItem *generalItem;
+            //            @property (nonatomic, retain) Run *run;
+            
+            // if ([(NSNumber *)[action  valueForKey:@"gameId"] longLongValue] == [self.gameId longLongValue])
+            {
+                //                NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                //                                            // Json,                         CoreData
+                //                                            nil];
+                //
+                //                NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                //                                            // Data,                                                        CoreData
+                //                                            // Relations cannot be done here easily due to context changes.
+                //                                            // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
+                //                                            nil];
+
+                //                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && runId==%@", self.gameId, [run valueForKey:@"runId"]];
+                //                Run *item = [Run MR_findFirstWithPredicate: predicate];
+                //
+                //                if (item) {
+                //                    if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
+                //                        DLog(@"Deleting Run: %@", [run valueForKey:@"title"])
+                //                        [item MR_deleteEntity];
+                //                    } else {
+                //                        DLog(@"Updating Run: %@", [run valueForKey:@"title"])
+                //                        item = (Run *)[ARLUtils UpdateManagedObjectFromDictionary:run
+                //                                                                    managedobject:item
+                //                                                                       nameFixups:namefixups
+                //                                                                       dataFixups:datafixups];
+                //
+                //                        // We can only update if both objects share the same context.
+                //                        Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
+                //                        [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+                //
+                //                        self.runId = item.runId;
+                //                    }
+                //                } else {
+                //                    if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
+                //                        // Skip creating deleted records.
+                //                        DLog(@"Skipping deleted Run: %@", [run valueForKey:@"title"])
+                //                    } else {
+                //                        // Uses MagicalRecord for Creation and Saving!
+                //                        DLog(@"Creating Run: %@", [run valueForKey:@"title"])
+                //                        item = (Run *)[ARLUtils ManagedObjectFromDictionary:run
+                //                                                                 entityName:@"Run"
+                //                                                                 nameFixups:namefixups
+                //                                                                 dataFixups:datafixups];
+                //                        
+                //                        // We can only update if both objects share the same context.
+                //                        Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
+                //                        [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+                //                        
+                //                        self.runId = item.runId;
+                //                    }
+                //                }
+            }
+        }
+        
+        // Saves any modification made after ManagedObjectFromDictionary.
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    }
+}
+
 
 /*!
  *  Downloads the general items and stores/update or deletes them in/from the database.
@@ -426,7 +527,7 @@
     ELog(error);
     
 #pragma warn Debug Code
-    // [ARLUtils LogJsonDictionary:response url:service];
+    [ARLUtils LogJsonDictionary:response url:service];
     
     // [GeneralItem MR_truncateAll];
     
