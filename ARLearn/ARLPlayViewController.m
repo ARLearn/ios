@@ -147,9 +147,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]];
             NSNumber *dependsOnItem = ( NSNumber *)[dependsOn valueForKey:@"generalItemId"];
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
-            // }
-
+            if (bid!=Invalid) {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
+            }
+            
             return cell;
         }
     }
@@ -216,15 +217,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     DLog(@"audioPlayerDidFinishPlaying");
 
-    {
-        Action *action = [Action MR_createEntity];
-        action.action = @"read";
-        action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:self.activeItem.generalItemId];
-        action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
-    }
-    
-    // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [self MarkActiveItemAsRead];
     
     [self UpdateItemVisibility];
     
@@ -235,16 +228,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 - (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
     DLog(@"audioPlayerDecodeErrorDidOccur");
-
-    {
-        Action *action = [Action MR_createEntity];
-        action.action = @"read";
-        action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:self.activeItem.generalItemId];
-        action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
-    }
     
-    // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [self MarkActiveItemAsRead];
     
     [self UpdateItemVisibility];
     
@@ -262,6 +247,26 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 }
 
 #pragma mark - Methods
+
+/*!
+ *  Mark the ActiveItem as Read.
+ */
+- (void)MarkActiveItemAsRead {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
+                              self.runId, self.activeItem.generalItemId, @"read"];
+    Action *action = [Action MR_findFirstWithPredicate:predicate];
+    if (!action) {
+        action = [Action MR_createEntity];
+        action.action = @"read";
+        action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:self.activeItem.generalItemId];
+        action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
+
+        // Saves any modification made after ManagedObjectFromDictionary.
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        
+        DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, @"read", self.runId);
+    }
+}
 
 /*!
  *  See http://stackoverflow.com/questions/16556905/filtering-nsdictionary-with-predicate
@@ -342,7 +347,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 case ActionDependency: {
                     NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
                                                @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-                                               self.runId, item.generalItemId, [dependsOn valueForKey:@"action"]];
+                                               self.runId, [dependsOn valueForKey:@"generalItemId"], [dependsOn valueForKey:@"action"]];
                     visible = [NSNumber numberWithBool:[Action MR_countOfEntitiesWithPredicate:predicate2] != 0];
                 }
                     break;
@@ -358,9 +363,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         [self.visibility setObject:visible forKey:[item.generalItemId stringValue]];
     }
     
-    [self.generalItems reloadData];
-    
     [self.generalItems setUserInteractionEnabled:YES];
+
+    [self.generalItems reloadData];
 }
 
 #pragma mark - Actions
