@@ -198,8 +198,8 @@
                                                                       error:&error] : nil;
     ELog(error);
     
-#pragma warn Debug Code
-    [ARLUtils LogJsonDictionary:game url:service];
+    //#pragma warn Debug Code
+    // [ARLUtils LogJsonDictionary:game url:service];
     
     //    @property (nonatomic, retain) NSString * creator;
     //    @property (nonatomic, retain) NSNumber * gameId;                  mapped
@@ -263,7 +263,7 @@
     }
     
     if (response && response.length != 0) {
-        [ARLUtils LogJsonData:response url:query];
+        // [ARLUtils LogJsonData:response url:query];
         
         NSDictionary *gameContent = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:response options:0 error:nil];
         
@@ -342,8 +342,8 @@
                                                                       error:&error] : nil;
     ELog(error);
     
-#pragma warn Debug Code
-    [ARLUtils LogJsonDictionary:response url:service];
+    //#pragma warn Debug Code
+    // [ARLUtils LogJsonDictionary:response url:service];
     
     NSDictionary *runs = [response objectForKey:@"runs"];
     
@@ -436,8 +436,8 @@
                                                                           error:&error] : nil;
         ELog(error);
         
-#pragma warn Debug Code
-        [ARLUtils LogJsonDictionary:response url:service];
+        //#pragma warn Debug Code
+        // [ARLUtils LogJsonDictionary:response url:service];
         
         NSDictionary *actions = [response objectForKey:@"actions"];
         
@@ -526,8 +526,8 @@
                                                                       error:&error] : nil;
     ELog(error);
     
-#pragma warn Debug Code
-    [ARLUtils LogJsonDictionary:response url:service];
+    //#pragma warn Debug Code
+    // [ARLUtils LogJsonDictionary:response url:service];
     
     // [GeneralItem MR_truncateAll];
     
@@ -723,11 +723,10 @@
     ARLPlayViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlayView"];
     
     if (newViewController) {
-        // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-        //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
-        // }
-        
+
+#warning There is no selection of runs nor creation when missing yet. Code expects one run to be present!
         newViewController.gameId = self.gameId;
+        newViewController.runId = self.runId;
         
         // Move to another UINavigationController or UITabBarController etc.
         // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6

@@ -480,6 +480,60 @@ static NSCondition *_theAbortLock;
 }
 
 /*!
+ *  Fetch and recreate (if neccesary) the applications temp drectory.
+ *
+ *  @return <#return value description#>
+ */
++(NSString *) GenerateTempDirectory {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    
+    NSString *cachePath = [paths objectAtIndex:0];
+    {
+        BOOL isDir = NO;
+        NSError *error;
+        if (! [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir] && isDir == NO) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:&error];
+            
+            ELog(error);
+        }
+    }
+    
+    return cachePath;
+}
+
+/*!
+ *  Generate, and recreate it's containing directory (if neccesary), the resource filename.
+ *
+ *  @param gameId The GameID
+ *  @param path   The Partial url path found in teh GameFiles (starts with 'generalItems/').
+ *
+ *  @return <#return value description#>
+ */
++(NSString *) GenerateResourceFileName:(NSNumber *)gameId path:(NSString *)path {
+    // Note: NSCachesDirectory needs to be re-created when accessed (to be safe).
+    // Split Path in Path and FileName.
+    NSRange last = [path rangeOfString:@"/" options:NSBackwardsSearch];
+    NSString *filename = [path substringFromIndex:last.location];
+    NSString *localpath = [path substringToIndex:last.location];
+    
+    // Unique FileName Format is <tmp>/<gameId>/<path>/<filemname>
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@%@", [ARLUtils GenerateTempDirectory], gameId, localpath];
+    {
+        BOOL isDir = NO;
+        NSError *error;
+        if (! [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir] && isDir == NO) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:&error];
+            
+            ELog(error);
+        }
+    }
+    
+    NSString *filePath = [NSString stringWithFormat:@"%@%@", cachePath, filename];
+    
+    return filePath;
+}
+
+/*!
  *
  *  Download a GameFile.
  *
@@ -501,30 +555,12 @@ static NSCondition *_theAbortLock;
  */
 +(NSString *) DownloadResource:(NSNumber *)gameId
                       gameFile:(NSDictionary *)gameFile {
-    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    //NSString *documentsDirectory = [paths objectAtIndex:0];
-    
-    // Note: NSCachesDirectory needs to be re-created when accessed (to be safe).
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    
-    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", [paths objectAtIndex:0], gameId];
-    
-    {
-        BOOL isDir = NO;
-        NSError *error;
-        if (! [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir] && isDir == NO) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:cachePath withIntermediateDirectories:YES attributes:nil error:&error];
-            
-            ELog(error);
-        }
-    }
-    
-    // NSString *fileName = [[url pathComponents] lastObject];
-    NSString *filePath = [NSString stringWithFormat:@"%@/%@", cachePath, [gameFile objectForKey:@"id"]];
-    NSString *path = [gameFile objectForKey:@"path"];
+ 
+    NSString *gameFilePath = [gameFile objectForKey:@"path"];
+
+    NSString *filePath = [ARLUtils GenerateResourceFileName:gameId path:gameFilePath];
     
     if ([[NSFileManager defaultManager] isReadableFileAtPath:filePath]) {
-        
         NSError *error;
         
         unsigned long long remoteSize = [[gameFile objectForKey:@"size"] longLongValue];
@@ -538,20 +574,20 @@ static NSCondition *_theAbortLock;
             NSString *remoteMD5 = [gameFile objectForKey:@"md5Hash"];
             
             if ([remoteMD5 isEqualToString:localMD5]) {
-                DLog(@"MD5Hash Match, Skipping Download of GameFile: %@", path);
+                DLog(@"MD5Hash Match, Skipping Download of GameFile: %@", gameFilePath);
                 
                 return filePath;
             } else {
-                DLog(@"MD5Hash Mismatch, Re-downloading GameFile: %@", path);
+                DLog(@"MD5Hash Mismatch, Re-downloading GameFile: %@", gameFilePath);
             }
         } else {
-            DLog(@"FileSize Mismatch, Re-downloading GameFile: %@", path);
+            DLog(@"FileSize Mismatch, Re-downloading GameFile: %@", gameFilePath);
         }
     } else {
-        DLog(@"Downloading GameFile: %@", path);
+        DLog(@"Downloading GameFile: %@", gameFilePath);
     }
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/game/%@%@", gameId, path]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/game/%@%@", gameId, gameFilePath]];
     
     NSData *urlData = [NSData dataWithContentsOfURL:url];
     

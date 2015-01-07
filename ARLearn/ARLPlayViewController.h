@@ -6,11 +6,17 @@
 //  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
 //
 
+#import "Action.h"
 #import "GeneralItem.h"
-#import "ARLBeanNames.h"
+#import "Run.h"
 
-@interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+#import "ARLBeanNames.h"
+#import "ARLUtils.h"
+
+@interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate>
 
 @property (strong, nonatomic) NSNumber *gameId;
+
+@property (strong, nonatomic) NSNumber *runId;
 
 @end

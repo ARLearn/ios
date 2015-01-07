@@ -151,6 +151,23 @@
                      url: (NSString *) url;
 
 /*!
+ *  Fetch and recreate (if neccesary) the applications temp drectory.
+ *
+ *  @return <#return value description#>
+ */
++(NSString *) GenerateTempDirectory;
+
+/*!
+ *  Generate, and recreate it's containing directory (if neccesary), the resource filename.
+ *
+ *  @param gameId The GameID
+ *  @param path   The Partial url path found in teh GameFiles (starts with 'generalItems/').
+ *
+ *  @return <#return value description#>
+ */
++(NSString *) GenerateResourceFileName:(NSNumber *)gameId path:(NSString *)path;
+
+/*!
  *  Download a GameFile.
  *
  *  @param gameId   The GameId
