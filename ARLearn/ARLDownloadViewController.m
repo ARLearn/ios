@@ -43,7 +43,8 @@
     [super viewWillAppear:animated];
     
     [self.navigationController setNavigationBarHidden:YES];
-    [self.navigationController setToolbarHidden:YES];
+    [self.navigationController setToolbarHidden:NO];
+    [self.playButton setEnabled:NO];
     
     [self.tableView setHidden:YES];
 }
@@ -51,11 +52,10 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-//    [self DownloadGameContent];
+    // [self DownloadGameContent];
     
-    // å[self DownloadSplashScreen];
+    // [self DownloadSplashScreen];
     
-    //TODO: The Operation below does not update the table every change!
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGame];
     }];
@@ -440,67 +440,108 @@
         // [ARLUtils LogJsonDictionary:response url:service];
         
         NSDictionary *actions = [response objectForKey:@"actions"];
-        
-        for (NSDictionary *action in actions) {
-            //            @property (nonatomic, retain) NSString * action;
-            //            @property (nonatomic, retain) NSNumber * synchronized;
-            //            @property (nonatomic, retain) NSNumber * time;
-            
-            //            @property (nonatomic, retain) Account *account;
-            //            @property (nonatomic, retain) GeneralItem *generalItem;
-            //            @property (nonatomic, retain) Run *run;
-            
-            // if ([(NSNumber *)[action  valueForKey:@"gameId"] longLongValue] == [self.gameId longLongValue])
-            {
-                //                NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                //                                            // Json,                         CoreData
-                //                                            nil];
-                //
-                //                NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                //                                            // Data,                                                        CoreData
-                //                                            // Relations cannot be done here easily due to context changes.
-                //                                            // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
-                //                                            nil];
 
-                //                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && runId==%@", self.gameId, [run valueForKey:@"runId"]];
-                //                Run *item = [Run MR_findFirstWithPredicate: predicate];
-                //
-                //                if (item) {
-                //                    if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
-                //                        DLog(@"Deleting Run: %@", [run valueForKey:@"title"])
-                //                        [item MR_deleteEntity];
-                //                    } else {
-                //                        DLog(@"Updating Run: %@", [run valueForKey:@"title"])
-                //                        item = (Run *)[ARLUtils UpdateManagedObjectFromDictionary:run
-                //                                                                    managedobject:item
-                //                                                                       nameFixups:namefixups
-                //                                                                       dataFixups:datafixups];
-                //
-                //                        // We can only update if both objects share the same context.
-                //                        Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
-                //                        [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
-                //
-                //                        self.runId = item.runId;
-                //                    }
-                //                } else {
-                //                    if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
-                //                        // Skip creating deleted records.
-                //                        DLog(@"Skipping deleted Run: %@", [run valueForKey:@"title"])
-                //                    } else {
-                //                        // Uses MagicalRecord for Creation and Saving!
-                //                        DLog(@"Creating Run: %@", [run valueForKey:@"title"])
-                //                        item = (Run *)[ARLUtils ManagedObjectFromDictionary:run
-                //                                                                 entityName:@"Run"
-                //                                                                 nameFixups:namefixups
-                //                                                                 dataFixups:datafixups];
-                //                        
-                //                        // We can only update if both objects share the same context.
-                //                        Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
-                //                        [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
-                //                        
-                //                        self.runId = item.runId;
-                //                    }
-                //                }
+        //{
+        //    "type": "org.celstec.arlearn2.beans.run.ActionList",
+        //    "runId": 4977978815545344,
+        //    "deleted": false,
+        //    "actions": [
+        //                {
+        //                    "type": "org.celstec.arlearn2.beans.run.Action",
+        //                    "timestamp": 1421241029935,
+        //                    "runId": 4977978815545344,
+        //                    "deleted": false,
+        //                    "identifier": 5807073128349696,
+        //                    "generalItemId": 6180497885495296,
+        //                    "generalItemType": "org.celstec.arlearn2.beans.generalItem.AudioObject",
+        //                    "userEmail": "2:103021572104496509774",
+        //                    "time": 1421241029935,
+        //                    "action": "read"
+        //                },
+        //                {
+        //                    "type": "org.celstec.arlearn2.beans.run.Action",
+        //                    "timestamp": 1421237414637,
+        //                    "runId": 4977978815545344,
+        //                    "deleted": false,
+        //                    "identifier": 5861948851748864,
+        //                    "generalItemId": 6180497885495296,
+        //                    "generalItemType": "org.celstec.arlearn2.beans.generalItem.AudioObject",
+        //                    "userEmail": "2:103021572104496509774",
+        //                    "time": 1421237414637,
+        //                    "action": "read"
+        //                },
+        //                {
+        //                    "type": "org.celstec.arlearn2.beans.run.Action",
+        //                    "timestamp": 1421242040473,
+        //                    "runId": 4977978815545344,
+        //                    "deleted": false,
+        //                    "identifier": 5865743723790336,
+        //                    "generalItemId": 6180497885495296,
+        //                    "generalItemType": "org.celstec.arlearn2.beans.generalItem.AudioObject",
+        //                    "userEmail": "2:103021572104496509774",
+        //                    "time": 1421242040473,
+        //                    "action": "read"
+        //                }
+        //                ]
+        //}
+        
+        for (NSDictionary *item in actions) {
+          
+            // @property (nonatomic, retain) NSString * action;          mapped
+            // @property (nonatomic, retain) NSNumber * synchronized;    yes (hardcoded value as it comes from the server)
+            // @property (nonatomic, retain) NSNumber * time;            mapped
+            
+            // @property (nonatomic, retain) Account *account;           manual
+            // @property (nonatomic, retain) GeneralItem *generalItem;   manual
+            // @property (nonatomic, retain) Run *run;                   manual
+
+            NSString *userEmail = (NSString *)[item valueForKey:@"userEmail"];
+            
+            NSArray *userComponents = [userEmail componentsSeparatedByString:@":"];
+            
+            NSString *accountType = [userComponents objectAtIndex:0];
+            NSString *accountId =[userComponents objectAtIndex:1];
+            
+            NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"run.runId==%lld && generalItem.generalItemId==%lld && account.accountType==%@ && account.localId==%@",
+                                       [[item valueForKey:@"runId"] longLongValue],
+                                       [[item valueForKey:@"generalItemId"] longLongValue],
+                                       accountType,
+                                       accountId
+                                       ];
+            
+            Action *action = [Action MR_findFirstWithPredicate:predicate1];
+            
+            if (action==nil) {
+                action = (Action *)[ARLUtils ManagedObjectFromDictionary:item entityName:@"Action"];
+                
+                // Manual Fixups;
+                {
+                    action.synchronized = [NSNumber numberWithBool:YES];
+                }
+                
+                {
+                    [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].run =
+                    [Run MR_findFirstByAttribute:@"runId"
+                                       withValue:[item valueForKey:@"runId"]
+                                       inContext:[NSManagedObjectContext MR_defaultContext]];
+                }
+                
+                {
+                    [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].generalItem =
+                    [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                               withValue:[item valueForKey:@"generalItemId"]
+                                               inContext:[NSManagedObjectContext MR_defaultContext]];
+                }
+                
+                {
+                    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"accountType==%@ && localId==%@",
+                                               accountType,
+                                               accountId];
+                    
+                    [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].account =
+                    [Account MR_findFirstWithPredicate:predicate2
+                                             inContext:[NSManagedObjectContext MR_defaultContext]];
+                }
             }
         }
         
@@ -708,6 +749,7 @@
     // [self.tableView reloadData];
     
     [self.tableView setHidden:YES];
+    [self.playButton setEnabled:YES];
     
     [timer invalidate];
 }

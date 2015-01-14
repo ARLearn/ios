@@ -75,6 +75,14 @@ typedef NS_ENUM(NSInteger, services) {
  */
 + (void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body;
 
+/*!
+ *  Generate a Cache Identifier based on Url and Body (if present).
+ *
+ *  @param service <#service description#>
+ *  @param body    <#body description#>
+ *
+ *  @return <#return value description#>
+ */
 + (NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body;
 
 /*!
@@ -86,15 +94,27 @@ typedef NS_ENUM(NSInteger, services) {
  */
 + (NSData *)sendHTTPGetWithAuthorization:(NSString *) service;
 
+/*!
+ *  Post a URL's content synchronously
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return the URL's content as NSData.
+ */
++(NSData *)sendHTTPPostWithAuthorization:(NSString *) service json:(NSDictionary *)json;
+
 + (void) setupOauthInfo;
 
 + (BOOL)networkAvailable;
 + (BOOL)isLoggedIn;
++ (Account *) CurrentAccount ;
 
 + (NSString *) facebookLoginString;
 + (NSString *) googleLoginString;
 + (NSString *) linkedInLoginString;
 + (NSString *) twitterLoginString;
+
++ (NSString *) MakeRestUrl:(NSString *) service;
 
 + (NSDictionary *) accountDetails;
 

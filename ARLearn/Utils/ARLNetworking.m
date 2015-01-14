@@ -33,6 +33,10 @@ static NSString *_twitterLoginString;
     return _twitterLoginString;
 }
 
++ (NSString *) MakeRestUrl:(NSString *) service {
+    return [NSString stringWithFormat:serviceUrlFmt, serverUrl, service];
+}
+
 + (NSDictionary *) accountDetails {
     NSData *data = [self sendHTTPGetWithAuthorization:[NSString stringWithFormat:@"account/accountDetails"]];
     
@@ -110,7 +114,8 @@ static NSString *_twitterLoginString;
  *  @param delegate The delegate to process data.
  *  @param service  The rest service part of the url.
  */
-+(void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service
++(void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate
+                    withService:(NSString *)service
 {
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject
@@ -165,7 +170,9 @@ static NSString *_twitterLoginString;
  *  @param service  The rest service part of the url.
  *  @param body     The additional data to OST in the request body.
  */
-+(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body
++(void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate
+                     withService:(NSString *)service
+                        withBody:(NSString *)body
 {
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultConfigObject
@@ -204,7 +211,8 @@ static NSString *_twitterLoginString;
  *
  *  @return The Cache ID.
  */
-+(NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body {
++(NSString *)generatePostDescription:(NSString *)service
+                            withBody:(NSString *)body {
     
 #pragma warn Replace by MD5 of complete URL+BODY?
     
@@ -224,7 +232,7 @@ static NSString *_twitterLoginString;
 // NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
 // NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
+    NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
 
     DLog(@"URL: %@", url);
     
@@ -252,7 +260,7 @@ static NSString *_twitterLoginString;
     //    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     //    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/rest/%@", service]];
+    NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
     
     DLog(@"URL: %@", url);
 
@@ -269,7 +277,91 @@ static NSString *_twitterLoginString;
                                                   returningResponse:&response
                                                               error:&error];
     
+    if (error==nil) {
+        [ARLUtils LogJsonData:data url:[url absoluteString]];
+    }
+    
     ELog(error);
+    
+    return data;
+}
+
+/*!
+ *  Get a URL's content synchronously
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return the URL's content as NSData.
+ */
++(NSData *)sendHTTPPostWithAuthorization:(NSString *)service
+                                    json:(NSDictionary *)json {
+    NSURLResponse *response = nil;
+    
+    //    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    //    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
+    
+    NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
+    
+    [ARLUtils LogJsonDictionary:json
+                            url:[url absoluteString]];
+    
+    //{
+    //    action = read;
+    //    generalItemId = 6180497885495296;
+    //    generalItemType = "org.celstec.arlearn2.beans.generalItem.AudioObject";
+    //    runId = 4977978815545344;
+    //    time = 1421237414518;
+    //    userEmail = "2:103021572104496509774";
+    //}
+    
+    // Prepare Data.
+    NSError *error1 = nil;
+    NSData *body = [NSJSONSerialization dataWithJSONObject:json options:0 error:&error1];
+    ELog(error1);
+    
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
+    
+    // Setup Authorization Token (should not be neccesary for search, but it is!)
+    NSString *authorizationString = [NSString stringWithFormat:@"GoogleLogin auth=%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"auth"]];
+    [urlRequest setValue:authorizationString
+      forHTTPHeaderField:@"Authorization"];
+    
+    // Setup Other Headers
+    [urlRequest addValue:@"application/json"
+      forHTTPHeaderField:@"Accept"];
+    [urlRequest addValue:@"application/json"
+      forHTTPHeaderField:@"Content-Type"];
+    
+    // Add Body.
+    [urlRequest setHTTPBody:body];
+
+    // Setup Method
+    [urlRequest setHTTPMethod:@"POST"];
+    
+    NSError *error2 = nil;
+    
+    NSData *data = [NSURLSession sendSynchronousDataTaskWithRequest:urlRequest
+                                                  returningResponse:&response
+                                                              error:&error2];
+    
+    if (error2==nil) {
+        [ARLUtils LogJsonData:data url:[url absoluteString]];
+        
+        //{
+        //    action = read;
+        //    deleted = 0;
+        //    generalItemId = 6180497885495296;
+        //    generalItemType = "org.celstec.arlearn2.beans.generalItem.AudioObject";
+        //    identifier = 5861948851748864;
+        //    runId = 4977978815545344;
+        //    time = 1421237414518;
+        //    timestamp = 1421237414637;
+        //    type = "org.celstec.arlearn2.beans.run.Action";
+        //    userEmail = "2:103021572104496509774";
+        //}
+    }
+
+    ELog(error2);
     
     return data;
 }

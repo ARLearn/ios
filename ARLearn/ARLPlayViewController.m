@@ -62,7 +62,13 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // Do any additional setup after loading the view.
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
     
-    self.items = [GeneralItem MR_findAllWithPredicate:predicate1];
+    self.items = [GeneralItem MR_findAllSortedBy:@"sortKey"
+                                       ascending:NO
+                                   withPredicate:predicate1];
+    
+    // Again Sort....
+    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
+    self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
     
     [self UpdateItemVisibility];
     
@@ -75,7 +81,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     NSError *error = nil;
     
-    //    if ([self.audioSession isOtherAudioPlaying]) {
+    //    if ([self.audioSession isOtherAudioPlaying]) {       
     //        // mix sound effects with music already playing
     //        [self.audioSession setCategory:AVAudioSessionCategorySoloAmbient error:&error];
     //    } else {
@@ -90,6 +96,16 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                object:[AVAudioSession sharedInstance]];
     
     ELog(error);
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
+        [self DownloadgeneralItemVisibilities];
+    }];
+
+    [[ARLAppDelegate theOQ] addOperation:backBO0];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -255,17 +271,167 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
                               self.runId, self.activeItem.generalItemId, @"read"];
     Action *action = [Action MR_findFirstWithPredicate:predicate];
+    
     if (!action) {
         action = [Action MR_createEntity];
-        action.action = @"read";
-        action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:self.activeItem.generalItemId];
-        action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
-
+        {
+            action.account = [ARLNetworking CurrentAccount];
+            action.action = @"read";
+            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:self.activeItem.generalItemId];
+            action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
+            action.synchronized = [NSNumber numberWithBool:NO];
+            action.time = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000];
+        }
+        
         // Saves any modification made after ManagedObjectFromDictionary.
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
         
         DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, @"read", self.runId);
+    } else {
+        DLog(@"Generalitem %@ for Run %@ is already marked as %@", self.activeItem.generalItemId, self.runId, @"read");
     }
+    
+    // TODO Find a better spot to publish actions (and make it a NSOperation)!
+    [self PublishActionsToServer];
+    
+    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
+    [self DownloadgeneralItemVisibilities];
+}
+
+/*!
+ *  Post all unsynced Actions to the server.
+ */
+-(void)PublishActionsToServer {
+    
+    // TODO Filter on runId too?
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"synchronized=%@", @NO];
+    
+    for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+        NSString *userEmail = [NSString stringWithFormat:@"%@:%@", action.account.accountType, action.account.localId];
+        
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                              action.action,                        @"action",
+                              action.run.runId,                     @"runId",
+                              action.generalItem.generalItemId,     @"generalItemId",
+                              userEmail,                            @"userEmail",
+                              action.time,                          @"time",
+                              action.generalItem.type,              @"generalItemType",
+                              nil];
+        
+        [ARLNetworking sendHTTPPostWithAuthorization:@"actions" json:dict];
+        
+        action.synchronized = [NSNumber numberWithBool:YES];
+    }
+    
+    // Saves any modification made after ManagedObjectFromDictionary.
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+
+/*!
+ *  Retrieve GeneralItemVisibility records from the server.
+ *
+ *  Runs in a background thread.
+ */
+-(void)DownloadgeneralItemVisibilities {
+    
+    // TODO Add TimeStamp to url retrieve less records?
+    
+    NSString *service = [NSString stringWithFormat:@"generalItemsVisibility/runId/%lld", [self.runId longLongValue]];
+
+    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
+
+    NSError *error = nil;
+    NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                      error:&error] : nil;
+    
+    if (error == nil) {
+        [ARLUtils LogJsonDictionary:response url:[ARLNetworking MakeRestUrl:service]];
+        
+        for (NSDictionary *item in [response valueForKey:@"generalItemsVisibility"])
+        {
+            DLog(@"GeneralItem: %lld has Status %@,", [[item valueForKey:@"generalItemId"] longLongValue], [item valueForKey:@"status"]);
+        
+            //{
+            //    "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibilityList",
+            //    "serverTime": 1421237978494,
+            //    "generalItemsVisibility": [
+            //                               {
+            //                                   "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibility",
+            //                                   "runId": 4977978815545344,
+            //                                   "deleted": false,
+            //                                   "lastModificationDate": 1417533139703,
+            //                                   "timeStamp": 1417533139537,
+            //                                   "status": 1,
+            //                                   "email": "2:103021572104496509774",
+            //                                   "generalItemId": 6180497885495296
+            //                               },
+            //                               {
+            //                                   "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibility",
+            //                                   "runId": 4977978815545344,
+            //                                   "deleted": false,
+            //                                   "lastModificationDate": 1421237415947,
+            //                                   "timeStamp": 1421237414637,
+            //                                   "status": 1,
+            //                                   "email": "2:103021572104496509774",
+            //                                   "generalItemId": 5232076227870720
+            //                               }
+            //                               ]
+            //}
+            
+            //            @dynamic email;                   mapped
+            //            @dynamic generalItemId;           mapped
+            //            @dynamic runId;                   mapped
+            //            @dynamic status;                  mapped
+            //            @dynamic timeStamp;               mapped
+            
+            //            @dynamic correspondingRun;        manual
+            //            @dynamic generalItem;             manual
+            
+            // Check if a record is already present.
+            //
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"generalItemId=%lld AND runId=%lld",
+                                      [[item valueForKey:@"generalItemId"] longLongValue],
+                                      [self.runId longLongValue]];
+            
+            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate];
+            
+            if (giv == nil) {
+                
+                // Create a new Record.
+                //
+                giv = (GeneralItemVisibility *)[ARLUtils ManagedObjectFromDictionary:item
+                                                                          entityName:@"GeneralItemVisibility"];
+                
+                [giv MR_inContext:[NSManagedObjectContext MR_defaultContext]].correspondingRun = [Run MR_findFirstByAttribute:@"runId"
+                                                                                                                    withValue:giv.runId
+                                                                                                                    inContext:[NSManagedObjectContext MR_defaultContext]];
+                
+                [giv MR_inContext:[NSManagedObjectContext MR_defaultContext]].generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                                                                                       withValue:giv.generalItemId
+                                                                                                                       inContext:[NSManagedObjectContext MR_defaultContext]];
+  
+                DLog(@"Created GeneralItemVisibility for %@ with status %@", giv.generalItemId, giv.status);
+            } else {
+                
+                // Only update when visibility status is still smaller then 2.
+                //
+                if (! [giv.status isEqualToNumber:[NSNumber numberWithInt:2]]) {
+                    giv.status = [item valueForKey:@"status"];
+                    giv.timeStamp = [item valueForKey:@"timeStamp"];
+                    
+                    DLog(@"Updated GeneralItemVisibility of %@ to status %@", giv.generalItemId, giv.status);
+                }
+            }
+        }
+    }
+    
+    // Saves any modification made after ManagedObjectFromDictionary.
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    [self.generalItems performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
 /*!
@@ -299,6 +465,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // This line is tricky (at least the first %@):
     NSPredicate *p = [NSPredicate predicateWithFormat:@"%@[SELF] == %@", self.visibility, @(1)];
 
+#warning this one is sorted on key (should be ordered).
+#warning see http://stackoverflow.com/questions/18716698/dictionary-key-sorting
+    
     NSArray *keys = [self.visibility allKeys];
     NSArray *filteredKeys = [keys filteredArrayUsingPredicate:p];
     
@@ -328,12 +497,12 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 }
 
 /*!
- *  Recalculate GeneralItem Visibility.
+ *  Recalculate GeneralItem Visibility based on Action.
  */
 - (void)UpdateItemVisibility {
     [self.generalItems setUserInteractionEnabled:NO];
     
-    // Calculate the visibility based on DependsOn and Actins stored.
+    // Calculate the visibility based on DependsOn and ActionDependency (using actions) stored.
     self.visibility = [[NSMutableDictionary alloc] init];
     for (GeneralItem *item in self.items) {
         NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
@@ -347,7 +516,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 case ActionDependency: {
                     NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
                                                @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-                                               self.runId, [dependsOn valueForKey:@"generalItemId"], [dependsOn valueForKey:@"action"]];
+                                               self.runId,
+                                               [dependsOn valueForKey:@"generalItemId"],
+                                               [dependsOn valueForKey:@"action"]];
+                    
                     visible = [NSNumber numberWithBool:[Action MR_countOfEntitiesWithPredicate:predicate2] != 0];
                 }
                     break;
@@ -358,6 +530,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         } else {
             visible = @(true);
         }
+
+#warning Use an array here for visibility and only add visible items.
         
         DLog(@"Adding %@=%@", [item.generalItemId stringValue], visible);
         [self.visibility setObject:visible forKey:[item.generalItemId stringValue]];

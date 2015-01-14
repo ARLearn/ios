@@ -587,7 +587,7 @@ static NSCondition *_theAbortLock;
         DLog(@"Downloading GameFile: %@", gameFilePath);
     }
     
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://streetlearn.appspot.com/game/%@%@", gameId, gameFilePath]];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/game/%@%@", serverUrl, gameId, gameFilePath]];
     
     NSData *urlData = [NSData dataWithContentsOfURL:url];
     

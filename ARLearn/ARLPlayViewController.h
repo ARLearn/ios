@@ -8,10 +8,12 @@
 
 #import "Action.h"
 #import "GeneralItem.h"
+#import "GeneralItemVisibility.h"
 #import "Run.h"
 
 #import "ARLBeanNames.h"
 #import "ARLUtils.h"
+#import "ARLNetworking.h"
 
 @interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate>
 
