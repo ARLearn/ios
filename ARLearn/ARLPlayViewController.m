@@ -14,7 +14,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *generalItems;
 
 @property (strong, nonatomic) NSArray *items;
-@property (strong, nonatomic) NSMutableDictionary *visibility;
+@property (strong, nonatomic) NSMutableArray *visibility;
 
 @property (strong, nonatomic) AVAudioSession *audioSession;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 @synthesize gameId;
 @synthesize runId;
-@synthesize generalItems;
+@synthesize items;
 
 #pragma mark - ViewController
 
@@ -441,7 +441,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
  *
  *  @return <#return value description#>
  */
-- (NSDictionary *)getVisibleItems
+- (NSArray *)getVisibleItems
 {
     // Original Demo Code:
     //
@@ -463,18 +463,20 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // NSLog(@"%@", matchingDictionary);
     
     // This line is tricky (at least the first %@):
-    NSPredicate *p = [NSPredicate predicateWithFormat:@"%@[SELF] == %@", self.visibility, @(1)];
-
-#warning this one is sorted on key (should be ordered).
-#warning see http://stackoverflow.com/questions/18716698/dictionary-key-sorting
+//    NSPredicate *p = [NSPredicate predicateWithFormat:@"%@[SELF] == %@", self.visibility, @(1)];
+//
+//#warning this one is sorted on key (should be ordered).
+//#warning see http://stackoverflow.com/questions/18716698/dictionary-key-sorting
+//    
+//    NSArray *keys = [self.visibility allKeys];
+//    NSArray *filteredKeys = [keys filteredArrayUsingPredicate:p];
+//    
+//    // Extract the matching key/value pairs from the original NSDictionary.
+//    NSDictionary *matchingDictionary = [self.visibility dictionaryWithValuesForKeys:filteredKeys];
+//    
+//    return matchingDictionary;
     
-    NSArray *keys = [self.visibility allKeys];
-    NSArray *filteredKeys = [keys filteredArrayUsingPredicate:p];
-    
-    // Extract the matching key/value pairs from the original NSDictionary.
-    NSDictionary *matchingDictionary = [self.visibility dictionaryWithValuesForKeys:filteredKeys];
-    
-    return matchingDictionary;
+    return self.visibility;
 }
 
 /*!
@@ -487,7 +489,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (GeneralItem *)getGeneralItemForRow:(NSInteger)row
 {
     // Get the GeneralItem matching the key from self.getVisibleItems for this row.
-    NSString *key = [[self.getVisibleItems allKeys] objectAtIndex:row];
+    NSString *key = [self.getVisibleItems objectAtIndex:row];
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K = %lld", @"generalItemId", [key longLongValue]];
     
@@ -499,15 +501,15 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 /*!
  *  Recalculate GeneralItem Visibility based on Action.
  */
-- (void)UpdateItemVisibility {
+- (void)UpdateItemVisibilityOld {
     [self.generalItems setUserInteractionEnabled:NO];
     
     // Calculate the visibility based on DependsOn and ActionDependency (using actions) stored.
-    self.visibility = [[NSMutableDictionary alloc] init];
+    self.visibility = [[NSMutableArray alloc] init];
     for (GeneralItem *item in self.items) {
         NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
         
-        NSNumber *visible = @(false);
+        bool visible = false;
         
         if ([json valueForKey:@"dependsOn"]) {
             NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
@@ -520,7 +522,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                [dependsOn valueForKey:@"generalItemId"],
                                                [dependsOn valueForKey:@"action"]];
                     
-                    visible = [NSNumber numberWithBool:[Action MR_countOfEntitiesWithPredicate:predicate2] != 0];
+                    visible = [Action MR_countOfEntitiesWithPredicate:predicate2] != 0;
                 }
                     break;
                     
@@ -528,18 +530,164 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     break;
             };
         } else {
-            visible = @(true);
+            visible = true;
         }
-
-#warning Use an array here for visibility and only add visible items.
+     
+        //DLog(@"Adding %@=%@", [item.generalItemId stringValue], visible);
+        //[self.visibility setObject:visible forKey:[item.generalItemId stringValue]];
         
-        DLog(@"Adding %@=%@", [item.generalItemId stringValue], visible);
-        [self.visibility setObject:visible forKey:[item.generalItemId stringValue]];
+        if (visible){
+            [self.visibility addObject:[item.generalItemId stringValue]];
+        }
     }
     
     [self.generalItems setUserInteractionEnabled:YES];
 
     [self.generalItems reloadData];
+}
+
+- (void)UpdateItemVisibility {
+    [self.generalItems setUserInteractionEnabled:NO];
+
+    self.visibility = [[NSMutableArray alloc] init];
+    
+    for (GeneralItem *item in self.items) {
+        NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
+        
+        long satisfiedAt = 0l;
+        
+        if ([json valueForKey:@"dependsOn"]) {
+            NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
+        
+            satisfiedAt = [self satisfiedAt:runId dependsOn:dependsOn];
+        }
+    
+        if (satisfiedAt<[ARLUtils Now] && satisfiedAt!=-1)
+        {
+            // Create GeneralItemVisibility if missing;
+            
+            // if GeneralItemVisibility ! exists
+            // then create one and save it.
+            // else
+            //    if status != INVISIBLE
+            //    then
+            //      if GeneralItemVisibility>satisfiedAt
+            //      then update timestamnp with satisfiedAt & save record
+            [self.visibility addObject:[item.generalItemId stringValue]];
+        }
+    }
+    // TODO self.visiblity has to be filled from a query.
+    [self.generalItems setUserInteractionEnabled:YES];
+    
+    [self.generalItems reloadData];
+}
+
+-(long)satisfiedAt:(NSNumber *)forRunId dependsOn:(NSDictionary *)dependsOn {
+    switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
+        case ActionDependency: {
+            // See Android's DependencyLocalObject:actionSatisfiedAt
+            long minSatisfiedAt = LONG_MAX;
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                                       @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
+                                       forRunId,
+                                       [dependsOn valueForKey:@"generalItemId"],
+                                       [dependsOn valueForKey:@"action"]];
+            
+            for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+                //TODO Some strange (safety)checks are missing here.
+                long newValue = action.time ? 0l : [action.time longValue];
+                
+                minSatisfiedAt = MIN(minSatisfiedAt, newValue);
+            }
+            
+            return minSatisfiedAt;
+        }
+            
+        case ProximityDependency: {
+            // See Android's DependencyLocalObject:proximitySatisfiedAt
+            long minSatisfiedAt = LONG_MAX;
+            
+            NSString *lat = [NSString stringWithFormat:@"%f",
+                             (double)((long)([[dependsOn valueForKey:@"lat"] doubleValue]*1e6)/1e6)];
+            NSString *lng = [NSString stringWithFormat:@"%f",
+                             (double)((long)([[dependsOn valueForKey:@"lng"] doubleValue]*1e6)/1e6)];
+            
+            NSString *rad = [[dependsOn valueForKey:@"radius"] stringValue];
+            
+            NSString *geo = [NSString stringWithFormat:@"geo:%@:%@:%@", lat,lng,rad];
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                                       @"run.runId=%@ AND action=%@",
+                                       forRunId,
+                                       geo];
+            
+            for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+                if ([geo isEqualToString:action.action]) {
+                    long newValue = action.time ? 0l : [action.time longValue];
+                    
+                    minSatisfiedAt = MIN(minSatisfiedAt, newValue);
+                }
+            }
+            
+            return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
+        }
+            
+        case TimeDependency: {
+            // See Android's DependencyLocalObject:timeSatisfiedAt
+            NSArray *deps = [dependsOn valueForKey:@"offset"];
+            
+            if ([deps count]==0) {
+                return -1;
+            }
+            
+            NSDictionary *dep = (NSDictionary *)[deps firstObject];
+            
+            long satisfiedAt = [self satisfiedAt:forRunId dependsOn:dep];
+            
+            return satisfiedAt == -1 ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longValue];
+        }
+
+        case OrDependency: {
+            // See Android's DependencyLocalObject:orSatisfiedAt
+            long minSatisfiedAt = LONG_MAX;
+            
+            NSArray *deps = [dependsOn valueForKey:@"dependencies"];
+            for (NSDictionary *dep in deps) {
+                long locmin = [self satisfiedAt:forRunId dependsOn:dep];
+                if (locmin != -1) {
+                    minSatisfiedAt = MIN(minSatisfiedAt, locmin);
+                }
+            }
+            
+            return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
+        }
+            
+        case AndDependency: {
+            // See Android's DependencyLocalObject:andSatisfiedAt
+            long maxSatisfiedAt = 0;
+
+            NSArray *deps = [dependsOn valueForKey:@"dependencies"];
+            for (NSDictionary *dep in deps) {
+                long locmax = [self satisfiedAt:forRunId dependsOn:dep];
+                
+                if (locmax == -1) {
+                    return locmax;
+                } else {
+                    maxSatisfiedAt = MAX(maxSatisfiedAt, locmax);
+                }
+            }
+            
+            return maxSatisfiedAt;
+        }
+            
+        default: {
+            //Should not happen.
+        }
+            break;
+    }
+    
+    return -1;
 }
 
 #pragma mark - Actions

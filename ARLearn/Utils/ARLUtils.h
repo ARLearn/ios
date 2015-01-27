@@ -197,4 +197,11 @@
  */
 + (UIImage *)grayishImage:(UIImage *)inputImage;
 
+/*!
+ *  Return the current time as a timestamp.
+ *
+ *  @return <#return value description#>
+ */
++(long) Now;
+
 @end

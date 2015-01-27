@@ -30,6 +30,8 @@
             @"org.celstec.arlearn2.beans.dependencies.ActionDependency": @(ActionDependency),
             @"org.celstec.arlearn2.beans.dependencies.ProximityDependency": @(ProximityDependency),
             @"org.celstec.arlearn2.beans.dependencies.TimeDependency": @(TimeDependency),
+            @"org.celstec.arlearn2.beans.dependencies.OrDependency": @(OrDependency),
+            @"org.celstec.arlearn2.beans.dependencies.AndDependency": @(AndDependency),
             
             @"org.celstec.arlearn2.beans.generalItem.AudioObject": @(AudioObject),
             @"org.celstec.arlearn2.beans.generalItem.GeneralItemList": @(GeneralItemList),

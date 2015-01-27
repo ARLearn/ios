@@ -13,6 +13,8 @@ typedef enum {
     ActionDependency,
     ProximityDependency,
     TimeDependency,
+    OrDependency,
+    AndDependency,
     
     // GeneralItems
     AudioObject,

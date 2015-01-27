@@ -660,4 +660,13 @@ static NSCondition *_theAbortLock;
     return grayscaleImage;
 }
 
+/*!
+ *  Return the current time as a timestamp.
+ *
+ *  @return <#return value description#>
+ */
++(long) Now {
+    return [[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000] longValue];
+}
+
 @end
