@@ -101,6 +101,8 @@ static NSCondition *_theAbortLock;
         [ARLNetworking setupOauthInfo];
     }
     
+    [self doRegisterForAPN:application];
+    
     return YES;
 }
 
@@ -189,28 +191,32 @@ static NSCondition *_theAbortLock;
     [MagicalRecord cleanUp];
 }
 
-/*!
- *  See http://stackoverflow.com/questions/24485681/registerforremotenotifications-method-not-being-called-properly
- *
- *  @param app <#app description#>
- */
-- (void)applicationDidFinishLaunching:(UIApplication *)app {
-    // other setup tasks here....
-    Log(@"applicationDidFinishLaunching");
-    
-#ifdef __IPHONE_8_0
-    //Right, that is the point
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeBadge
-                                                                                         |UIRemoteNotificationTypeSound) categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-#else
-    //register to receive notifications
-    UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound;
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:myTypes];
-#endif
-}
-
 #pragma mark - APN
+
+/*!
+ * Register for APN with Apple.
+ *
+ *  @param application <#application description#>
+ */
+- (void)doRegisterForAPN:(UIApplication *)application
+{
+#warning APN REGISTRATION CODE ENABLED FOR NOW.
+    
+    // See http://stackoverflow.com/questions/24216632/remote-notification-ios-8
+    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+#ifdef __IPHONE_8_0
+        //Right, that is the point
+       UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIRemoteNotificationTypeBadge
+                                                      |UIRemoteNotificationTypeSound) categories:nil];
+        [application registerUserNotificationSettings:settings];
+#endif
+    } else {
+        //register to receive notifications
+        UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound;
+        [application registerForRemoteNotificationTypes:myTypes];
+        
+    }
+}
 
 //TESTCODE: Remote notifications
 /*!

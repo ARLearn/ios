@@ -352,7 +352,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         
         for (NSDictionary *item in [response valueForKey:@"generalItemsVisibility"])
         {
-            DLog(@"GeneralItem: %lld has Status %@,", [[item valueForKey:@"generalItemId"] longLongValue], [item valueForKey:@"status"]);
+            // DLog(@"GeneralItem: %lld has Status %@,", [[item valueForKey:@"generalItemId"] longLongValue], [item valueForKey:@"status"]);
         
             //{
             //    "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibilityList",
@@ -413,7 +413,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                                                                                        withValue:giv.generalItemId
                                                                                                                        inContext:[NSManagedObjectContext MR_defaultContext]];
   
-                DLog(@"Created GeneralItemVisibility for %@ with status %@", giv.generalItemId, giv.status);
+                Log(@"Created GeneralItemVisibility for %@ ('%@') with status %@", giv.generalItemId, giv.generalItem.name, giv.status);
             } else {
                 
                 // Only update when visibility status is still smaller then 2.
@@ -422,7 +422,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     giv.status = [item valueForKey:@"status"];
                     giv.timeStamp = [item valueForKey:@"timeStamp"];
                     
-                    DLog(@"Updated GeneralItemVisibility of %@ to status %@", giv.generalItemId, giv.status);
+                    Log(@"Updated GeneralItemVisibility of %@ ('%@') to status %@", giv.generalItemId, giv.generalItem.name, giv.status);
                 }
             }
         }
@@ -498,53 +498,53 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     return item;
 }
 
-/*!
- *  Recalculate GeneralItem Visibility based on Action.
- */
-- (void)UpdateItemVisibilityOld {
-    [self.generalItems setUserInteractionEnabled:NO];
-    
-    // Calculate the visibility based on DependsOn and ActionDependency (using actions) stored.
-    self.visibility = [[NSMutableArray alloc] init];
-    for (GeneralItem *item in self.items) {
-        NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
-        
-        bool visible = false;
-        
-        if ([json valueForKey:@"dependsOn"]) {
-            NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
-            
-            switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
-                case ActionDependency: {
-                    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
-                                               @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-                                               self.runId,
-                                               [dependsOn valueForKey:@"generalItemId"],
-                                               [dependsOn valueForKey:@"action"]];
-                    
-                    visible = [Action MR_countOfEntitiesWithPredicate:predicate2] != 0;
-                }
-                    break;
-                    
-                default:
-                    break;
-            };
-        } else {
-            visible = true;
-        }
-     
-        //DLog(@"Adding %@=%@", [item.generalItemId stringValue], visible);
-        //[self.visibility setObject:visible forKey:[item.generalItemId stringValue]];
-        
-        if (visible){
-            [self.visibility addObject:[item.generalItemId stringValue]];
-        }
-    }
-    
-    [self.generalItems setUserInteractionEnabled:YES];
-
-    [self.generalItems reloadData];
-}
+///*!
+// *  Recalculate GeneralItem Visibility based on Action.
+// */
+//- (void)UpdateItemVisibilityOld {
+//    [self.generalItems setUserInteractionEnabled:NO];
+//    
+//    // Calculate the visibility based on DependsOn and ActionDependency (using actions) stored.
+//    self.visibility = [[NSMutableArray alloc] init];
+//    for (GeneralItem *item in self.items) {
+//        NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
+//        
+//        bool visible = false;
+//        
+//        if ([json valueForKey:@"dependsOn"]) {
+//            NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
+//            
+//            switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
+//                case ActionDependency: {
+//                    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
+//                                               @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
+//                                               self.runId,
+//                                               [dependsOn valueForKey:@"generalItemId"],
+//                                               [dependsOn valueForKey:@"action"]];
+//                    
+//                    visible = [Action MR_countOfEntitiesWithPredicate:predicate2] != 0;
+//                }
+//                    break;
+//                    
+//                default:
+//                    break;
+//            };
+//        } else {
+//            visible = true;
+//        }
+//     
+//        //DLog(@"Adding %@=%@", [item.generalItemId stringValue], visible);
+//        //[self.visibility setObject:visible forKey:[item.generalItemId stringValue]];
+//        
+//        if (visible){
+//            [self.visibility addObject:[item.generalItemId stringValue]];
+//        }
+//    }
+//    
+//    [self.generalItems setUserInteractionEnabled:YES];
+//
+//    [self.generalItems reloadData];
+//}
 
 - (void)UpdateItemVisibility {
     [self.generalItems setUserInteractionEnabled:NO];
@@ -559,24 +559,53 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         if ([json valueForKey:@"dependsOn"]) {
             NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
         
-            satisfiedAt = [self satisfiedAt:runId dependsOn:dependsOn];
+            satisfiedAt = [self satisfiedAt:self.runId dependsOn:dependsOn];
         }
     
-        if (satisfiedAt<[ARLUtils Now] && satisfiedAt!=-1)
+        if (satisfiedAt<[ARLUtils Now] && satisfiedAt != -1)
         {
             // Create GeneralItemVisibility if missing;
             
-            // if GeneralItemVisibility ! exists
-            // then create one and save it.
-            // else
-            //    if status != INVISIBLE
-            //    then
-            //      if GeneralItemVisibility>satisfiedAt
-            //      then update timestamnp with satisfiedAt & save record
-            [self.visibility addObject:[item.generalItemId stringValue]];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                                      @"runId=%@ AND generalItemId=%@",
+                                      self.runId,
+                                      item.generalItemId];
+            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate];
+            
+            if (!giv)
+            {
+                // if not exists, create one and save it.
+                giv = [GeneralItemVisibility MR_createEntity];
+                {
+                    giv.generalItemId = item.generalItemId;
+                    giv.runId = self.runId;
+                    giv.status = VISIBLE;
+                    giv.timeStamp = [NSNumber numberWithLong:satisfiedAt];
+                    giv.email = [[ARLNetworking CurrentAccount] email];
+                    giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
+                    giv.generalItem = item;
+                    
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
+                    Log(@"GeneralItem: %@ ('%@') status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                }
+            } else {
+                // update timestamp if not INVISIBLE.
+                if (![giv.status isEqualToNumber:INVISIBLE] && [giv.timeStamp longValue] > satisfiedAt) {
+                    giv.timeStamp = [NSNumber numberWithLong:satisfiedAt];
+                    
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
+                    Log(@"GeneralItem: %@ ('%@') updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                }
+            }
+            
+            if ([giv.status isEqualToNumber:VISIBLE] && ![self.visibility containsObject:[item.generalItemId stringValue]]) {
+                [self.visibility addObject:[item.generalItemId stringValue]];
+            }
         }
     }
-    // TODO self.visiblity has to be filled from a query.
+
     [self.generalItems setUserInteractionEnabled:YES];
     
     [self.generalItems reloadData];

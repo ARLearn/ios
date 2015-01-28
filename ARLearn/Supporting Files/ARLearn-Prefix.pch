@@ -26,4 +26,9 @@
     #import "ARLLog.h"
 
     #import "PrivateData.h"
+
+    #define UNDEFINED  [NSNumber numberWithInt: 0]
+    #define VISIBLE    [NSNumber numberWithInt: 1]
+    #define INVISIBLE  [NSNumber numberWithInt: 2]
+
 #endif

@@ -401,10 +401,10 @@ static NSString *_twitterLoginString;
         }
     }
     
-    Log(@"%@", self.facebookLoginString);
-    Log(@"%@", self.googleLoginString);
-    Log(@"%@", self.linkedInLoginString);
-    Log(@"%@", self.twitterLoginString);
+    //    Log(@"%@", self.facebookLoginString);
+    //    Log(@"%@", self.googleLoginString);
+    //    Log(@"%@", self.linkedInLoginString);
+    //    Log(@"%@", self.twitterLoginString);
 }
 
 #pragma mark AbortMessage
