@@ -204,4 +204,14 @@
  */
 +(long) Now;
 
+/*!
+ *  Format a double as a Date/Time.
+ *
+ *  @param withUnixTime <#withUnixTime description#>
+ *  @param stamp        <#stamp description#>
+ *
+ *  @return <#return value description#>
+ */
++(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSString *)stamp;
+
 @end

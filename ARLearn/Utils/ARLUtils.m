@@ -669,4 +669,32 @@ static NSCondition *_theAbortLock;
     return [[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000] longValue];
 }
 
+/*!
+ *  Format a double as a Date/Time.
+ *
+ *  @param withUnixTime <#withUnixTime description#>
+ *  @param stamp        <#stamp description#>
+ *
+ *  @return <#return value description#>
+ */
++(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSString *)stamp {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
+    return [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970:[stamp doubleValue]/1000.0f]];
+}
+
+///*!
+// *  Format a double as a Date/Time.
+// *
+// *  @param withUnixTime <#withUnixTime description#>
+// *  @param stamp        <#stamp description#>
+// *
+// *  @return <#return value description#>
+// */
+//+(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSNumber *)stamp {
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
+//    return [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970:[stamp doubleValue]/1000.0f]];
+//}
+
 @end

@@ -278,11 +278,16 @@ didCompleteWithError:(NSError *)error
     //    "language": "en"
     //}
     
+    //1422489600    (unix)
+    //1422536899756 (arlearn)
+    
     self.game = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
     self.titleLabel.text = [self.game objectForKey:@"title"];
     self.languageLabel.text = [self.game objectForKey:@"language"];
-    
+    self.summaryText.text = [self.game objectForKey:@"description"];
+    self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDateTime:@"dd-MMM-yyyy"
+                                                                                         withUnixTime:[self.game objectForKey:@"lastModificationDate"]]];
     Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
 }
 

@@ -670,6 +670,13 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 return -1;
             }
             
+#error this halts on the new test game
+//            {
+//                generalItemId = 5774370509160448;
+//                scope = 0;
+//                type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
+//            }
+            
             NSDictionary *dep = (NSDictionary *)[deps firstObject];
             
             long satisfiedAt = [self satisfiedAt:forRunId dependsOn:dep];
