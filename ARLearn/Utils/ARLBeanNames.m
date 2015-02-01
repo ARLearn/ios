@@ -60,4 +60,20 @@
     return (BeanIds)[[self.beanNames valueForKey:type] integerValue];
 }
 
++(NSString *) beanIdToBeanName:(BeanIds)bid {
+    for (NSString *key in ARLBeanNames.beanNames) {
+        int val = [[ARLBeanNames.beanNames valueForKey:key] intValue];
+        if (val == (int)bid) {
+            NSRange r = [key rangeOfString:@"." options:NSBackwardsSearch];
+            if (r.location == NSNotFound) {
+                return key;
+            }else {
+                return [key substringFromIndex:r.location + 1];
+            }
+        }
+    }
+    
+    return [ARLBeanNames beanIdToBeanName:Invalid];
+}
+
 @end

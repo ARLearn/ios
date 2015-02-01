@@ -10,16 +10,13 @@
 
 @interface ARLDownloadViewController ()
 
-@property (weak, nonatomic) IBOutlet UIImageView *background;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *playButton;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
 
 - (IBAction)playButtonAction:(UIBarButtonItem *)sender;
 
-@property (readonly, nonatomic) NSString *cellIdentifier;
-
 @property (strong, nonatomic) NSArray *gameFiles;
-
 @property (strong, nonatomic) NSDictionary *downloadStatus;
 
 @end
@@ -34,9 +31,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Do any additional setup after loading the view.
+    
     self.downloadStatus = [[NSDictionary alloc] init];
 
-    // Do any additional setup after loading the view.
+    [self applyConstraints];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -44,30 +43,25 @@
     
     [self.navigationController setNavigationBarHidden:YES];
     [self.navigationController setToolbarHidden:NO];
-    [self.playButton setEnabled:NO];
     
-    [self.tableView setHidden:YES];
+    [self.playButton setEnabled:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    // [self DownloadGameContent];
-    
-    // [self DownloadSplashScreen];
-    
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGame];
     }];
-
+    
     NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
-         [self DownloadGameContent];
+        [self DownloadGameContent];
     }];
     
     NSBlockOperation *backBO2 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadSplashScreen];
     }];
-
+    
     NSBlockOperation *backBO3 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGameFiles];
     }];
@@ -122,58 +116,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
-
-#pragma mark - UITableViewDelegate
-
-#pragma mark - UITableViewDataSource
-
-- (NSInteger)tableView:(UITableView *)tableView
- numberOfRowsInSection:(NSInteger)section
-{
-    // DLog(@"Cnt: %d", self.gameFiles.count);
-    
-    return self.gameFiles.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView
-         cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: self.cellIdentifier];
-    
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier: self.cellIdentifier];
-    }
-    
-    NSString *path = [[self.gameFiles objectAtIndex:indexPath.row] valueForKey:@"path"];
-    NSArray *parts = [path componentsSeparatedByString:@"/"];
-    NSNumber *size = [[self.gameFiles objectAtIndex:indexPath.row]
-                      valueForKey:@"size"];
-    
-    cell.textLabel.text = [parts lastObject];
-    
-    if ([[self.downloadStatus valueForKey:path] boolValue]) {
-        cell.detailTextLabel.text = @"";
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    } else {
-        cell.detailTextLabel.text =[ARLUtils bytestoString:size];
-    }
-    
-    return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 44.0/2.0;
-}
-
 #pragma mark - Properties
 
 -(NSString *) cellIdentifier {
@@ -181,6 +123,44 @@
 }
 
 #pragma mark - Methods
+
+- (void) applyConstraints {
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.view,             @"view",
+                                     
+                                     self.backgroundImage,  @"backgroundImage",
+                                     
+                                     self.progressBar,      @"progressBar",
+                                     
+                                     nil];
+    
+    // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
+    
+    self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    self.progressBar.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // Fix Background.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    // Fix ProgressBar Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[progressBar]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    // Fix ProgressBar Vertically.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[progressBar]-(8)-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+}
 
 /*!
  *  Downloads teh Game we're participating in.
@@ -278,11 +258,6 @@
         }
         
         self.downloadStatus = dict;
-        
-        if (self.gameFiles.count>0) {
-            [self.tableView performSelectorOnMainThread:@selector(setHidden:) withObject:NO waitUntilDone:NO];
-            [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-        }
     }
 }
 
@@ -298,11 +273,11 @@
         if ([path isEqualToString:@"/gameSplashScreen"]) {
             NSString *local = [ARLUtils DownloadResource:self.gameId gameFile:gameFile];
 
-            [self.background performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
+            [self.backgroundImage performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
             
             [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE] forKey: path];
             
-            [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+            [self performSelectorOnMainThread:@selector(updateProgress) withObject:nil waitUntilDone:YES];
             
             break;
         }
@@ -322,7 +297,7 @@
         
         [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE] forKey: path];
         
-        [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(updateProgress) withObject:nil waitUntilDone:YES];
     }
 }
 
@@ -519,18 +494,28 @@
                     action.synchronized = [NSNumber numberWithBool:YES];
                 }
                 
+                if ([item valueForKey:@"runId"] && [[item valueForKey:@"runId"] longLongValue] != 0)
                 {
-                    [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].run =
-                    [Run MR_findFirstByAttribute:@"runId"
-                                       withValue:[item valueForKey:@"runId"]
-                                       inContext:[NSManagedObjectContext MR_defaultContext]];
+                    Run *r = [Run MR_findFirstByAttribute:@"runId"
+                                               withValue:[item valueForKey:@"runId"]
+                                               inContext:[NSManagedObjectContext MR_defaultContext]];
+                    if (r) {
+                        [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].run = r;
+                    } else {
+                        Log("Run %@ for Action not found", [item valueForKey:@"runId"]);
+                    }
                 }
                 
+                if ([item valueForKey:@"generalItemId"] && [[item valueForKey:@"generalItemId"] longLongValue] != 0)
                 {
-                    [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].generalItem =
-                    [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                               withValue:[item valueForKey:@"generalItemId"]
-                                               inContext:[NSManagedObjectContext MR_defaultContext]];
+                    GeneralItem *gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                                 withValue:[item valueForKey:@"generalItemId"]
+                                                                 inContext:[NSManagedObjectContext MR_defaultContext]];
+                    if (gi) {
+                        [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].generalItem = gi;
+                    } else {
+                        Log("GeneralItem %@ for Action not found", [item valueForKey:@"generalItemId"]);
+                    }
                 }
                 
                 {
@@ -568,16 +553,7 @@
     ELog(error);
     
     //#pragma warn Debug Code
-    // [ARLUtils LogJsonDictionary:response url:service];
-    
-    // [GeneralItem MR_truncateAll];
-    
-#pragma warn Debug Code
-    //TODO: Delete either all generalItems beloging to a game or use updates.
-    
-    // NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", self.gameId];
-    // [GeneralItem MR_deleteAllMatchingPredicate: predicate];
-    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [ARLUtils LogJsonDictionary:response url:service];
     
     NSDictionary *generalItems = [response objectForKey:@"generalItems"];
     
@@ -746,12 +722,28 @@
     [self.navigationController setNavigationBarHidden:NO];
     [self.navigationController setToolbarHidden:NO];
     
-    // [self.tableView reloadData];
-    
-    [self.tableView setHidden:YES];
     [self.playButton setEnabled:YES];
     
+    self.progressBar.progress =1.0f;
+    
     [timer invalidate];
+}
+
+- (void)updateProgress {
+    int cnt = 0;
+    
+    for (NSString *key in [self.downloadStatus keyEnumerator])
+    {
+        if ([(NSNumber *)[self.downloadStatus valueForKey:key] isEqualToNumber:[NSNumber numberWithBool:YES]]) {
+            cnt++;
+        }
+    }
+    
+    if ([self.downloadStatus count]>0) {
+        self.progressBar.progress = (float)cnt/[self.downloadStatus count];
+    } else {
+        self.progressBar.progress =0.0f;
+    }
 }
 
 #pragma mark - Actions

@@ -12,6 +12,7 @@
 @property (readonly, nonatomic) CGFloat navbarHeight;
 @property (readonly, nonatomic) CGFloat tabbarHeight;
 @property (readonly, nonatomic) CGFloat statusbarHeight;
+@property (readonly, nonatomic) CGFloat toolbarHeight;
 
 @property (readonly, nonatomic) UIInterfaceOrientation interfaceOrientation;
 

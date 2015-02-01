@@ -8,6 +8,24 @@
 
 @interface ARLUtils : NSObject <UIAlertViewDelegate>
 
+// See http://stackoverflow.com/questions/8755506/put-checkmark-in-the-left-side-of-uitableviewcell
+
+#define emptySpace                  @"\u2001"
+#define checkBoxDisabledChecked     @"\u2611"
+#define checkBoxUnchecked           @"\u2B1C"
+#define checkBoxEnabledChecked      @"\u2705"
+#define radioButtonChecked          @"\u26AB"
+#define radioButtonUnchecked        @"\u26AA"
+#define checkMarkLight              @"\u2713",
+#define checkMarkBold               @"\u2714",
+#define thumbsUp                    @"\U0001F44D"
+#define thumbsDown                  @"\U0001F44E"
+#define lockLocked                  @"\U0001F512"
+#define lockUnlocked                @"\U0001F513"
+#define stripesOne                  @"\u268A"
+#define stripesTwo                  @"\u268C"
+#define stripesThree                @"\u2630"
+
 /*!
  *  Log GIT Version Info.
  */
@@ -213,5 +231,7 @@
  *  @return <#return value description#>
  */
 +(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSString *)stamp;
+
++ (NSAttributedString *)htmlToAttributedString:(NSString *)theHtml;
 
 @end

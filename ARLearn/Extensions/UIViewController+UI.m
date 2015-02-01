@@ -46,6 +46,16 @@
 /*!
  *  Getter
  *
+ *  @return The Tool Bar Height.
+ */
+-(CGFloat) toolbarHeight {
+    return self.navigationController.toolbar.bounds.size.height;
+}
+
+
+/*!
+ *  Getter
+ *
  *  @return The Tab Bar Height.
  */
 -(CGFloat) tabbarHeight {

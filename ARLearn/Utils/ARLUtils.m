@@ -697,4 +697,14 @@ static NSCondition *_theAbortLock;
 //    return [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970:[stamp doubleValue]/1000.0f]];
 //}
 
++ (NSAttributedString *)htmlToAttributedString:(NSString *)theHtml {
+    return[[NSAttributedString alloc] initWithData:[theHtml dataUsingEncoding:NSUTF8StringEncoding]
+                                           options:@{
+                                                     NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
+                                                     NSCharacterEncodingDocumentAttribute: @(NSUTF8StringEncoding)
+                                                     }
+                                documentAttributes:nil
+                                             error:nil];
+}
+
 @end

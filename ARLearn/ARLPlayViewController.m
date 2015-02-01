@@ -10,8 +10,9 @@
 
 @interface ARLPlayViewController ()
 
-@property (weak, nonatomic) IBOutlet UIImageView *background;
-@property (weak, nonatomic) IBOutlet UITableView *generalItems;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
+@property (weak, nonatomic) IBOutlet UITableView *itemsTable;
+@property (weak, nonatomic) IBOutlet UITextView *descriptionText;
 
 @property (strong, nonatomic) NSArray *items;
 @property (strong, nonatomic) NSMutableArray *visibility;
@@ -96,6 +97,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                object:[AVAudioSession sharedInstance]];
     
     ELog(error);
+    
+    [self applyConstraints];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -150,9 +153,17 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             
             GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
             
-            cell.textLabel.text = item.name;
-            
             NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
+            
+            NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
+                                       @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
+                                       self.runId,
+                                       item.generalItemId,
+                                       @"read"];
+            
+            NSString *text = [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];
+            
+            cell.textLabel.text = text;
             
             // DLog(@"%@=%@",[item.generalItemId stringValue], [self.visibility valueForKey:[item.generalItemId stringValue]]);
             
@@ -165,14 +176,38 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             NSNumber *dependsOnItem = ( NSNumber *)[dependsOn valueForKey:@"generalItemId"];
             if (bid!=Invalid) {
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
+            } else {
+                bid = [ARLBeanNames beanTypeToBeanId:item.type];
+                if (bid!=Invalid) {
+                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Type: %@ (%lld)", [ARLBeanNames beanIdToBeanName:bid], [item.generalItemId longLongValue]];
+                } else {
+                    cell.detailTextLabel.text = [ARLBeanNames beanIdToBeanName:bid];
+                }
             }
             
+            // See http://stackoverflow.com/questions/12296904/accessorybuttontappedforrowwithindexpath-not-getting-called
+            // workaround for accessoryButtonTappedForRowWithIndexPath
+            // UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+
+            // set the button's target to this table view controller so we can interpret touch events and map that to a NSIndexSet
+            // [button addTarget:self
+            //            action:@selector(checkButtonTapped:event:)
+            //  forControlEvents:UIControlEventTouchUpInside];
+
             return cell;
         }
     }
     
     // Should not happen!!
     return nil;
+}
+
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+    // Probably not called as we use UITableViewCellAccesssoryDisclosureIndicator instead of UITableViewCellAccessoryDetailDisclosureButton
+ 
+    // See https://github.com/bitmapdata/MSCellAccessory/blob/master/MSCellAccessory/MSCellAccessory.m
+    
+    Log("Disclosure Tapped %@", indexPath);
 }
 
 /*!
@@ -186,7 +221,15 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         case GENERALITEM: {
             self.activeItem = [self getGeneralItemForRow:indexPath.row];
 
+            if (self.activeItem) {
+                self.descriptionText.attributedText = [ARLUtils htmlToAttributedString:self.activeItem.richText];
+            } else {
+                self.descriptionText.text = @"No Description.";
+            }
+            
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:self.activeItem.type];
+            
+#warning this code should move to the view andling a single GeneralItem!
             
             switch (bid) {
                 case AudioObject:
@@ -215,7 +258,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     [self.audioPlayer prepareToPlay];
                     [self.audioPlayer play];
                     
-                    [self.generalItems setUserInteractionEnabled:NO];
+                    [self.itemsTable setUserInteractionEnabled:NO];
                 }
                     break;
                     
@@ -237,7 +280,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     [self UpdateItemVisibility];
     
-    [self.generalItems setUserInteractionEnabled:YES];
+    [self.itemsTable setUserInteractionEnabled:YES];
     
     self.activeItem = nil;
 }
@@ -249,7 +292,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     [self UpdateItemVisibility];
     
-    [self.generalItems setUserInteractionEnabled:YES];
+    [self.itemsTable setUserInteractionEnabled:YES];
 
     self.activeItem = nil;
 }
@@ -263,6 +306,52 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 }
 
 #pragma mark - Methods
+
+- (void) applyConstraints {
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.view,             @"view",
+                                     
+                                     self.backgroundImage,  @"backgroundImage",
+                                     
+                                     self.itemsTable,       @"itemsTable",
+                                     self.descriptionText,  @"descriptionText",
+                                     
+                                     nil];
+    
+    // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
+    
+    self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    self.itemsTable.translatesAutoresizingMaskIntoConstraints = NO;
+    self.descriptionText.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // Fix Background.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    // Fix itemsTable Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[itemsTable]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    // Fix descriptionText Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    // Fix itemsTable/descriptionText Vertically.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==200)]-[itemsTable]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+}
 
 /*!
  *  Mark the ActiveItem as Read.
@@ -431,7 +520,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // Saves any modification made after ManagedObjectFromDictionary.
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
-    [self.generalItems performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [self.itemsTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
 
 /*!
@@ -443,39 +532,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
  */
 - (NSArray *)getVisibleItems
 {
-    // Original Demo Code:
-    //
-    // NSDictionary *d = [NSDictionary dictionaryWithObjectsAndKeys:
-    //                       [NSArray arrayWithObjects:@"a", @"b", @"c", nil], @"a",
-    //                       [NSArray arrayWithObjects:@"b", @"c", @"a", nil], @"b",
-    //                       [NSArray arrayWithObjects:@"c", @"a", @"b", nil], @"c",
-    //                       [NSArray arrayWithObjects:@"a", @"b", @"c", nil], @"d",
-    //                       nil];
-    //
-    // NSPredicate *p = [NSPredicate predicateWithFormat:@"%@[SELF][0] == 'a'", d];
-    // NSLog(@"%@", p);
-    //
-    // NSArray *keys = [d allKeys];
-    // NSArray *filteredKeys = [keys filteredArrayUsingPredicate:p];
-    // NSLog(@"%@", filteredKeys);
-    //
-    // NSDictionary *matchingDictionary = [d dictionaryWithValuesForKeys:filteredKeys];
-    // NSLog(@"%@", matchingDictionary);
-    
-    // This line is tricky (at least the first %@):
-//    NSPredicate *p = [NSPredicate predicateWithFormat:@"%@[SELF] == %@", self.visibility, @(1)];
-//
-//#warning this one is sorted on key (should be ordered).
-//#warning see http://stackoverflow.com/questions/18716698/dictionary-key-sorting
-//    
-//    NSArray *keys = [self.visibility allKeys];
-//    NSArray *filteredKeys = [keys filteredArrayUsingPredicate:p];
-//    
-//    // Extract the matching key/value pairs from the original NSDictionary.
-//    NSDictionary *matchingDictionary = [self.visibility dictionaryWithValuesForKeys:filteredKeys];
-//    
-//    return matchingDictionary;
-    
     return self.visibility;
 }
 
@@ -498,56 +554,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     return item;
 }
 
-///*!
-// *  Recalculate GeneralItem Visibility based on Action.
-// */
-//- (void)UpdateItemVisibilityOld {
-//    [self.generalItems setUserInteractionEnabled:NO];
-//    
-//    // Calculate the visibility based on DependsOn and ActionDependency (using actions) stored.
-//    self.visibility = [[NSMutableArray alloc] init];
-//    for (GeneralItem *item in self.items) {
-//        NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
-//        
-//        bool visible = false;
-//        
-//        if ([json valueForKey:@"dependsOn"]) {
-//            NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
-//            
-//            switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
-//                case ActionDependency: {
-//                    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
-//                                               @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-//                                               self.runId,
-//                                               [dependsOn valueForKey:@"generalItemId"],
-//                                               [dependsOn valueForKey:@"action"]];
-//                    
-//                    visible = [Action MR_countOfEntitiesWithPredicate:predicate2] != 0;
-//                }
-//                    break;
-//                    
-//                default:
-//                    break;
-//            };
-//        } else {
-//            visible = true;
-//        }
-//     
-//        //DLog(@"Adding %@=%@", [item.generalItemId stringValue], visible);
-//        //[self.visibility setObject:visible forKey:[item.generalItemId stringValue]];
-//        
-//        if (visible){
-//            [self.visibility addObject:[item.generalItemId stringValue]];
-//        }
-//    }
-//    
-//    [self.generalItems setUserInteractionEnabled:YES];
-//
-//    [self.generalItems reloadData];
-//}
-
 - (void)UpdateItemVisibility {
-    [self.generalItems setUserInteractionEnabled:NO];
+    [self.itemsTable setUserInteractionEnabled:NO];
 
     self.visibility = [[NSMutableArray alloc] init];
     
@@ -606,121 +614,127 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         }
     }
 
-    [self.generalItems setUserInteractionEnabled:YES];
+    [self.itemsTable setUserInteractionEnabled:YES];
     
-    [self.generalItems reloadData];
+    [self.itemsTable reloadData];
+    
+    // See http://stackoverflow.com/questions/724892/uitableview-scroll-to-the-top
+    [self.itemsTable setContentOffset:CGPointZero animated:YES];
 }
 
 -(long)satisfiedAt:(NSNumber *)forRunId dependsOn:(NSDictionary *)dependsOn {
-    switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
-        case ActionDependency: {
-            // See Android's DependencyLocalObject:actionSatisfiedAt
-            long minSatisfiedAt = LONG_MAX;
-            
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:
-                                       @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-                                       forRunId,
-                                       [dependsOn valueForKey:@"generalItemId"],
-                                       [dependsOn valueForKey:@"action"]];
-            
-            for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
-                //TODO Some strange (safety)checks are missing here.
-                long newValue = action.time ? 0l : [action.time longValue];
+    if (dependsOn!=nil)
+    {
+        switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
+            case ActionDependency: {
+                // See Android's DependencyLocalObject:actionSatisfiedAt
+                long minSatisfiedAt = LONG_MAX;
                 
-                minSatisfiedAt = MIN(minSatisfiedAt, newValue);
-            }
-            
-            return minSatisfiedAt;
-        }
-            
-        case ProximityDependency: {
-            // See Android's DependencyLocalObject:proximitySatisfiedAt
-            long minSatisfiedAt = LONG_MAX;
-            
-            NSString *lat = [NSString stringWithFormat:@"%f",
-                             (double)((long)([[dependsOn valueForKey:@"lat"] doubleValue]*1e6)/1e6)];
-            NSString *lng = [NSString stringWithFormat:@"%f",
-                             (double)((long)([[dependsOn valueForKey:@"lng"] doubleValue]*1e6)/1e6)];
-            
-            NSString *rad = [[dependsOn valueForKey:@"radius"] stringValue];
-            
-            NSString *geo = [NSString stringWithFormat:@"geo:%@:%@:%@", lat,lng,rad];
-            
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:
-                                       @"run.runId=%@ AND action=%@",
-                                       forRunId,
-                                       geo];
-            
-            for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
-                if ([geo isEqualToString:action.action]) {
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                                          @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
+                                          forRunId,
+                                          [dependsOn valueForKey:@"generalItemId"],
+                                          [dependsOn valueForKey:@"action"]];
+                
+                for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+                    //TODO Some strange (safety)checks are missing here.
                     long newValue = action.time ? 0l : [action.time longValue];
                     
                     minSatisfiedAt = MIN(minSatisfiedAt, newValue);
                 }
-            }
-            
-            return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
-        }
-            
-        case TimeDependency: {
-            // See Android's DependencyLocalObject:timeSatisfiedAt
-            NSArray *deps = [dependsOn valueForKey:@"offset"];
-            
-            if ([deps count]==0) {
-                return -1;
-            }
-            
-#error this halts on the new test game
-//            {
-//                generalItemId = 5774370509160448;
-//                scope = 0;
-//                type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
-//            }
-            
-            NSDictionary *dep = (NSDictionary *)[deps firstObject];
-            
-            long satisfiedAt = [self satisfiedAt:forRunId dependsOn:dep];
-            
-            return satisfiedAt == -1 ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longValue];
-        }
-
-        case OrDependency: {
-            // See Android's DependencyLocalObject:orSatisfiedAt
-            long minSatisfiedAt = LONG_MAX;
-            
-            NSArray *deps = [dependsOn valueForKey:@"dependencies"];
-            for (NSDictionary *dep in deps) {
-                long locmin = [self satisfiedAt:forRunId dependsOn:dep];
-                if (locmin != -1) {
-                    minSatisfiedAt = MIN(minSatisfiedAt, locmin);
-                }
-            }
-            
-            return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
-        }
-            
-        case AndDependency: {
-            // See Android's DependencyLocalObject:andSatisfiedAt
-            long maxSatisfiedAt = 0;
-
-            NSArray *deps = [dependsOn valueForKey:@"dependencies"];
-            for (NSDictionary *dep in deps) {
-                long locmax = [self satisfiedAt:forRunId dependsOn:dep];
                 
-                if (locmax == -1) {
-                    return locmax;
-                } else {
-                    maxSatisfiedAt = MAX(maxSatisfiedAt, locmax);
-                }
+                return minSatisfiedAt;
             }
-            
-            return maxSatisfiedAt;
+                
+            case ProximityDependency: {
+                // See Android's DependencyLocalObject:proximitySatisfiedAt
+                long minSatisfiedAt = LONG_MAX;
+                
+                NSString *lat = [NSString stringWithFormat:@"%f",
+                                 (double)((long)([[dependsOn valueForKey:@"lat"] doubleValue]*1e6)/1e6)];
+                NSString *lng = [NSString stringWithFormat:@"%f",
+                                 (double)((long)([[dependsOn valueForKey:@"lng"] doubleValue]*1e6)/1e6)];
+                
+                NSString *rad = [[dependsOn valueForKey:@"radius"] stringValue];
+                
+                NSString *geo = [NSString stringWithFormat:@"geo:%@:%@:%@", lat,lng,rad];
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:
+                                          @"run.runId=%@ AND action=%@",
+                                          forRunId,
+                                          geo];
+                
+                for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+                    if ([geo isEqualToString:action.action]) {
+                        long newValue = action.time ? 0l : [action.time longValue];
+                        
+                        minSatisfiedAt = MIN(minSatisfiedAt, newValue);
+                    }
+                }
+                
+                return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
+            }
+                
+            case TimeDependency: {
+                // See Android's DependencyLocalObject:timeSatisfiedAt
+                NSArray *deps = [dependsOn valueForKey:@"offset"];
+                
+                if ([deps count]==0) {
+                    return -1;
+                }
+                
+//#error this halts on the new test game
+                //            {
+                //                generalItemId = 5774370509160448;
+                //                scope = 0;
+                //                type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
+                //            }
+                
+                NSDictionary *dep = (NSDictionary *)[deps firstObject];
+                
+                long satisfiedAt = [self satisfiedAt:forRunId dependsOn:dep];
+                
+                return satisfiedAt == -1 ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longValue];
+            }
+                
+            case OrDependency: {
+                // See Android's DependencyLocalObject:orSatisfiedAt
+                long minSatisfiedAt = LONG_MAX;
+                
+                NSArray *deps = [dependsOn valueForKey:@"dependencies"];
+                for (NSDictionary *dep in deps) {
+                    long locmin = [self satisfiedAt:forRunId dependsOn:dep];
+                    if (locmin != -1) {
+                        minSatisfiedAt = MIN(minSatisfiedAt, locmin);
+                    }
+                }
+                
+                return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
+            }
+                
+            case AndDependency: {
+                // See Android's DependencyLocalObject:andSatisfiedAt
+                long maxSatisfiedAt = 0;
+                
+                NSArray *deps = [dependsOn valueForKey:@"dependencies"];
+                for (NSDictionary *dep in deps) {
+                    long locmax = [self satisfiedAt:forRunId dependsOn:dep];
+                    
+                    if (locmax == -1) {
+                        return locmax;
+                    } else {
+                        maxSatisfiedAt = MAX(maxSatisfiedAt, locmax);
+                    }
+                }
+                
+                return maxSatisfiedAt;
+            }
+                
+            default: {
+                //Should not happen.
+            }
+                break;
         }
-            
-        default: {
-            //Should not happen.
-        }
-            break;
     }
     
     return -1;
@@ -741,5 +755,17 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     DLog(@"onAudioSessionEvent:%@", notification.description);
 }
+
+//- (void)checkButtonTapped:(id)sender event:(id)event{
+//    NSSet *touches = [event allTouches];
+//    UITouch *touch = [touches anyObject];
+//    
+//    CGPoint currentTouchPosition = [touch locationInView:self.itemsTable];
+//    
+//    NSIndexPath *indexPath = [self.itemsTable indexPathForRowAtPoint: currentTouchPosition];
+//    if (indexPath != nil) {
+//       Log("Disclosure Tapped %@", indexPath);
+//    }
+//}
 
 @end

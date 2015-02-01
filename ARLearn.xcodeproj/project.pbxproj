@@ -10,6 +10,7 @@
 		8D00B2391A5C237600B4803C /* ARLBeanNames.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D00B2381A5C237600B4803C /* ARLBeanNames.m */; };
 		8D04D2721A41B0A40071582E /* ARLOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D04D2711A41B0A40071582E /* ARLOperations.m */; };
 		8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */; };
+		8D1658601A7ECC4200C7450D /* ARLGeneralItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D16585F1A7ECC4200C7450D /* ARLGeneralItemViewController.m */; };
 		8D219651196D26080044616A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219650196D26080044616A /* main.m */; };
 		8D219655196D26080044616A /* ARLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D219654196D26080044616A /* ARLAppDelegate.m */; };
 		8D21965B196D26080044616A /* ARLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D21965A196D26080044616A /* ARLViewController.m */; };
@@ -107,6 +108,8 @@
 		8D04D2711A41B0A40071582E /* ARLOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLOperations.m; sourceTree = "<group>"; };
 		8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLCategoriesViewController.h; sourceTree = "<group>"; };
 		8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLCategoriesViewController.m; sourceTree = "<group>"; };
+		8D16585E1A7ECC4200C7450D /* ARLGeneralItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGeneralItemViewController.h; sourceTree = "<group>"; };
+		8D16585F1A7ECC4200C7450D /* ARLGeneralItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGeneralItemViewController.m; sourceTree = "<group>"; };
 		8D219641196D26080044616A /* ARLearn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARLearn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D21964C196D26080044616A /* ARLearn-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ARLearn-Info.plist"; sourceTree = "<group>"; };
 		8D219650196D26080044616A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -347,6 +350,8 @@
 				8DEE589719828BFA00C2283F /* ARLGamePin.m */,
 				8D87A51219868C3800842BC6 /* ARLGameViewController.h */,
 				8D87A51319868C3800842BC6 /* ARLGameViewController.m */,
+				8D16585E1A7ECC4200C7450D /* ARLGeneralItemViewController.h */,
+				8D16585F1A7ECC4200C7450D /* ARLGeneralItemViewController.m */,
 				8D6FB7101A1221220085ABA5 /* ARLLoginViewController.h */,
 				8D6FB7111A1221220085ABA5 /* ARLLoginViewController.m */,
 				8D8B45DC19740BCA001FC6DF /* ARLMainViewController.h */,
@@ -800,6 +805,7 @@
 				8DDECF331976AAB9007CECB4 /* CurrentItemVisibility.m in Sources */,
 				8D219A81196D31350044616A /* MagicalRecord+Options.m in Sources */,
 				8DEE589819828BFA00C2283F /* ARLGamePin.m in Sources */,
+				8D1658601A7ECC4200C7450D /* ARLGeneralItemViewController.m in Sources */,
 				8D219A28196D2DBD0044616A /* ARLUtils.m in Sources */,
 				8D219A72196D31350044616A /* NSManagedObject+MagicalAggregation.m in Sources */,
 				8D219A71196D31350044616A /* NSString+MagicalDataImport.m in Sources */,

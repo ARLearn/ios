@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
 //
 
+#import "UIViewController+UI.h"
+
 #import "ARLAppDelegate.h"
 #import "ARLNetworking.h"
 #import "ARLPlayViewController.h"
@@ -14,7 +16,7 @@
 #import "Run.h"
 #import "Game.h"
 
-@interface ARLDownloadViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface ARLDownloadViewController : UIViewController
 
 @property (strong, nonatomic) NSNumber *gameId;
 
