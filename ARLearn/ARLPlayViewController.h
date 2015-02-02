@@ -14,6 +14,7 @@
 #import "ARLBeanNames.h"
 #import "ARLUtils.h"
 #import "ARLNetworking.h"
+#import "ARLGeneralItemViewController.h"
 
 @interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate>
 

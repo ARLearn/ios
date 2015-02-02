@@ -149,7 +149,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 {
     switch (indexPath.section) {
         case GENERALITEM : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: self.cellIdentifier];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: self.cellIdentifier  forIndexPath:indexPath];
             
             GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
             
@@ -208,6 +208,40 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // See https://github.com/bitmapdata/MSCellAccessory/blob/master/MSCellAccessory/MSCellAccessory.m
     
     Log("Disclosure Tapped %@", indexPath);
+    
+    GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
+    
+    BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
+    
+    switch (bid) {
+        case SingleChoiceTest:
+        case MultipleChoiceTest: {
+            ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
+            
+            if (newViewController) {
+                newViewController.activeItem  = item;
+                
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+                
+                newViewController = nil;
+            }
+        }
+            
+        case ScanTag:
+            // Nothing yet
+            break;
+            
+        case OpenQuestion:
+            // Nothing yet
+            break;
+            
+        default:
+            //Should not happen
+            Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
+            break;
+    }
 }
 
 /*!
@@ -229,7 +263,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:self.activeItem.type];
             
-#warning this code should move to the view andling a single GeneralItem!
+#warning this code should move to the view handling a single GeneralItem!
             
             switch (bid) {
                 case AudioObject:

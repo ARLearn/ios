@@ -491,6 +491,7 @@
                 
                 // Manual Fixups;
                 {
+#warning BAD-ACCESS can occur.
                     action.synchronized = [NSNumber numberWithBool:YES];
                 }
                 
