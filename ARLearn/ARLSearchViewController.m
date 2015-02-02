@@ -255,7 +255,8 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
 {
     switch (indexPath.section) {
         case RESULTS : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                                    forIndexPath:indexPath];
             
             if (cell == nil) {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2

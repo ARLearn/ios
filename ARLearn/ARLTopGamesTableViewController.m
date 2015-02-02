@@ -103,7 +103,8 @@ NSArray *ids;
 {
     switch (indexPath.section) {
         case TOPGAMES : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                                    forIndexPath:indexPath];
             
             switch (indexPath.item) {
                 case 0:

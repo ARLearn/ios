@@ -149,7 +149,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 {
     switch (indexPath.section) {
         case GENERALITEM : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: self.cellIdentifier  forIndexPath:indexPath];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                                    forIndexPath:indexPath];
             
             GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
             

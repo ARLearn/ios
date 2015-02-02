@@ -279,7 +279,8 @@ didCompleteWithError:(NSError *)error
 {
     switch (indexPath.section) {
         case NEARBYRESULTS : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                                    forIndexPath:indexPath];
             
             NSDictionary *game = [self.results objectAtIndex:indexPath.item];
             

@@ -154,7 +154,8 @@ NSArray *ids;
 {
     switch (indexPath.section) {
         case FEATURED : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                                    forIndexPath:indexPath];
             
 #warning Hardcoded Values.
             
