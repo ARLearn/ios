@@ -77,7 +77,8 @@
  *  @return The NSManagedObject that has been created and inserted into Core Data
  */
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
-                                       entityName:(NSString *)entity;
+                                       entityName:(NSString *)entity
+                                   managedContext:(NSManagedObjectContext *)ctx;
 
 /*!
  *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
@@ -92,7 +93,8 @@
  */
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
                                        entityName:(NSString *)entity
-                                       nameFixups:(NSDictionary *)fixups;
+                                       nameFixups:(NSDictionary *)fixups
+                                   managedContext:(NSManagedObjectContext *)ctx;
 
 /*!
  *  Creates a NSManagedObject for a certain Entity and fills it with date from a NSDictionary.
@@ -110,7 +112,8 @@
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
                                        entityName:(NSString *)entity
                                        nameFixups:(NSDictionary *)fixups
-                                       dataFixups:(NSDictionary *)data;
+                                       dataFixups:(NSDictionary *)data
+                                   managedContext:(NSManagedObjectContext *)ctx;
 
 /*!
  *  Updates a NSManagedObject with date from a NSDictionary.
@@ -127,7 +130,8 @@
 + (NSManagedObject *) UpdateManagedObjectFromDictionary:(NSDictionary *)dict
                                           managedobject:(NSManagedObject *)managedobject
                                              nameFixups:(NSDictionary *)fixups
-                                             dataFixups:(NSDictionary *)data;
+                                             dataFixups:(NSDictionary *)data
+                                         managedContext:(NSManagedObjectContext *)ctx;
 
 /*!
  *  Creates a NSDictionary containing data from a certain NSManagedObject.

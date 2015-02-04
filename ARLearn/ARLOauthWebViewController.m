@@ -118,7 +118,8 @@
             account.localId = [accountDetails objectForKey:@"localId"];
             account.name = [accountDetails objectForKey:@"name"];
             // account.picture = [accountDetails objectForKey:@"picture"];
-
+            
+            [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
             
             //[Account accountWithDictionary:accountDetails inManagedObjectContext:appDelegate.managedObjectContext];

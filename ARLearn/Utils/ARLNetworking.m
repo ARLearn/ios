@@ -278,7 +278,7 @@ static NSString *_twitterLoginString;
                                                               error:&error];
     
     if (error==nil) {
-        [ARLUtils LogJsonData:data url:[url absoluteString]];
+        // [ARLUtils LogJsonData:data url:[url absoluteString]];
     }
     
     ELog(error);
@@ -302,8 +302,8 @@ static NSString *_twitterLoginString;
     
     NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
     
-    [ARLUtils LogJsonDictionary:json
-                            url:[url absoluteString]];
+//    [ARLUtils LogJsonDictionary:json
+//                            url:[url absoluteString]];
     
     //{
     //    action = read;
@@ -345,7 +345,7 @@ static NSString *_twitterLoginString;
                                                               error:&error2];
     
     if (error2==nil) {
-        [ARLUtils LogJsonData:data url:[url absoluteString]];
+        // [ARLUtils LogJsonData:data url:[url absoluteString]];
         
         //{
         //    action = read;

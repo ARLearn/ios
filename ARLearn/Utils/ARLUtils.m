@@ -112,12 +112,15 @@ static NSCondition *_theAbortLock;
  *  @return The NSManagedObject that has been created and inserted into Core Data.
  */
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
-                                       entityName:(NSString *)entity {
+                                       entityName:(NSString *)entity
+                                   managedContext:(NSManagedObjectContext *)ctx;
+{
     
     return [ARLUtils ManagedObjectFromDictionary:dict
                                       entityName:entity
                                       nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
-                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                  managedContext:ctx];
 }
 
 /*!
@@ -134,12 +137,14 @@ static NSCondition *_theAbortLock;
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
                                        entityName:(NSString *)entity
                                        nameFixups:(NSDictionary *)fixups
+                                   managedContext:(NSManagedObjectContext *)ctx;
 {
     
     return [ARLUtils ManagedObjectFromDictionary:dict
                                       entityName:entity
                                       nameFixups:fixups
-                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                  managedContext:ctx];
 }
 
 /*!
@@ -157,7 +162,9 @@ static NSCondition *_theAbortLock;
 + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
                                        entityName:(NSString *)entity
                                        nameFixups:(NSDictionary *)fixups
-                                       dataFixups:(NSDictionary *)data {
+                                       dataFixups:(NSDictionary *)data
+                                   managedContext:(NSManagedObjectContext *)ctx
+{
     
     // 1) Make sure we can modify object inside the MagicalRecord block.
     __block NSManagedObject *object;
@@ -190,7 +197,7 @@ static NSCondition *_theAbortLock;
     }];
 
     // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
-    return [object MR_inContext:[NSManagedObjectContext MR_defaultContext]];
+    return [object MR_inContext:ctx];
 }
 
 /*!
@@ -208,8 +215,9 @@ static NSCondition *_theAbortLock;
 + (NSManagedObject *) UpdateManagedObjectFromDictionary:(NSDictionary *)dict
                                           managedobject:(NSManagedObject *)managedobject
                                              nameFixups:(NSDictionary *)fixups
-                                             dataFixups:(NSDictionary *)data {
-    
+                                             dataFixups:(NSDictionary *)data
+                                         managedContext:(NSManagedObjectContext *)ctx
+{
     
     //    // 1) Make sure we can modify object inside the MagicalRecord block.
     __block NSManagedObject *object;
@@ -244,7 +252,7 @@ static NSCondition *_theAbortLock;
     }];
     
     // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
-    return [object MR_inContext:[NSManagedObjectContext MR_defaultContext]];
+    return [object MR_inContext:ctx];
 }
 
 /*!

@@ -70,6 +70,13 @@ static NSCondition *_theAbortLock;
     // Step 1. Setup Core Data Stack with Magical Record
     // Step 2. Relax. Why not have a beer? Surely all this talk of beer is making you thirsty…
     
+//    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:managedObjectStore.persistentStoreCoordinator];
+//    [NSManagedObjectContext MR_setRootSavingContext:managedObjectStore.persistentStoreManagedObjectContext];
+    
+    [MagicalRecord setShouldAutoCreateDefaultPersistentStoreCoordinator:YES];
+    
+    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:[NSPersistentStoreCoordinator MR_defaultStoreCoordinator]];
+    
     //[MagicalRecord setupAutoMigratingCoreDataStack];
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
     
@@ -77,7 +84,7 @@ static NSCondition *_theAbortLock;
     
     
 #warning DEBUG Code (Delete all records handled sofar)
-    
+     
     [Game MR_truncateAll];
     [Run MR_truncateAll];
     [GeneralItem MR_truncateAll];

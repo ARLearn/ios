@@ -8,10 +8,14 @@
 
 #import "ARLUtils.h"
 #import "ARLBeanNames.h"
+#import "ARLNetworking.h"
 
+#import "Action.h"
 #import "GeneralItem.h"
 
 @interface ARLGeneralItemViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
+@property (strong, nonatomic) NSNumber *runId;
 
 @property (strong, nonatomic) GeneralItem *activeItem;
 

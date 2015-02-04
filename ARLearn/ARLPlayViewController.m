@@ -21,6 +21,8 @@
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 @property (strong, nonatomic) GeneralItem *activeItem;
 
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
+
 /*!
  *  ID's and order of the cells.
  */
@@ -104,6 +106,11 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    // See http://stackoverflow.com/questions/16852227/how-to-add-pull-tableview-up-to-refresh-data-inside-the-uitableview
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    [self.itemsTable addSubview:self.refreshControl];
+
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadgeneralItemVisibilities];
     }];
@@ -220,6 +227,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
             
             if (newViewController) {
+                newViewController.runId = self.runId;
                 newViewController.activeItem  = item;
                 
                 // Move to another UINavigationController or UITabBarController etc.
@@ -401,13 +409,16 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         {
             action.account = [ARLNetworking CurrentAccount];
             action.action = @"read";
-            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:self.activeItem.generalItemId];
-            action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
+            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                            withValue:self.activeItem.generalItemId];
+            action.run = [Run MR_findFirstByAttribute:@"runId"
+                                            withValue:self.runId];
             action.synchronized = [NSNumber numberWithBool:NO];
             action.time = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000];
         }
         
         // Saves any modification made after ManagedObjectFromDictionary.
+        [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
         
@@ -450,6 +461,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
+    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
@@ -470,9 +482,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
                                                                     options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
                                                                       error:&error] : nil;
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
     
     if (error == nil) {
-        [ARLUtils LogJsonDictionary:response url:[ARLNetworking MakeRestUrl:service]];
+        // [ARLUtils LogJsonDictionary:response url:[ARLNetworking MakeRestUrl:service]];
         
         for (NSDictionary *item in [response valueForKey:@"generalItemsVisibility"])
         {
@@ -520,26 +533,37 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                       [[item valueForKey:@"generalItemId"] longLongValue],
                                       [self.runId longLongValue]];
             
-            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate];
+            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate
+                                                                                inContext:ctx];
             
             if (giv == nil) {
                 
                 // Create a new Record.
                 //
                 giv = (GeneralItemVisibility *)[ARLUtils ManagedObjectFromDictionary:item
-                                                                          entityName:@"GeneralItemVisibility"];
+                                                                          entityName:@"GeneralItemVisibility"
+                                                                      managedContext:ctx];
                 
-                [giv MR_inContext:[NSManagedObjectContext MR_defaultContext]].correspondingRun = [Run MR_findFirstByAttribute:@"runId"
-                                                                                                                    withValue:giv.runId
-                                                                                                                    inContext:[NSManagedObjectContext MR_defaultContext]];
+                giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"
+                                                          withValue:giv.runId
+                                                          inContext:ctx];
                 
-                [giv MR_inContext:[NSManagedObjectContext MR_defaultContext]].generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                                                                                       withValue:giv.generalItemId
-                                                                                                                       inContext:[NSManagedObjectContext MR_defaultContext]];
-  
+                giv.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                             withValue:giv.generalItemId
+                                                             inContext:ctx];
+                
                 Log(@"Created GeneralItemVisibility for %@ ('%@') with status %@", giv.generalItemId, giv.generalItem.name, giv.status);
             } else {
-                
+                if (!giv.correspondingRun) {
+                    giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"
+                                                              withValue:giv.runId
+                                                              inContext:ctx];
+                }
+                if (!giv.generalItem) {
+                    giv.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                                 withValue:giv.generalItemId
+                                                                 inContext:ctx];
+                }
                 // Only update when visibility status is still smaller then 2.
                 //
                 if (! [giv.status isEqualToNumber:[NSNumber numberWithInt:2]]) {
@@ -553,7 +577,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [ctx MR_saveToPersistentStoreAndWait];
+    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     [self.itemsTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 }
@@ -589,6 +614,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     return item;
 }
 
+/*!
+ *  Re-calculate the GeneralItem Vsibility for all GeneralIems.
+ */
 - (void)UpdateItemVisibility {
     [self.itemsTable setUserInteractionEnabled:NO];
 
@@ -628,6 +656,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
                     giv.generalItem = item;
                     
+                    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
                     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
                     Log(@"GeneralItem: %@ ('%@') status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
@@ -637,6 +666,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 if (![giv.status isEqualToNumber:INVISIBLE] && [giv.timeStamp longValue] > satisfiedAt) {
                     giv.timeStamp = [NSNumber numberWithLong:satisfiedAt];
                     
+                    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
                     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
                     Log(@"GeneralItem: %@ ('%@') updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
@@ -657,6 +687,14 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [self.itemsTable setContentOffset:CGPointZero animated:YES];
 }
 
+/*!
+ *  Calulates the time a dependsOn is satisfied (ie becomes visible).
+ *
+ *  @param forRunId  The id of the current Run.
+ *  @param dependsOn A NSDictionary containing the dependsOn data.
+ *
+ *  @return <#return value description#>
+ */
 -(long)satisfiedAt:(NSNumber *)forRunId dependsOn:(NSDictionary *)dependsOn {
     if (dependsOn!=nil)
     {
@@ -775,6 +813,30 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     return -1;
 }
 
+- (void)refresh:(UIRefreshControl *)refreshControl
+{
+    if (self.refreshControl && !self.refreshControl.isRefreshing) {
+        NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
+            Log(@"refresh calls UpdateItemVisibility");
+            [self DownloadgeneralItemVisibilities];
+        }];
+        
+        NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
+            [self UpdateItemVisibility];
+        }];
+        
+        Log(@"refresh schedules DownloadgeneralItemVisibilities");
+        
+        [foreBO addDependency:backBO0];
+        
+        [[NSOperationQueue mainQueue] addOperation:foreBO];
+        
+        [[ARLAppDelegate theOQ] addOperation:backBO0];
+        
+                                                       [refreshControl endRefreshing];
+     }
+}
+
 #pragma mark - Actions
 
 #pragma mark - Events 
@@ -782,7 +844,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 /*!
  *  Notification Messages from AVAudioSession.
  *
- *  @param notification <#notification description#>
+ *  @param notification
  */
 - (void) onAudioSessionEvent: (NSNotification *) notification {
     

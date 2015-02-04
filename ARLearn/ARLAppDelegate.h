@@ -16,8 +16,6 @@
 #import "ARLNetworking.h"
 
 #import "Account.h"
-
-#warning DEBUG Code (Delete all records handled sofar)
 #import "GeneralItem.h"
 #import "Game.h"
 #import "Run.h"

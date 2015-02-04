@@ -50,6 +50,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    [Action MR_truncateAll];
+    
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGame];
     }];
@@ -199,8 +201,10 @@
                                 // Data,                                                        CoreData
                                 nil];
     
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", self.gameId];
-    Game *item = [Game MR_findFirstWithPredicate: predicate];
+    Game *item = [Game MR_findFirstWithPredicate: predicate inContext:ctx];
     
     if (item) {
         if ([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) {
@@ -211,7 +215,8 @@
             item = (Game *)[ARLUtils UpdateManagedObjectFromDictionary:game
                                                          managedobject:item
                                                             nameFixups:namefixups
-                                                            dataFixups:datafixups];
+                                                            dataFixups:datafixups
+                                                        managedContext:ctx];
         }
     } else {
         if ([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) {
@@ -223,12 +228,14 @@
             item = (Game *)[ARLUtils ManagedObjectFromDictionary:game
                                                       entityName:@"Game"
                                                       nameFixups:namefixups
-                                                      dataFixups:datafixups];
+                                                      dataFixups:datafixups
+                                                  managedContext:ctx];
         }
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [ctx MR_saveToPersistentStoreAndWait];
+    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 -(void) DownloadGameContent {
@@ -317,6 +324,8 @@
                                                                       error:&error] : nil;
     ELog(error);
     
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
     //#pragma warn Debug Code
     // [ARLUtils LogJsonDictionary:response url:service];
     
@@ -349,7 +358,8 @@
                                         nil];
             
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && runId==%@", self.gameId, [run valueForKey:@"runId"]];
-            Run *item = [Run MR_findFirstWithPredicate: predicate];
+            
+            Run *item = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
             
             if (item) {
                 if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
@@ -360,11 +370,12 @@
                     item = (Run *)[ARLUtils UpdateManagedObjectFromDictionary:run
                                                                 managedobject:item
                                                                    nameFixups:namefixups
-                                                                   dataFixups:datafixups];
+                                                                   dataFixups:datafixups
+                                                               managedContext:ctx];
 
                     // We can only update if both objects share the same context.
-                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
-                    [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:ctx];
+                    item.game = game;
                     
                     self.runId = item.runId;
                 }
@@ -378,11 +389,12 @@
                     item = (Run *)[ARLUtils ManagedObjectFromDictionary:run
                                                              entityName:@"Run"
                                                              nameFixups:namefixups
-                                                             dataFixups:datafixups];
+                                                             dataFixups:datafixups
+                                                         managedContext:ctx];
 
                     // We can only update if both objects share the same context.
-                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
-                    [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].game = game;
+                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:ctx];
+                    item.game = game;
 
                     self.runId = item.runId;
                 }
@@ -391,7 +403,8 @@
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [ctx MR_saveToPersistentStoreAndWait];
+//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 /*!
@@ -416,6 +429,8 @@
         
         NSDictionary *actions = [response objectForKey:@"actions"];
 
+        NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+        
         //{
         //    "type": "org.celstec.arlearn2.beans.run.ActionList",
         //    "runId": 4977978815545344,
@@ -484,24 +499,31 @@
                                        accountId
                                        ];
             
-            Action *action = [Action MR_findFirstWithPredicate:predicate1];
+            Action *action = [Action MR_findFirstWithPredicate:predicate1 inContext:ctx];
+           
+            Run *r;
+            GeneralItem *gi;
+            Account *a;
             
             if (action==nil) {
-                action = (Action *)[ARLUtils ManagedObjectFromDictionary:item entityName:@"Action"];
+                Log(@"Creating Action");
+                action = (Action *)[ARLUtils ManagedObjectFromDictionary:item
+                                                              entityName:@"Action"
+                                                          managedContext:ctx];
                 
                 // Manual Fixups;
                 {
 #warning BAD-ACCESS can occur.
                     action.synchronized = [NSNumber numberWithBool:YES];
                 }
-                
+
                 if ([item valueForKey:@"runId"] && [[item valueForKey:@"runId"] longLongValue] != 0)
                 {
-                    Run *r = [Run MR_findFirstByAttribute:@"runId"
-                                               withValue:[item valueForKey:@"runId"]
-                                               inContext:[NSManagedObjectContext MR_defaultContext]];
+                    r = [Run MR_findFirstByAttribute:@"runId"
+                                                withValue:[item valueForKey:@"runId"]
+                                                inContext:ctx];
                     if (r) {
-                        [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].run = r;
+                        action.run = r;
                     } else {
                         Log("Run %@ for Action not found", [item valueForKey:@"runId"]);
                     }
@@ -509,11 +531,11 @@
                 
                 if ([item valueForKey:@"generalItemId"] && [[item valueForKey:@"generalItemId"] longLongValue] != 0)
                 {
-                    GeneralItem *gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                    gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
                                                                  withValue:[item valueForKey:@"generalItemId"]
-                                                                 inContext:[NSManagedObjectContext MR_defaultContext]];
+                                                                 inContext:ctx];
                     if (gi) {
-                        [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].generalItem = gi;
+                        action.generalItem = gi;
                     } else {
                         Log("GeneralItem %@ for Action not found", [item valueForKey:@"generalItemId"]);
                     }
@@ -524,15 +546,21 @@
                                                accountType,
                                                accountId];
                     
-                    [action MR_inContext:[NSManagedObjectContext MR_defaultContext]].account =
-                    [Account MR_findFirstWithPredicate:predicate2
-                                             inContext:[NSManagedObjectContext MR_defaultContext]];
+                    a = [Account MR_findFirstWithPredicate:predicate2
+                                                          inContext:ctx];
+                    
+                    if (a) {
+                        action.account = a;
+                    }
                 }
+                
+               [ctx MR_saveToPersistentStoreAndWait];
             }
         }
         
         // Saves any modification made after ManagedObjectFromDictionary.
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     }
 }
 
@@ -553,8 +581,10 @@
                                                                       error:&error] : nil;
     ELog(error);
     
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
     //#pragma warn Debug Code
-    [ARLUtils LogJsonDictionary:response url:service];
+    // [ARLUtils LogJsonDictionary:response url:service];
     
     NSDictionary *generalItems = [response objectForKey:@"generalItems"];
     
@@ -623,7 +653,7 @@
                                     nil];
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && generalItemId==%@", self.gameId, [generalItem valueForKey:@"id"]];
-        GeneralItem *item = [GeneralItem MR_findFirstWithPredicate: predicate];
+        GeneralItem *item = [GeneralItem MR_findFirstWithPredicate: predicate inContext:ctx];
         
         //DONE: Test record deletion.
         //TODO: Find out what to do with linked records in other tables (like GeneralItemVisibility).
@@ -636,11 +666,14 @@
                 item = (GeneralItem *)[ARLUtils UpdateManagedObjectFromDictionary:generalItem
                                                                     managedobject:item
                                                                        nameFixups:namefixups
-                                                                       dataFixups:datafixups];
+                                                                       dataFixups:datafixups
+                                                                   managedContext:ctx];
 
                 // We can only update if both objects share the same context.
-                Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
-                [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].ownerGame = game;
+                Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                                withValue:self.gameId
+                                                inContext:ctx];
+                item.ownerGame = game;
             }
         } else {
             if ([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) {
@@ -652,13 +685,18 @@
                 item = (GeneralItem *)[ARLUtils ManagedObjectFromDictionary:generalItem
                                                                  entityName:@"GeneralItem"
                                                                  nameFixups:namefixups
-                                                                 dataFixups:datafixups];
+                                                                 dataFixups:datafixups
+                                                             managedContext:ctx];
 
                 // We can only update if both objects share the same context.
-                Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:[NSManagedObjectContext MR_defaultContext]];
-                [item MR_inContext:[NSManagedObjectContext MR_defaultContext]].ownerGame = game;
+                Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                                withValue:self.gameId
+                                                inContext:ctx];
+                item.ownerGame = game;
             }
         }
+        
+        [ctx MR_saveToPersistentStoreAndWait];
         
         //TODO: Handle and resolved rest of the fields later.
         
@@ -668,7 +706,8 @@
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//    [ctx MR_saveToPersistentStoreAndWait];
+//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //WESPOT CODE
     //    + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
