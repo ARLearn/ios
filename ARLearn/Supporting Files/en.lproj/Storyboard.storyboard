@@ -269,6 +269,9 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
+                    <navigationItem key="navigationItem" title="Play" id="gra-lx-aNM">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="hcI-RI-PV4"/>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -335,6 +338,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" title="Play" id="P4k-Mh-S4y"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -347,7 +351,7 @@
             </objects>
             <point key="canvasLocation" x="2193" y="-268"/>
         </scene>
-        <!--General Item View Controller-->
+        <!--Item-->
         <scene sceneID="RBV-O2-jjJ">
             <objects>
                 <viewController storyboardIdentifier="GeneralItemView" id="kmV-ZX-avk" customClass="ARLGeneralItemViewController" sceneMemberID="viewController">
@@ -402,6 +406,9 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
+                    <navigationItem key="navigationItem" title="Item" id="BAD-zl-YNp">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="UNT-vs-66C"/>
+                    </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>

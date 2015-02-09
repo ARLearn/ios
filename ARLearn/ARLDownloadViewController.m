@@ -26,6 +26,8 @@
 @synthesize gameId;
 @synthesize runId;
 
+NSInteger downloaded = 0;
+
 #pragma mark - ViewController
 
 - (void)viewDidLoad {
@@ -44,11 +46,15 @@
     [self.navigationController setNavigationBarHidden:YES];
     [self.navigationController setToolbarHidden:NO];
     
+    self.navigationItem.title = @"Download";
+    
     [self.playButton setEnabled:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    downloaded = 0;
     
     [Action MR_truncateAll];
     
@@ -81,7 +87,7 @@
     }];
     
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
-        [NSTimer scheduledTimerWithTimeInterval:(self.gameFiles.count==0 ? 0.1 : 2.5)
+        [NSTimer scheduledTimerWithTimeInterval:(downloaded==0 ? 0.1 : 2.5)
                                          target:self
                                        selector:@selector(splashDone:)
                                        userInfo:nil
@@ -110,6 +116,10 @@
     
     // This Fails to update the UI (seems to hang).
     // [[NSOperationQueue mainQueue] waitUntilAllOperationsAreFinished];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    self.title = @"X";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -278,13 +288,23 @@
         NSString *path = [gameFile valueForKey:@"path"];
         
         if ([path isEqualToString:@"/gameSplashScreen"]) {
-            NSString *local = [ARLUtils DownloadResource:self.gameId gameFile:gameFile];
-
-            [self.backgroundImage performSelectorOnMainThread:@selector(setImage:) withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
+            BOOL cached =  [ARLUtils CheckResource:self.gameId
+                                          gameFile:gameFile];
             
-            [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE] forKey: path];
+            if (!cached) {
+                NSString *local = [ARLUtils DownloadResource:self.gameId
+                                                    gameFile:gameFile];
+                
+                [self.backgroundImage performSelectorOnMainThread:@selector(setImage:)
+                                                       withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
+            }
             
-            [self performSelectorOnMainThread:@selector(updateProgress) withObject:nil waitUntilDone:YES];
+                [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE]
+                                       forKey:path];
+            
+            [self performSelectorOnMainThread:@selector(updateProgress:)
+                                   withObject:[NSNumber numberWithBool:cached]
+                                waitUntilDone:YES];
             
             break;
         }
@@ -300,11 +320,20 @@
     for (NSDictionary *gameFile in self.gameFiles) {
         NSString *path = [gameFile valueForKey:@"path"];
         
-        [ARLUtils DownloadResource:self.gameId gameFile:gameFile];
+        BOOL cached =  [ARLUtils CheckResource:self.gameId
+                                      gameFile:gameFile];
         
-        [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE] forKey: path];
+        if (!cached) {
+        [ARLUtils DownloadResource:self.gameId
+                          gameFile:gameFile];
+        }
         
-        [self performSelectorOnMainThread:@selector(updateProgress) withObject:nil waitUntilDone:YES];
+        [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE]
+                               forKey: path];
+        
+        [self performSelectorOnMainThread:@selector(updateProgress:)
+                               withObject:[NSNumber numberWithBool:cached]
+                            waitUntilDone:YES];
     }
 }
 
@@ -764,12 +793,17 @@
     
     [self.playButton setEnabled:YES];
     
-    self.progressBar.progress =1.0f;
+    self.progressBar.progress = 1.0f;
     
     [timer invalidate];
 }
 
-- (void)updateProgress {
+/*!
+ *  Update the progressbar and keep track of downloaded files.
+ *
+ *  @param cached <#cached description#>
+ */
+- (void)updateProgress:(NSNumber *) cached {
     int cnt = 0;
     
     for (NSString *key in [self.downloadStatus keyEnumerator])
@@ -783,6 +817,10 @@
         self.progressBar.progress = (float)cnt/[self.downloadStatus count];
     } else {
         self.progressBar.progress =0.0f;
+    }
+    
+    if (![cached boolValue]) {
+        downloaded++;
     }
 }
 

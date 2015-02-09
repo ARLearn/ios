@@ -23,6 +23,8 @@
 
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
 
+- (IBAction)backButtonTapped:(UIBarButtonItem *)sender;
+
 /*!
  *  ID's and order of the cells.
  */
@@ -100,6 +102,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     ELog(error);
     
+    [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
+     
     [self applyConstraints];
 }
 
@@ -114,8 +118,13 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadgeneralItemVisibilities];
     }];
-
+    
     [[ARLAppDelegate theOQ] addOperation:backBO0];
+}
+
+-(void) viewWillDisappear:(BOOL)animated {
+
+    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -133,6 +142,22 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // Pass the selected object to the new view controller.
 }
 */
+
+#pragma mark - UINavigationControllerDelegate
+
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar
+        shouldPopItem:(UINavigationItem *)item
+{
+    Log(@"shouldPopItem");
+    
+    //insert your back button handling logic here
+    // let the pop happen
+    [ARLUtils popToViewControllerOnNavigationController:[ARLGameViewController class]
+                                   navigationController:self.navigationController
+                                               animated:YES];
+    
+    return NO;
+}
 
 #pragma mark - UITableViewDelegate
 
@@ -813,6 +838,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     return -1;
 }
 
+#pragma mark - Actions
+
 - (void)refresh:(UIRefreshControl *)refreshControl
 {
     if (self.refreshControl && !self.refreshControl.isRefreshing) {
@@ -833,13 +860,19 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         
         [[ARLAppDelegate theOQ] addOperation:backBO0];
         
-                                                       [refreshControl endRefreshing];
-     }
+        [refreshControl endRefreshing];
+    }
 }
 
-#pragma mark - Actions
+- (IBAction)backButtonTapped:(UIBarButtonItem *)sender {
+    // Log(@"back button pressed");
+    
+    [ARLUtils popToViewControllerOnNavigationController:[ARLGameViewController class]
+                                   navigationController:self.navigationController
+                                               animated:YES];
+}
 
-#pragma mark - Events 
+#pragma mark - Events
 
 /*!
  *  Notification Messages from AVAudioSession.

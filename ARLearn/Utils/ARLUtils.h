@@ -25,6 +25,7 @@
 #define stripesOne                  @"\u268A"
 #define stripesTwo                  @"\u268C"
 #define stripesThree                @"\u2630"
+#define backArrow                   @"\U000025C0\U0000FE0E"
 
 /*!
  *  Log GIT Version Info.
@@ -200,6 +201,17 @@
 +(NSString *) DownloadResource:(NSNumber *)gameId gameFile:(NSDictionary *)gameFile;
 
 /*!
+ *  Check extistance and MD5 of a GameFile.
+ *
+ *  @param gameId   The GameId
+ *  @param gameFile The GameFile description as NSDictionary.
+ *
+ *  @return The Local Path to the File.
+ */
++(BOOL) CheckResource:(NSNumber *)gameId
+             gameFile:(NSDictionary *)gameFile;
+    
+/*!
  *  Convert bytes to a readable string.
  *
  *  @param value <#value description#>
@@ -236,6 +248,23 @@
  */
 +(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSString *)stamp;
 
+/*!
+ *  Convert html to an Attributed String.
+ *
+ *  @param theHtml <#theHtml description#>
+ *
+ *  @return <#return value description#>
+ */
 + (NSAttributedString *)htmlToAttributedString:(NSString *)theHtml;
+
+/*!
+ *  Pop the UIViewControllers up to a specified UIViewController Class.
+ */
++ (void)popToViewControllerOnNavigationController:(Class)viewControllerClass
+                             navigationController:(UINavigationController *)navigationController
+                                         animated:(BOOL)animated;
+
++ (void)setBackButton:(UIViewController *)viewController
+               action:(SEL)action;
 
 @end

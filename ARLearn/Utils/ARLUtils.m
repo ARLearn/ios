@@ -608,6 +608,62 @@ static NSCondition *_theAbortLock;
 }
 
 /*!
+ *  Check extistance and MD5 of a GameFile.
+ *
+ *  See http://stackoverflow.com/questions/5323427/how-do-i-download-and-save-a-file-locally-on-ios-using-objective-c
+ *  See http://stackoverflow.com/questions/1567134/how-can-i-get-a-writable-path-on-the-iphone
+ *  See http://stackoverflow.com/questions/5903157/ios-parse-a-url-into-segments
+ *
+ *
+ *  http://streetlearn.appspot.com/game/<gameid>/<gamefilepath>
+ *
+ *  Example:
+ *
+ *  http://streetlearn.appspot.com/game/13876002/gameSplashScreen
+ *
+ *  @param gameId   The GameId
+ *  @param gameFile The GameFile description as NSDictionary.
+ *
+ *  @return The Local Path to the File.
+ */
++(BOOL) CheckResource:(NSNumber *)gameId
+                      gameFile:(NSDictionary *)gameFile {
+    
+    NSString *gameFilePath = [gameFile objectForKey:@"path"];
+    
+    NSString *filePath = [ARLUtils GenerateResourceFileName:gameId path:gameFilePath];
+    
+    if ([[NSFileManager defaultManager] isReadableFileAtPath:filePath]) {
+        NSError *error;
+        
+        unsigned long long remoteSize = [[gameFile objectForKey:@"size"] longLongValue];
+        unsigned long long localSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:&error] fileSize];
+        
+        ELog(error);
+        
+        if (remoteSize == localSize) {
+            
+            NSString *localMD5 = [NSData MD5:filePath];
+            NSString *remoteMD5 = [gameFile objectForKey:@"md5Hash"];
+            
+            if ([remoteMD5 isEqualToString:localMD5]) {
+                DLog(@"MD5Hash Match, Skipping Download of GameFile: %@", gameFilePath);
+                
+                return YES;
+            } else {
+                DLog(@"MD5Hash Mismatch, Re-downloading GameFile: %@", gameFilePath);
+            }
+        } else {
+            DLog(@"FileSize Mismatch, Re-downloading GameFile: %@", gameFilePath);
+        }
+    } else {
+        DLog(@"Downloading GameFile: %@", gameFilePath);
+    }
+    
+    return NO;
+}
+
+/*!
  *  Convert bytes to a readable string.
  *
  *  See http://stackoverflow.com/questions/7846495/how-to-get-file-size-properly-and-convert-it-to-mb-gb-in-cocoa
@@ -705,6 +761,13 @@ static NSCondition *_theAbortLock;
 //    return [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970:[stamp doubleValue]/1000.0f]];
 //}
 
+/*!
+ *  Convert html to an Attributed String.
+ *
+ *  @param theHtml <#theHtml description#>
+ *
+ *  @return <#return value description#>
+ */
 + (NSAttributedString *)htmlToAttributedString:(NSString *)theHtml {
     return[[NSAttributedString alloc] initWithData:[theHtml dataUsingEncoding:NSUTF8StringEncoding]
                                            options:@{
@@ -713,6 +776,44 @@ static NSCondition *_theAbortLock;
                                                      }
                                 documentAttributes:nil
                                              error:nil];
+}
+
+
++ (void)popToViewControllerOnNavigationController:(Class)viewControllerClass
+                             navigationController:(UINavigationController *)navigationController
+                                         animated:(BOOL)animated {
+    NSMutableArray *allViewControllers = [NSMutableArray arrayWithArray:[navigationController viewControllers]];
+    for (UIViewController *aViewController in allViewControllers) {
+        if ([aViewController isKindOfClass:viewControllerClass]) {
+            [navigationController popToViewController:aViewController animated:animated];
+        }
+    }
+}
+
+
++ (void)setBackButton:(UIViewController *)viewController
+               action:(SEL)action
+{
+    NSString *backBtn = [[NSString stringWithFormat:@"%@ %@", backArrow, NSLocalizedString(@"Back", @"Back")]
+                         stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    if(! viewController.navigationItem.leftBarButtonItem)
+    {
+        viewController.navigationItem.leftBarButtonItem =
+        [[UIBarButtonItem alloc] initWithTitle:backBtn
+                                         style:UIBarButtonItemStylePlain
+                                        target:viewController
+                                        action:action];
+    }
+    else
+    {
+      //  0x10302
+        
+        //U00002329
+        viewController.navigationItem.leftBarButtonItem.title = backBtn;
+        viewController.navigationItem.leftBarButtonItem.target = viewController;
+        viewController.navigationItem.leftBarButtonItem.action = action;
+    }
 }
 
 @end

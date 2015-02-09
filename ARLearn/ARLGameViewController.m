@@ -49,13 +49,15 @@
     [super viewDidLoad];
     
     DLog(@"GameID = %@", self.gameId);
-    
+ 
     [self applyConstraints];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    self.navigationItem.leftBarButtonItem.title = @"XBACK";
+
     self.navigationController.navigationBarHidden=NO;
     self.navigationController.toolbarHidden=NO;
     
