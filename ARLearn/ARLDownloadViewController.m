@@ -56,7 +56,8 @@ NSInteger downloaded = 0;
     
     downloaded = 0;
     
-    [Action MR_truncateAll];
+    // Debug code to force re-valuation.
+    // [Action MR_truncateAll];
     
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGame];
@@ -245,7 +246,8 @@ NSInteger downloaded = 0;
     
     // Saves any modification made after ManagedObjectFromDictionary.
     [ctx MR_saveToPersistentStoreAndWait];
-    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 -(void) DownloadGameContent {
@@ -433,7 +435,8 @@ NSInteger downloaded = 0;
     
     // Saves any modification made after ManagedObjectFromDictionary.
     [ctx MR_saveToPersistentStoreAndWait];
-//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 /*!
@@ -588,8 +591,7 @@ NSInteger downloaded = 0;
         }
         
         // Saves any modification made after ManagedObjectFromDictionary.
-        // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     }
 }
 
@@ -735,8 +737,7 @@ NSInteger downloaded = 0;
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
-//    [ctx MR_saveToPersistentStoreAndWait];
-//    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     //WESPOT CODE
     //    + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict

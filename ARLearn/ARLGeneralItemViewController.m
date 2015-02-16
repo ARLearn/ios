@@ -360,6 +360,7 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
         
         // Saves any modification made after ManagedObjectFromDictionary.
         [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
+        
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         
         
@@ -403,6 +404,7 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     
     // Saves any modification made after ManagedObjectFromDictionary.
     [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
+    
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 

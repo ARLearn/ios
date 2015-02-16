@@ -85,10 +85,10 @@ static NSCondition *_theAbortLock;
     
 #warning DEBUG Code (Delete all records handled sofar)
      
-    [Game MR_truncateAll];
-    [Run MR_truncateAll];
-    [GeneralItem MR_truncateAll];
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    //[Game MR_truncateAll];
+    //[Run MR_truncateAll];
+    //[GeneralItem MR_truncateAll];
+    //[[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
 #warning FORCING LOGGING.
     

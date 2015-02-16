@@ -53,17 +53,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //#warning Debug Code ahead
-    //    {
-    //        Action *action = [Action MR_createEntity];
-    //        action.action = @"read";
-    //        action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId" withValue:@(5232076227870720)];
-    //        action.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
-    //    }
-    //
-    //    // Saves any modification made after ManagedObjectFromDictionary.
-    //    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
     // Do any additional setup after loading the view.
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
     
@@ -597,15 +586,19 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     
                     Log(@"Updated GeneralItemVisibility of %@ ('%@') to status %@", giv.generalItemId, giv.generalItem.name, giv.status);
                 }
+                
+                [ctx MR_saveToPersistentStoreAndWait];
             }
         }
     }
     
     // Saves any modification made after ManagedObjectFromDictionary.
-    [ctx MR_saveToPersistentStoreAndWait];
-    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
-    [self.itemsTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    [self performSelectorOnMainThread:@selector(UpdateItemVisibility) withObject:nil waitUntilDone:YES];
+   
+    // ¥[self.itemsTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
 }
 
 /*!
@@ -641,24 +634,32 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 /*!
  *  Re-calculate the GeneralItem Vsibility for all GeneralIems.
+ *
+ *  Runs in a background thread.
  */
 - (void)UpdateItemVisibility {
     [self.itemsTable setUserInteractionEnabled:NO];
 
     self.visibility = [[NSMutableArray alloc] init];
     
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
+    long long int now = [ARLUtils Now];
+    
     for (GeneralItem *item in self.items) {
         NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
         
-        long satisfiedAt = 0l;
+        long long int satisfiedAt = 0l;
         
         if ([json valueForKey:@"dependsOn"]) {
             NSDictionary *dependsOn = [json valueForKey:@"dependsOn"];
-        
-            satisfiedAt = [self satisfiedAt:self.runId dependsOn:dependsOn];
+            
+            satisfiedAt = [self satisfiedAt:self.runId
+                                  dependsOn:dependsOn
+                                        ctx:ctx];
         }
-    
-        if (satisfiedAt<[ARLUtils Now] && satisfiedAt != -1)
+        
+        if (satisfiedAt<now && satisfiedAt != -1)
         {
             // Create GeneralItemVisibility if missing;
             
@@ -666,35 +667,36 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                       @"runId=%@ AND generalItemId=%@",
                                       self.runId,
                                       item.generalItemId];
-            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate];
+            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate
+                                                                                inContext:ctx];
             
             if (!giv)
             {
                 // if not exists, create one and save it.
-                giv = [GeneralItemVisibility MR_createEntity];
+                giv = [GeneralItemVisibility MR_createEntityInContext:ctx];
                 {
                     giv.generalItemId = item.generalItemId;
                     giv.runId = self.runId;
                     giv.status = VISIBLE;
-                    giv.timeStamp = [NSNumber numberWithLong:satisfiedAt];
+                    giv.timeStamp = [NSNumber numberWithLongLong:satisfiedAt];
                     giv.email = [[ARLNetworking CurrentAccount] email];
-                    giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
-                    giv.generalItem = item;
+                    giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"
+                                                              withValue:self.runId
+                                                              inContext:ctx];
+                    giv.generalItem = [item MR_inContext:ctx];
                     
-                    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                    [ctx MR_saveToPersistentStoreAndWait];
 
-                    Log(@"GeneralItem: %@ ('%@') status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                    Log(@"GeneralItem: %@ ('%@') created and status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
                 }
             } else {
                 // update timestamp if not INVISIBLE.
-                if (![giv.status isEqualToNumber:INVISIBLE] && [giv.timeStamp longValue] > satisfiedAt) {
-                    giv.timeStamp = [NSNumber numberWithLong:satisfiedAt];
+                if (![giv.status isEqualToNumber:INVISIBLE] && [giv.timeStamp longLongValue] > satisfiedAt) {
+                    giv.timeStamp = [NSNumber numberWithLongLong:satisfiedAt];
                     
-                    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                    [ctx MR_saveToPersistentStoreAndWait];
 
-                    Log(@"GeneralItem: %@ ('%@') updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                     Log(@"GeneralItem: %@ ('%@') timestamp updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
                 }
             }
             
@@ -703,6 +705,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             }
         }
     }
+
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 
     [self.itemsTable setUserInteractionEnabled:YES];
     
@@ -720,13 +724,18 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
  *
  *  @return <#return value description#>
  */
--(long)satisfiedAt:(NSNumber *)forRunId dependsOn:(NSDictionary *)dependsOn {
+-(unsigned long long int)satisfiedAt:(NSNumber *)forRunId
+         dependsOn:(NSDictionary *)dependsOn
+               ctx:(NSManagedObjectContext *)ctx{
     if (dependsOn!=nil)
     {
+        // DLog(@"Checking satisfiedAt for %@ = %@",
+        //     [dependsOn valueForKey:@"generalItemId"],
+        //     [dependsOn valueForKey:@"action"])
         switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
             case ActionDependency: {
                 // See Android's DependencyLocalObject:actionSatisfiedAt
-                long minSatisfiedAt = LONG_MAX;
+                long long int minSatisfiedAt = LONG_MAX;
                 
                 NSPredicate *predicate = [NSPredicate predicateWithFormat:
                                           @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
@@ -734,9 +743,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                           [dependsOn valueForKey:@"generalItemId"],
                                           [dependsOn valueForKey:@"action"]];
                 
-                for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+                for (Action *action in [Action MR_findAllWithPredicate:predicate
+                                                             inContext:ctx]) {
                     //TODO Some strange (safety)checks are missing here.
-                    long newValue = action.time ? 0l : [action.time longValue];
+                    long long int newValue = action.time ? [action.time longLongValue]: 0l;
                     
                     minSatisfiedAt = MIN(minSatisfiedAt, newValue);
                 }
@@ -746,7 +756,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 
             case ProximityDependency: {
                 // See Android's DependencyLocalObject:proximitySatisfiedAt
-                long minSatisfiedAt = LONG_MAX;
+                long long int minSatisfiedAt = LONG_MAX;
                 
                 NSString *lat = [NSString stringWithFormat:@"%f",
                                  (double)((long)([[dependsOn valueForKey:@"lat"] doubleValue]*1e6)/1e6)];
@@ -762,9 +772,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                           forRunId,
                                           geo];
                 
-                for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+                for (Action *action in [Action MR_findAllWithPredicate:predicate
+                                                             inContext:ctx]) {
                     if ([geo isEqualToString:action.action]) {
-                        long newValue = action.time ? 0l : [action.time longValue];
+                        long long int newValue = action.time ? 0l : [action.time longLongValue];
                         
                         minSatisfiedAt = MIN(minSatisfiedAt, newValue);
                     }
@@ -790,18 +801,22 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 
                 NSDictionary *dep = (NSDictionary *)[deps firstObject];
                 
-                long satisfiedAt = [self satisfiedAt:forRunId dependsOn:dep];
+                long long int satisfiedAt = [self satisfiedAt:forRunId
+                                                    dependsOn:dep
+                                                          ctx:ctx];
                 
-                return satisfiedAt == -1 ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longValue];
+                return satisfiedAt == -1 ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longLongValue];
             }
                 
             case OrDependency: {
                 // See Android's DependencyLocalObject:orSatisfiedAt
-                long minSatisfiedAt = LONG_MAX;
+                long long int minSatisfiedAt = LONG_MAX;
                 
                 NSArray *deps = [dependsOn valueForKey:@"dependencies"];
                 for (NSDictionary *dep in deps) {
-                    long locmin = [self satisfiedAt:forRunId dependsOn:dep];
+                    long long int locmin = [self satisfiedAt:forRunId
+                                                   dependsOn:dep
+                                                         ctx:ctx];
                     if (locmin != -1) {
                         minSatisfiedAt = MIN(minSatisfiedAt, locmin);
                     }
@@ -812,11 +827,13 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 
             case AndDependency: {
                 // See Android's DependencyLocalObject:andSatisfiedAt
-                long maxSatisfiedAt = 0;
+                long long int maxSatisfiedAt = 0;
                 
                 NSArray *deps = [dependsOn valueForKey:@"dependencies"];
                 for (NSDictionary *dep in deps) {
-                    long locmax = [self satisfiedAt:forRunId dependsOn:dep];
+                    long long int locmax = [self satisfiedAt:forRunId
+                                                   dependsOn:dep
+                                                         ctx:ctx];
                     
                     if (locmax == -1) {
                         return locmax;

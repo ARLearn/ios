@@ -473,11 +473,11 @@ static NSCondition *_theAbortLock;
         // Log(@"JSON:\r%@", jsonDictionary);
         
         NSError *error = nil;
-        NSData* jsonData = [NSJSONSerialization
-                            dataWithJSONObject:jsonDictionary
-                            options:kNilOptions
-                            error:&error];
-        
+//        NSData* jsonData = [NSJSONSerialization
+//                            dataWithJSONObject:jsonDictionary
+//                            options:kNilOptions
+//                            error:&error];
+
         if (error==nil) {
             Log(@"JSON:\r%@", jsonDictionary);
             // Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
@@ -729,8 +729,8 @@ static NSCondition *_theAbortLock;
  *
  *  @return <#return value description#>
  */
-+(long) Now {
-    return [[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000] longValue];
++(long long int) Now {
+    return (long long int)[[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000] longLongValue];
 }
 
 /*!

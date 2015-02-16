@@ -236,7 +236,7 @@
  *
  *  @return <#return value description#>
  */
-+(long) Now;
++(unsigned long long int) Now;
 
 /*!
  *  Format a double as a Date/Time.

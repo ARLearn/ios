@@ -56,7 +56,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    self.navigationItem.leftBarButtonItem.title = @"XBACK";
+    self.navigationItem.leftBarButtonItem.title = @"BACK";
 
     self.navigationController.navigationBarHidden=NO;
     self.navigationController.toolbarHidden=NO;
