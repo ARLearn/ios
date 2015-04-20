@@ -1149,7 +1149,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self responseWithDictionary:data];
 }
 
-- (void) createImageResponse:(NSData *)data
+- (void) chttps://code.google.com/p/arlearn-ios.arlearnv3reateImageResponse:(NSData *)data
                        width:(NSNumber*)width
                       height:(NSNumber *)height
                      withRun:(Run *)run
