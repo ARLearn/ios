@@ -190,6 +190,7 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
+#pragma warning USE THIS ACCUMULATING CODE EVERWHERE!!!
     NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
     self.accumulatedSize = [response expectedContentLength];
@@ -225,7 +226,7 @@ didCompleteWithError:(NSError *)error
 {
     NSLog(@"Completed HTTP Task");
     
-    if(error == nil)
+    if (error == nil)
     {
         [self processData:self.accumulatedData];
         

@@ -232,7 +232,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     switch (indexPath.section) {
         case GENERALITEM: {
             
-            Log("Disclosure Tapped %@", indexPath);
+            // DLog("Disclosure Tapped %@", indexPath);
             
             GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
             
@@ -274,6 +274,22 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     //            sortKey = 0;
                     //            type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
                     //        }
+                    if ([json valueForKey:@"openQuestion"]) {
+                        ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
+                        
+                        if (newViewController) {
+                            newViewController.runId = self.runId;
+                            newViewController.activeItem  = item;
+                            
+                            // Move to another UINavigationController or UITabBarController etc.
+                            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                            [self.navigationController pushViewController:newViewController animated:YES];
+                            
+                            newViewController = nil;
+                        }
+                        
+                        // Render Data Collection Task.
+                    }
                     break;
                     
                 case AudioObject:

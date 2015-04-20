@@ -16,6 +16,9 @@
 
 @property (nonatomic, strong) NSArray *results;
 
+@property (retain, nonatomic) NSMutableData *accumulatedData;
+@property (nonatomic) long long accumulatedSize;
+
 - (IBAction)logoutButtonAction:(UIBarButtonItem *)sender;
 - (IBAction)backButtonAction:(UIBarButtonItem *)sender;
 
@@ -300,7 +303,12 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    NSLog(@"Got HTTP Response");
+    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+    
+    self.accumulatedSize = [response expectedContentLength];
+    self.accumulatedData = [[NSMutableData alloc]init];
+    
+    NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -309,13 +317,15 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    NSLog(@"Got HTTP Data");
+    NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
-    [self processData:data];
+    [self.accumulatedData appendData:data];
     
-    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+    if ([self.accumulatedData length]==self.accumulatedSize) {
+        //    [ARLQueryCache addQuery:dataTask.taskDescription withResponse:data];
+    }
 }
 
 - (void)URLSession:(NSURLSession *)session
@@ -324,8 +334,12 @@ didCompleteWithError:(NSError *)error
 {
     NSLog(@"Completed HTTP Task");
     
-    if(error == nil)
+    if (error == nil)
     {
+        [self processData:self.accumulatedData];
+        
+        [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
+        
         // Update UI Here?
         NSLog(@"Download is Succesfull");
     } else {

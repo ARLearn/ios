@@ -1122,7 +1122,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                           [NSNumber numberWithInt:TEXT],                                          @"responseType",
                           nil];
     
-    [self responseWithDictionary:data];
+   Response *textResponse = [self responseWithDictionary:data];
 }
 
 #warning TODO Port NarratorItem
@@ -1228,7 +1228,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                 self.activeItem,                 @"generalItem",
                                 self.run,                        @"run",
                                 nil];
-    
+#warning THIS STILL FAILS!!!!
     return (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
                                                   entityName:[Action MR_entityName]
                                                   nameFixups:namefixups
