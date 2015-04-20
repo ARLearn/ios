@@ -75,15 +75,15 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     NSError *error = nil;
     
-    //    if ([self.audioSession isOtherAudioPlaying]) {       
+    //    if ([self.audioSession isOtherAudioPlaying]) {
     //        // mix sound effects with music already playing
     //        [self.audioSession setCategory:AVAudioSessionCategorySoloAmbient error:&error];
     //    } else {
     //        [self.audioSession setCategory:AVAudioSessionCategoryAmbient error:&error];
     //    }
-
+    
     [self.audioSession setCategory:AVAudioSessionCategoryPlayback error:&error];
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onAudioSessionEvent:)
                                                  name:AVAudioSessionInterruptionNotification
@@ -92,7 +92,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     ELog(error);
     
     [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
-     
+    
     [self applyConstraints];
 }
 
@@ -103,7 +103,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     [self.itemsTable addSubview:self.refreshControl];
-
+    
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadgeneralItemVisibilities];
     }];
@@ -112,7 +112,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 }
 
 -(void) viewWillDisappear:(BOOL)animated {
-
+    
     [super viewWillDisappear:animated];
 }
 
@@ -123,14 +123,14 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 #pragma mark - UINavigationControllerDelegate
 
@@ -210,12 +210,12 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             // See http://stackoverflow.com/questions/12296904/accessorybuttontappedforrowwithindexpath-not-getting-called
             // workaround for accessoryButtonTappedForRowWithIndexPath
             // UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-
+            
             // set the button's target to this table view controller so we can interpret touch events and map that to a NSIndexSet
             // [button addTarget:self
             //            action:@selector(checkButtonTapped:event:)
             //  forControlEvents:UIControlEventTouchUpInside];
-
+            
             return cell;
         }
     }
@@ -226,44 +226,77 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
     // Probably not called as we use UITableViewCellAccesssoryDisclosureIndicator instead of UITableViewCellAccessoryDetailDisclosureButton
- 
+    
     // See https://github.com/bitmapdata/MSCellAccessory/blob/master/MSCellAccessory/MSCellAccessory.m
-    
-    Log("Disclosure Tapped %@", indexPath);
-    
-    GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
-    
-    BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
-    
-    switch (bid) {
-        case SingleChoiceTest:
-        case MultipleChoiceTest: {
-            ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
+    switch (indexPath.section) {
+        case GENERALITEM: {
             
-            if (newViewController) {
-                newViewController.runId = self.runId;
-                newViewController.activeItem  = item;
-                
-                // Move to another UINavigationController or UITabBarController etc.
-                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                [self.navigationController pushViewController:newViewController animated:YES];
-                
-                newViewController = nil;
+            Log("Disclosure Tapped %@", indexPath);
+            
+            GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
+            
+            BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
+            
+            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+            [ARLUtils LogJsonDictionary:json url:nil];
+            
+            switch (bid) {
+                case SingleChoiceTest:
+                case MultipleChoiceTest: {
+                    ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
+                    
+                    if (newViewController) {
+                        newViewController.runId = self.runId;
+                        newViewController.activeItem  = item;
+                        
+                        // Move to another UINavigationController or UITabBarController etc.
+                        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                        [self.navigationController pushViewController:newViewController animated:YES];
+                        
+                        newViewController = nil;
+                    }
+                }
+                    
+                case NarratorItem:
+                    // Nothing yet
+                    //        {
+                    //            deleted = 0;
+                    //            description = "";
+                    //            fileReferences =     (
+                    //            );
+                    //            gameId = 13876002;
+                    //            id = 5835376316907520;
+                    //            lastModificationDate = 1427274724860;
+                    //            name = test;
+                    //            richText = "";
+                    //            scope = user;
+                    //            sortKey = 0;
+                    //            type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+                    //        }
+                    break;
+                    
+                case AudioObject:
+                    // TODO
+                    if ([json valueForKey:@"openQuestion"]) {
+                        // Render Data Collection Task.
+                    }
+                    break;
+                    
+                case ScanTag:
+                    // Nothing yet
+                    break;
+                    
+                case OpenQuestion:
+                    // Nothing yet
+                    break;
+                    
+                default:
+                    //Should not happen
+                    Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
+                    break;
             }
+            break;
         }
-            
-        case ScanTag:
-            // Nothing yet
-            break;
-            
-        case OpenQuestion:
-            // Nothing yet
-            break;
-            
-        default:
-            //Should not happen
-            Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
-            break;
     }
 }
 
@@ -277,7 +310,50 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     switch (indexPath.section) {
         case GENERALITEM: {
             self.activeItem = [self getGeneralItemForRow:indexPath.row];
-
+            
+            // Example AudioObject (with openQuestion).
+            //{
+            //    audioFeed = "http://streetlearn.appspot.com/game/5248241780129792/generalItems/5232076227870720/audio";
+            //    autoLaunch = 0;
+            //    autoPlay = 0;
+            //    deleted = 0;
+            //    dependsOn =     {
+            //        action = read;
+            //        generalItemId = 6180497885495296;
+            //        scope = 0;
+            //        type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
+            //    };
+            //    description = "Voor de Campanile voerde Andrea di Pisano reli?fs uit in de onderste zone, gewijd aan respectievelijk voorstellingen uit Genesis en de vrije kunsten. Voor deze reli?fs geldt als vorm de zeshoek en een groter oppervlak dan de vierpas van de deuren. De reeks aan de westzijde heeft betrekking op Genesis, te weten Schepping van Adam, Schepping van Eva, Adam en Eva aan het werk en vier reli?fs betreffende de mechanische arbeid, bijv. die van Tubalkain als eerste smid en Noah als eerste boer.Kies een reli?f uit, maak ervan een foto. Publiceer deze foto.\nMaak vervolgens een audio-opname en spreek in hoe Pisano de grotere vrijheid in vormgeving vergeleken met zijn vierpasreli?fs aan het Baptisterium heeft benut. Publiceer deze audio-opname.";
+            //    fileReferences =     (
+            //    );
+            //    gameId = 5248241780129792;
+            //    id = 5232076227870720;
+            //    lastModificationDate = 1417528003150;
+            //    lat = "43.772792";
+            //    lng = "11.255546";
+            //    name = "Opdracht 1";
+            //    openQuestion =     {
+            //        textDescription = "";
+            //        type = "org.celstec.arlearn2.beans.generalItem.OpenQuestion";
+            //        valueDescription = "";
+            //        withAudio = 1;
+            //        withPicture = 1;
+            //        withText = 0;
+            //        withValue = 0;
+            //        withVideo = 0;
+            //    };
+            //    richText = "Voor de Campanile voerde Andrea di Pisano reli?fs uit in de onderste zone, gewijd aan respectievelijk voorstellingen uit Genesis en de vrije kunsten. Voor deze reli?fs geldt als vorm de zeshoek en een groter oppervlak dan de vierpas van de deuren.&nbsp;<div>De reeks aan de westzijde heeft betrekking op Genesis, te weten Schepping van Adam, Schepping van Eva, Adam en Eva aan het werk en vier reli?fs betreffende de mechanische arbeid, bijv. die van Tubalkain als eerste smid en Noah als eerste boer.</div><div>Kies een reli?f uit, maak ervan een foto. Publiceer deze foto.\nMaak vervolgens een audio-opname en spreek in hoe Pisano de grotere vrijheid in vormgeving vergeleken met zijn vierpasreli?fs aan het Baptisterium heeft benut. Publiceer deze audio-opname.</div>";
+            //    roles =     (
+            //    );
+            //    scope = user;
+            //    showCountDown = 0;
+            //    sortKey = 2;
+            //    type = "org.celstec.arlearn2.beans.generalItem.AudioObject";
+            //}
+            
+            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+            [ARLUtils LogJsonDictionary:json url:nil];
+            
             if (self.activeItem) {
                 self.descriptionText.attributedText = [ARLUtils htmlToAttributedString:self.activeItem.richText];
             } else {
@@ -322,7 +398,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 default:
                     break;
             }
-
+            
             break;
         }
     }
@@ -332,7 +408,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     DLog(@"audioPlayerDidFinishPlaying");
-
+    
     [self MarkActiveItemAsRead];
     
     [self UpdateItemVisibility];
@@ -350,7 +426,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [self UpdateItemVisibility];
     
     [self.itemsTable setUserInteractionEnabled:YES];
-
+    
     self.activeItem = nil;
 }
 
@@ -434,7 +510,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         // Saves any modification made after ManagedObjectFromDictionary.
         [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-
+        
         
         DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, @"read", self.runId);
     } else {
@@ -489,9 +565,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     // TODO Add TimeStamp to url retrieve less records?
     
     NSString *service = [NSString stringWithFormat:@"generalItemsVisibility/runId/%lld", [self.runId longLongValue]];
-
+    
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
-
+    
     NSError *error = nil;
     NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
                                                                     options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
@@ -504,7 +580,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         for (NSDictionary *item in [response valueForKey:@"generalItemsVisibility"])
         {
             // DLog(@"GeneralItem: %lld has Status %@,", [[item valueForKey:@"generalItemId"] longLongValue], [item valueForKey:@"status"]);
-        
+            
             //{
             //    "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibilityList",
             //    "serverTime": 1421237978494,
@@ -597,7 +673,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     [self performSelectorOnMainThread:@selector(UpdateItemVisibility) withObject:nil waitUntilDone:YES];
-   
+    
     // ¥[self.itemsTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
 }
 
@@ -639,7 +715,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
  */
 - (void)UpdateItemVisibility {
     [self.itemsTable setUserInteractionEnabled:NO];
-
+    
     self.visibility = [[NSMutableArray alloc] init];
     
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
@@ -686,7 +762,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     giv.generalItem = [item MR_inContext:ctx];
                     
                     [ctx MR_saveToPersistentStoreAndWait];
-
+                    
                     Log(@"GeneralItem: %@ ('%@') created and status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
                 }
             } else {
@@ -695,8 +771,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     giv.timeStamp = [NSNumber numberWithLongLong:satisfiedAt];
                     
                     [ctx MR_saveToPersistentStoreAndWait];
-
-                     Log(@"GeneralItem: %@ ('%@') timestamp updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                    
+                    Log(@"GeneralItem: %@ ('%@') timestamp updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
                 }
             }
             
@@ -705,9 +781,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             }
         }
     }
-
+    
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-
+    
     [self.itemsTable setUserInteractionEnabled:YES];
     
     [self.itemsTable reloadData];
@@ -725,13 +801,13 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
  *  @return <#return value description#>
  */
 -(unsigned long long int)satisfiedAt:(NSNumber *)forRunId
-         dependsOn:(NSDictionary *)dependsOn
-               ctx:(NSManagedObjectContext *)ctx{
+                           dependsOn:(NSDictionary *)dependsOn
+                                 ctx:(NSManagedObjectContext *)ctx{
     if (dependsOn!=nil)
     {
         // DLog(@"Checking satisfiedAt for %@ = %@",
         //     [dependsOn valueForKey:@"generalItemId"],
-        //     [dependsOn valueForKey:@"action"])
+        //,     [dependsOn valueForKey:@"action"])
         switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
             case ActionDependency: {
                 // See Android's DependencyLocalObject:actionSatisfiedAt
@@ -792,7 +868,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     return -1;
                 }
                 
-//#error this halts on the new test game
+                //#error this halts on the new test game
                 //            {
                 //                generalItemId = 5774370509160448;
                 //                scope = 0;
@@ -906,9 +982,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 //- (void)checkButtonTapped:(id)sender event:(id)event{
 //    NSSet *touches = [event allTouches];
 //    UITouch *touch = [touches anyObject];
-//    
+//
 //    CGPoint currentTouchPosition = [touch locationInView:self.itemsTable];
-//    
+//
 //    NSIndexPath *indexPath = [self.itemsTable indexPathForRowAtPoint: currentTouchPosition];
 //    if (indexPath != nil) {
 //       Log("Disclosure Tapped %@", indexPath);

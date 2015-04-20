@@ -816,4 +816,62 @@ static NSCondition *_theAbortLock;
     }
 }
 
++ (NSString *)base64forData:(NSData*)theData
+{
+    const uint8_t* input = (const uint8_t*)[theData bytes];
+    NSInteger length = [theData length];
+    
+    static char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    
+    NSMutableData* data = [NSMutableData dataWithLength:((length + 2) / 3) * 4];
+    uint8_t* output = (uint8_t*)data.mutableBytes;
+    
+    NSInteger i;
+    for (i=0; i < length; i += 3) {
+        NSInteger value = 0;
+        NSInteger j;
+        for (j = i; j < (i + 3); j++) {
+            value <<= 8;
+            
+            if (j < length) {
+                value |= (0xFF & input[j]);
+            }
+        }
+        
+        NSInteger theIndex = (i / 3) * 4;
+        output[theIndex + 0] =                    table[(value >> 18) & 0x3F];
+        output[theIndex + 1] =                    table[(value >> 12) & 0x3F];
+        output[theIndex + 2] = (i + 1) < length ? table[(value >> 6)  & 0x3F] : '=';
+        output[theIndex + 3] = (i + 2) < length ? table[(value >> 0)  & 0x3F] : '=';
+    }
+    
+    return [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+}
+
++ (NSString *)cleanHtml:(NSString *)theHtml {
+    NSString *tmp = [[theHtml stringByReplacingOccurrencesOfString:@"<p>" withString:@"\r"]
+                     stringByReplacingOccurrencesOfString:@"</p>" withString:@"\r"];
+    
+    // if ([theHtml rangeOfString:@"<p>"].location == 0) {
+    //   theHtml = [theHtml substringFromIndex:3];
+    // }
+    
+    // NSBigMutableString* x;
+    
+    //Remove Trailing </p>
+    //    if ([theHtml rangeOfString:@"</p>"].location == theHtml.length-1-3) {
+    //        theHtml = [theHtml substringToIndex:theHtml.length-1-3];
+    //    }
+    
+    // The following call is slow!!
+    if ([tmp rangeOfString:@"<"].location != NSNotFound && [tmp rangeOfString:@">"].location != NSNotFound) {
+        tmp = [[ARLUtils htmlToAttributedString:tmp] string];
+    }
+    
+    //Remove WhiteSpace (note U0000fffc is 'OBJECT REPLACEMENT CHARACTER' acording to unicode).
+    return [tmp stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@" \r\n\t\U0000fffc"]];
+    
+    //return [theHtml stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
 @end

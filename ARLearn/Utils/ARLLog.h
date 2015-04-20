@@ -49,4 +49,6 @@
 
 + (BOOL *)LogOn;
 
++ (BOOL *)SaveNLogAbort:(NSManagedObjectContext *)managedObjectContext func:(NSString *)func;
+
 @end

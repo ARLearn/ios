@@ -297,7 +297,7 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
                                      
                                      self.backgroundImage,  @"backgroundImage",
                                      
-                                     self.answersTable,       @"answersTable",
+                                     self.answersTable,     @"answersTable",
                                      self.descriptionText,  @"descriptionText",
                                      
                                      nil];

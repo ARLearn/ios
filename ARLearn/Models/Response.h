@@ -2,8 +2,8 @@
 //  Response.h
 //  ARLearn
 //
-//  Created by Wim van der Vegt on 7/16/14.
-//  Copyright (c) 2014 Open University of the Netherlands. All rights reserved.
+//  Created by G.W. van der Vegt on 20/04/15.
+//  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -23,6 +23,9 @@
 @property (nonatomic, retain) NSNumber * timeStamp;
 @property (nonatomic, retain) NSString * value;
 @property (nonatomic, retain) NSNumber * width;
+@property (nonatomic, retain) NSNumber * responseType;
+@property (nonatomic, retain) NSNumber * lat;
+@property (nonatomic, retain) NSNumber * lng;
 @property (nonatomic, retain) Account *account;
 @property (nonatomic, retain) GeneralItem *generalItem;
 @property (nonatomic, retain) Run *run;

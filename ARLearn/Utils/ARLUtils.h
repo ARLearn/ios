@@ -27,6 +27,15 @@
 #define stripesThree                @"\u2630"
 #define backArrow                   @"\U000025C0\U0000FE0E"
 
+typedef NS_ENUM (NSInteger, ResponseTypes) {
+    UNKNOWN = 0,
+    PHOTO   = 1,
+    VIDEO   = 2,
+    AUDIO   = 3,
+    TEXT    = 4,
+    NUMBER  = 5
+};
+
 /*!
  *  Log GIT Version Info.
  */
@@ -266,5 +275,9 @@
 
 + (void)setBackButton:(UIViewController *)viewController
                action:(SEL)action;
+
++ (NSString *)base64forData:(NSData*)theData;
+
++ (NSString *)cleanHtml:(NSString *)theHtml;
 
 @end

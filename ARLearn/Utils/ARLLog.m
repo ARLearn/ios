@@ -30,4 +30,29 @@ static BOOL _logOn = YES;
     return &_logOn;
 }
 
+/*!
+ *  Use with func equal to [NSString stringWithFormat:@"%s",__func__]
+ *
+ *  @param managedObjectContext <#managedObjectContext description#>
+ *  @param func                 <#func description#>
+ *
+ *  @return <#return value description#>
+ */
++ (BOOL *)SaveNLogAbort:(NSManagedObjectContext *)managedObjectContext func:(NSString *)func {
+    BOOL result = YES;
+    
+    NSError *error = nil;
+    
+    if (managedObjectContext && [managedObjectContext hasChanges]) {
+        result = [managedObjectContext save:&error];
+        ELog(error);
+    }
+    
+    if (error && !result) {
+        [ARLUtils ShowAbortMessage:error fromMethod:func];
+    }
+    
+    return result;
+}
+
 @end
