@@ -26,12 +26,14 @@
 - (IBAction)downloadButtonAction:(UIButton *)sender;
 
 @property (retain, nonatomic) NSDictionary *game;
+@property (strong, nonatomic) NSNumber *runId;
 
 @end
 
 @implementation ARLGameViewController
 
 @synthesize game;
+@synthesize runId;
 
 #pragma mark - ViewController
 
@@ -282,15 +284,58 @@ didCompleteWithError:(NSError *)error
     
     //1422489600    (unix)
     //1422536899756 (arlearn)
+    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
-    self.game = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    BeanIds bid = [ARLBeanNames beanTypeToBeanId:[json valueForKey:@"type"]];
     
-    self.titleLabel.text = [self.game objectForKey:@"title"];
-    self.languageLabel.text = [self.game objectForKey:@"language"];
-    self.summaryText.text = [self.game objectForKey:@"description"];
-    self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDateTime:@"dd-MMM-yyyy"
-                                                                                         withUnixTime:[self.game objectForKey:@"lastModificationDate"]]];
-    Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
+    switch (bid) {
+        case RunList: {
+            
+#warning FOR NOW TAKE THE FIRST RUN IF ANY.
+#warning RUNLIST IS TO SMALL, only two runs are returned (AUTHORISATION PROBLEMS?).
+            for (NSDictionary *run in [json valueForKey:@"runs"]) {
+                if ([[run valueForKey:@"gameId"] longLongValue] == [self.gameId longLongValue]) {
+                    self.runId = [run valueForKey:@"runId"];
+                    DLog(@"runID = %@", self.runId);
+                    break;
+                }
+            }
+        }
+            break;
+            
+        case GameBean: {
+            //     "type": ,
+            //
+            //    "type": "org.celstec.arlearn2.beans.game.Game",
+            
+            self.game = json;
+            
+            self.titleLabel.text = [self.game objectForKey:@"title"];
+            self.languageLabel.text = [self.game objectForKey:@"language"];
+            self.summaryText.text = [self.game objectForKey:@"description"];
+            self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDateTime:@"dd-MMM-yyyy"
+                                                                                                 withUnixTime:[self.game objectForKey:@"lastModificationDate"]]];
+            Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
+            
+            // Fetch RunId too.
+            NSString *query = @"myRuns/participate";
+            
+            NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
+            
+            NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+            
+            if (!response) {
+                [ARLNetworking sendHTTPGetWithDelegate:self withService:query];
+            } else {
+                NSLog(@"Using cached query data");
+                [self processData:response];
+            }
+        }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 - (void)performQuery {
@@ -311,20 +356,24 @@ didCompleteWithError:(NSError *)error
 #pragma mark - Actions
 
 - (IBAction)downloadButtonAction:(UIButton *)sender {
-    ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
     
-    if (newViewController) {
-        // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-        //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
-        // }
+    if (self.runId) {
+        ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
         
-        newViewController.gameId = self.gameId;
-        
-        // Move to another UINavigationController or UITabBarController etc.
-        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-        [self.navigationController pushViewController:newViewController animated:YES];
-        
-        newViewController = nil;
+        if (newViewController) {
+            // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+            //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
+            // }
+            
+            newViewController.gameId = self.gameId;
+            newViewController.runId = self.runId;
+            
+            // Move to another UINavigationController or UITabBarController etc.
+            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+            [self.navigationController pushViewController:newViewController animated:YES];
+            
+            newViewController = nil;
+        }
     }
 }
 

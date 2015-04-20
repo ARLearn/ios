@@ -127,7 +127,11 @@ static NSString *_twitterLoginString;
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
     // Setup Authorization Token (should not be neccesary for search, but it is!)
-    [urlRequest addValue:[NSString stringWithFormat:@"GoogleLogin auth=%@", authtoken] forHTTPHeaderField:@"Authorization"];
+    // WRONG CODE, authtoken is hardcoded!
+    // [urlRequest addValue:[NSString stringWithFormat:@"GoogleLogin auth=%@", authtoken] forHTTPHeaderField:@"Authorization"];
+    
+    NSString * authorizationString = [NSString stringWithFormat:@"GoogleLogin auth=%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"auth"]];
+    [urlRequest setValue:authorizationString forHTTPHeaderField:@"Authorization"];
     
     // Setup Headers
     [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
@@ -177,13 +181,16 @@ static NSString *_twitterLoginString;
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration:defaultConfigObject
                                                                  delegate:delegate
-                                                            delegateQueue: [NSOperationQueue mainQueue]];
+                                                            delegateQueue:[NSOperationQueue mainQueue]];
     
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:serviceUrlFmt, serverUrl, service]];
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
   
     // Setup Authorization Token (should not be neccesary for search, but it is!)
-    [urlRequest addValue:[NSString stringWithFormat:@"GoogleLogin auth=%@", authtoken] forHTTPHeaderField:@"Authorization"];
+    // WRONG CODE, authtoken is hardcoded!
+    // [urlRequest addValue:[NSString stringWithFormat:@"GoogleLogin auth=%@", authtoken] forHTTPHeaderField:@"Authorization"];
+    NSString * authorizationString = [NSString stringWithFormat:@"GoogleLogin auth=%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"auth"]];
+    [urlRequest setValue:authorizationString forHTTPHeaderField:@"Authorization"];
     
     // Setup Headers
     [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];

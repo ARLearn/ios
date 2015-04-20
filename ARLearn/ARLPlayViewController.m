@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) AVAudioSession *audioSession;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+
 @property (strong, nonatomic) GeneralItem *activeItem;
 
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
@@ -237,7 +238,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
             
-            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
             [ARLUtils LogJsonDictionary:json url:nil];
             
             switch (bid) {
@@ -278,6 +279,19 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 case AudioObject:
                     // TODO
                     if ([json valueForKey:@"openQuestion"]) {
+                        ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
+                        
+                        if (newViewController) {
+                            newViewController.runId = self.runId;
+                            newViewController.activeItem  = item;
+                            
+                            // Move to another UINavigationController or UITabBarController etc.
+                            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                            [self.navigationController pushViewController:newViewController animated:YES];
+                            
+                            newViewController = nil;
+                        }
+                        
                         // Render Data Collection Task.
                     }
                     break;
@@ -480,7 +494,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                                         views:viewsDictionary]];
     
     // Fix itemsTable/descriptionText Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==200)]-[itemsTable]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==300)]-[itemsTable]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];

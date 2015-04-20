@@ -7,6 +7,7 @@
 //
 #import "ARLAppDelegate.h"
 #import "ARLNetworking.h"
+#import "ARLBeanNames.h"
 
 #import "Game.h"
 

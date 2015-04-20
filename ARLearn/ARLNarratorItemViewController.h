@@ -28,6 +28,8 @@
 #import "ARLCoreDataUtils.h"
 #import "ARLUtils.h"
 
+#import "UIImage+Resize.h"
+
 @interface ARLNarratorItemViewController : UICollectionViewController
 <NSFetchedResultsControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UITextFieldDelegate>
 

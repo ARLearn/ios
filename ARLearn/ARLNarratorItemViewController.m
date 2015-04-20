@@ -980,9 +980,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
         [self createImageResponse:imageData
                                 width:[NSNumber numberWithFloat:image.size.width]
-                               height:[NSNumber numberWithFloat:image.size.height]
-                              withRun:self.run
-                      withGeneralItem:self.activeItem];
+                               height:[NSNumber numberWithFloat:image.size.height]];
     } else {
         id object = [info objectForKey:UIImagePickerControllerMediaURL];
         
@@ -993,9 +991,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         // voor conversie nar mp4
         
         NSData* videoData = [NSData dataWithContentsOfURL:object];
-        [self createVideoResponse:videoData
-                          withRun:self.run
-                  withGeneralItem:self.activeItem];
+        [self createVideoResponse:videoData];
         
         // [picker dismissViewControllerAnimated:YES completion:NULL];
     }
@@ -1134,7 +1130,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (void) createValueResponse:(NSString *)value
                      withRun:(Run *)run
              withGeneralItem:(GeneralItem *)generalItem {
-
+    
     NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
                              value, @"value",
                              nil];
@@ -1149,12 +1145,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self responseWithDictionary:data];
 }
 
-- (void) chttps://code.google.com/p/arlearn-ios.arlearnv3reateImageResponse:(NSData *)data
+- (void) createImageResponse:(NSData *)data
                        width:(NSNumber*)width
-                      height:(NSNumber *)height
-                     withRun:(Run *)run
-             withGeneralItem:(GeneralItem *)generalItem {
-
+                      height:(NSNumber *)height {
+    
     u_int32_t random = arc4random();
     NSString *fileName =[NSString stringWithFormat:@"%u.%@", random, @"jpg"];
     
@@ -1175,10 +1169,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
   [self responseWithDictionary:jsonDict];
 }
 
-- (void) createVideoResponse:(NSData *)data
-                     withRun:(Run *)run
-             withGeneralItem:(GeneralItem *)generalItem {
-    
+- (void) createVideoResponse:(NSData *)data {
     u_int32_t random = arc4random();
     NSString *fileName =[NSString stringWithFormat:@"%u.%@", random, @"mov"];
     
@@ -1193,8 +1184,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 - (void) createAudioResponse:(NSData *)data
-                     withRun:(Run *)run
-             withGeneralItem:(GeneralItem *)generalItem
                     fileName:(NSString *)fileName {
 #warning TODO Port NarratorItem
 }

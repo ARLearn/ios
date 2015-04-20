@@ -34,6 +34,9 @@ typedef enum {
     
     // Run
     RunBean,
+    RunList,
+    
+    // Response
     ResponseList,
 } BeanIds;
 

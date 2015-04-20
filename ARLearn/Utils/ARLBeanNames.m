@@ -48,6 +48,8 @@
             @"org.celstec.arlearn2.beans.game.GameFile": @(GameFileBean),
             
             @"org.celstec.arlearn2.beans.run.Run": @(RunBean),
+            @"org.celstec.arlearn2.beans.run.RunList": @(RunList),
+            
             @"org.celstec.arlearn2.beans.run.ResponseList": @(ResponseList),
         };
         
