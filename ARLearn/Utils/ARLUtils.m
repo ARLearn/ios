@@ -874,4 +874,19 @@ static NSCondition *_theAbortLock;
     //return [theHtml stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 
+/*!
+ *  Convert NSDictionary to a JSON NSString.
+ *
+ *  @param jsonDictionary The NSDictionary to convert.
+ *
+ *  @return The resulting JSON NSString.
+ */
++ (NSString *)jsonString:(NSDictionary *) jsonDictionary {
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary
+                                                       options:0
+                                                         error:&error];
+    
+    return [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding];
+}
 @end

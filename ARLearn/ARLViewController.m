@@ -261,7 +261,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
         NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
         
         // Uses MagicalRecord for Saving!
-        TestAccount *acc = (TestAccount *)[ARLUtils ManagedObjectFromDictionary:data entityName:@"TestAccount" nameFixups:fixups
+        TestAccount *acc = (TestAccount *)[ARLUtils ManagedObjectFromDictionary:data entityName:[TestAccount MR_entityName] // @"TestAccount"
+                                                                     nameFixups:fixups
                                                                  managedContext:ctx];
         
         // Log(@"%@ %@", acc.name, acc.email);

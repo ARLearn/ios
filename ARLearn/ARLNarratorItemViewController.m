@@ -790,7 +790,9 @@ typedef NS_ENUM(NSInteger, responses) {
 - (void) collectAudio {
     ARLAudioRecorderViewController *controller = [[ARLAudioRecorderViewController alloc] init];
     
-    controller.inquiry = self.inquiry;
+#warning TODO Port NarratorItem
+    // controller.inquiry = self.inquiry;
+  
     controller.generalItem = self.activeItem;
     
     [self.navigationController pushViewController:controller animated:TRUE];
@@ -874,7 +876,7 @@ typedef NS_ENUM(NSInteger, responses) {
                 NSNumber *number = [formatter numberFromString:trimmed];
                 
                 if (number != nil) {
-                    [Response createValueResponse:trimmed //[trimmed stringByReplacingOccurrencesOfString:decimalSymbol withString:@"."]
+                    [self createValueResponse:trimmed //[trimmed stringByReplacingOccurrencesOfString:decimalSymbol withString:@"."]
                                           withRun:self.run
                                   withGeneralItem:self.activeItem];
                 } else {
@@ -889,18 +891,15 @@ typedef NS_ENUM(NSInteger, responses) {
             }
                 break;
             case 2:
-                [Response createTextResponse: trimmed
+                [self createTextResponse: trimmed
                                      withRun:self.run
                              withGeneralItem:self.activeItem];
                 break;
         }
         
-        [Action initAction:@"answer_given"
-                    forRun:self.run
-            forGeneralItem:self.activeItem
-    inManagedObjectContext:self.activeItem.managedObjectContext];
-        
-        [ARLLog SaveNLogAbort:self.activeItem.managedObjectContext func:[NSString stringWithFormat:@"%s",__func__]];
+        [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                    activeItem:self.activeItem
+                                          verb:@"answer_given"];
         
         if (ARLNetworking.networkAvailable) {
 #warning TODO Port NarratorItem
@@ -979,7 +978,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     if (image) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
-        [Response createImageResponse:imageData
+        [self createImageResponse:imageData
                                 width:[NSNumber numberWithFloat:image.size.width]
                                height:[NSNumber numberWithFloat:image.size.height]
                               withRun:self.run
@@ -994,28 +993,22 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         // voor conversie nar mp4
         
         NSData* videoData = [NSData dataWithContentsOfURL:object];
-        [Response createVideoResponse:videoData
-                              withRun:self.run
-                      withGeneralItem:self.activeItem];
+        [self createVideoResponse:videoData
+                          withRun:self.run
+                  withGeneralItem:self.activeItem];
         
         // [picker dismissViewControllerAnimated:YES completion:NULL];
     }
     
-    [Action initAction:@"answer_given" forRun:self.run forGeneralItem:self.activeItem inManagedObjectContext:self.activeItem.managedObjectContext];
+    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                activeItem:self.activeItem
+                                      verb:@"answer_given"];
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
-    if (self.activeItem.managedObjectContext) {
-        [ARLLog SaveNLogAbort:self.activeItem.managedObjectContext func:[NSString stringWithFormat:@"%s",__func__]];
-        
-        [self.activeItem.managedObjectContext.parentContext performBlock:^{
-            [ARLLog SaveNLogAbort:self.activeItem.managedObjectContext.parentContext func:[NSString stringWithFormat:@"%s",__func__]];
-        }];
-        
-        if (ARLNetworking.networkAvailable) {
+    if (ARLNetworking.networkAvailable) {
 #warning TODO Port NarratorItem
-            //            [ARLCloudSynchronizer syncResponses: self.activeItem.managedObjectContext];
-        }
+        //            [ARLCloudSynchronizer syncResponses: self.activeItem.managedObjectContext];
     }
 }
 
@@ -1119,5 +1112,139 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self.imagePickerController dismissViewControllerAnimated:YES completion:NULL];
 }
 
+- (void) createTextResponse:(NSString *)text
+                    withRun:(Run*)run
+            withGeneralItem:(GeneralItem *)generalItem {
+
+    NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
+                             text, @"text", nil];
+    
+    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [ARLUtils jsonString:jsonDict],                                         @"value",
+                          [NSNumber numberWithBool:NO],                                           @"synchronized",
+                          [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
+                          [NSNumber numberWithInt:TEXT],                                          @"responseType",
+                          nil];
+    
+    [self responseWithDictionary:data];
+}
+
+#warning TODO Port NarratorItem
+
+- (void) createValueResponse:(NSString *)value
+                     withRun:(Run *)run
+             withGeneralItem:(GeneralItem *)generalItem {
+
+    NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
+                             value, @"value",
+                             nil];
+    
+    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [ARLUtils jsonString:jsonDict],                                         @"value",
+                          [NSNumber numberWithBool:NO],                                           @"synchronized",
+                          [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
+                          [NSNumber numberWithInt:NUMBER],                                        @"responseType",
+                          nil];
+    
+    [self responseWithDictionary:data];
+}
+
+- (void) createImageResponse:(NSData *)data
+                       width:(NSNumber*)width
+                      height:(NSNumber *)height
+                     withRun:(Run *)run
+             withGeneralItem:(GeneralItem *)generalItem {
+
+    u_int32_t random = arc4random();
+    NSString *fileName =[NSString stringWithFormat:@"%u.%@", random, @"jpg"];
+    
+    //    // Create thumb here...
+    UIImage *img = [[UIImage alloc] initWithData:data];
+    NSData *thumb = UIImageJPEGRepresentation([img thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationDefault], 1.0);
+    
+    NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
+                             data,                              @"data",
+                             width,                             @"width",
+                             height,                            @"height",
+                             @"application/jpg",                @"contentType",
+                             [NSNumber numberWithInt:PHOTO],    @"responseType",
+                             fileName,                          @"fileName",
+                             thumb,                             @"thumb",
+                             nil];
+
+  [self responseWithDictionary:jsonDict];
+}
+
+- (void) createVideoResponse:(NSData *)data
+                     withRun:(Run *)run
+             withGeneralItem:(GeneralItem *)generalItem {
+    
+    u_int32_t random = arc4random();
+    NSString *fileName =[NSString stringWithFormat:@"%u.%@", random, @"mov"];
+    
+    NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
+                             data,                              @"data",
+                             @"video/quicktime",                @"contentType",
+                             [NSNumber numberWithInt:VIDEO],    @"responseType",
+                             fileName,                          @"fileName",
+                             nil];
+    
+    [self responseWithDictionary:jsonDict];
+}
+
+- (void) createAudioResponse:(NSData *)data
+                     withRun:(Run *)run
+             withGeneralItem:(GeneralItem *)generalItem
+                    fileName:(NSString *)fileName {
+#warning TODO Port NarratorItem
+}
+
+- (Response *)responseWithDictionary:(NSDictionary *)respDict
+{
+#warning TODO Port NarratorItem
+    //    @property (nonatomic, retain) NSString * contentType;
+    //    @property (nonatomic, retain) NSData * data;
+    //    @property (nonatomic, retain) NSString * fileName;
+    //    @property (nonatomic, retain) NSNumber * height;
+    //    @property (nonatomic, retain) NSNumber * responseId;
+    //    @property (nonatomic, retain) NSNumber * synchronized;
+    //    @property (nonatomic, retain) NSData * thumb;
+    //    @property (nonatomic, retain) NSNumber * timeStamp;
+    //    @property (nonatomic, retain) NSString * value;
+    //    @property (nonatomic, retain) NSNumber * width;
+    //    @property (nonatomic, retain) NSNumber * responseType;
+    //    @property (nonatomic, retain) NSNumber * lat;
+    //    @property (nonatomic, retain) NSNumber * lng;
+    //    @property (nonatomic, retain) Account *account;
+    //    @property (nonatomic, retain) GeneralItem *generalItem;
+    //    @property (nonatomic, retain) Run *run;
+    
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
+//    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+//                          @"Wim Slot",          @"xname",
+//                          @"Wim",               @"givenName",
+//                          @"Slot",              @"familyName",
+//                          @"wim.slot@ou.nl",    @"email",
+//                          nil];
+    
+    NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Json,                        CoreData
+                                // @"description",                  @"richTextDescription",
+                                nil];
+    
+    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Data,                         CoreData
+                                [ARLNetworking CurrentAccount],  @"account",
+                                self.activeItem,                 @"generalItem",
+                                self.run,                        @"run",
+                                nil];
+    
+    return (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
+                                                  entityName:[Action MR_entityName]
+                                                  nameFixups:namefixups
+                                                  dataFixups:datafixups
+                                              managedContext:ctx];
+}
 
 @end

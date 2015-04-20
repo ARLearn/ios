@@ -205,7 +205,7 @@ NSInteger downloaded = 0;
     
     NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
                                 // Json,                        CoreData
-                                @"dscription",                  @"richTextDescription",
+                                @"description",                  @"richTextDescription",
                                 nil];
     
     NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -237,7 +237,7 @@ NSInteger downloaded = 0;
             // Uses MagicalRecord for Creation and Saving!
             DLog(@"Creating Game: %@", [game valueForKey:@"title"])
             item = (Game *)[ARLUtils ManagedObjectFromDictionary:game
-                                                      entityName:@"Game"
+                                                      entityName:[Game MR_entityName] //@"Game"
                                                       nameFixups:namefixups
                                                       dataFixups:datafixups
                                                   managedContext:ctx];
@@ -418,7 +418,7 @@ NSInteger downloaded = 0;
                     // Uses MagicalRecord for Creation and Saving!
                     DLog(@"Creating Run: %@", [run valueForKey:@"title"])
                     item = (Run *)[ARLUtils ManagedObjectFromDictionary:run
-                                                             entityName:@"Run"
+                                                             entityName:[Run MR_entityName] //@"Run"
                                                              nameFixups:namefixups
                                                              dataFixups:datafixups
                                                          managedContext:ctx];
@@ -540,7 +540,7 @@ NSInteger downloaded = 0;
             if (action==nil) {
                 Log(@"Creating Action");
                 action = (Action *)[ARLUtils ManagedObjectFromDictionary:item
-                                                              entityName:@"Action"
+                                                              entityName:[Action MR_entityName] // @"Action"
                                                           managedContext:ctx];
                 
                 // Manual Fixups;
@@ -714,7 +714,7 @@ NSInteger downloaded = 0;
                 // Uses MagicalRecord for Creation and Saving!
                 DLog(@"Creating GeneralItem: %@", [generalItem valueForKey:@"name"])
                 item = (GeneralItem *)[ARLUtils ManagedObjectFromDictionary:generalItem
-                                                                 entityName:@"GeneralItem"
+                                                                 entityName:[GeneralItem MR_entityName] // @"GeneralItem"
                                                                  nameFixups:namefixups
                                                                  dataFixups:datafixups
                                                              managedContext:ctx];

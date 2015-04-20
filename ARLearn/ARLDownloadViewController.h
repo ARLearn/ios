@@ -7,6 +7,7 @@
 //
 
 #import "UIViewController+UI.h"
+#import "UIImage-categories/UIImage+Alpha.h"
 
 #import "ARLAppDelegate.h"
 #import "ARLNetworking.h"

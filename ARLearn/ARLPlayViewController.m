@@ -490,32 +490,37 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
  *  Mark the ActiveItem as Read.
  */
 - (void)MarkActiveItemAsRead {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-                              self.runId, self.activeItem.generalItemId, @"read"];
-    Action *action = [Action MR_findFirstWithPredicate:predicate];
+    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                activeItem:self.activeItem
+                                      verb:@"read"];
     
-    if (!action) {
-        action = [Action MR_createEntity];
-        {
-            action.account = [ARLNetworking CurrentAccount];
-            action.action = @"read";
-            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                            withValue:self.activeItem.generalItemId];
-            action.run = [Run MR_findFirstByAttribute:@"runId"
-                                            withValue:self.runId];
-            action.synchronized = [NSNumber numberWithBool:NO];
-            action.time = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000];
-        }
-        
-        // Saves any modification made after ManagedObjectFromDictionary.
-        [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        
-        
-        DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, @"read", self.runId);
-    } else {
-        DLog(@"Generalitem %@ for Run %@ is already marked as %@", self.activeItem.generalItemId, self.runId, @"read");
-    }
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
+//                              self.runId, self.activeItem.generalItemId, @"read"];
+//    Action *action = [Action MR_findFirstWithPredicate:predicate];
+//    
+//    if (!action) {
+//        action = [Action MR_createEntity];
+//        {
+//            action.account = [ARLNetworking CurrentAccount];
+//            action.action = @"read";
+//            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+//                                                            withValue:self.activeItem.generalItemId];
+//            action.run = [Run MR_findFirstByAttribute:@"runId"
+//                                            withValue:self.runId];
+//            action.synchronized = [NSNumber numberWithBool:NO];
+//            action.time = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000];
+//        }
+//        
+//        // Saves any modification made after ManagedObjectFromDictionary.
+//        [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
+//        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+//        
+//        
+//        DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, @"read", self.runId);
+//    } else {
+//        DLog(@"Generalitem %@ for Run %@ is already marked as %@", self.activeItem.generalItemId, self.runId, @"read");
+//    }
+    
     
     // TODO Find a better spot to publish actions (and make it a NSOperation)!
     [self PublishActionsToServer];
@@ -527,7 +532,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 /*!
  *  Post all unsynced Actions to the server.
  */
--(void)PublishActionsToServer {
+- (void)PublishActionsToServer {
     
     // TODO Filter on runId too?
     
@@ -631,7 +636,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 // Create a new Record.
                 //
                 giv = (GeneralItemVisibility *)[ARLUtils ManagedObjectFromDictionary:item
-                                                                          entityName:@"GeneralItemVisibility"
+                                                                          entityName:[GeneralItemVisibility MR_entityName] // @"GeneralItemVisibility"
                                                                       managedContext:ctx];
                 
                 giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"

@@ -86,6 +86,10 @@
 		8DA9799A1AE5400200709E72 /* ARLWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979991AE5400200709E72 /* ARLWebViewController.m */; };
 		8DA9799D1AE5406100709E72 /* ARLAudioRecordButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9799C1AE5406100709E72 /* ARLAudioRecordButtons.m */; };
 		8DA979A11AE5469F00709E72 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979A01AE5469F00709E72 /* Response.m */; };
+		8DBFE4141AE560EC000F61F2 /* ARLCoreDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */; };
+		8DBFE4231AE57675000F61F2 /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE41E1AE57675000F61F2 /* UIImage+Alpha.m */; };
+		8DBFE4241AE57675000F61F2 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4201AE57675000F61F2 /* UIImage+Resize.m */; };
+		8DBFE4251AE57675000F61F2 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4221AE57675000F61F2 /* UIImage+RoundedCorner.m */; };
 		8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DC418AA19878AF300054466 /* Storyboard.storyboard */; };
 		8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC418AD19878F8000054466 /* QuartzCore.framework */; };
 		8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DC418B01987C14900054466 /* ARLMyGamesViewController.m */; };
@@ -264,6 +268,14 @@
 		8DA9799E1AE545B600709E72 /* ARLDatabase v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ARLDatabase v3.xcdatamodel"; sourceTree = "<group>"; };
 		8DA9799F1AE5469F00709E72 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
 		8DA979A01AE5469F00709E72 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
+		8DBFE4121AE560EC000F61F2 /* ARLCoreDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLCoreDataUtils.h; sourceTree = "<group>"; };
+		8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLCoreDataUtils.m; sourceTree = "<group>"; };
+		8DBFE41D1AE57675000F61F2 /* UIImage+Alpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Alpha.h"; path = "ARLearn/Extensions/UIImage+Alpha.h"; sourceTree = "<group>"; };
+		8DBFE41E1AE57675000F61F2 /* UIImage+Alpha.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Alpha.m"; path = "ARLearn/Extensions/UIImage+Alpha.m"; sourceTree = "<group>"; };
+		8DBFE41F1AE57675000F61F2 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Resize.h"; path = "ARLearn/Extensions/UIImage+Resize.h"; sourceTree = "<group>"; };
+		8DBFE4201AE57675000F61F2 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Resize.m"; path = "ARLearn/Extensions/UIImage+Resize.m"; sourceTree = "<group>"; };
+		8DBFE4211AE57675000F61F2 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+RoundedCorner.h"; path = "ARLearn/Extensions/UIImage+RoundedCorner.h"; sourceTree = "<group>"; };
+		8DBFE4221AE57675000F61F2 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+RoundedCorner.m"; path = "ARLearn/Extensions/UIImage+RoundedCorner.m"; sourceTree = "<group>"; };
 		8DC418AB19878AF300054466 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		8DC418AD19878F8000054466 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8DC418AF1987C14900054466 /* ARLMyGamesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMyGamesViewController.h; sourceTree = "<group>"; };
@@ -615,6 +627,7 @@
 		8D6FB70D1A0A43CF0085ABA5 /* External */ = {
 			isa = PBXGroup;
 			children = (
+				8DBFE4191AE574E2000F61F2 /* UIImage-categories */,
 				8DE5E5141A0A3B6900A60381 /* NSURLSession-SynchronousTask */,
 				8D219A2D196D31350044616A /* MagicalRecord */,
 				8D55B2811975633600C0A56B /* TPKeyboardAvoiding */,
@@ -647,6 +660,8 @@
 				8D87A51019864A3C00842BC6 /* ARLQueryCache.m */,
 				8D219A26196D2DBD0044616A /* ARLUtils.h */,
 				8D219A27196D2DBD0044616A /* ARLUtils.m */,
+				8DBFE4121AE560EC000F61F2 /* ARLCoreDataUtils.h */,
+				8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -671,6 +686,19 @@
 				8D87A51719869CD400842BC6 /* ARLButton.m */,
 			);
 			path = SubClasses;
+			sourceTree = "<group>";
+		};
+		8DBFE4191AE574E2000F61F2 /* UIImage-categories */ = {
+			isa = PBXGroup;
+			children = (
+				8DBFE41D1AE57675000F61F2 /* UIImage+Alpha.h */,
+				8DBFE41E1AE57675000F61F2 /* UIImage+Alpha.m */,
+				8DBFE41F1AE57675000F61F2 /* UIImage+Resize.h */,
+				8DBFE4201AE57675000F61F2 /* UIImage+Resize.m */,
+				8DBFE4211AE57675000F61F2 /* UIImage+RoundedCorner.h */,
+				8DBFE4221AE57675000F61F2 /* UIImage+RoundedCorner.m */,
+			);
+			name = "UIImage-categories";
 			sourceTree = "<group>";
 		};
 		8DC418A919878AF300054466 /* en.lproj */ = {
@@ -804,6 +832,7 @@
 				8D7A8D2A197EA09B00B37013 /* ARLNearbyViewController.m in Sources */,
 				8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				8D87A50B1986427000842BC6 /* ARLDelayOperation.m in Sources */,
+				8DBFE4231AE57675000F61F2 /* UIImage+Alpha.m in Sources */,
 				8DDD7E481A324506004D501B /* ARLDownloadViewController.m in Sources */,
 				8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */,
 				8DDECF361976AAB9007CECB4 /* Game.m in Sources */,
@@ -811,7 +840,9 @@
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
 				8D6FB7151A1225AB0085ABA5 /* ARLOauthWebViewController.m in Sources */,
 				8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */,
+				8DBFE4141AE560EC000F61F2 /* ARLCoreDataUtils.m in Sources */,
 				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
+				8DBFE4251AE57675000F61F2 /* UIImage+RoundedCorner.m in Sources */,
 				8DDECF451976AABA007CECB4 /* Account.m in Sources */,
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,
 				8DA9798E1AE53FC900709E72 /* ARLAudioRecorder.m in Sources */,
@@ -825,6 +856,7 @@
 				8DA9799A1AE5400200709E72 /* ARLWebViewController.m in Sources */,
 				8D87A51419868C3900842BC6 /* ARLGameViewController.m in Sources */,
 				8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */,
+				8DBFE4241AE57675000F61F2 /* UIImage+Resize.m in Sources */,
 				8D55B28C1975633600C0A56B /* TPKeyboardAvoidingTableView.m in Sources */,
 				8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */,
 				8D219A7A196D31350044616A /* NSManagedObjectContext+MagicalThreading.m in Sources */,

@@ -280,4 +280,6 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 
 + (NSString *)cleanHtml:(NSString *)theHtml;
 
++ (NSString *)jsonString:(NSDictionary *) jsonDictionary;
+
 @end

@@ -11,6 +11,7 @@
 #import "GeneralItemVisibility.h"
 #import "Run.h"
 
+#import "ARLCoreDataUtils.h"
 #import "ARLBeanNames.h"
 #import "ARLUtils.h"
 #import "ARLNetworking.h"
