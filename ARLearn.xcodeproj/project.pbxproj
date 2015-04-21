@@ -84,7 +84,6 @@
 		8DA979971AE53FEA00709E72 /* ARLNarratorItemHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979961AE53FEA00709E72 /* ARLNarratorItemHeaderViewController.m */; };
 		8DA9799A1AE5400200709E72 /* ARLWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979991AE5400200709E72 /* ARLWebViewController.m */; };
 		8DA9799D1AE5406100709E72 /* ARLAudioRecordButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9799C1AE5406100709E72 /* ARLAudioRecordButtons.m */; };
-		8DA979A11AE5469F00709E72 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979A01AE5469F00709E72 /* Response.m */; };
 		8DBFE4141AE560EC000F61F2 /* ARLCoreDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */; };
 		8DBFE4231AE57675000F61F2 /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE41E1AE57675000F61F2 /* UIImage+Alpha.m */; };
 		8DBFE4241AE57675000F61F2 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4201AE57675000F61F2 /* UIImage+Resize.m */; };
@@ -96,6 +95,7 @@
 		8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC418AD19878F8000054466 /* QuartzCore.framework */; };
 		8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DC418B01987C14900054466 /* ARLMyGamesViewController.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
+		8DCCBB281AE66E0F0004359A /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DCCBB271AE66E0F0004359A /* Response.m */; };
 		8DDD7E481A324506004D501B /* ARLDownloadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDD7E471A324506004D501B /* ARLDownloadViewController.m */; };
 		8DDECF211976AAB8007CECB4 /* GeneralItemVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF201976AAB8007CECB4 /* GeneralItemVisibility.m */; };
 		8DDECF241976AAB9007CECB4 /* Inquiry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF231976AAB9007CECB4 /* Inquiry.m */; };
@@ -264,7 +264,6 @@
 		8DA979991AE5400200709E72 /* ARLWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLWebViewController.m; sourceTree = "<group>"; };
 		8DA9799B1AE5406100709E72 /* ARLAudioRecordButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLAudioRecordButtons.h; sourceTree = "<group>"; };
 		8DA9799C1AE5406100709E72 /* ARLAudioRecordButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLAudioRecordButtons.m; sourceTree = "<group>"; };
-		8DA979A01AE5469F00709E72 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
 		8DBFE4121AE560EC000F61F2 /* ARLCoreDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLCoreDataUtils.h; sourceTree = "<group>"; };
 		8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLCoreDataUtils.m; sourceTree = "<group>"; };
 		8DBFE41D1AE57675000F61F2 /* UIImage+Alpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Alpha.h"; path = "ARLearn/Extensions/UIImage+Alpha.h"; sourceTree = "<group>"; };
@@ -283,6 +282,8 @@
 		8DC418AF1987C14900054466 /* ARLMyGamesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLMyGamesViewController.h; sourceTree = "<group>"; };
 		8DC418B01987C14900054466 /* ARLMyGamesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLMyGamesViewController.m; sourceTree = "<group>"; };
 		8DC69663196D500E00FA1505 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		8DCCBB261AE66E0F0004359A /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
+		8DCCBB271AE66E0F0004359A /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
 		8DDD7E461A324506004D501B /* ARLDownloadViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLDownloadViewController.h; sourceTree = "<group>"; };
 		8DDD7E471A324506004D501B /* ARLDownloadViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLDownloadViewController.m; sourceTree = "<group>"; };
 		8DDECF1F1976AAB8007CECB4 /* GeneralItemVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItemVisibility.h; sourceTree = "<group>"; };
@@ -305,7 +306,6 @@
 		8DDECF381976AAB9007CECB4 /* Run.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Run.m; sourceTree = "<group>"; };
 		8DDECF3A1976AABA007CECB4 /* GeneralItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralItem.h; sourceTree = "<group>"; };
 		8DDECF3B1976AABA007CECB4 /* GeneralItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralItem.m; sourceTree = "<group>"; };
-		8DDECF3D1976AABA007CECB4 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
 		8DDECF401976AABA007CECB4 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		8DDECF411976AABA007CECB4 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 		8DDECF431976AABA007CECB4 /* Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Account.h; sourceTree = "<group>"; };
@@ -479,7 +479,8 @@
 				8DDECF231976AAB9007CECB4 /* Inquiry.m */,
 				8DDECF401976AABA007CECB4 /* Message.h */,
 				8DDECF411976AABA007CECB4 /* Message.m */,
-				8DDECF3D1976AABA007CECB4 /* Response.h */,
+				8DCCBB261AE66E0F0004359A /* Response.h */,
+				8DCCBB271AE66E0F0004359A /* Response.m */,
 				8DDECF371976AAB9007CECB4 /* Run.h */,
 				8DDECF381976AAB9007CECB4 /* Run.m */,
 				8DDECF251976AAB9007CECB4 /* SynchronizationBookKeeping.h */,
@@ -840,6 +841,7 @@
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
 				8D6FB7151A1225AB0085ABA5 /* ARLOauthWebViewController.m in Sources */,
+				8DCCBB281AE66E0F0004359A /* Response.m in Sources */,
 				8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */,
 				8DBFE4141AE560EC000F61F2 /* ARLCoreDataUtils.m in Sources */,
 				8D219655196D26080044616A /* ARLAppDelegate.m in Sources */,
@@ -902,7 +904,6 @@
 				8D219A82196D31350044616A /* MagicalRecord+Setup.m in Sources */,
 				8D00B2391A5C237600B4803C /* ARLBeanNames.m in Sources */,
 				8D219A6D196D31350044616A /* NSEntityDescription+MagicalDataImport.m in Sources */,
-				8DA979A11AE5469F00709E72 /* Response.m in Sources */,
 				8DA979971AE53FEA00709E72 /* ARLNarratorItemHeaderViewController.m in Sources */,
 				8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */,
 				8D21965B196D26080044616A /* ARLViewController.m in Sources */,

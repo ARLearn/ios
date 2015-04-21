@@ -899,7 +899,7 @@ typedef NS_ENUM(NSInteger, responses) {
         
         [ARLCoreDataUtils CreateOrUpdateAction:self.runId
                                     activeItem:self.activeItem
-                                          verb:@"answer_given"];
+                                          verb:answer_given_action];
         
         if (ARLNetworking.networkAvailable) {
 #warning TODO Port NarratorItem
@@ -998,7 +998,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     [ARLCoreDataUtils CreateOrUpdateAction:self.runId
                                 activeItem:self.activeItem
-                                      verb:@"answer_given"];
+                                      verb:answer_given_action];
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     

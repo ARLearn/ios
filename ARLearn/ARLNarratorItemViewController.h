@@ -27,6 +27,7 @@
 #import "ARLNarratorItemHeaderViewController.h"
 #import "ARLCoreDataUtils.h"
 #import "ARLUtils.h"
+#import "ARLBeanNames.h"
 
 #import "UIImage+Resize.h"
 

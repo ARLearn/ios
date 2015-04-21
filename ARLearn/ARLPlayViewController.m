@@ -182,7 +182,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                        @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
                                        self.runId,
                                        item.generalItemId,
-                                       @"read"];
+                                       read_action];
             
             NSString *text = [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];
             
@@ -395,8 +395,21 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 #warning this code should move to the view handling a single GeneralItem!
             
             switch (bid) {
+                case NarratorItem:
+                    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                                activeItem:self.activeItem
+                                                      verb:read_action];
+                    
+                    [self UpdateItemVisibility];
+                    
+                    break;
+                    
                 case AudioObject:
                 {
+                    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                                activeItem:self.activeItem
+                                                      verb:read_action];
+                    
                     NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
                     
                     NSString *audioFeed = [json valueForKey:@"audioFeed"];
@@ -439,19 +452,25 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     DLog(@"audioPlayerDidFinishPlaying");
     
-    [self MarkActiveItemAsRead];
-    
     [self UpdateItemVisibility];
     
     [self.itemsTable setUserInteractionEnabled:YES];
+    
+    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                activeItem:self.activeItem
+                                      verb:complete_action];
+    
+    // TODO Find a better spot to publish actions (and make it a NSOperation)!
+    [self PublishActionsToServer];
+    
+    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
+    [self DownloadgeneralItemVisibilities];
     
     self.activeItem = nil;
 }
 
 - (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
     DLog(@"audioPlayerDecodeErrorDidOccur");
-    
-    [self MarkActiveItemAsRead];
     
     [self UpdateItemVisibility];
     
@@ -522,36 +541,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (void)MarkActiveItemAsRead {
     [ARLCoreDataUtils CreateOrUpdateAction:self.runId
                                 activeItem:self.activeItem
-                                      verb:@"read"];
-    
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-//                              self.runId, self.activeItem.generalItemId, @"read"];
-//    Action *action = [Action MR_findFirstWithPredicate:predicate];
-//    
-//    if (!action) {
-//        action = [Action MR_createEntity];
-//        {
-//            action.account = [ARLNetworking CurrentAccount];
-//            action.action = @"read";
-//            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-//                                                            withValue:self.activeItem.generalItemId];
-//            action.run = [Run MR_findFirstByAttribute:@"runId"
-//                                            withValue:self.runId];
-//            action.synchronized = [NSNumber numberWithBool:NO];
-//            action.time = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000];
-//        }
-//        
-//        // Saves any modification made after ManagedObjectFromDictionary.
-//        [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-//        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-//        
-//        
-//        DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, @"read", self.runId);
-//    } else {
-//        DLog(@"Generalitem %@ for Run %@ is already marked as %@", self.activeItem.generalItemId, self.runId, @"read");
-//    }
-    
-    
+                                      verb:read_action];
+        
     // TODO Find a better spot to publish actions (and make it a NSOperation)!
     [self PublishActionsToServer];
     
@@ -757,6 +748,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     long long int now = [ARLUtils Now];
     
+    Log(@"Now: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:now] stringValue]]);
+    
     for (GeneralItem *item in self.items) {
         NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
         
@@ -768,6 +761,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             satisfiedAt = [self satisfiedAt:self.runId
                                   dependsOn:dependsOn
                                         ctx:ctx];
+
+            Log(@"SatisfiedAt: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:satisfiedAt] stringValue]]);
         }
         
         if (satisfiedAt<now && satisfiedAt != -1)
@@ -846,7 +841,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
         switch ([ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]]) {
             case ActionDependency: {
                 // See Android's DependencyLocalObject:actionSatisfiedAt
-                long long int minSatisfiedAt = LONG_MAX;
+                long long int minSatisfiedAt = LLONG_MAX;
                 
                 NSPredicate *predicate = [NSPredicate predicateWithFormat:
                                           @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
@@ -860,6 +855,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     long long int newValue = action.time ? [action.time longLongValue]: 0l;
                     
                     minSatisfiedAt = MIN(minSatisfiedAt, newValue);
+
+                    Log(@"newValue: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:newValue] stringValue]]);
+                    Log(@"minSatisfiedAt: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:minSatisfiedAt] stringValue]]);
+                    
                 }
                 
                 return minSatisfiedAt;
@@ -867,7 +866,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 
             case ProximityDependency: {
                 // See Android's DependencyLocalObject:proximitySatisfiedAt
-                long long int minSatisfiedAt = LONG_MAX;
+                long long int minSatisfiedAt = LLONG_MIN;
                 
                 NSString *lat = [NSString stringWithFormat:@"%f",
                                  (double)((long)([[dependsOn valueForKey:@"lat"] doubleValue]*1e6)/1e6)];
@@ -891,8 +890,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                         minSatisfiedAt = MIN(minSatisfiedAt, newValue);
                     }
                 }
+
+#pragma warning is LLONG_MAX here correct?
                 
-                return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
+                return minSatisfiedAt == LLONG_MAX ? -1 : minSatisfiedAt;
             }
                 
             case TimeDependency: {
@@ -921,7 +922,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 
             case OrDependency: {
                 // See Android's DependencyLocalObject:orSatisfiedAt
-                long long int minSatisfiedAt = LONG_MAX;
+                long long int minSatisfiedAt = LLONG_MAX;
                 
                 NSArray *deps = [dependsOn valueForKey:@"dependencies"];
                 for (NSDictionary *dep in deps) {
@@ -933,7 +934,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                     }
                 }
                 
-                return minSatisfiedAt == LONG_MAX ? -1 : minSatisfiedAt;
+                return minSatisfiedAt == LLONG_MAX ? -1 : minSatisfiedAt;
             }
                 
             case AndDependency: {

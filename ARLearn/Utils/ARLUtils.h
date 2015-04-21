@@ -258,6 +258,15 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 +(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSString *)stamp;
 
 /*!
+ *  Format a double as a Date/Time.
+ *
+ *  @param stamp        <#stamp description#>
+ *
+ *  @return <#return value description#>
+ */
++(NSString *)formatDateTime:(NSString *)stamp;
+
+/*!
  *  Convert html to an Attributed String.
  *
  *  @param theHtml <#theHtml description#>

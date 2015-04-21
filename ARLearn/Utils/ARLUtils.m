@@ -747,6 +747,17 @@ static NSCondition *_theAbortLock;
     return [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970:[stamp doubleValue]/1000.0f]];
 }
 
+/*!
+ *  Format a double as a Date/Time.
+ *
+ *  @param stamp        <#stamp description#>
+ *
+ *  @return <#return value description#>
+ */
++(NSString *)formatDateTime:(NSString *)stamp {
+    return    [ARLUtils formatDateTime:@"dd-MMM-yyyy" withUnixTime:stamp];
+}
+
 ///*!
 // *  Format a double as a Date/Time.
 // *

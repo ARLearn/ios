@@ -16,9 +16,17 @@
 #import "ARLNetworking.h"
 
 #import "Account.h"
-#import "GeneralItem.h"
+#import "Action.h"
+#import "CurrentItemVisibility.h"
 #import "Game.h"
+#import "GeneralItem.h"
+#import "GeneralItemData.h"
+#import "GeneralItemVisibility.h"
+#import "Inquiry.h"
+#import "Message.h"
+#import "Response.h"
 #import "Run.h"
+#import "SynchronizationBookKeeping.h"
 
 @interface ARLAppDelegate : UIResponder <UIApplicationDelegate, CLLocationManagerDelegate>
 

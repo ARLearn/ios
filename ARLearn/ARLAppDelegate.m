@@ -410,6 +410,20 @@ static NSCondition *_theAbortLock;
     
     [Account MR_deleteAllMatchingPredicate:predicate];
     
+    [Action MR_truncateAll];
+    [CurrentItemVisibility MR_truncateAll];
+    [Game MR_truncateAll];
+    [GeneralItem MR_truncateAll];
+    [GeneralItemData MR_truncateAll];
+    [GeneralItemVisibility MR_truncateAll];
+    
+#pragma warning include Inquiry table in ARLearn?
+    [Inquiry MR_truncateAll];
+    [Message MR_truncateAll];
+    [Response MR_truncateAll];
+    [Run MR_truncateAll];
+    [SynchronizationBookKeeping MR_truncateAll];
+
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 

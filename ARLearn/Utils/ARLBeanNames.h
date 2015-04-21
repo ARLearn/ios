@@ -6,6 +6,10 @@
 //  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
 //
 
+#define read_action @"read"
+#define complete_action @"complete"
+#define answer_given_action @"answer_given"
+
 typedef enum {
     Invalid,
     
