@@ -884,7 +884,9 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 #warning TODO Port NarratorItem
     // controller.inquiry = self.inquiry;
   
-    controller.generalItem = self.activeItem;
+    TODO Move saving to code into viewcontroller?
+    controller.activeItem = self.activeItem;
+    controller.run = self.run;
     
     [self.navigationController pushViewController:controller animated:TRUE];
 }
