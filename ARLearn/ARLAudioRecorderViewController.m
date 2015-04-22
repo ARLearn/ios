@@ -15,8 +15,8 @@
 
 @implementation ARLAudioRecorderViewController
 
-@synthesize inquiry = _inquiry;
-@synthesize generalItem = _generalItem;
+@synthesize run = _run;
+@synthesize activeItem = _activeItem;
 
 - (void) clickedSaveButton: (NSData*) audioData {
 
@@ -48,7 +48,9 @@
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor whiteColor];
+    UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
+    [self.view addSubview:backgroundImage];
+    [self.view sendSubviewToBack:backgroundImage];
     
     self.countField = [[UILabel alloc] init];
     self.countField.text = @"00:00";

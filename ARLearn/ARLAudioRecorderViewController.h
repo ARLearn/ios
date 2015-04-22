@@ -7,15 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import "ARLAudioRecorder.h"
 #import "ARLAudioRecordButtons.h"
 
 @class ARLAudioRecorder;
 @class ARLAudioRecordButtons;
+
 @interface ARLAudioRecorderViewController : UIViewController
 
-@property (nonatomic, weak) GeneralItem* generalItem;
-@property (nonatomic, weak) Inquiry* inquiry;
+@property (nonatomic, weak) GeneralItem* activeItem;
+@property (nonatomic, weak) Run* run;
 
 @property (strong, nonatomic ) ARLAudioRecorder * recorder;
 @property (strong, nonatomic) AVAudioSession *session;

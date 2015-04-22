@@ -789,8 +789,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 - (void)setupFetchedResultsController {
-   // NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Response"];
-
     NSMutableArray *tmp = [[NSMutableArray alloc] init];
     
     if (self.withPicture){
@@ -814,8 +812,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                               [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:NUMBER]]]];
     }
     
-#warning TODO Port NarratorItem
-    
     // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
     NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
     NSPredicate *andPredicate = [NSPredicate predicateWithFormat: @"run.runId = %lld AND generalItem.generalItemId = %lld",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue]];
@@ -823,49 +819,25 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
     
-    // NSFetchRequest *request = [Response MR_requestAllWithPredicate:predicate];
+#warning SOMETIMES BAD-ACCES HERE.
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
     
-    // [request setFetchBatchSize:8];
-    
-    //
-    //    request.sortDescriptors = [NSArray arrayWithObjects:
-    //                               [NSSortDescriptor sortDescriptorWithKey:@"responseType"
-    //                                                             ascending:YES selector:@selector(compare:)],
-    //                               [NSSortDescriptor sortDescriptorWithKey:@"timeStamp"
-    //                                                             ascending:YES selector:@selector(compare:)],
-    //                               nil];
-    
-    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
-    
-    NSFetchRequest *request =  [Response MR_requestAllSortedBy:nil //@"responseType,timeStamp"
+    NSFetchRequest *request =  [Response MR_requestAllSortedBy:nil
                                                      ascending:YES
                                                  withPredicate:predicate
                                                      inContext:ctx];
-    NSArray *recs = [Response MR_findAll];
-    Log(@"Records: %d", [recs count]);
-    
-#warning TODO Port NarratorItem
-    
-    //    [Response MR_fetchController:<#(NSFetchRequest *)#> delegate:<#(id<NSFetchedResultsControllerDelegate>)#> useFileCache:<#(BOOL)#> groupedBy:<#(NSString *)#> inContext:<#(NSManagedObjectContext *)#>]
-    //
+    request.fetchBatchSize = 8;
     
     self.fetchedResultsController = [Response MR_fetchController:request
                                                         delegate:self
                                                     useFileCache:NO
                                                        groupedBy:nil
                                                        inContext:ctx];
-    
-    //  self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
-    //  managedObjectContext:self.inquiry.run.managedObjectContext
-    // sectionNameKeyPath:nil
-    // cacheName:nil];
 
     NSError *error = nil;
     [self.fetchedResultsController performFetch:&error];
 
     ELog(error);
-    
-    //    self.fetchedResultsController.delegate = self;
 }
 
 -(UIImage *) drawText:(NSString*) text inImage:(UIImage*)image atPoint:(CGPoint)point
@@ -995,7 +967,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
  *  Take a Picture.
  */
 - (void) collectImage {
-    if (!self.imagePickerController) {
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        //  if (!self.imagePickerController) {
         self.imagePickerController = [[UIImagePickerController alloc] init];
         
         // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
@@ -1203,11 +1176,33 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (void) createAudioResponse:(NSData *)data
                     fileName:(NSString *)fileName {
 #warning TODO Port NarratorItem
+
+//    Response *response = [Response initResponse:run
+//                                 forGeneralItem:generalItem
+//                                       withData:data
+//                         inManagedObjectContext:generalItem.managedObjectContext];
+//    
+//    if ([fileName hasSuffix:@".m4a"]) {
+//        response.contentType = @"audio/aac";
+//    } else  if ([fileName hasSuffix:@".mp3"]) {
+//        response.contentType = @"audio/mp3";
+//    } else  if ([fileName hasSuffix:@".amr"]) {
+//        response.contentType = @"audio/amr";
+//    } else {
+//        // Fallback.
+//        response.contentType = @"audio/aac";
+//    }
+//    
+//    response.responseType = [NSNumber numberWithInt:AUDIO];
+//    
+//    //    u_int32_t random = arc4random();
+//    response.fileName = fileName;//[NSString stringWithFormat:@"%u.%@", random, @"mp3"];
+//    
+//    response.account = [ARLNetworking CurrentAccount];
 }
 
 - (Response *)responseWithDictionary:(NSDictionary *)respDict
 {
-#warning TODO Port NarratorItem
     //    @property (nonatomic, retain) NSString * contentType;
     //    @property (nonatomic, retain) NSData * data;
     //    @property (nonatomic, retain) NSString * fileName;
@@ -1225,7 +1220,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     //    @property (nonatomic, retain) GeneralItem *generalItem;
     //    @property (nonatomic, retain) Run *run;
     
-    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
 
     Response *response = (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
                                                                 entityName:[Response MR_entityName]
@@ -1233,6 +1228,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                                                 dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
                                                             managedContext:ctx];
     
+    // Fixup object references.
     response.account = [[ARLNetworking CurrentAccount] MR_inContext:ctx];
     response.generalItem = [self.activeItem MR_inContext:ctx];
     response.run = [self.run MR_inContext:ctx];
