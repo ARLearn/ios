@@ -529,7 +529,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                                         views:viewsDictionary]];
     
     // Fix itemsTable/descriptionText Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==300)]-[itemsTable]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==150)]-[itemsTable]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];

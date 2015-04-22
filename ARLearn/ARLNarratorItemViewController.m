@@ -64,256 +64,13 @@ typedef NS_ENUM(NSInteger, responses) {
 @synthesize runId = _runId;
 @synthesize run;
 
-/*!
- *  Getter
- *
- *  @return The Cell Identifier.
- */
--(NSString *) cellIdentifier {
-    return  @"imageItemCell";
-}
-
-- (void)setActiveItem:(GeneralItem *)activeItem {
-    _activeItem = activeItem;
-    
-    NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
-    
-    self.openQuestion = [json valueForKey:@"openQuestion"];
-}
-
-- (GeneralItem *)activeItem {
-    return _activeItem;
-}
-
-- (void)setRunId:(NSNumber *)runId {
-    _runId = runId;
-    
-    self.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
-}
-
-- (NSNumber *)runId {
-    return _runId;
-}
-
-/*!
- *  Getter
- *
- *  @return The Number of Columns.
- */
--(CGFloat) noColumns {
-    return  4.0f;
-}
-
-/*!
- *  Getter
- *
- *  @return The Column Inset.
- */
--(CGFloat) columnInset {
-    return  10.0f;
-}
-
-/*!
- *  Create a UIBarButton with a background image depending on the enabled state.
- *
- *  See http://stackoverflow.com/questions/7101608/setting-image-for-uibarbuttonitem-image-stretched
- *
- *  @param imageString The name of the Image.
- *  @param enabled     If YES the button is enabled else disabled (and having a grayed image).
- *  @param selector    The selector to use when the button is tapped.
- *
- *  @return The created UIBarButtonItem.
- */
-- (UIBarButtonItem *)addUIBarButtonWithImage:(NSString *)imageString enabled:(BOOL)enabled action:(SEL)selector {
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-    
-    if (enabled) {
-        [button addTarget:self action:selector forControlEvents:UIControlEventTouchUpInside];
-    }
-    
-    // button.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    UIImage * image = [UIImage imageNamed:imageString];
-    if (!enabled) {
-        image = [self grayishImage:image];
-    }
-    
-    [button setBackgroundImage:image forState:UIControlStateNormal];
-    [button setEnabled:enabled];
-    
-    return [[UIBarButtonItem alloc] initWithCustomView:button];
-}
-
-/*!
- *  Transform the image in grayscale, while keeping its transparency.
- *
- *  See http://stackoverflow.com/questions/1298867/convert-image-to-grayscale
- *
- *  @param inputImage The Image to be grayed.
- *
- *  @return The GrayScale Image.
- */
-- (UIImage *)grayishImage:(UIImage *)inputImage {
-    UIGraphicsBeginImageContextWithOptions(inputImage.size, NO, inputImage.scale);
-    
-    @autoreleasepool {
-        CGRect imageRect = CGRectMake(0.0f, 0.0f, inputImage.size.width, inputImage.size.height);
-        
-        CGContextRef ctx = UIGraphicsGetCurrentContext();
-        
-        // Draw a white background
-        CGContextSetRGBFillColor(ctx, 1.0f, 1.0f, 1.0f, 1.0f);
-        CGContextFillRect(ctx, imageRect);
-        
-        // Draw the luminosity on top of the white background to get grayscale
-        [inputImage drawInRect:imageRect blendMode:kCGBlendModeLuminosity alpha:1.0f];
-        
-        // Apply the source image's alpha
-        [inputImage drawInRect:imageRect blendMode:kCGBlendModeDestinationIn alpha:1.0f];
-        
-    }
-    
-    UIImage* grayscaleImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return grayscaleImage;
-}
-
-/*!
- *  Process the JSON (the openQuestion object) that is stored with the GeneralItem.
- *
- *  @param jsonDict The openQuestion object in JSON format.
- */
-- (void) processJsonSetup:(NSDictionary *) jsonDict {
-    self.isVisible = YES;
-    
-    self.withAudio =   [(NSNumber*)[jsonDict objectForKey:@"withAudio"] intValue] ==1;
-    self.withPicture = [(NSNumber*)[jsonDict objectForKey:@"withPicture"] intValue] ==1;
-    self.withText =    [(NSNumber*)[jsonDict objectForKey:@"withText"] intValue] ==1;
-    self.withValue =   [(NSNumber*)[jsonDict objectForKey:@"withValue"] intValue] ==1;
-    self.withVideo =   [(NSNumber*)[jsonDict objectForKey:@"withVideo"] intValue] ==1;
-    
-    self.textDescription =  [jsonDict objectForKey:@"textDescription"];
-    self.valueDescription = [jsonDict objectForKey:@"valueDescription"];
-    
-    UIBarButtonItem *audioButton = [self addUIBarButtonWithImage:@"task-record"  enabled:self.withAudio   action:@selector(collectAudio)];
-    UIBarButtonItem *imageButton = [self addUIBarButtonWithImage:@"task-photo"   enabled:self.withPicture action:@selector(collectImage)];
-    UIBarButtonItem *videoButton = [self addUIBarButtonWithImage:@"task-video"   enabled:self.withVideo   action:@selector(collectVideo)];
-    UIBarButtonItem *noteButton  = [self addUIBarButtonWithImage:@"task-explore" enabled:self.withValue   action:@selector(collectNumber)];
-    UIBarButtonItem *textButton  = [self addUIBarButtonWithImage:@"task-text"    enabled:self.withText    action:@selector(collectText)];
-    
-    UIBarButtonItem *flexButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    
-    NSArray *buttons = [[NSArray alloc] initWithObjects:audioButton, flexButton, imageButton, flexButton, videoButton, flexButton, noteButton, flexButton, textButton, nil];
-    
-    [self setToolbarItems:buttons];
-}
-
-- (void)setupFetchedResultsController {
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Response"];
-    
-    [request setFetchBatchSize:8];
-    
-    NSMutableArray *tmp = [[NSMutableArray alloc] init];
-    
-    if (self.withPicture){
-        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:[NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:PHOTO]]]];
-    }
-    if (self.self.withVideo){
-        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:[NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:VIDEO]]]];
-    }
-    if (self.withAudio){
-        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:[NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:AUDIO]]]];
-    }
-    if (self.withText) {
-        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:[NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:TEXT]]]];
-    }
-    if (self.withValue) {
-        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:[NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:NUMBER]]]];
-    }
-    
-#warning TODO Port NarratorItem
-    
-    // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
-    NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
-    NSPredicate *andPredicate = [NSPredicate predicateWithFormat: @"run.runId = %lld AND generalItem.generalItemId = %lld",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue]];
-    
-    // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
-    request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
-    
-    request.sortDescriptors = [NSArray arrayWithObjects:
-                               [NSSortDescriptor sortDescriptorWithKey:@"responseType"
-                                                             ascending:YES selector:@selector(compare:)],
-                               [NSSortDescriptor sortDescriptorWithKey:@"timeStamp"
-                                                             ascending:YES selector:@selector(compare:)],
-                               nil];
-    
-#warning TODO Port NarratorItem
-    
-    //    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
-    //                                                                        managedObjectContext:self.inquiry.run.managedObjectContext
-    //                                                                          sectionNameKeyPath:nil
-    //                                                                                   cacheName:nil];
-    //
-    //    NSError *error = nil;
-    //    [self.fetchedResultsController performFetch:&error];
-    //
-    //    self.fetchedResultsController.delegate = self;
-}
-
-- (void)syncProgress:(NSNotification*)notification
-{
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(syncProgress:)
-                               withObject:notification
-                            waitUntilDone:YES];
-        return;
-    }
-    
-    NSString *recordType = notification.object;
-    
-    // DLog(@"syncProgress: %@", recordType);
-    
-    if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
-        //
-    }
-}
-
-- (void)syncReady:(NSNotification*)notification
-{
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(syncReady:)
-                               withObject:notification
-                            waitUntilDone:YES];
-        return;
-    }
-    
-    NSString *recordType = notification.object;
-    
-    // DLog(@"syncReady: %@", recordType);
-    
-    if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
-        // Comparing cnt fails because the code already does a performFetch before we enter here (because we switch views to add this one is rebuilt).
-        // NSUInteger cntBefore = [[self.fetchedResultsController fetchedObjects] count];
-        
-        NSError *error = nil;
-        [self.fetchedResultsController performFetch:&error];
-        
-        // NSUInteger cntAfter = [[self.fetchedResultsController fetchedObjects] count];
-        
-        // if (cntBefore!=cntAfter) {
-        // Log(@"Responses: %d -> %d", cntBefore, cntAfter);
-        
-        [self.collectionView reloadData];
-        // }
-    }
-}
+#pragma mark - ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.collectionView.opaque = NO;
-    self.collectionView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"main"]];
+    self.collectionView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -341,7 +98,7 @@ typedef NS_ENUM(NSInteger, responses) {
     
     [self setupFetchedResultsController];
     
-    // [self.collectionView reloadData];
+    [self.collectionView reloadData];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -400,7 +157,7 @@ typedef NS_ENUM(NSInteger, responses) {
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - UICollectionView Datasource
+#pragma mark - UICollectionView Datasource.
 
 /*!
  *  The number of sections in a Collection.
@@ -484,7 +241,7 @@ typedef NS_ENUM(NSInteger, responses) {
                         } else if (response.data) {
                             cell.imgView.image = [UIImage imageWithData:response.data];
                         } else {
-                            cell.imgView.Image = [UIImage imageNamed:@"task-photo"];
+                            cell.imgView.image = [UIImage imageNamed:@"task-photo"];
                         }
                     } else if (self.withVideo && [response.responseType isEqualToNumber:[NSNumber numberWithInt:VIDEO]]) {
                         
@@ -527,7 +284,7 @@ typedef NS_ENUM(NSInteger, responses) {
                             //                  } else if (response.data) {
                             //                      cell.imgView.image = [UIImage imageWithData:response.data];
                         } else {
-                            cell.imgView.Image = [UIImage imageNamed:@"task-video"];
+                            cell.imgView.image = [UIImage imageNamed:@"task-video"];
                         }
                         //                  cell.imgView.image = [UIImage imageNamed:@"task-video"];
                         
@@ -595,7 +352,7 @@ typedef NS_ENUM(NSInteger, responses) {
     return reusableview;
 }
 
-#pragma mark – UICollectionViewDelegateFlowLayout
+#pragma mark - UICollectionViewDelegateFlowLayout.
 
 - (CGSize)getCellSize {
     // noColumns
@@ -747,214 +504,7 @@ typedef NS_ENUM(NSInteger, responses) {
     // TODO: Deselect item
 }
 
--(UIImage *) drawText:(NSString*) text inImage:(UIImage*)image atPoint:(CGPoint)point
-{
-    //See http://stackoverflow.com/questions/4670851/nsstring-drawatpoint-blurry
-    UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);
-    
-    //See http://stackoverflow.com/questions/4670851/nsstring-drawatpoint-blurry
-    CGContextSetShouldAntialias(UIGraphicsGetCurrentContext(), true);
-    
-    //[image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
-    CGRect rect = CGRectMake(point.x, point.y, image.size.width, image.size.height);
-    rect = CGRectInset(rect, 5, 5);
-    
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-    
-    NSDictionary *attributes = @{
-                                 // UIFont, default Helvetica(Neue) 12
-                                 NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
-                                 NSParagraphStyleAttributeName: paragraphStyle,
-                                 NSForegroundColorAttributeName: [UIColor blackColor],
-                                 NSBackgroundColorAttributeName: [UIColor whiteColor]
-                                 };
-    
-    //    NSStringDrawingContext *drawingContext = [[NSStringDrawingContext alloc] init];
-    //    drawingContext.minimumScaleFactor = 0.5; // Half the font siz
-    
-    [text drawInRect:rect withAttributes:attributes]; //CGRectIntegral(rect)
-    
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    
-    return newImage;
-}
-
-#pragma mark Collect Methods.
-
-/*!
- *  Record Audio.
- */
-- (void) collectAudio {
-    ARLAudioRecorderViewController *controller = [[ARLAudioRecorderViewController alloc] init];
-    
-#warning TODO Port NarratorItem
-    // controller.inquiry = self.inquiry;
-  
-    controller.generalItem = self.activeItem;
-    
-    [self.navigationController pushViewController:controller animated:TRUE];
-}
-
-/*!
- *  Request a Number.
- */
-- (void) collectNumber
-{
-    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:self.valueDescription
-                                                          message:NSLocalizedString(@"Enter Number", @"Enter Number")
-                                                         delegate:self
-                                                cancelButtonTitle:NSLocalizedString(@"Cancel", @"Cancel")
-                                                otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
-    
-    //    self.valueTextField = [[UITextField alloc] initWithFrame:CGRectMake(12.0, 45.0, 260.0, 25.0)];
-    //    [self.valueTextField setBackgroundColor:[UIColor whiteColor]];
-    //
-    //    [myAlertView addSubview:self.valueTextField];
-    
-    myAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    myAlertView.tag = 1;
-    
-    [myAlertView show];
-    
-    // see: http://stackoverflow.com/questions/10579658/uialertview-uialertviewstylesecuretextinput-numeric-keyboard
-    [[myAlertView textFieldAtIndex:0] setDelegate:self];
-    [[myAlertView textFieldAtIndex:0] resignFirstResponder];
-    [[myAlertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
-    [[myAlertView textFieldAtIndex:0] becomeFirstResponder];
-}
-
-/*!
- *  Request Text.
- */
-- (void) collectText
-{
-    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:self.textDescription
-                                                          message:NSLocalizedString(@"Enter Text",@"Enter Text")
-                                                         delegate:self
-                                                cancelButtonTitle:NSLocalizedString(@"Cancel", @"Cancel")
-                                                otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
-    
-    myAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    myAlertView.tag = 2;
-    
-    //self.valueTextField = [[UITextField alloc] initWithFrame:CGRectMake(12.0, 45.0, 260.0, 25.0)];
-    //[self.valueTextField setBackgroundColor:[UIColor whiteColor]];
-    // see http://stackoverflow.com/questions/9407338/xcode-how-to-uialertview-with-a-text-field-on-a-loop-until-correct-value-en
-    
-    //[myAlertView addSubview:self.valueTextField];
-    [myAlertView show];
-}
-
-/*!
- *  Click At Button Handler.
- *
- *  @param alertView   <#alertView description#>
- *  @param buttonIndex <#buttonIndex description#>
- */
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
-    
-    if ([title isEqualToString:NSLocalizedString(@"OK", @"OK")]) {
-        UITextField *alertTextField = [alertView textFieldAtIndex:0];
-        
-        NSString *trimmed = [alertTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        
-        switch (alertView.tag) {
-            case 1: {
-                
-                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-                [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-                NSString *decimalSymbol = [formatter decimalSeparator];
-                
-                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"." withString:decimalSymbol];
-                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"," withString:decimalSymbol];
-                
-                NSNumber *number = [formatter numberFromString:trimmed];
-                
-                if (number != nil) {
-                    [self createValueResponse:trimmed //[trimmed stringByReplacingOccurrencesOfString:decimalSymbol withString:@"."]
-                                          withRun:self.run
-                                  withGeneralItem:self.activeItem];
-                } else {
-                    // Invalid Number.
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"Error")
-                                                                    message:NSLocalizedString(@"Invalid Number", @"Invalid Number")
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                          otherButtonTitles:nil, nil];
-                    [alert show];
-                }
-            }
-                break;
-            case 2:
-                [self createTextResponse: trimmed
-                                     withRun:self.run
-                             withGeneralItem:self.activeItem];
-                break;
-        }
-        
-        [ARLCoreDataUtils CreateOrUpdateAction:self.runId
-                                    activeItem:self.activeItem
-                                          verb:answer_given_action];
-        
-        if (ARLNetworking.networkAvailable) {
-#warning TODO Port NarratorItem
-            // [ARLCloudSynchronizer syncResponses:self.activeItem.managedObjectContext];
-        }
-    }
-}
-
-/*!
- *  Record Video.
- */
-- (void) collectVideo {
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        self.imagePickerController = [[UIImagePickerController alloc] init];
-        self.imagePickerController.delegate = self;
-        
-        // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
-        self.mode = UIImagePickerControllerCameraCaptureModeVideo;
-        
-        self.imagePickerController.sourceType =  UIImagePickerControllerSourceTypeCamera;
-        self.imagePickerController.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
-        
-        if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
-            self.imagePickerController.cameraDevice= UIImagePickerControllerCameraDeviceRear;
-        } else {
-            self.imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-        }
-        
-        [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
-    }
-}
-
-/*!
- *  Take a Picture.
- */
-- (void) collectImage {
-    if (!self.imagePickerController) {
-        self.imagePickerController = [[UIImagePickerController alloc] init];
-        
-        // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-        self.mode = UIImagePickerControllerCameraCaptureModePhoto;
-        
-        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-            self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-        } else {
-            self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-        }
-        
-        // image picker needs a delegate so we can respond to its messages
-        [self.imagePickerController setDelegate:self];
-    }
-    
-    // Place image picker on the screen
-    [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
-}
+#pragma mark - UIImagePickerControllerDelegate
 
 /*!
  *  Handle recording of Videos and taking Photo with the iOS Api.
@@ -979,8 +529,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     if (image) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
         [self createImageResponse:imageData
-                                width:[NSNumber numberWithFloat:image.size.width]
-                               height:[NSNumber numberWithFloat:image.size.height]];
+                            width:[NSNumber numberWithFloat:image.size.width]
+                           height:[NSNumber numberWithFloat:image.size.height]];
     } else {
         id object = [info objectForKey:UIImagePickerControllerMediaURL];
         
@@ -1007,6 +557,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         //            [ARLCloudSynchronizer syncResponses: self.activeItem.managedObjectContext];
     }
 }
+
+#pragma mark - UINavigationControllerDelegate
 
 // See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
 - (void) navigationController: (UINavigationController *)navigationController
@@ -1087,6 +639,451 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     }
 }
 
+#pragma mark - Properties
+
+/*!
+ *  Getter
+ *
+ *  @return The Cell Identifier.
+ */
+-(NSString *) cellIdentifier {
+    return  @"imageItemCell";
+}
+
+- (void)setActiveItem:(GeneralItem *)activeItem {
+    _activeItem = activeItem;
+    
+    NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+    
+    self.openQuestion = [json valueForKey:@"openQuestion"];
+}
+
+- (GeneralItem *)activeItem {
+    return _activeItem;
+}
+
+- (void)setRunId:(NSNumber *)runId {
+    _runId = runId;
+    
+    self.run = [Run MR_findFirstByAttribute:@"runId" withValue:self.runId];
+}
+
+- (NSNumber *)runId {
+    return _runId;
+}
+
+/*!
+ *  Getter
+ *
+ *  @return The Number of Columns.
+ */
+-(CGFloat) noColumns {
+    return  4.0f;
+}
+
+/*!
+ *  Getter
+ *
+ *  @return The Column Inset.
+ */
+-(CGFloat) columnInset {
+    return  10.0f;
+}
+
+#pragma mark - Methods
+
+/*!
+ *  Create a UIBarButton with a background image depending on the enabled state.
+ *
+ *  See http://stackoverflow.com/questions/7101608/setting-image-for-uibarbuttonitem-image-stretched
+ *
+ *  @param imageString The name of the Image.
+ *  @param enabled     If YES the button is enabled else disabled (and having a grayed image).
+ *  @param selector    The selector to use when the button is tapped.
+ *
+ *  @return The created UIBarButtonItem.
+ */
+- (UIBarButtonItem *)addUIBarButtonWithImage:(NSString *)imageString enabled:(BOOL)enabled action:(SEL)selector {
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+    
+    if (enabled) {
+        [button addTarget:self action:selector forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    // button.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    UIImage * image = [UIImage imageNamed:imageString];
+    if (!enabled) {
+        image = [self grayishImage:image];
+    }
+    
+    [button setBackgroundImage:image forState:UIControlStateNormal];
+    [button setEnabled:enabled];
+    
+    return [[UIBarButtonItem alloc] initWithCustomView:button];
+}
+
+/*!
+ *  Transform the image in grayscale, while keeping its transparency.
+ *
+ *  See http://stackoverflow.com/questions/1298867/convert-image-to-grayscale
+ *
+ *  @param inputImage The Image to be grayed.
+ *
+ *  @return The GrayScale Image.
+ */
+- (UIImage *)grayishImage:(UIImage *)inputImage {
+    UIGraphicsBeginImageContextWithOptions(inputImage.size, NO, inputImage.scale);
+    
+    @autoreleasepool {
+        CGRect imageRect = CGRectMake(0.0f, 0.0f, inputImage.size.width, inputImage.size.height);
+        
+        CGContextRef ctx = UIGraphicsGetCurrentContext();
+        
+        // Draw a white background
+        CGContextSetRGBFillColor(ctx, 1.0f, 1.0f, 1.0f, 1.0f);
+        CGContextFillRect(ctx, imageRect);
+        
+        // Draw the luminosity on top of the white background to get grayscale
+        [inputImage drawInRect:imageRect blendMode:kCGBlendModeLuminosity alpha:1.0f];
+        
+        // Apply the source image's alpha
+        [inputImage drawInRect:imageRect blendMode:kCGBlendModeDestinationIn alpha:1.0f];
+        
+    }
+    
+    UIImage* grayscaleImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return grayscaleImage;
+}
+
+/*!
+ *  Process the JSON (the openQuestion object) that is stored with the GeneralItem.
+ *
+ *  @param jsonDict The openQuestion object in JSON format.
+ */
+- (void) processJsonSetup:(NSDictionary *) jsonDict {
+    self.isVisible = YES;
+    
+    self.withAudio =   [(NSNumber*)[jsonDict objectForKey:@"withAudio"] intValue] ==1;
+    self.withPicture = [(NSNumber*)[jsonDict objectForKey:@"withPicture"] intValue] ==1;
+    self.withText =    [(NSNumber*)[jsonDict objectForKey:@"withText"] intValue] ==1;
+    self.withValue =   [(NSNumber*)[jsonDict objectForKey:@"withValue"] intValue] ==1;
+    self.withVideo =   [(NSNumber*)[jsonDict objectForKey:@"withVideo"] intValue] ==1;
+    
+    self.textDescription =  [jsonDict objectForKey:@"textDescription"];
+    self.valueDescription = [jsonDict objectForKey:@"valueDescription"];
+    
+    UIBarButtonItem *audioButton = [self addUIBarButtonWithImage:@"task-record"  enabled:self.withAudio   action:@selector(collectAudio)];
+    UIBarButtonItem *imageButton = [self addUIBarButtonWithImage:@"task-photo"   enabled:self.withPicture action:@selector(collectImage)];
+    UIBarButtonItem *videoButton = [self addUIBarButtonWithImage:@"task-video"   enabled:self.withVideo   action:@selector(collectVideo)];
+    UIBarButtonItem *noteButton  = [self addUIBarButtonWithImage:@"task-explore" enabled:self.withValue   action:@selector(collectNumber)];
+    UIBarButtonItem *textButton  = [self addUIBarButtonWithImage:@"task-text"    enabled:self.withText    action:@selector(collectText)];
+    
+    UIBarButtonItem *flexButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    NSArray *buttons = [[NSArray alloc] initWithObjects:audioButton, flexButton, imageButton, flexButton, videoButton, flexButton, noteButton, flexButton, textButton, nil];
+    
+    [self setToolbarItems:buttons];
+}
+
+- (void)setupFetchedResultsController {
+   // NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Response"];
+
+    NSMutableArray *tmp = [[NSMutableArray alloc] init];
+    
+    if (self.withPicture){
+        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
+                                              [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:PHOTO]]]];
+    }
+    if (self.self.withVideo){
+        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
+                                              [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:VIDEO]]]];
+    }
+    if (self.withAudio){
+        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
+                                              [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:AUDIO]]]];
+    }
+    if (self.withText) {
+        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
+                                              [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:TEXT]]]];
+    }
+    if (self.withValue) {
+        tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
+                                              [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:NUMBER]]]];
+    }
+    
+#warning TODO Port NarratorItem
+    
+    // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
+    NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
+    NSPredicate *andPredicate = [NSPredicate predicateWithFormat: @"run.runId = %lld AND generalItem.generalItemId = %lld",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue]];
+    
+    // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
+    NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
+    
+    // NSFetchRequest *request = [Response MR_requestAllWithPredicate:predicate];
+    
+    // [request setFetchBatchSize:8];
+    
+    //
+    //    request.sortDescriptors = [NSArray arrayWithObjects:
+    //                               [NSSortDescriptor sortDescriptorWithKey:@"responseType"
+    //                                                             ascending:YES selector:@selector(compare:)],
+    //                               [NSSortDescriptor sortDescriptorWithKey:@"timeStamp"
+    //                                                             ascending:YES selector:@selector(compare:)],
+    //                               nil];
+    
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
+    NSFetchRequest *request =  [Response MR_requestAllSortedBy:nil //@"responseType,timeStamp"
+                                                     ascending:YES
+                                                 withPredicate:predicate
+                                                     inContext:ctx];
+    NSArray *recs = [Response MR_findAll];
+    Log(@"Records: %d", [recs count]);
+    
+#warning TODO Port NarratorItem
+    
+    //    [Response MR_fetchController:<#(NSFetchRequest *)#> delegate:<#(id<NSFetchedResultsControllerDelegate>)#> useFileCache:<#(BOOL)#> groupedBy:<#(NSString *)#> inContext:<#(NSManagedObjectContext *)#>]
+    //
+    
+    self.fetchedResultsController = [Response MR_fetchController:request
+                                                        delegate:self
+                                                    useFileCache:NO
+                                                       groupedBy:nil
+                                                       inContext:ctx];
+    
+    //  self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
+    //  managedObjectContext:self.inquiry.run.managedObjectContext
+    // sectionNameKeyPath:nil
+    // cacheName:nil];
+
+    NSError *error = nil;
+    [self.fetchedResultsController performFetch:&error];
+
+    ELog(error);
+    
+    //    self.fetchedResultsController.delegate = self;
+}
+
+-(UIImage *) drawText:(NSString*) text inImage:(UIImage*)image atPoint:(CGPoint)point
+{
+    //See http://stackoverflow.com/questions/4670851/nsstring-drawatpoint-blurry
+    UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);
+    
+    //See http://stackoverflow.com/questions/4670851/nsstring-drawatpoint-blurry
+    CGContextSetShouldAntialias(UIGraphicsGetCurrentContext(), true);
+    
+    //[image drawInRect:CGRectMake(0,0,image.size.width,image.size.height)];
+    CGRect rect = CGRectMake(point.x, point.y, image.size.width, image.size.height);
+    rect = CGRectInset(rect, 5, 5);
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    
+    NSDictionary *attributes = @{
+                                 // UIFont, default Helvetica(Neue) 12
+                                 NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+                                 NSParagraphStyleAttributeName: paragraphStyle,
+                                 NSForegroundColorAttributeName: [UIColor blackColor],
+                                 NSBackgroundColorAttributeName: [UIColor whiteColor]
+                                 };
+    
+    //    NSStringDrawingContext *drawingContext = [[NSStringDrawingContext alloc] init];
+    //    drawingContext.minimumScaleFactor = 0.5; // Half the font siz
+    
+    [text drawInRect:rect withAttributes:attributes]; //CGRectIntegral(rect)
+    
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return newImage;
+}
+
+/*!
+ *  Record Audio.
+ */
+- (void) collectAudio {
+    ARLAudioRecorderViewController *controller = [[ARLAudioRecorderViewController alloc] init];
+    
+#warning TODO Port NarratorItem
+    // controller.inquiry = self.inquiry;
+  
+    controller.generalItem = self.activeItem;
+    
+    [self.navigationController pushViewController:controller animated:TRUE];
+}
+
+/*!
+ *  Request a Number.
+ */
+- (void) collectNumber
+{
+    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:self.valueDescription
+                                                          message:NSLocalizedString(@"Enter Number", @"Enter Number")
+                                                         delegate:self
+                                                cancelButtonTitle:NSLocalizedString(@"Cancel", @"Cancel")
+                                                otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
+    
+    //    self.valueTextField = [[UITextField alloc] initWithFrame:CGRectMake(12.0, 45.0, 260.0, 25.0)];
+    //    [self.valueTextField setBackgroundColor:[UIColor whiteColor]];
+    //
+    //    [myAlertView addSubview:self.valueTextField];
+    
+    myAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    myAlertView.tag = 1;
+    
+    [myAlertView show];
+    
+    // see: http://stackoverflow.com/questions/10579658/uialertview-uialertviewstylesecuretextinput-numeric-keyboard
+    [[myAlertView textFieldAtIndex:0] setDelegate:self];
+    [[myAlertView textFieldAtIndex:0] resignFirstResponder];
+    [[myAlertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
+    [[myAlertView textFieldAtIndex:0] becomeFirstResponder];
+}
+
+/*!
+ *  Request Text.
+ */
+- (void) collectText
+{
+    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:self.textDescription
+                                                          message:NSLocalizedString(@"Enter Text",@"Enter Text")
+                                                         delegate:self
+                                                cancelButtonTitle:NSLocalizedString(@"Cancel", @"Cancel")
+                                                otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
+    
+    myAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    myAlertView.tag = 2;
+    
+    //self.valueTextField = [[UITextField alloc] initWithFrame:CGRectMake(12.0, 45.0, 260.0, 25.0)];
+    //[self.valueTextField setBackgroundColor:[UIColor whiteColor]];
+    // see http://stackoverflow.com/questions/9407338/xcode-how-to-uialertview-with-a-text-field-on-a-loop-until-correct-value-en
+    
+    //[myAlertView addSubview:self.valueTextField];
+    [myAlertView show];
+}
+
+/*!
+ *  Record Video.
+ */
+- (void) collectVideo {
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        self.imagePickerController = [[UIImagePickerController alloc] init];
+        self.imagePickerController.delegate = self;
+        
+        // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
+        self.mode = UIImagePickerControllerCameraCaptureModeVideo;
+        
+        self.imagePickerController.sourceType =  UIImagePickerControllerSourceTypeCamera;
+        self.imagePickerController.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
+        
+        if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
+            self.imagePickerController.cameraDevice= UIImagePickerControllerCameraDeviceRear;
+        } else {
+            self.imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        }
+        
+        [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
+    }
+}
+
+/*!
+ *  Take a Picture.
+ */
+- (void) collectImage {
+    if (!self.imagePickerController) {
+        self.imagePickerController = [[UIImagePickerController alloc] init];
+        
+        // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+        self.mode = UIImagePickerControllerCameraCaptureModePhoto;
+        
+        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+            self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+        } else {
+            self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        }
+        
+        // image picker needs a delegate so we can respond to its messages
+        [self.imagePickerController setDelegate:self];
+    }
+    
+    // Place image picker on the screen
+    [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
+}
+
+#pragma mark - Actions
+
+/*!
+ *  Click At Button Handler.
+ *
+ *  @param alertView   <#alertView description#>
+ *  @param buttonIndex <#buttonIndex description#>
+ */
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if ([title isEqualToString:NSLocalizedString(@"OK", @"OK")]) {
+        UITextField *alertTextField = [alertView textFieldAtIndex:0];
+        
+        NSString *trimmed = [alertTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        switch (alertView.tag) {
+            case 1: {
+                
+                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+                [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+                NSString *decimalSymbol = [formatter decimalSeparator];
+                
+                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"." withString:decimalSymbol];
+                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"," withString:decimalSymbol];
+                
+                NSNumber *number = [formatter numberFromString:trimmed];
+                
+                if (number != nil) {
+                    [self createValueResponse:trimmed //[trimmed stringByReplacingOccurrencesOfString:decimalSymbol withString:@"."]
+                                          withRun:self.run
+                                  withGeneralItem:self.activeItem];
+                } else {
+                    // Invalid Number.
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"Error")
+                                                                    message:NSLocalizedString(@"Invalid Number", @"Invalid Number")
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                          otherButtonTitles:nil, nil];
+                    [alert show];
+                }
+            }
+                break;
+            case 2:
+                [self createTextResponse: trimmed
+                                     withRun:self.run
+                             withGeneralItem:self.activeItem];
+                break;
+        }
+        
+        [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                    activeItem:self.activeItem
+                                          verb:answer_given_action];
+        
+        if (ARLNetworking.networkAvailable) {
+#warning TODO Port NarratorItem
+            // [ARLCloudSynchronizer syncResponses:self.activeItem.managedObjectContext];
+        }
+
+        NSError *error = nil;
+        [self.fetchedResultsController performFetch:&error];
+        
+        ELog(error);
+
+        Log(@"RESPONSES: %d",[self.fetchedResultsController.fetchedObjects count]);
+    }
+}
+
 // See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
 - (void) showCamera: (id) sender {
     self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -1111,18 +1108,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (void) createTextResponse:(NSString *)text
                     withRun:(Run*)run
             withGeneralItem:(GeneralItem *)generalItem {
-
+    
     NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
                              text, @"text", nil];
     
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           [ARLUtils jsonString:jsonDict],                                         @"value",
+                          [NSNumber numberWithInt:0],                                             @"responseId",
                           [NSNumber numberWithBool:NO],                                           @"synchronized",
                           [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
                           [NSNumber numberWithInt:TEXT],                                          @"responseType",
                           nil];
     
-   Response *textResponse = [self responseWithDictionary:data];
+    Response *textResponse = [self responseWithDictionary:data];
+
+    [self.collectionView reloadData];
 }
 
 #warning TODO Port NarratorItem
@@ -1137,12 +1137,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           [ARLUtils jsonString:jsonDict],                                         @"value",
+                          [NSNumber numberWithInt:0],                                             @"responseId",
                           [NSNumber numberWithBool:NO],                                           @"synchronized",
                           [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
                           [NSNumber numberWithInt:NUMBER],                                        @"responseType",
                           nil];
     
-    [self responseWithDictionary:data];
+    Response *valueResponse = [self responseWithDictionary:data];
+    
+    [self.collectionView reloadData];
 }
 
 - (void) createImageResponse:(NSData *)data
@@ -1157,16 +1160,25 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSData *thumb = UIImageJPEGRepresentation([img thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationDefault], 1.0);
     
     NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
-                             data,                              @"data",
-                             width,                             @"width",
-                             height,                            @"height",
-                             @"application/jpg",                @"contentType",
-                             [NSNumber numberWithInt:PHOTO],    @"responseType",
-                             fileName,                          @"fileName",
-                             thumb,                             @"thumb",
+                             data,                                                                   @"data",
+                             [NSNumber numberWithInt:0],                                             @"responseId",
+                             [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
+                             [NSNumber numberWithBool:NO],                                           @"synchronized",
+                             width,                                                                  @"width",
+                             height,                                                                 @"height",
+                             @"application/jpg",                                                     @"contentType",
+                             [NSNumber numberWithInt:PHOTO],                                         @"responseType",
+                             fileName,                                                               @"fileName",
+                             thumb,                                                                  @"thumb",
                              nil];
 
   [self responseWithDictionary:jsonDict];
+
+    // TEST CODE
+//    NSError *error = nil;
+//    [self.fetchedResultsController performFetch:&error];
+//    
+//  [self.collectionView reloadData];
 }
 
 - (void) createVideoResponse:(NSData *)data {
@@ -1174,13 +1186,18 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSString *fileName =[NSString stringWithFormat:@"%u.%@", random, @"mov"];
     
     NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
-                             data,                              @"data",
-                             @"video/quicktime",                @"contentType",
-                             [NSNumber numberWithInt:VIDEO],    @"responseType",
-                             fileName,                          @"fileName",
+                             data,                                                                   @"data",
+                             [NSNumber numberWithInt:0],                                             @"responseId",
+                             [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
+                             [NSNumber numberWithBool:NO],                                           @"synchronized",
+                             @"video/quicktime",                                                     @"contentType",
+                             [NSNumber numberWithInt:VIDEO],                                         @"responseType",
+                             fileName,                                                               @"fileName",
                              nil];
     
     [self responseWithDictionary:jsonDict];
+    
+    [self.collectionView reloadData];
 }
 
 - (void) createAudioResponse:(NSData *)data
@@ -1209,31 +1226,70 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     //    @property (nonatomic, retain) Run *run;
     
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+
+    Response *response = (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
+                                                                entityName:[Response MR_entityName]
+                                                                nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                                                dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                                            managedContext:ctx];
     
-//    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-//                          @"Wim Slot",          @"xname",
-//                          @"Wim",               @"givenName",
-//                          @"Slot",              @"familyName",
-//                          @"wim.slot@ou.nl",    @"email",
-//                          nil];
+    response.account = [[ARLNetworking CurrentAccount] MR_inContext:ctx];
+    response.generalItem = [self.activeItem MR_inContext:ctx];
+    response.run = [self.run MR_inContext:ctx];
     
-    NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                                // Json,                        CoreData
-                                // @"description",                  @"richTextDescription",
-                                nil];
+    [ctx MR_saveToPersistentStoreAndWait];
     
-    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                                // Data,                         CoreData
-                                [ARLNetworking CurrentAccount],  @"account",
-                                self.activeItem,                 @"generalItem",
-                                self.run,                        @"run",
-                                nil];
-#warning THIS STILL FAILS!!!!
-    return (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
-                                                  entityName:[Action MR_entityName]
-                                                  nameFixups:namefixups
-                                                  dataFixups:datafixups
-                                              managedContext:ctx];
+    return response;
+}
+
+#pragma mark - Notifications.
+
+- (void)syncProgress:(NSNotification*)notification
+{
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(syncProgress:)
+                               withObject:notification
+                            waitUntilDone:YES];
+        return;
+    }
+    
+    NSString *recordType = notification.object;
+    
+    // DLog(@"syncProgress: %@", recordType);
+    
+    if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
+        //
+    }
+}
+
+- (void)syncReady:(NSNotification*)notification
+{
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(syncReady:)
+                               withObject:notification
+                            waitUntilDone:YES];
+        return;
+    }
+    
+    NSString *recordType = notification.object;
+    
+    // DLog(@"syncReady: %@", recordType);
+    
+    if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
+        // Comparing cnt fails because the code already does a performFetch before we enter here (because we switch views to add this one is rebuilt).
+        // NSUInteger cntBefore = [[self.fetchedResultsController fetchedObjects] count];
+        
+        NSError *error = nil;
+        [self.fetchedResultsController performFetch:&error];
+        
+        // NSUInteger cntAfter = [[self.fetchedResultsController fetchedObjects] count];
+        
+        // if (cntBefore!=cntAfter) {
+        // Log(@"Responses: %d -> %d", cntBefore, cntAfter);
+        
+        [self.collectionView reloadData];
+        // }
+    }
 }
 
 @end
