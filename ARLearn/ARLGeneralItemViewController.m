@@ -11,7 +11,7 @@
 @interface ARLGeneralItemViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
-@property (weak, nonatomic) IBOutlet UITextView *descriptionText;
+@property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
 @property (weak, nonatomic) IBOutlet UITableView *answersTable;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 
@@ -46,11 +46,28 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // The ContentSize of the UIWebView will only grow so start small.
+    CGRect newBounds =  self.descriptionText.bounds;
+    newBounds.size.height = 10;
+    self.descriptionText.bounds = newBounds;
+    
+    self.descriptionText.delegate = self;
+    
     if (self.activeItem) {
-        self.descriptionText.attributedText = [ARLUtils htmlToAttributedString:self.activeItem.richText];
+        if (TrimmedStringLength(self.activeItem.richText) != 0) {
+            self.descriptionText.hidden = NO;
+            [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+        } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
+            self.descriptionText.hidden = NO;
+            [self.descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
+        }
+    }else {
+        self.descriptionText.hidden = YES;
     }
     
-    [self applyConstraints];
+    if (self.descriptionText.isHidden) {
+        [self applyConstraints];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -162,6 +179,16 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
             }
         }
     }
+}
+
+#pragma mark - UIWebViewDelegate
+
+-(void)webViewDidFinishLoad:(UIWebView *)webView {
+    CGRect newBounds = webView.bounds;
+    newBounds.size.height = webView.scrollView.contentSize.height;
+    webView.bounds = newBounds;
+    
+    [self applyConstraints];
 }
 
 #warning TODO is to visablize the tasks to do
@@ -331,10 +358,18 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
                                                                         views:viewsDictionary]];
     
     // Fix itemsTable/descriptionText Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==200)]-[answersTable]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+    if (self.descriptionText.isHidden) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[answersTable]-|"
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    } else {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[answersTable]-|",
+                                                                                   self.descriptionText.bounds.size.height]
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    }
 }
 
 /*!

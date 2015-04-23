@@ -27,6 +27,10 @@
 #define stripesThree                @"\u2630"
 #define backArrow                   @"\U000025C0\U0000FE0E"
 
+#define TrimString( object ) [object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]
+
+#define TrimmedStringLength( object ) [[object stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ] length]
+
 typedef NS_ENUM (NSInteger, ResponseTypes) {
     UNKNOWN = 0,
     PHOTO   = 1,

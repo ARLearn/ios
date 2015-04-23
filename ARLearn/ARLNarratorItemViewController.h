@@ -32,7 +32,7 @@
 #import "UIImage+Resize.h"
 
 @interface ARLNarratorItemViewController : UICollectionViewController
-<NSFetchedResultsControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UITextFieldDelegate>
+<NSFetchedResultsControllerDelegate, UINavigationControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UITextFieldDelegate,UIWebViewDelegate>
 
 @property (strong, nonatomic) NSNumber *runId;
 

@@ -12,7 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UITableView *itemsTable;
-@property (weak, nonatomic) IBOutlet UITextView *descriptionText;
+@property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
 
 @property (strong, nonatomic) NSArray *items;
 @property (strong, nonatomic) NSMutableArray *visibility;
@@ -53,6 +53,25 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    // Setting a footer hides empty cels at the bottom.
+    self.itemsTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    // The ContentSize of the UIWebView will only grow so start small.
+    CGRect newBounds =  self.descriptionText.bounds;
+    newBounds.size.height = 10;
+    self.descriptionText.bounds = newBounds;
+    
+    self.descriptionText.delegate = self;
+    
+    Game *game= [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId];
+    
+    if (game && TrimmedStringLength(game.richTextDescription) != 0) {
+        self.descriptionText.hidden = NO;
+        [self.descriptionText loadHTMLString:game.richTextDescription baseURL:nil];
+    } else {
+        self.descriptionText.hidden = YES;
+    }
     
     // Do any additional setup after loading the view.
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
@@ -94,7 +113,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
     
-    [self applyConstraints];
+    if (self.descriptionText.isHidden) {
+        [self applyConstraints];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -184,19 +205,26 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                        item.generalItemId,
                                        read_action];
             
-            NSString *text = [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];
+            NSString *text = item.name;
+           
+            if ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0) {
+                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            } else {
+                 cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+            
+            // [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];
             
             cell.textLabel.text = text;
             
             // DLog(@"%@=%@",[item.generalItemId stringValue], [self.visibility valueForKey:[item.generalItemId stringValue]]);
             
-            // if ([[self.visibility valueForKey:[item.generalItemId stringValue]] integerValue] == 1) {
-            // cell.detailTextLabel.text = @"Visible";
-            // } else {
             NSDictionary* dependsOn = [json valueForKey:@"dependsOn"];
             
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]];
+           
             NSNumber *dependsOnItem = ( NSNumber *)[dependsOn valueForKey:@"generalItemId"];
+            
             if (bid!=Invalid) {
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
             } else {
@@ -225,111 +253,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     return nil;
 }
 
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-    // Probably not called as we use UITableViewCellAccesssoryDisclosureIndicator instead of UITableViewCellAccessoryDetailDisclosureButton
-    
-    // See https://github.com/bitmapdata/MSCellAccessory/blob/master/MSCellAccessory/MSCellAccessory.m
-    switch (indexPath.section) {
-        case GENERALITEM: {
-            
-            // DLog("Disclosure Tapped %@", indexPath);
-            
-            GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
-            
-            BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
-            
-            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
-            [ARLUtils LogJsonDictionary:json url:nil];
-            
-            switch (bid) {
-                case SingleChoiceTest:
-                case MultipleChoiceTest: {
-                    ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
-                    
-                    if (newViewController) {
-                        newViewController.runId = self.runId;
-                        newViewController.activeItem  = item;
-                        
-                        // Move to another UINavigationController or UITabBarController etc.
-                        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                        [self.navigationController pushViewController:newViewController animated:YES];
-                        
-                        newViewController = nil;
-                    }
-                }
-                    
-                case NarratorItem:
-                    // Nothing yet
-                    //        {
-                    //            deleted = 0;
-                    //            description = "";
-                    //            fileReferences =     (
-                    //            );
-                    //            gameId = 13876002;
-                    //            id = 5835376316907520;
-                    //            lastModificationDate = 1427274724860;
-                    //            name = test;
-                    //            richText = "";
-                    //            scope = user;
-                    //            sortKey = 0;
-                    //            type = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
-                    //        }
-                    if ([json valueForKey:@"openQuestion"]) {
-                        ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
-                        
-                        if (newViewController) {
-                            newViewController.runId = self.runId;
-                            newViewController.activeItem  = item;
-                            
-                            // Move to another UINavigationController or UITabBarController etc.
-                            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                            [self.navigationController pushViewController:newViewController animated:YES];
-                            
-                            newViewController = nil;
-                        }
-                        
-                        // Render Data Collection Task.
-                    }
-                    break;
-                    
-                case AudioObject:
-                    // TODO
-                    if ([json valueForKey:@"openQuestion"]) {
-                        ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
-                        
-                        if (newViewController) {
-                            newViewController.runId = self.runId;
-                            newViewController.activeItem  = item;
-                            
-                            // Move to another UINavigationController or UITabBarController etc.
-                            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                            [self.navigationController pushViewController:newViewController animated:YES];
-                            
-                            newViewController = nil;
-                        }
-                        
-                        // Render Data Collection Task.
-                    }
-                    break;
-                    
-                case ScanTag:
-                    // Nothing yet
-                    break;
-                    
-                case OpenQuestion:
-                    // Nothing yet
-                    break;
-                    
-                default:
-                    //Should not happen
-                    Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
-                    break;
-            }
-            break;
-        }
-    }
-}
-
 /*!
  *  Tap on table Row
  *
@@ -340,146 +263,101 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     switch (indexPath.section) {
         case GENERALITEM: {
             self.activeItem = [self getGeneralItemForRow:indexPath.row];
-            
-            // Example AudioObject (with openQuestion).
-            //{
-            //    audioFeed = "http://streetlearn.appspot.com/game/5248241780129792/generalItems/5232076227870720/audio";
-            //    autoLaunch = 0;
-            //    autoPlay = 0;
-            //    deleted = 0;
-            //    dependsOn =     {
-            //        action = read;
-            //        generalItemId = 6180497885495296;
-            //        scope = 0;
-            //        type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
-            //    };
-            //    description = "Voor de Campanile voerde Andrea di Pisano reli?fs uit in de onderste zone, gewijd aan respectievelijk voorstellingen uit Genesis en de vrije kunsten. Voor deze reli?fs geldt als vorm de zeshoek en een groter oppervlak dan de vierpas van de deuren. De reeks aan de westzijde heeft betrekking op Genesis, te weten Schepping van Adam, Schepping van Eva, Adam en Eva aan het werk en vier reli?fs betreffende de mechanische arbeid, bijv. die van Tubalkain als eerste smid en Noah als eerste boer.Kies een reli?f uit, maak ervan een foto. Publiceer deze foto.\nMaak vervolgens een audio-opname en spreek in hoe Pisano de grotere vrijheid in vormgeving vergeleken met zijn vierpasreli?fs aan het Baptisterium heeft benut. Publiceer deze audio-opname.";
-            //    fileReferences =     (
-            //    );
-            //    gameId = 5248241780129792;
-            //    id = 5232076227870720;
-            //    lastModificationDate = 1417528003150;
-            //    lat = "43.772792";
-            //    lng = "11.255546";
-            //    name = "Opdracht 1";
-            //    openQuestion =     {
-            //        textDescription = "";
-            //        type = "org.celstec.arlearn2.beans.generalItem.OpenQuestion";
-            //        valueDescription = "";
-            //        withAudio = 1;
-            //        withPicture = 1;
-            //        withText = 0;
-            //        withValue = 0;
-            //        withVideo = 0;
-            //    };
-            //    richText = "Voor de Campanile voerde Andrea di Pisano reli?fs uit in de onderste zone, gewijd aan respectievelijk voorstellingen uit Genesis en de vrije kunsten. Voor deze reli?fs geldt als vorm de zeshoek en een groter oppervlak dan de vierpas van de deuren.&nbsp;<div>De reeks aan de westzijde heeft betrekking op Genesis, te weten Schepping van Adam, Schepping van Eva, Adam en Eva aan het werk en vier reli?fs betreffende de mechanische arbeid, bijv. die van Tubalkain als eerste smid en Noah als eerste boer.</div><div>Kies een reli?f uit, maak ervan een foto. Publiceer deze foto.\nMaak vervolgens een audio-opname en spreek in hoe Pisano de grotere vrijheid in vormgeving vergeleken met zijn vierpasreli?fs aan het Baptisterium heeft benut. Publiceer deze audio-opname.</div>";
-            //    roles =     (
-            //    );
-            //    scope = user;
-            //    showCountDown = 0;
-            //    sortKey = 2;
-            //    type = "org.celstec.arlearn2.beans.generalItem.AudioObject";
-            //}
-            
-            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
-            [ARLUtils LogJsonDictionary:json url:nil];
-            
-            if (self.activeItem) {
-                self.descriptionText.attributedText = [ARLUtils htmlToAttributedString:self.activeItem.richText];
-            } else {
-                self.descriptionText.text = @"No Description.";
-            }
+
+            [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                        activeItem:self.activeItem
+                                              verb:read_action];
+
+            // NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+            // [ARLUtils LogJsonDictionary:json url:nil];
             
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:self.activeItem.type];
             
-#warning this code should move to the view handling a single GeneralItem!
-            
             switch (bid) {
-                case NarratorItem:
-                    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
-                                                activeItem:self.activeItem
-                                                      verb:read_action];
+                    // Contains Text + Choice.
+                case SingleChoiceTest:
+                case MultipleChoiceTest: {
+                    ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
                     
-                    [self UpdateItemVisibility];
-                    
+                    if (newViewController) {
+                        newViewController.runId = self.runId;
+                        newViewController.activeItem  = self.activeItem;
+                        
+                        // Move to another UINavigationController or UITabBarController etc.
+                        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                        [self.navigationController pushViewController:newViewController animated:YES];
+                        
+                        newViewController = nil;
+                    }
+                }
                     break;
                     
+                    // Contains Text + openQuestion (or nothing).
+                case NarratorItem:
+                {
+                    // if ([json valueForKey:@"openQuestion"]) {
+                    ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
+                    
+                    if (newViewController) {
+                        newViewController.runId = self.runId;
+                        newViewController.activeItem  = self.activeItem;
+                        
+                        // Move to another UINavigationController or UITabBarController etc.
+                        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                        [self.navigationController pushViewController:newViewController animated:YES];
+                        
+                        newViewController = nil;
+                    }
+                    
+                }
+                    break;
+                    
+                    // Contains Audio + openQuestion (or nothing).
                 case AudioObject:
                 {
-                    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
-                                                activeItem:self.activeItem
-                                                      verb:read_action];
+                    ARLAudioPlayer *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"AudioPlayer"];
                     
-                    NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
-                    
-                    NSString *audioFeed = [json valueForKey:@"audioFeed"];
-                    
-                    NSRange index = [audioFeed rangeOfString:[self.activeItem.gameId stringValue]];
-                    
-                    NSString *path = [audioFeed substringFromIndex:index.location + index.length];
-                    
-                    NSString *audioFile = [ARLUtils GenerateResourceFileName:self.activeItem.gameId
-                                                                        path:path];
-                    
-                    NSURL *audioUrl = [[NSURL alloc] initFileURLWithPath:audioFile];
-                    
-                    // See http://stackoverflow.com/questions/1973902/play-mp3-files-with-iphone-sdk
-                    // See http://www.raywenderlich.com/69369/audio-tutorial-ios-playing-audio-programatically-2014-edition
-                    // See http://stackoverflow.com/questions/9683547/avaudioplayer-throws-breakpoint-in-debug-mode
-                    NSError *error;
-                    self.audioPlayer = [[AVAudioPlayer alloc]
-                                        initWithContentsOfURL:audioUrl
-                                        error:&error];
-                    [self.audioPlayer setDelegate:self];
-                    [self.audioPlayer prepareToPlay];
-                    [self.audioPlayer play];
-                    
-                    [self.itemsTable setUserInteractionEnabled:NO];
+                    if (newViewController) {
+                        newViewController.runId = self.runId;
+                        newViewController.activeItem  = self.activeItem;
+                        
+                        // Move to another UINavigationController or UITabBarController etc.
+                        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                        [self.navigationController pushViewController:newViewController animated:YES];
+                        
+                        newViewController = nil;
+                    }
                 }
                     break;
                     
                 default:
+                    //Should not happen
+                    Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
                     break;
             }
             
             break;
         }
     }
-}
-
-#pragma mark - AVAudioPlayerDelegate
-
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
-    DLog(@"audioPlayerDidFinishPlaying");
     
     [self UpdateItemVisibility];
-    
-    [self.itemsTable setUserInteractionEnabled:YES];
-    
-    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
-                                activeItem:self.activeItem
-                                      verb:complete_action];
     
     // TODO Find a better spot to publish actions (and make it a NSOperation)!
     [self PublishActionsToServer];
     
     // TODO Find a better spot to sync visibility (and make it a NSOperation)!
     [self DownloadgeneralItemVisibilities];
-    
-    self.activeItem = nil;
 }
 
-- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
-    DLog(@"audioPlayerDecodeErrorDidOccur");
-    
-    [self UpdateItemVisibility];
-    
-    [self.itemsTable setUserInteractionEnabled:YES];
-    
-    self.activeItem = nil;
-}
+#pragma mark - UIWebViewDelegate
 
-#warning Interruption calls are all deprecated (should use the AVAUdioSession instead).
+-(void)webViewDidFinishLoad:(UIWebView *)webView {
+    CGRect newBounds = webView.bounds;
+    newBounds.size.height = webView.scrollView.contentSize.height;
+    webView.bounds = newBounds;
+    
+    [self applyConstraints];
+}
 
 #pragma mark - Properties
 
@@ -529,10 +407,18 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                                                         views:viewsDictionary]];
     
     // Fix itemsTable/descriptionText Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText(==150)]-[itemsTable]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+    if (self.descriptionText.isHidden) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[itemsTable]-|"
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    } else {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[itemsTable]-|",
+                                                                                   self.descriptionText.bounds.size.height]
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    }
 }
 
 /*!

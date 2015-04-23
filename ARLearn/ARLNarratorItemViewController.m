@@ -69,6 +69,21 @@ typedef NS_ENUM(NSInteger, responses) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    CGRect newBounds =  self.activeItemdescriptionText.bounds;
+//    newBounds.size.height = 10;
+//    self.descriptionText.bounds = newBounds;
+//    
+//    self.descriptionText.delegate = self;
+//    
+//    Game *game= [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId];
+//    
+//    if (game && TrimmedStringLength(game.richTextDescription) != 0) {
+//        self.descriptionText.hidden = NO;
+//        [self.descriptionText loadHTMLString:game.richTextDescription baseURL:nil];
+//    } else {
+//        self.descriptionText.hidden = YES;
+//    }
+//    
     self.collectionView.opaque = NO;
     self.collectionView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
 }
@@ -639,6 +654,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     }
 }
 
+#pragma mark - UIWebViewDelegate
+
+-(void)webViewDidFinishLoad:(UIWebView *)webView {
+    CGRect newBounds = webView.bounds;
+    newBounds.size.height = webView.scrollView.contentSize.height;
+    webView.bounds = newBounds;
+}
+
 #pragma mark - Properties
 
 /*!
@@ -884,7 +907,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 #warning TODO Port NarratorItem
     // controller.inquiry = self.inquiry;
   
-    TODO Move saving to code into viewcontroller?
+   // TODO Move saving to code into viewcontroller?
     controller.activeItem = self.activeItem;
     controller.run = self.run;
     

@@ -13,7 +13,7 @@
 #import "Action.h"
 #import "GeneralItem.h"
 
-@interface ARLGeneralItemViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface ARLGeneralItemViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,UIWebViewDelegate>
 
 @property (strong, nonatomic) NSNumber *runId;
 
