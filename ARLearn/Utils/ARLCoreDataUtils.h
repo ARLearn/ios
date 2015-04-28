@@ -8,6 +8,7 @@
 
 #include "ARLNetworking.h"
 #include "ARLLog.h"
+#include "ARLSynchronisation.h"
 
 #include "Action.h"
 #include "GeneralItem.h"
@@ -17,5 +18,10 @@
 + (void)CreateOrUpdateAction:(NSNumber *)runId
                   activeItem:(GeneralItem *)activeItem
                         verb:(NSString *)verb;
-
+/*!
+ *  Mark the ActiveItem as Read.
+ */
++ (void)MarkAnswerAsGiven:(NSNumber*)runId
+            generalItemid:(NSNumber *)generalItemId
+                 answerId:(NSString *)answerId;
 @end

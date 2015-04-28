@@ -91,6 +91,21 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
+    
+    [ARLSynchronisation PublishActionsToServer];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(syncProgress:)
+                                                 name:ARL_SYNCPROGRESS
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(syncReady:)
+                                                 name:ARL_SYNCREADY
+                                               object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -102,15 +117,18 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [self.itemsTable addSubview:self.refreshControl];
     
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
-        [self DownloadgeneralItemVisibilities];
+        [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
     }];
     
     [[ARLAppDelegate theOQ] addOperation:backBO0];
 }
 
--(void) viewWillDisappear:(BOOL)animated {
-    
+- (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCPROGRESS object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCREADY object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -319,10 +337,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [self UpdateItemVisibility];
     
     // TODO Find a better spot to publish actions (and make it a NSOperation)!
-    [self PublishActionsToServer];
+    [ARLSynchronisation PublishActionsToServer];
     
     // TODO Find a better spot to sync visibility (and make it a NSOperation)!
-    [self DownloadgeneralItemVisibilities];
+    [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
 }
 
 #pragma mark - UIWebViewDelegate
@@ -406,163 +424,9 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                       verb:read_action];
         
     // TODO Find a better spot to publish actions (and make it a NSOperation)!
-    [self PublishActionsToServer];
+    [ARLSynchronisation PublishActionsToServer];
     
-    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
-    [self DownloadgeneralItemVisibilities];
-}
-
-/*!
- *  Post all unsynced Actions to the server.
- */
-- (void)PublishActionsToServer {
-    
-    // TODO Filter on runId too?
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"synchronized=%@", @NO];
-    
-    for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
-        NSString *userEmail = [NSString stringWithFormat:@"%@:%@", action.account.accountType, action.account.localId];
-        
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              action.action,                        @"action",
-                              action.run.runId,                     @"runId",
-                              action.generalItem.generalItemId,     @"generalItemId",
-                              userEmail,                            @"userEmail",
-                              action.time,                          @"time",
-                              action.generalItem.type,              @"generalItemType",
-                              nil];
-        
-        [ARLNetworking sendHTTPPostWithAuthorization:@"actions" json:dict];
-        
-        action.synchronized = [NSNumber numberWithBool:YES];
-    }
-    
-    // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-}
-
-/*!
- *  Retrieve GeneralItemVisibility records from the server.
- *
- *  Runs in a background thread.
- */
--(void)DownloadgeneralItemVisibilities {
-    
-    // TODO Add TimeStamp to url retrieve less records?
-    
-    NSString *service = [NSString stringWithFormat:@"generalItemsVisibility/runId/%lld", [self.runId longLongValue]];
-    
-    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
-    
-    NSError *error = nil;
-    NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
-                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
-                                                                      error:&error] : nil;
-    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
-    
-    if (error == nil) {
-        // [ARLUtils LogJsonDictionary:response url:[ARLNetworking MakeRestUrl:service]];
-        
-        for (NSDictionary *item in [response valueForKey:@"generalItemsVisibility"])
-        {
-            // DLog(@"GeneralItem: %lld has Status %@,", [[item valueForKey:@"generalItemId"] longLongValue], [item valueForKey:@"status"]);
-            
-            //{
-            //    "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibilityList",
-            //    "serverTime": 1421237978494,
-            //    "generalItemsVisibility": [
-            //                               {
-            //                                   "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibility",
-            //                                   "runId": 4977978815545344,
-            //                                   "deleted": false,
-            //                                   "lastModificationDate": 1417533139703,
-            //                                   "timeStamp": 1417533139537,
-            //                                   "status": 1,
-            //                                   "email": "2:103021572104496509774",
-            //                                   "generalItemId": 6180497885495296
-            //                               },
-            //                               {
-            //                                   "type": "org.celstec.arlearn2.beans.run.GeneralItemVisibility",
-            //                                   "runId": 4977978815545344,
-            //                                   "deleted": false,
-            //                                   "lastModificationDate": 1421237415947,
-            //                                   "timeStamp": 1421237414637,
-            //                                   "status": 1,
-            //                                   "email": "2:103021572104496509774",
-            //                                   "generalItemId": 5232076227870720
-            //                               }
-            //                               ]
-            //}
-            
-            //            @dynamic email;                   mapped
-            //            @dynamic generalItemId;           mapped
-            //            @dynamic runId;                   mapped
-            //            @dynamic status;                  mapped
-            //            @dynamic timeStamp;               mapped
-            
-            //            @dynamic correspondingRun;        manual
-            //            @dynamic generalItem;             manual
-            
-            // Check if a record is already present.
-            //
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"generalItemId=%lld AND runId=%lld",
-                                      [[item valueForKey:@"generalItemId"] longLongValue],
-                                      [self.runId longLongValue]];
-            
-            GeneralItemVisibility *giv = [GeneralItemVisibility MR_findFirstWithPredicate:predicate
-                                                                                inContext:ctx];
-            
-            if (giv == nil) {
-                
-                // Create a new Record.
-                //
-                giv = (GeneralItemVisibility *)[ARLUtils ManagedObjectFromDictionary:item
-                                                                          entityName:[GeneralItemVisibility MR_entityName] // @"GeneralItemVisibility"
-                                                                      managedContext:ctx];
-                
-                giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"
-                                                          withValue:giv.runId
-                                                          inContext:ctx];
-                
-                giv.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                             withValue:giv.generalItemId
-                                                             inContext:ctx];
-                
-                Log(@"Created GeneralItemVisibility for %@ ('%@') with status %@", giv.generalItemId, giv.generalItem.name, giv.status);
-            } else {
-                if (!giv.correspondingRun) {
-                    giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"
-                                                              withValue:giv.runId
-                                                              inContext:ctx];
-                }
-                if (!giv.generalItem) {
-                    giv.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                                 withValue:giv.generalItemId
-                                                                 inContext:ctx];
-                }
-                // Only update when visibility status is still smaller then 2.
-                //
-                if (! [giv.status isEqualToNumber:[NSNumber numberWithInt:2]]) {
-                    giv.status = [item valueForKey:@"status"];
-                    giv.timeStamp = [item valueForKey:@"timeStamp"];
-                    
-                    Log(@"Updated GeneralItemVisibility of %@ ('%@') to status %@", giv.generalItemId, giv.generalItem.name, giv.status);
-                }
-                
-                [ctx MR_saveToPersistentStoreAndWait];
-            }
-        }
-    }
-    
-    // Saves any modification made after ManagedObjectFromDictionary.
-    
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
-    [self performSelectorOnMainThread:@selector(UpdateItemVisibility) withObject:nil waitUntilDone:YES];
-    
-    // ¥[self.itemsTable performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
 }
 
 /*!
@@ -836,14 +700,14 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     if (self.refreshControl && !self.refreshControl.isRefreshing) {
         NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
             Log(@"refresh calls UpdateItemVisibility");
-            [self DownloadgeneralItemVisibilities];
+            [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
         }];
         
         NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
             [self UpdateItemVisibility];
         }];
         
-        Log(@"refresh schedules DownloadgeneralItemVisibilities");
+        Log(@"refresh schedules DownloadGeneralItemVisibilities");
         
         [foreBO addDependency:backBO0];
         
@@ -861,6 +725,67 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [ARLUtils popToViewControllerOnNavigationController:[ARLMyGamesViewController class]
                                    navigationController:self.navigationController
                                                animated:YES];
+}
+
+#pragma mark - Notifications.
+
+- (void)syncProgress:(NSNotification*)notification
+{
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(syncProgress:)
+                               withObject:notification
+                            waitUntilDone:YES];
+        return;
+    }
+    
+    NSString *recordType = notification.object;
+    
+    Log(@"syncProgress: %@", recordType);
+    
+    if ([NSStringFromClass([GeneralItem class]) isEqualToString:recordType]) {
+        //
+    }
+}
+
+- (void)syncReady:(NSNotification*)notification
+{
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(syncReady:)
+                               withObject:notification
+                            waitUntilDone:YES];
+        return;
+    }
+    
+    NSString *recordType = notification.object;
+    
+    Log(@"syncReady: %@", recordType);
+    if ([NSStringFromClass([GeneralItemVisibility class]) isEqualToString:recordType]) {
+        [self UpdateItemVisibility];
+        
+        [self.itemsTable reloadData];
+    } else if ([NSStringFromClass([GeneralItem class]) isEqualToString:recordType]) {
+        NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
+        
+        self.items = [GeneralItem MR_findAllSortedBy:@"sortKey"
+                                           ascending:NO
+                                       withPredicate:predicate1];
+        
+        // Again Sort....
+        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
+        self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
+        
+        [self UpdateItemVisibility];
+        
+        [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
+        
+        if (self.descriptionText.isHidden) {
+            [self applyConstraints];
+        }
+        
+        [self.itemsTable reloadData];
+    } else {
+        DLog(@"syncReady, unhandled recordType: %@", recordType);
+    }
 }
 
 @end

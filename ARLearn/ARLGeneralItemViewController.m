@@ -375,76 +375,6 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     }
 }
 
-/*!
- *  Mark the ActiveItem as Read.
- */
-- (void)MarkAnswerAsGiven:(NSString *)answerId {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
-                              self.runId, self.activeItem.generalItemId, answerId];
-    Action *action = [Action MR_findFirstWithPredicate:predicate];
-    
-    if (!action) {
-        action = [Action MR_createEntity];
-        {
-            action.account = [ARLNetworking CurrentAccount];
-            action.action = answerId;
-            action.generalItem = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                            withValue:self.activeItem.generalItemId];
-            action.run = [Run MR_findFirstByAttribute:@"runId"
-                                            withValue:self.runId];
-            action.synchronized = [NSNumber numberWithBool:NO];
-            action.time = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000];
-        }
-        
-        // Saves any modification made after ManagedObjectFromDictionary.
-        [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-        
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        
-        
-        DLog(@"Marked Generalitem %@ as '%@' for Run %@", self.activeItem.generalItemId, action.action, self.runId);
-    } else {
-        DLog(@"Generalitem %@ for Run %@ is already marked as %@", self.activeItem.generalItemId, self.runId, action.action);
-    }
-    
-    // TODO Find a better spot to publish actions (and make it a NSOperation)!
-    [self PublishActionsToServer];
-    
-    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
-    // [self DownloadgeneralItemVisibilities];
-}
-
-/*!
- *  Post all unsynced Actions to the server.
- */
--(void)PublishActionsToServer {
-    
-    // TODO Filter on runId too?
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"synchronized=%@", @NO];
-    
-    for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
-        NSString *userEmail = [NSString stringWithFormat:@"%@:%@", action.account.accountType, action.account.localId];
-        
-        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              action.action,                        @"action",
-                              action.run.runId,                     @"runId",
-                              action.generalItem.generalItemId,     @"generalItemId",
-                              userEmail,                            @"userEmail",
-                              action.time,                          @"time",
-                              action.generalItem.type,              @"generalItemType",
-                              nil];
-        
-        [ARLNetworking sendHTTPPostWithAuthorization:@"actions" json:dict];
-        
-        action.synchronized = [NSNumber numberWithBool:YES];
-    }
-    
-    // Saves any modification made after ManagedObjectFromDictionary.
-    [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
-    
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-}
 
 #pragma mark - Actions
 
@@ -458,7 +388,9 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
         NSDictionary *answer = [self.answers objectAtIndex:i];
         
         if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
-            [self MarkAnswerAsGiven:[answer valueForKey:@"id"]];
+            [ARLCoreDataUtils MarkAnswerAsGiven:self.runId
+                                  generalItemid:self.activeItem.generalItemId
+                                       answerId:[answer valueForKey:@"id"]];
             
             Log(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
         }

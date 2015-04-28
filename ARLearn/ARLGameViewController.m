@@ -92,7 +92,7 @@ didReceiveResponse:(NSURLResponse *)response
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
     
-    NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    // NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -101,7 +101,7 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
+    // NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
@@ -116,7 +116,7 @@ didReceiveResponse:(NSURLResponse *)response
               task:(NSURLSessionTask *)task
 didCompleteWithError:(NSError *)error
 {
-    NSLog(@"Completed HTTP Task");
+    // NSLog(@"Completed HTTP Task");
     
     if (error == nil)
     {
@@ -125,7 +125,7 @@ didCompleteWithError:(NSError *)error
         [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
         
         // Update UI Here?
-        NSLog(@"Download is Succesfull");
+        // NSLog(@"Download is Succesfull");
     } else {
         NSLog(@"Error %@",[error userInfo]);
     }

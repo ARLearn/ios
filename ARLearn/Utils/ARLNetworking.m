@@ -34,7 +34,12 @@ static NSString *_twitterLoginString;
 }
 
 + (NSString *) MakeRestUrl:(NSString *) service {
-    return [NSString stringWithFormat:serviceUrlFmt, serverUrl, service];
+    if ([service hasPrefix:@"/"]) {
+        return [NSString stringWithFormat:@"%@%@", serverUrl, service];
+    } else {
+        return [NSString stringWithFormat:serviceUrlFmt, serverUrl, service];
+    }
+    // return [NSString stringWithFormat:serviceUrlFmt, serverUrl, service];
 }
 
 + (NSDictionary *) accountDetails {
@@ -134,8 +139,10 @@ static NSString *_twitterLoginString;
     [urlRequest setValue:authorizationString forHTTPHeaderField:@"Authorization"];
     
     // Setup Headers
-    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest addValue:applicationjson
+      forHTTPHeaderField:acceptHeader];
+    [urlRequest addValue:applicationjson
+      forHTTPHeaderField:contenttypeHeader];
     
     // Setup Method
     [urlRequest setHTTPMethod:@"GET"];
@@ -193,8 +200,10 @@ static NSString *_twitterLoginString;
     [urlRequest setValue:authorizationString forHTTPHeaderField:@"Authorization"];
     
     // Setup Headers
-    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest addValue:applicationjson
+      forHTTPHeaderField:acceptHeader];
+    [urlRequest addValue:applicationjson
+      forHTTPHeaderField:contenttypeHeader];
 
     // Setup Method
     [urlRequest setHTTPMethod:@"POST"];
@@ -269,7 +278,7 @@ static NSString *_twitterLoginString;
     
     NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
     
-    DLog(@"URL: %@", url);
+    // DLog(@"URL: %@", url);
 
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
@@ -302,29 +311,33 @@ static NSString *_twitterLoginString;
  */
 +(NSData *)sendHTTPPostWithAuthorization:(NSString *)service
                                     json:(NSDictionary *)json {
+    NSError *error = nil;
+    NSData *data =  [NSJSONSerialization dataWithJSONObject:json options:0 error:&error];
+    ELog(error);
+    
+    return [ARLNetworking sendHTTPPostWithAuthorization:service
+                                                   data:data
+                                             withAccept:@"application/json"
+                                        withContentType:@"application/json"];
+}
+
+/*!
+ *  Get a URL's content synchronously
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return the URL's content as NSData.
+ */
++(NSData *)sendHTTPPostWithAuthorization:(NSString *)service
+                                    data:(NSData *)body
+                              withAccept:(NSString *)withAccept
+                         withContentType:(NSString *)withContentType {
     NSURLResponse *response = nil;
     
     //    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     //    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject];
     
     NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
-    
-//    [ARLUtils LogJsonDictionary:json
-//                            url:[url absoluteString]];
-    
-    //{
-    //    action = read;
-    //    generalItemId = 6180497885495296;
-    //    generalItemType = "org.celstec.arlearn2.beans.generalItem.AudioObject";
-    //    runId = 4977978815545344;
-    //    time = 1421237414518;
-    //    userEmail = "2:103021572104496509774";
-    //}
-    
-    // Prepare Data.
-    NSError *error1 = nil;
-    NSData *body = [NSJSONSerialization dataWithJSONObject:json options:0 error:&error1];
-    ELog(error1);
     
     NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
     
@@ -334,24 +347,24 @@ static NSString *_twitterLoginString;
       forHTTPHeaderField:@"Authorization"];
     
     // Setup Other Headers
-    [urlRequest addValue:@"application/json"
-      forHTTPHeaderField:@"Accept"];
-    [urlRequest addValue:@"application/json"
-      forHTTPHeaderField:@"Content-Type"];
+    [urlRequest addValue:withAccept
+      forHTTPHeaderField:acceptHeader];
+    [urlRequest addValue:withContentType
+      forHTTPHeaderField:contenttypeHeader];
     
     // Add Body.
     [urlRequest setHTTPBody:body];
-
+    
     // Setup Method
     [urlRequest setHTTPMethod:@"POST"];
     
-    NSError *error2 = nil;
+    NSError *error = nil;
     
     NSData *data = [NSURLSession sendSynchronousDataTaskWithRequest:urlRequest
                                                   returningResponse:&response
-                                                              error:&error2];
+                                                              error:&error];
     
-    if (error2==nil) {
+    if (error==nil) {
         // [ARLUtils LogJsonData:data url:[url absoluteString]];
         
         //{
@@ -367,8 +380,8 @@ static NSString *_twitterLoginString;
         //    userEmail = "2:103021572104496509774";
         //}
     }
-
-    ELog(error2);
+    
+    ELog(error);
     
     return data;
 }

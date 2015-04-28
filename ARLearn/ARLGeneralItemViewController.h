@@ -9,6 +9,8 @@
 #import "ARLUtils.h"
 #import "ARLBeanNames.h"
 #import "ARLNetworking.h"
+#import "ARLSynchronisation.h"
+#import "ARLCoreDataUtils.h"
 
 #import "Action.h"
 #import "GeneralItem.h"

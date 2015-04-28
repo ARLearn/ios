@@ -62,7 +62,8 @@ typedef NS_ENUM(NSInteger, services) {
  *  @param delegate <#delegate description#>
  *  @param service  <#service description#>
  */
-+ (void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service;
++ (void) sendHTTPGetWithDelegate:(id <NSURLSessionDelegate>)delegate
+                     withService:(NSString *)service;
 
 + (NSString *)generateGetDescription:(NSString *)service;
 
@@ -73,7 +74,9 @@ typedef NS_ENUM(NSInteger, services) {
  *  @param service  <#service description#>
  *  @param body     <#body description#>
  */
-+ (void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate withService:(NSString *)service withBody:(NSString *)body;
++ (void) sendHTTPPostWithDelegate:(id <NSURLSessionDelegate>)delegate
+                      withService:(NSString *)service
+                         withBody:(NSString *)body;
 
 /*!
  *  Generate a Cache Identifier based on Url and Body (if present).
@@ -83,7 +86,8 @@ typedef NS_ENUM(NSInteger, services) {
  *
  *  @return <#return value description#>
  */
-+ (NSString *)generatePostDescription:(NSString *)service withBody:(NSString *)body;
++ (NSString *)generatePostDescription:(NSString *)service
+                             withBody:(NSString *)body;
 
 /*!
  *  Synchronous.
@@ -92,7 +96,7 @@ typedef NS_ENUM(NSInteger, services) {
  *
  *  @return <#return value description#>
  */
-+ (NSData *)sendHTTPGetWithAuthorization:(NSString *) service;
++ (NSData *)sendHTTPGetWithAuthorization:(NSString *)service;
 
 /*!
  *  Post a URL's content synchronously
@@ -101,7 +105,20 @@ typedef NS_ENUM(NSInteger, services) {
  *
  *  @return the URL's content as NSData.
  */
-+(NSData *)sendHTTPPostWithAuthorization:(NSString *) service json:(NSDictionary *)json;
++(NSData *)sendHTTPPostWithAuthorization:(NSString *)service
+                                    json:(NSDictionary *)json;
+
+/*!
+ *  Get a URL's content synchronously
+ *
+ *  @param service The Rest Service Url part.
+ *
+ *  @return the URL's content as NSData.
+ */
++(NSData *)sendHTTPPostWithAuthorization:(NSString *)service
+                                    data:(NSData *)body
+                              withAccept:(NSString *)withAccept
+                         withContentType:(NSString *)withContentType;
 
 + (void) setupOauthInfo;
 

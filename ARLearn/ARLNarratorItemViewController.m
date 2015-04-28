@@ -94,6 +94,7 @@ typedef NS_ENUM(NSInteger, responses) {
 //    // Again Sort....
 //    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:NO];
 //    self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
+    
     self.itemsTable.delegate = self;
     self.itemsTable.dataSource = self;
     
@@ -113,26 +114,36 @@ typedef NS_ENUM(NSInteger, responses) {
     
     self.navigationController.toolbarHidden = NO;
     
-#warning TODO Port NarratorItem
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(syncProgress:)
+                                                 name:ARL_SYNCPROGRESS
+                                               object:nil];
     
-    //    [[NSNotificationCenter defaultCenter] addObserver:self
-    //                                             selector:@selector(syncProgress:)
-    //                                                 name:INQ_SYNCPROGRESS
-    //                                               object:nil];
-    //
-    //    [[NSNotificationCenter defaultCenter] addObserver:self
-    //                                             selector:@selector(syncReady:)
-    //                                                 name:INQ_SYNCREADY
-    //                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(syncReady:)
+                                                 name:ARL_SYNCREADY
+                                                   object:nil];
     
     [self setupFetchedResultsController];
+
+    NSError *error = nil;
+    [self.fetchedResultsController performFetch:&error];
+    ELog(error);
+    
+    Log("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
     
     [self.itemsTable reloadData];
+    
+    NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
+        [ARLSynchronisation DownloadResponses:self.runId];
+    }];
+    
+    [[ARLAppDelegate theOQ] addOperation:backBO1];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+
     if (ARLNetworking.networkAvailable) {
         
 #warning TODO Port NarratorItem
@@ -168,13 +179,11 @@ typedef NS_ENUM(NSInteger, responses) {
 - (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-#warning TODO Port NarratorItem
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCPROGRESS object:nil];
     
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:INQ_SYNCPROGRESS object:nil];
-    //
-    //    [[NSNotificationCenter defaultCenter] removeObserver:self name:INQ_SYNCREADY object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCREADY object:nil];
     
-    self.navigationController.toolbarHidden = YES;
+    // self.navigationController.toolbarHidden = YES;
     
     self.fetchedResultsController = nil;
 }
@@ -237,7 +246,6 @@ typedef NS_ENUM(NSInteger, responses) {
                                                                        options: NSJSONReadingMutableContainers
                                                                          error:&error];
 
-            
             if (response.fileName) {
                 
                 if (self.withPicture && [response.responseType isEqualToNumber:[NSNumber numberWithInt:PHOTO]]) {
@@ -311,7 +319,6 @@ typedef NS_ENUM(NSInteger, responses) {
                         cell.imageView.image = [UIImage imageNamed:@"task-explore"];
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"value"]];
                     }
-                    
 
                     //                    if ((self.withText  && [response.responseType isEqualToNumber:[NSNumber numberWithInt:TEXT]]) ||
                     //                        (self.withValue && [response.responseType isEqualToNumber:[NSNumber numberWithInt:NUMBER]])) {
@@ -514,7 +521,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     if (ARLNetworking.networkAvailable) {
 #warning TODO Port NarratorItem
-        //            [ARLCloudSynchronizer syncResponses: self.activeItem.managedObjectContext];
+        // [ARLCloudSynchronizer syncResponses: self.activeItem.managedObjectContext];
     }
 }
 
@@ -797,15 +804,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (void)setupFetchedResultsController {
     NSMutableArray *tmp = [[NSMutableArray alloc] init];
     
-    if (self.withPicture){
+    if (self.withPicture) {
         tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
                                               [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:PHOTO]]]];
     }
-    if (self.self.withVideo){
+    if (self.self.withVideo) {
         tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
                                               [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:VIDEO]]]];
     }
-    if (self.withAudio){
+    if (self.withAudio) {
         tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
                                               [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:AUDIO]]]];
     }
@@ -817,15 +824,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
                                               [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:NUMBER]]]];
     }
-    
+#warning DEBUG CODE
     // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
     NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
-    NSPredicate *andPredicate = [NSPredicate predicateWithFormat: @"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue], @NO];
+//    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue], @NO];
+    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",
+                                 [self.runId longLongValue],
+                                 [self.activeItem.generalItemId longLongValue],
+                                 @NO];
     
     // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
     
-#warning SOMETIMES BAD-ACCES HERE.
+   // NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"run.runId = %@ AND revoked = %@", run.runId, @NO];
+    
+#warning SOMETIMES BAD-ACCES HERE?
     
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
     
@@ -833,18 +846,13 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                                      ascending:YES
                                                  withPredicate:predicate
                                                      inContext:ctx];
-    request.fetchBatchSize = 8;
-    
+    // request.fetchBatchSize = 8;
+
     self.fetchedResultsController = [Response MR_fetchController:request
                                                         delegate:self
                                                     useFileCache:NO
                                                        groupedBy:nil
                                                        inContext:ctx];
-
-    NSError *error = nil;
-    [self.fetchedResultsController performFetch:&error];
-
-    ELog(error);
 }
 
 -(UIImage *) drawText:(NSString*) text inImage:(UIImage*)image atPoint:(CGPoint)point
@@ -953,11 +961,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
  */
 - (void) collectVideo {
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        self.imagePickerController = [[UIImagePickerController alloc] init];
-        self.imagePickerController.delegate = self;
-        
-        // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
-        self.mode = UIImagePickerControllerCameraCaptureModeVideo;
+        if (!self.imagePickerController) {
+            self.imagePickerController = [[UIImagePickerController alloc] init];
+            self.imagePickerController.delegate = self;
+            self.mode = UIImagePickerControllerCameraCaptureModeVideo;
+        }
         
         self.imagePickerController.sourceType =  UIImagePickerControllerSourceTypeCamera;
         self.imagePickerController.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
@@ -976,25 +984,23 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
  *  Take a Picture.
  */
 - (void) collectImage {
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        //  if (!self.imagePickerController) {
-        self.imagePickerController = [[UIImagePickerController alloc] init];
-        
-        // self.imagePickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
-        self.mode = UIImagePickerControllerCameraCaptureModePhoto;
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ||
+        [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary] ) {
+        if (!self.imagePickerController) {
+            self.imagePickerController = [[UIImagePickerController alloc] init];
+            self.imagePickerController.delegate = self;
+            self.mode = UIImagePickerControllerCameraCaptureModePhoto;
+        }
         
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
             self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
         } else {
             self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         }
-        
-        // image picker needs a delegate so we can respond to its messages
-        [self.imagePickerController setDelegate:self];
+
+        // Place image picker on the screen
+        [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
     }
-    
-    // Place image picker on the screen
-    [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
 }
 
 #pragma mark - Actions
@@ -1054,7 +1060,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         
         if (ARLNetworking.networkAvailable) {
 #warning TODO Port NarratorItem
-            // [ARLCloudSynchronizer syncResponses:self.activeItem.managedObjectContext];
+            // [ARLCloudSynchronizer  :self.activeItem.managedObjectContext];
         }
 
         NSError *error = nil;
@@ -1153,13 +1159,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                              fileName,                                                               @"fileName",
                              thumb,                                                                  @"thumb",
                              nil];
-
-  [self responseWithDictionary:jsonDict];
-
+    
+    [self responseWithDictionary:jsonDict];
+    
+    [self.itemsTable reloadData];
+    
     // TEST CODE
-//    NSError *error = nil;
-//    [self.fetchedResultsController performFetch:&error];
-//    
+    //    NSError *error = nil;
+    //    [self.fetchedResultsController performFetch:&error];
+    //    
 //  [self.collectionView reloadData];
 }
 
@@ -1244,6 +1252,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     [ctx MR_saveToPersistentStoreAndWait];
     
+    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    [ARLSynchronisation PublishResponsesToServer];
+    
+#warning This Code Fails without a PublishResponsesToServer.
+    // NSError *error = nil;
+    // [self.fetchedResultsController performFetch:&error];
+    // ELog(error);
+    
     return response;
 }
 
@@ -1281,19 +1298,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // DLog(@"syncReady: %@", recordType);
     
     if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
-        // Comparing cnt fails because the code already does a performFetch before we enter here (because we switch views to add this one is rebuilt).
-        // NSUInteger cntBefore = [[self.fetchedResultsController fetchedObjects] count];
-        
         NSError *error = nil;
         [self.fetchedResultsController performFetch:&error];
+        ELog(error);
         
-        // NSUInteger cntAfter = [[self.fetchedResultsController fetchedObjects] count];
-        
-        // if (cntBefore!=cntAfter) {
-        // Log(@"Responses: %d -> %d", cntBefore, cntAfter);
+        Log("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
         
         [self.itemsTable reloadData];
-        // }
+    } else {
+        DLog(@"syncReady, unhandled recordType: %@", recordType);
     }
 }
 

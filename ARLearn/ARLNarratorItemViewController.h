@@ -22,12 +22,11 @@
 #import "ARLAudioRecorder.h"
 #import "ARLAudioRecorderViewController.h"
 #import "ARLAppDelegate.h"
-#import "ARLNarratorItemView.h"
 #import "ARLWebViewController.h"
-#import "ARLNarratorItemHeaderViewController.h"
 #import "ARLCoreDataUtils.h"
 #import "ARLUtils.h"
 #import "ARLBeanNames.h"
+#import "ARLDownloadViewController.h"
 
 #import "UIImage+Resize.h"
 

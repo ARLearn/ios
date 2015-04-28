@@ -19,8 +19,9 @@
 #import "ARLNarratorItemViewController.h"
 #import "ARLMyGamesViewController.h"
 #import "ARLAudioPlayer.h"
+#import "ARLSynchronisation.h"
 
-@interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate, UINavigationControllerDelegate, UIWebViewDelegate>
+@interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate, NSFetchedResultsControllerDelegate, UINavigationControllerDelegate, UIWebViewDelegate>
 
 @property (strong, nonatomic) NSNumber *gameId;
 

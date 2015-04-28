@@ -40,6 +40,9 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
     NUMBER  = 5
 };
 
+#define ARL_SYNCREADY    @"ARL_syncReady"
+#define ARL_SYNCPROGRESS @"ARL_syncProgress"
+#define ARL_GOTAPN       @"ARL_GotAPN"
 /*!
  *  Log GIT Version Info.
  */
