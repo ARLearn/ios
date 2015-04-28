@@ -72,6 +72,10 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+ 
+    // Setting a footer hides empty cels at the bottom.
+    self.nearbyGamesTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
     
     // Do any additional setup after loading the view.
 

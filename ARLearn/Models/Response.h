@@ -2,7 +2,7 @@
 //  Response.h
 //  ARLearn
 //
-//  Created by G.W. van der Vegt on 21/04/15.
+//  Created by G.W. van der Vegt on 28/04/15.
 //  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
 //
 
@@ -26,6 +26,7 @@
 @property (nonatomic, retain) NSNumber * timeStamp;
 @property (nonatomic, retain) NSString * value;
 @property (nonatomic, retain) NSNumber * width;
+@property (nonatomic, retain) NSNumber * revoked;
 @property (nonatomic, retain) Account *account;
 @property (nonatomic, retain) GeneralItem *generalItem;
 @property (nonatomic, retain) Run *run;

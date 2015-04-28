@@ -2,7 +2,7 @@
 //  Response.m
 //  ARLearn
 //
-//  Created by G.W. van der Vegt on 21/04/15.
+//  Created by G.W. van der Vegt on 28/04/15.
 //  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
 //
 
@@ -27,6 +27,7 @@
 @dynamic timeStamp;
 @dynamic value;
 @dynamic width;
+@dynamic revoked;
 @dynamic account;
 @dynamic generalItem;
 @dynamic run;

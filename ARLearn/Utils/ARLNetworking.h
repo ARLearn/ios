@@ -118,4 +118,8 @@ typedef NS_ENUM(NSInteger, services) {
 
 + (NSDictionary *) accountDetails;
 
++ (NSData *) getUserInfo:(NSNumber *)runId
+                        userId:(NSString *)userId
+                    providerId:(NSString *)providerId;
+
 @end

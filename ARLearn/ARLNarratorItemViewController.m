@@ -69,12 +69,14 @@ typedef NS_ENUM(NSInteger, responses) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    CGRect newBounds =  self.activeItemdescriptionText.bounds;
-//    newBounds.size.height = 10;
-//    self.descriptionText.bounds = newBounds;
-//    
-//    self.descriptionText.delegate = self;
-//    
+    CGRect newBounds =  self.activeItemdescriptionText.bounds;
+    newBounds.size.height = 10;
+    self.descriptionText.bounds = newBounds;
+    
+    self.descriptionText.delegate = self;
+
+      [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+    
 //    Game *game= [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId];
 //    
 //    if (game && TrimmedStringLength(game.richTextDescription) != 0) {
@@ -229,7 +231,6 @@ typedef NS_ENUM(NSInteger, responses) {
 - (UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     ARLNarratorItemView *cell = (ARLNarratorItemView *)[cv dequeueReusableCellWithReuseIdentifier:self.cellIdentifier
                                                                                      forIndexPath:indexPath];
-    
     
     cell.backgroundColor = [UIColor colorWithRed:(float)0xE6
                                            green:(float)0xE6
@@ -837,7 +838,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
     NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
-    NSPredicate *andPredicate = [NSPredicate predicateWithFormat: @"run.runId = %lld AND generalItem.generalItemId = %lld",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue]];
+    NSPredicate *andPredicate = [NSPredicate predicateWithFormat: @"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue], @NO];
     
     // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];

@@ -46,6 +46,9 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Setting a footer hides empty cels at the bottom.
+    self.answersTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
     // The ContentSize of the UIWebView will only grow so start small.
     CGRect newBounds =  self.descriptionText.bounds;
     newBounds.size.height = 10;
@@ -61,7 +64,7 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
             self.descriptionText.hidden = NO;
             [self.descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
         }
-    }else {
+    } else {
         self.descriptionText.hidden = YES;
     }
     

@@ -2,7 +2,7 @@
 //  Run.h
 //  ARLearn
 //
-//  Created by G.W. van der Vegt on 20/04/15.
+//  Created by G.W. van der Vegt on 28/04/15.
 //  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
 //
 
@@ -13,7 +13,7 @@
 
 @interface Run : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * deleted;
+@property (nonatomic, retain) NSNumber * revoked;
 @property (nonatomic, retain) NSNumber * gameId;
 @property (nonatomic, retain) NSString * owner;
 @property (nonatomic, retain) NSNumber * runId;

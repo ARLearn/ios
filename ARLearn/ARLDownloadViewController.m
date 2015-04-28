@@ -87,6 +87,11 @@ NSInteger downloaded = 0;
         [self DownloadActions];
     }];
     
+    NSBlockOperation *backBO7 =[NSBlockOperation blockOperationWithBlock:^{
+        [self DownloadResponses];
+    }];
+    
+
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
         [NSTimer scheduledTimerWithTimeInterval:(downloaded==0 ? 0.1 : 2.5)
                                          target:self
@@ -102,11 +107,13 @@ NSInteger downloaded = 0;
     [backBO4 addDependency:backBO3];
     [backBO5 addDependency:backBO4];
     [backBO6 addDependency:backBO5];
+    [backBO7 addDependency:backBO6];
     
-    [foreBO  addDependency:backBO6];
+    [foreBO  addDependency:backBO7];
     
     [[NSOperationQueue mainQueue] addOperation:foreBO];
     
+    [[ARLAppDelegate theOQ] addOperation:backBO7];
     [[ARLAppDelegate theOQ] addOperation:backBO6];
     [[ARLAppDelegate theOQ] addOperation:backBO5];
     [[ARLAppDelegate theOQ] addOperation:backBO4];
@@ -218,7 +225,8 @@ NSInteger downloaded = 0;
     Game *item = [Game MR_findFirstWithPredicate: predicate inContext:ctx];
     
     if (item) {
-        if ([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) {
+        if (([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) ||
+            ([game valueForKey:@"revoked"] && [[game valueForKey:@"revoked"] integerValue] != 0)) {
             DLog(@"Deleting Game: %@", [game valueForKey:@"title"])
             [item MR_deleteEntity];
         } else {
@@ -230,13 +238,14 @@ NSInteger downloaded = 0;
                                                         managedContext:ctx];
         }
     } else {
-        if ([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) {
-            // Skip creating deleted records.
-            DLog(@"Skipping deleted Game: %@", [game valueForKey:@"title"])
-        } else {
-            // Uses MagicalRecord for Creation and Saving!
-            DLog(@"Creating Game: %@", [game valueForKey:@"title"])
-            item = (Game *)[ARLUtils ManagedObjectFromDictionary:game
+        if (([game valueForKey:@"deleted"] && [[game valueForKey:@"deleted"] integerValue] != 0) ||
+            ([game valueForKey:@"revoked"] && [[game valueForKey:@"revoked"] integerValue] != 0)) {
+                // Skip creating deleted records.
+                DLog(@"Skipping deleted Game: %@", [game valueForKey:@"title"])
+            } else {
+                // Uses MagicalRecord for Creation and Saving!
+                DLog(@"Creating Game: %@", [game valueForKey:@"title"])
+                item = (Game *)[ARLUtils ManagedObjectFromDictionary:game
                                                       entityName:[Game MR_entityName] //@"Game"
                                                       nameFixups:namefixups
                                                       dataFixups:datafixups
@@ -393,7 +402,8 @@ NSInteger downloaded = 0;
             Run *item = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
             
             if (item) {
-                if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
+                if (([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) ||
+                    ([run valueForKey:@"revoked"] && [[run valueForKey:@"revoked"] integerValue] != 0)) {
                     DLog(@"Deleting Run: %@", [run valueForKey:@"title"])
                     [item MR_deleteEntity];
                 } else {
@@ -411,7 +421,8 @@ NSInteger downloaded = 0;
                     self.runId = item.runId;
                 }
             } else {
-                if ([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) {
+                if (([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) ||
+                    ([run valueForKey:@"revoked"] && [[run valueForKey:@"revoked"] integerValue] != 0)) {
                     // Skip creating deleted records.
                     DLog(@"Skipping deleted Run: %@", [run valueForKey:@"title"])
                 } else {
@@ -422,11 +433,11 @@ NSInteger downloaded = 0;
                                                              nameFixups:namefixups
                                                              dataFixups:datafixups
                                                          managedContext:ctx];
-
+                    
                     // We can only update if both objects share the same context.
                     Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId inContext:ctx];
                     item.game = game;
-
+                    
                     self.runId = item.runId;
                 }
             }
@@ -595,7 +606,6 @@ NSInteger downloaded = 0;
     }
 }
 
-
 /*!
  *  Downloads the general items and stores/update or deletes them in/from the database.
  *
@@ -689,7 +699,8 @@ NSInteger downloaded = 0;
         //DONE: Test record deletion.
         //TODO: Find out what to do with linked records in other tables (like GeneralItemVisibility).
         if (item) {
-            if ([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) {
+            if (([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) ||
+                ([generalItem valueForKey:@"revoked"] && [[generalItem valueForKey:@"revoked"] integerValue] != 0)) {
                 DLog(@"Deleting GeneralItem: %@", [generalItem valueForKey:@"name"])
                 [item MR_deleteEntity];
             } else {
@@ -699,7 +710,7 @@ NSInteger downloaded = 0;
                                                                        nameFixups:namefixups
                                                                        dataFixups:datafixups
                                                                    managedContext:ctx];
-
+                
                 // We can only update if both objects share the same context.
                 Game *game =[Game MR_findFirstByAttribute:@"gameId"
                                                 withValue:self.gameId
@@ -707,7 +718,8 @@ NSInteger downloaded = 0;
                 item.ownerGame = game;
             }
         } else {
-            if ([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) {
+            if (([generalItem valueForKey:@"deleted"] && [[generalItem valueForKey:@"deleted"] integerValue] != 0) ||
+                ([generalItem valueForKey:@"revoked"] && [[generalItem valueForKey:@"revoked"] integerValue] != 0)) {
                 // Skip creating deleted records.
                 DLog(@"Skipping deleted GeneralItem: %@", [generalItem valueForKey:@"name"])
             }else {
@@ -738,52 +750,249 @@ NSInteger downloaded = 0;
     
     // Saves any modification made after ManagedObjectFromDictionary.
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
-    //WESPOT CODE
-    //    + (NSManagedObject *) ManagedObjectFromDictionary:(NSDictionary *)dict
-    //entityName:(NSString *)entity
-    //nameFixups:(NSDictionary *)fixups {
-    
-    //
-    //    GeneralItem *gi = [self retrieveFromDb:giDict withManagedContext:context];
-    //    if ([[giDict objectForKey:@"deleted"] boolValue]) {
-    //        if (gi) {
-    //            //item is deleted
-    //            [context deleteObject:gi];
-    //            gi=nil;
-    //        }
-    //        return nil;
-    //    }
-    //    if (!gi) {
-    //        gi = [NSEntityDescription insertNewObjectForEntityForName:@"GeneralItem"
-    //                                           inManagedObjectContext:context];
-    //    }
-    //
-    //#pragma warn VEG CREATE GI here with a local id of 0 if missing in dictionary.
-    //
-    //    if ([giDict objectForKey:@"id"]) {
-    //        gi.generalItemId = [giDict objectForKey:@"id"];
-    //    } else {
-    //        gi.generalItemId = 0;
-    //    }
-    //    gi.ownerGame = game;
-    //    gi.gameId = [giDict objectForKey:@"gameId"];
-    //    gi.lat = [giDict objectForKey:@"lat"];
-    //    gi.lng = [giDict objectForKey:@"lng"];
-    //    gi.name = [giDict objectForKey:@"name"];
-    //    gi.richText = [giDict objectForKey:@"richText"];
-    //    gi.sortKey = [giDict objectForKey:@"sortKey"] ;
-    //    gi.type = [giDict objectForKey:@"type"];
-    //    gi.json = [NSKeyedArchiver archivedDataWithRootObject:giDict];
-    //
-    //    if ( gi.generalItemId != 0) {
-    //        [self setCorrespondingVisibilityItems:gi];
-    //
-    //        [self downloadCorrespondingData:giDict withGeneralItem:gi inManagedObjectContext:context];
-    //    }
-    //
-    //    [INQLog SaveNLog:context];
 }
+
+/*!
+ *  Downloads the general items and stores/update or deletes them in/from the database.
+ *
+ *  Runs in a background thread.
+ */
+-(void) DownloadResponses {
+    NSString *service = [NSString stringWithFormat:@"response/runId/%@", self.runId];
+    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
+    
+    NSError *error = nil;
+    
+    NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                      error:&error] : nil;
+    ELog(error);
+    
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
+    //#pragma warn Debug Code
+    // [ARLUtils LogJsonDictionary:response url:service];
+    
+    NSDictionary *responses = [response objectForKey:@"responses"];
+    
+    for (NSDictionary *response in responses) {
+        
+        // Sample JSON:
+        //{
+        //    "type": "org.celstec.arlearn2.beans.run.ResponseList",
+        //    "deleted": false,
+        //    "responses": [
+        //                  {
+        //                      "type": "org.celstec.arlearn2.beans.run.Response",
+        //                      "timestamp": 1429778810783,
+        //                      "runId": 5777243095695360,
+        //                      "deleted": false,
+        //                      "responseId": 5313819882553344,
+        //                      "generalItemId": 5800061720068096,
+        //                      "userEmail": "2:103021572104496509774",
+        //                      "responseValue": "{\"imageUrl\":\"http:\\/\\/streetlearn.appspot.com\\/uploadService\\/5777243095695360\\/2:103021572104496509774\\/image1816922733.jpg\",\"width\":1024,\"height\":720,\"contentType\":\"image\\/jpeg\"}",
+        //                      "lastModificationDate": 1429778806816,
+        //                      "revoked": false
+        //                  },
+        //                  {
+        //                      "type": "org.celstec.arlearn2.beans.run.Response",
+        //                      "timestamp": 1429778585233,
+        //                      "runId": 5777243095695360,
+        //                      "deleted": false,
+        //                      "responseId": 5796436767670272,
+        //                      "generalItemId": 5800061720068096,
+        //                      "userEmail": "2:103021572104496509774",
+        //                      "responseValue": "{\"value\":258}",
+        //                      "lastModificationDate": 1429778582920,
+        //                      "revoked": false
+        //                  }
+        //                  ]
+        //}
+        
+//        @property (nonatomic, retain) NSString * contentType;
+//        @property (nonatomic, retain) NSData * data;
+//        @property (nonatomic, retain) NSString * fileName;
+//        @property (nonatomic, retain) NSNumber * height;
+//        @property (nonatomic, retain) NSNumber * lat;
+//        @property (nonatomic, retain) NSNumber * lng;
+//        @property (nonatomic, retain) NSNumber * responseId;
+//        @property (nonatomic, retain) NSNumber * responseType;
+//        @property (nonatomic, retain) NSNumber * synchronized;
+//        @property (nonatomic, retain) NSData * thumb;
+//        @property (nonatomic, retain) NSNumber * timeStamp;
+//        @property (nonatomic, retain) NSString * value;
+//        @property (nonatomic, retain) NSNumber * width;
+//        @property (nonatomic, retain) NSNumber * revoked;
+//        @property (nonatomic, retain) Account *account;
+//        @property (nonatomic, retain) GeneralItem *generalItem;
+//        @property (nonatomic, retain) Run *run;
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"responseId==%@", [response valueForKey:@"responseId"]];
+        
+        Response *item = [Response MR_findFirstWithPredicate: predicate inContext:ctx];
+
+        NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    // Json,                         CoreData
+                                    @"timestamp",                    @"timeStamp",
+                                    @"responseValue",                @"value",
+                                    nil];
+        
+        NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    // Data,                                                        CoreData
+                                    // [NSKeyedArchiver archivedDataWithRootObject:generalItem],       @"json",
+                                    // Relations cannot be done here easily due to context changes.
+                                    // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"ownerGame",
+                                    nil];
+        
+        //DONE: Test record deletion.
+        //TODO: Find out what to do with linked records in other tables (like GeneralItemVisibility).
+        
+        BOOL deleted = NO;
+        
+        if (item) {
+            if (([response valueForKey:@"deleted"] && [[response valueForKey:@"deleted"] integerValue] != 0) ||
+                ([response valueForKey:@"revoked"] && [[response valueForKey:@"revoked"] integerValue] != 0)) {
+                DLog(@"Deleting Response: %@", [response valueForKey:@"responseId"])
+                [item MR_deleteEntity];
+                
+                deleted = YES;
+            } else {
+                DLog(@"Updating Response: %@", [response valueForKey:@"responseId"])
+                item = (Response *)[ARLUtils UpdateManagedObjectFromDictionary:response
+                                                                 managedobject:item
+                                                                    nameFixups:namefixups
+                                                                    dataFixups:datafixups
+                                                                managedContext:ctx];
+                
+
+            }
+        } else {
+            if (([response valueForKey:@"deleted"] && [[response valueForKey:@"deleted"] integerValue] != 0) ||
+                ([response valueForKey:@"revoked"] && [[response valueForKey:@"revoked"] integerValue] != 0)) {
+                // Skip creating deleted records.
+                DLog(@"Skipping deleted Response: %@", [response valueForKey:@"responseId"])
+            } else {
+                // Uses MagicalRecord for Creation and Saving!
+                DLog(@"Creating Response: %@", [response valueForKey:@"responseId"])
+                item = (Response *)[ARLUtils ManagedObjectFromDictionary:response
+                                                                 entityName:[Response MR_entityName] // @"Response"
+                                                                 nameFixups:namefixups
+                                                                 dataFixups:datafixups
+                                                          managedContext:ctx];
+            }
+        }
+    
+        // We can only update if both objects share the same context.
+        
+        if (!deleted) {
+            // 1) Update Run
+            if (!(item.run && [item.run.runId isEqualToNumber:self.runId])) {
+                Run *run =[Run MR_findFirstByAttribute:@"runId"
+                                             withValue:self.runId
+                                             inContext:ctx];
+                item.run = run;
+            }
+            
+            // 2) Update Account
+            NSArray *userComponents = [[response valueForKey:@"userEmail"] componentsSeparatedByString:@":"];
+            
+            NSString *accountType = [userComponents objectAtIndex:0];
+            NSString *accountId =[userComponents objectAtIndex:1];
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(localId = %@) AND (accountType = %@)", accountId, accountType];
+            
+            Account *account = [Account MR_findFirstWithPredicate:predicate inContext:ctx];
+            if (!account) {
+                NSData *data = [ARLNetworking getUserInfo:self.runId
+                                                   userId:accountId
+                                               providerId:accountType];
+                
+                NSDictionary *dict = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                            options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                              error:&error] : nil;
+                if (dict) {
+                    
+                    NSURL *url = [NSURL URLWithString:[dict objectForKey:[dict objectForKey:@"picture"] ? @"picture": @"icon"]];
+                    NSData *urlData = [NSData dataWithContentsOfURL:url];
+                    
+                    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                // Data,                                                        CoreData
+                                                urlData,                                                        @"picture",
+                                                // Relations cannot be done here easily due to context changes.
+                                                // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"ownerGame",
+                                                nil];
+                    
+                    account = (Account *)[ARLUtils ManagedObjectFromDictionary:dict
+                                                                    entityName:[Account MR_entityName]
+                                                                    nameFixups:nil
+                                                                    dataFixups:datafixups
+                                                                managedContext:ctx];
+                }
+            }
+            item.account = account;
+            
+            // 3) Update GeneratItem
+            if (!(item.generalItem && [item.generalItem.generalItemId isEqualToNumber:[response valueForKey:@"generalItemId"]])) {
+                GeneralItem *generalitem =[GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                                     withValue:[response valueForKey:@"generalItemId"]
+                                                                     inContext:ctx];
+                item.generalItem = generalitem;
+            }
+            
+            // 4) Update responseType
+            NSError *error = nil;
+            NSData *data = [[response objectForKey:@"responseValue"] dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *value = [NSJSONSerialization JSONObjectWithData:data
+                                                                  options: NSJSONReadingMutableContainers
+                                                                    error: &error];
+            ELog(error);
+            
+            if (value) {
+                if ([value objectForKey:@"imageUrl"]) {
+                    item.height = [NSNumber numberWithInt:[[value objectForKey:@"height"] integerValue]];
+                    item.width = [NSNumber numberWithInt:[[value objectForKey:@"width"] integerValue]];
+                    item.fileName = [value objectForKey:@"imageUrl"];
+                    item.contentType = @"application/jpg";
+                    item.responseType = [NSNumber numberWithInt:PHOTO];
+                } else if ([value objectForKey:@"videoUrl"]) {
+                    item.fileName = [value objectForKey:@"videoUrl"];
+                    item.contentType = @"video/quicktime";
+                    item.responseType = [NSNumber numberWithInt:VIDEO];
+                } else if ([value objectForKey:@"audioUrl"]) {
+                    item.fileName = [value objectForKey:@"audioUrl"];
+                    if ([item.fileName hasSuffix:@".m4a"]) {
+                        item.contentType = @"audio/aac";
+                    } else  if ([item.fileName hasSuffix:@".mp3"]) {
+                        item.contentType = @"audio/mp3";
+                    } else  if ([item.fileName hasSuffix:@".amr"]) {
+                        item.contentType = @"audio/amr";
+                    } else {
+                        // Fallback.
+                        item.contentType = @"audio/aac";
+                    }
+                    item.responseType = [NSNumber numberWithInt:AUDIO];
+                } else if ([value objectForKey:@"text"]) {
+                    NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    item.value = jsonString;//[valueDict objectForKey:@"text"];
+                    item.responseType = [NSNumber numberWithInt:TEXT];
+                } else if ([value objectForKey:@"value"]) {
+                    NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    item.value = jsonString;//[valueDict objectForKey:@"value"];
+                    item.responseType = [NSNumber numberWithInt:NUMBER];
+                }
+            }
+        }
+        
+#warning TODO split-out json responseValue depending on responseType
+#warning TODO update responseType as well.
+        
+        [ctx MR_saveToPersistentStoreAndWait];
+    }
+    
+    // Saves any modification made after ManagedObjectFromDictionary.
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+
 
 /*!
  *  Update after the splash screen period has elapsed.

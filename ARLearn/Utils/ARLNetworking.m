@@ -459,4 +459,10 @@ static NSString *_twitterLoginString;
 //    return [[self executeARLearnPostWithAuthorization:@"login" postData:postData withContentType:textplain] objectForKey:@"auth"];
 //}
 
++ (NSData *) getUserInfo:(NSNumber *)runId
+                        userId:(NSString *)userId
+                    providerId:(NSString *)providerId {
+    return [self sendHTTPGetWithAuthorization:[NSString stringWithFormat:@"users/runId/%@/account/%@:%@", runId, providerId, userId]];
+}
+
 @end

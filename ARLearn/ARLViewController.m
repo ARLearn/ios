@@ -52,6 +52,9 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 {
     [super viewDidLoad];
     
+    // Setting a footer hides empty cels at the bottom.
+    self.table.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
 	// Do any additional setup after loading the view, typically from a nib.
     
     self.table.dataSource = self;

@@ -85,6 +85,7 @@
 		8DA979971AE53FEA00709E72 /* ARLNarratorItemHeaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979961AE53FEA00709E72 /* ARLNarratorItemHeaderViewController.m */; };
 		8DA9799A1AE5400200709E72 /* ARLWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA979991AE5400200709E72 /* ARLWebViewController.m */; };
 		8DA9799D1AE5406100709E72 /* ARLAudioRecordButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9799C1AE5406100709E72 /* ARLAudioRecordButtons.m */; };
+		8DAB0C861AEF914C0020E5D2 /* MappingModel_v3_to_v4.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8DAB0C851AEF914C0020E5D2 /* MappingModel_v3_to_v4.xcmappingmodel */; };
 		8DBFE4141AE560EC000F61F2 /* ARLCoreDataUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */; };
 		8DBFE4231AE57675000F61F2 /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE41E1AE57675000F61F2 /* UIImage+Alpha.m */; };
 		8DBFE4241AE57675000F61F2 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE4201AE57675000F61F2 /* UIImage+Resize.m */; };
@@ -267,6 +268,8 @@
 		8DA979991AE5400200709E72 /* ARLWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLWebViewController.m; sourceTree = "<group>"; };
 		8DA9799B1AE5406100709E72 /* ARLAudioRecordButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLAudioRecordButtons.h; sourceTree = "<group>"; };
 		8DA9799C1AE5406100709E72 /* ARLAudioRecordButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLAudioRecordButtons.m; sourceTree = "<group>"; };
+		8DAB0C841AEF91020020E5D2 /* ARLDatabase v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ARLDatabase v4.xcdatamodel"; sourceTree = "<group>"; };
+		8DAB0C851AEF914C0020E5D2 /* MappingModel_v3_to_v4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = MappingModel_v3_to_v4.xcmappingmodel; sourceTree = "<group>"; };
 		8DBFE4121AE560EC000F61F2 /* ARLCoreDataUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLCoreDataUtils.h; sourceTree = "<group>"; };
 		8DBFE4131AE560EC000F61F2 /* ARLCoreDataUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLCoreDataUtils.m; sourceTree = "<group>"; };
 		8DBFE41D1AE57675000F61F2 /* UIImage+Alpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Alpha.h"; path = "ARLearn/Extensions/UIImage+Alpha.h"; sourceTree = "<group>"; };
@@ -441,6 +444,7 @@
 				8D87A50E198648F600842BC6 /* Extensions */,
 				8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */,
 				8D21965C196D26080044616A /* Images.xcassets */,
+				8DAB0C851AEF914C0020E5D2 /* MappingModel_v3_to_v4.xcmappingmodel */,
 				8D219A22196D2AB30044616A /* Models */,
 				8D87A50C198648A500842BC6 /* Operations */,
 				8D219A87196D3AC10044616A /* PrivateData.h */,
@@ -855,6 +859,7 @@
 				8DDECF451976AABA007CECB4 /* Account.m in Sources */,
 				8D219A75196D31350044616A /* NSManagedObject+MagicalRecord.m in Sources */,
 				8DA9798E1AE53FC900709E72 /* ARLAudioRecorder.m in Sources */,
+				8DAB0C861AEF914C0020E5D2 /* MappingModel_v3_to_v4.xcmappingmodel in Sources */,
 				8DDECF271976AAB9007CECB4 /* SynchronizationBookKeeping.m in Sources */,
 				8D219A7E196D31350044616A /* MagicalRecord+Actions.m in Sources */,
 				8D87A51119864A3C00842BC6 /* ARLQueryCache.m in Sources */,
@@ -1077,11 +1082,12 @@
 		8DBFE42A1AE582FA000F61F2 /* ARLDatabase.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				8DAB0C841AEF91020020E5D2 /* ARLDatabase v4.xcdatamodel */,
 				8DBFE42B1AE582FA000F61F2 /* ARLDatabase v1.xcdatamodel */,
 				8DBFE42C1AE582FA000F61F2 /* ARLDatabase v2.xcdatamodel */,
 				8DBFE42D1AE582FA000F61F2 /* ARLDatabase v3.xcdatamodel */,
 			);
-			currentVersion = 8DBFE42D1AE582FA000F61F2 /* ARLDatabase v3.xcdatamodel */;
+			currentVersion = 8DAB0C841AEF91020020E5D2 /* ARLDatabase v4.xcdatamodel */;
 			path = ARLDatabase.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
