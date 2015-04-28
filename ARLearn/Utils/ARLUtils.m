@@ -900,4 +900,12 @@ static NSCondition *_theAbortLock;
     
     return [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding];
 }
+
+static BOOL _YES_ = YES;
+static BOOL _NO_ = NO;
+
++ (BOOL *)boolToBoolPointer:(BOOL) value {
+    return value ? &_YES_:&_NO_;
+}
+
 @end

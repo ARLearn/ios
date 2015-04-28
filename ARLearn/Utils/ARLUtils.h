@@ -249,7 +249,7 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
  *
  *  @return <#return value description#>
  */
-+(unsigned long long int) Now;
++(long long int) Now;
 
 /*!
  *  Format a double as a Date/Time.
@@ -294,5 +294,7 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 + (NSString *)cleanHtml:(NSString *)theHtml;
 
 + (NSString *)jsonString:(NSDictionary *) jsonDictionary;
+
++ (BOOL *)boolToBoolPointer:(BOOL) value;
 
 @end

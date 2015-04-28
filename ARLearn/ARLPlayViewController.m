@@ -17,8 +17,8 @@
 @property (strong, nonatomic) NSArray *items;
 @property (strong, nonatomic) NSMutableArray *visibility;
 
-@property (strong, nonatomic) AVAudioSession *audioSession;
-@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+//@property (strong, nonatomic) AVAudioSession *audioSession;
+//@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 
 @property (strong, nonatomic) GeneralItem *activeItem;
 
@@ -85,31 +85,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
     
     [self UpdateItemVisibility];
-    
-    // See http://www.raywenderlich.com/69369/audio-tutorial-ios-playing-audio-programatically-2014-edition
-    self.audioSession = [AVAudioSession sharedInstance];
-    
-    // See handy chart on pg. 46 of the Audio Session Programming Guide for what the categories mean
-    // Not absolutely required in this example, but good to get into the habit of doing
-    // See pg. 10 of Audio Session Programming Guide for "Why a Default Session Usually Isn't What You Want"
-    
-    NSError *error = nil;
-    
-    //    if ([self.audioSession isOtherAudioPlaying]) {
-    //        // mix sound effects with music already playing
-    //        [self.audioSession setCategory:AVAudioSessionCategorySoloAmbient error:&error];
-    //    } else {
-    //        [self.audioSession setCategory:AVAudioSessionCategoryAmbient error:&error];
-    //    }
-    
-    [self.audioSession setCategory:AVAudioSessionCategoryPlayback error:&error];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(onAudioSessionEvent:)
-                                                 name:AVAudioSessionInterruptionNotification
-                                               object:[AVAudioSession sharedInstance]];
-    
-    ELog(error);
     
     [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
     
@@ -296,7 +271,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                 case NarratorItem:
                 {
                     // if ([json valueForKey:@"openQuestion"]) {
-                    ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
+                    //
+                    ARLNarratorItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
                     
                     if (newViewController) {
                         newViewController.runId = self.runId;
@@ -886,31 +862,5 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                    navigationController:self.navigationController
                                                animated:YES];
 }
-
-#pragma mark - Events
-
-/*!
- *  Notification Messages from AVAudioSession.
- *
- *  @param notification
- */
-- (void) onAudioSessionEvent: (NSNotification *) notification {
-    
-    // See http://stackoverflow.com/questions/22400345/playing-music-at-back-ground-avaudiosessioninterruptionnotification-not-fired
-    
-    DLog(@"onAudioSessionEvent:%@", notification.description);
-}
-
-//- (void)checkButtonTapped:(id)sender event:(id)event{
-//    NSSet *touches = [event allTouches];
-//    UITouch *touch = [touches anyObject];
-//
-//    CGPoint currentTouchPosition = [touch locationInView:self.itemsTable];
-//
-//    NSIndexPath *indexPath = [self.itemsTable indexPathForRowAtPoint: currentTouchPosition];
-//    if (indexPath != nil) {
-//       Log("Disclosure Tapped %@", indexPath);
-//    }
-//}
 
 @end

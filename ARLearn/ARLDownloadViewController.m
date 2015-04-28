@@ -982,10 +982,7 @@ NSInteger downloaded = 0;
                 }
             }
         }
-        
-#warning TODO split-out json responseValue depending on responseType
-#warning TODO update responseType as well.
-        
+
         [ctx MR_saveToPersistentStoreAndWait];
     }
     

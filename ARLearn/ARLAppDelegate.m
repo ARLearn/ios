@@ -64,7 +64,6 @@ static NSCondition *_theAbortLock;
                                                object:nil];
     
     Reachability *reach = [Reachability reachabilityWithHostname:serverUrl];
-
     
     // Setup CoreData with MagicalRecord
     // Step 1. Setup Core Data Stack with Magical Record
@@ -493,7 +492,7 @@ static CLLocationCoordinate2D currentCoordinates;
         NSDate *eventDate = location.timestamp;
         NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
         
-        if (abs(howRecent) < 15.0) {
+        if (ABS(howRecent) < 15.0) {
             // If the event is recent, do something with it.
             DLog(@"Lat: %+.6f, Long: %+.6f\n",
                  location.coordinate.latitude,

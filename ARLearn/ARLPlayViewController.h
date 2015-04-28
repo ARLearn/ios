@@ -16,6 +16,7 @@
 #import "ARLUtils.h"
 #import "ARLNetworking.h"
 #import "ARLGeneralItemViewController.h"
+#import "ARLNarratorItemViewController.h"
 #import "ARLMyGamesViewController.h"
 #import "ARLAudioPlayer.h"
 

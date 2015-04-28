@@ -24,6 +24,10 @@ typedef NS_ENUM(NSInteger, responses) {
     numResponses
 };
 
+@property (weak, nonatomic) IBOutlet UITableView *itemsTable;
+@property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
+
 @property (nonatomic, readwrite) BOOL withAudio;
 @property (nonatomic, readwrite) BOOL withPicture;
 @property (nonatomic, readwrite) BOOL withText;
@@ -41,8 +45,8 @@ typedef NS_ENUM(NSInteger, responses) {
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
-@property (readonly, nonatomic) CGFloat noColumns;
-@property (readonly, nonatomic) CGFloat columnInset;
+//@property (readonly, nonatomic) CGFloat noColumns;
+//@property (readonly, nonatomic) CGFloat columnInset;
 
 @property (readwrite, nonatomic) UIImagePickerControllerCameraCaptureMode mode;
 
@@ -52,42 +56,50 @@ typedef NS_ENUM(NSInteger, responses) {
 @property (strong, nonatomic) NSDictionary *openQuestion;
 @property (strong, nonatomic) Run *run;
 
+//@property (strong, nonatomic) NSArray *items;
+
 @end
 
 @implementation ARLNarratorItemViewController
 
-//@synthesize inquiry = _inquiry;
-//@synthesize generalItem = _generalItem;
-//@synthesize account = _account;
-
 @synthesize activeItem = _activeItem;
 @synthesize runId = _runId;
 @synthesize run;
+
+//@synthesize items;
 
 #pragma mark - ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    CGRect newBounds =  self.activeItemdescriptionText.bounds;
+    // Setting a footer hides empty cels at the bottom.
+    self.itemsTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+
+    CGRect newBounds =  self.descriptionText.bounds;
     newBounds.size.height = 10;
     self.descriptionText.bounds = newBounds;
     
     self.descriptionText.delegate = self;
-
-      [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
     
-//    Game *game= [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId];
+    [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+    
+    // Do any additional setup after loading the view.
+//    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND revoked=%@", self.runId, self.activeItem.generalItemId, @NO];
 //    
-//    if (game && TrimmedStringLength(game.richTextDescription) != 0) {
-//        self.descriptionText.hidden = NO;
-//        [self.descriptionText loadHTMLString:game.richTextDescription baseURL:nil];
-//    } else {
-//        self.descriptionText.hidden = YES;
-//    }
+//    self.items = [Response MR_findAllSortedBy:@"sortKey"
+//                                       ascending:NO
+//                                   withPredicate:predicate1];
 //    
-    self.collectionView.opaque = NO;
-    self.collectionView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
+//    // Again Sort....
+//    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"timeStamp" ascending:NO];
+//    self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
+    self.itemsTable.delegate = self;
+    self.itemsTable.dataSource = self;
+    
+    if (self.descriptionText.isHidden) {
+        [self applyConstraints];
+    }
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -115,7 +127,7 @@ typedef NS_ENUM(NSInteger, responses) {
     
     [self setupFetchedResultsController];
     
-    [self.collectionView reloadData];
+    [self.itemsTable reloadData];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -174,19 +186,11 @@ typedef NS_ENUM(NSInteger, responses) {
     [super didReceiveMemoryWarning];
 }
 
-#pragma mark - UICollectionView Datasource.
+#pragma mark - UITableViewDelegate Datasource.
 
-/*!
- *  The number of sections in a Collection.
- *
- *  see http://www.raywenderlich.com/22324/beginning-uicollectionview-in-ios-6-part-12
- *
- *  @param view The Table to be served.
- *
- *  @return The number of sections.
- */
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)view
-{
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return numResponses;
 }
 
@@ -198,8 +202,8 @@ typedef NS_ENUM(NSInteger, responses) {
  *
  *  @return The number of Rows in the requested section.
  */
-- (NSInteger)collectionView:(UICollectionView *)view numberOfItemsInSection:(NSInteger)section
-{
+- (NSInteger)tableView:(UITableView *)tableView
+ numberOfRowsInSection:(NSInteger)section {
     NSInteger count = 0;
     
     switch (section){
@@ -211,313 +215,253 @@ typedef NS_ENUM(NSInteger, responses) {
     return count;
 }
 
-// 4
-/*- (UICollectionReusableView *)collectionView:
- (UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
- {
- return [[UICollectionReusableView alloc] init];
- }*/
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+                                                            forIndexPath:indexPath];
 
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
-//    switch (section){
-//        case RESPONSES:
-//            return @"";
-//    }
-//
-//    // Error
-//    return @"";
-//}
+    switch (indexPath.section) {
+        case RESPONSES : {
+            Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
+            
+            // Log(@"%@ - %@ %@", response.fileName, response.value, response.contentType);
+            if (response.account) {
+                cell.textLabel.text = [NSString stringWithFormat:@"Author: %@ %@", response.account.givenName, response.account.familyName];
+            }
+            cell.detailTextLabel.text = @"";
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    ARLNarratorItemView *cell = (ARLNarratorItemView *)[cv dequeueReusableCellWithReuseIdentifier:self.cellIdentifier
-                                                                                     forIndexPath:indexPath];
-    
-    cell.backgroundColor = [UIColor colorWithRed:(float)0xE6
-                                           green:(float)0xE6
-                                            blue:(float)0xFA
-                                           alpha:1.0F];
-    
-    cell.imgView.frame = CGRectMake(0,0,
-                                    cell.frame.size.width,
-                                    cell.frame.size.height);
-    
-    @autoreleasepool {
-        switch (indexPath.section) {
-            case RESPONSES:{
-                Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
+            NSError * error = nil;
+            NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
+                                                                       options: NSJSONReadingMutableContainers
+                                                                         error:&error];
+
+            
+            if (response.fileName) {
                 
-                //            Log(@"%@ - %@ %@", response.fileName, response.value, response.contentType);
-                
-                if (response.fileName) {
+                if (self.withPicture && [response.responseType isEqualToNumber:[NSNumber numberWithInt:PHOTO]]) {
                     
-                    if (self.withPicture && [response.responseType isEqualToNumber:[NSNumber numberWithInt:PHOTO]]) {
-                        
-                        if (response.thumb) {
-                            cell.imgView.image = [UIImage imageWithData:response.thumb];
-                        } else if (response.data) {
-                            cell.imgView.image = [UIImage imageWithData:response.data];
-                        } else {
-                            cell.imgView.image = [UIImage imageNamed:@"task-photo"];
-                        }
-                    } else if (self.withVideo && [response.responseType isEqualToNumber:[NSNumber numberWithInt:VIDEO]]) {
-                        
-                        if (response.thumb) {
-                            cell.imgView.image = [UIImage imageWithData:response.thumb];
-                            
-                            // rotate 90' Right (will al least make portrait videos right).
-                            CGAffineTransform rotate = CGAffineTransformMakeRotation( M_PI / 2.0 );
-                            [cell.imgView setTransform:rotate];
-                            
-                            // create a new bitmap image context
-                            UIGraphicsBeginImageContext(cell.imgView.image.size);
-                            
-                            // draw original image into the context
-                            [cell.imgView.image drawAtPoint:CGPointZero];
-                            
-                            // draw icon
-                            UIImage *ico = [UIImage imageNamed:@"task-video-overlay"];
-                            
-                            // see http://stackoverflow.com/questions/8858404/uiimage-aspect-fit-when-using-drawinrect
-                            CGFloat aspect = cell.imgView.image.size.width / cell.imgView.image.size.height;
-                            
-                            CGPoint p = CGPointMake(cell.imgView.image.size.width, cell.imgView.image.size.height);
-                            
-                            if (ico.size.width / aspect <= ico.size.width) {
-                                CGSize s = CGSizeMake(ico.size.width, ico.size.width/(aspect));
-                                [ico drawInRect:CGRectMake(p.x-s.width-2, 2, s.width, s.height)];
-                            }else {
-                                CGSize s = CGSizeMake(ico.size.height*aspect, ico.size.height);
-                                [ico drawInRect:CGRectMake(p.x-s.width-2, 2, s.width, s.height)];
-                            }
-                            
-                            // make image out of bitmap context
-                            UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
-                            
-                            // free the context
-                            UIGraphicsEndImageContext();
-                            
-                            cell.imgView.image = retImage;
-                            //                  } else if (response.data) {
-                            //                      cell.imgView.image = [UIImage imageWithData:response.data];
-                        } else {
-                            cell.imgView.image = [UIImage imageNamed:@"task-video"];
-                        }
-                        //                  cell.imgView.image = [UIImage imageNamed:@"task-video"];
-                        
-                    } else if (self.withAudio && [response.responseType isEqualToNumber:[NSNumber numberWithInt:AUDIO]]) {
-                        cell.imgView.image = [UIImage imageNamed:@"task-record"];
+                    //                        if (response.thumb) {
+                    //                            cell.imgView.image = [UIImage imageWithData:response.thumb];
+                    //                        } else if (response.data) {
+                    //                            cell.imgView.image = [UIImage imageWithData:response.data];
+                    //                        } else {
+                    
+                    cell.imageView.image = [UIImage imageNamed:@"task-photo"];
+                    cell.detailTextLabel.text = [response.responseId stringValue];
+
+                    //                        }
+                } else if (self.withVideo && [response.responseType isEqualToNumber:[NSNumber numberWithInt:VIDEO]]) {
+                    
+                    //                        if (response.thumb) {
+                    //                            cell.imgView.image = [UIImage imageWithData:response.thumb];
+                    //
+                    //                            // rotate 90' Right (will al least make portrait videos right).
+                    //                            CGAffineTransform rotate = CGAffineTransformMakeRotation( M_PI / 2.0 );
+                    //                            [cell.imgView setTransform:rotate];
+                    //
+                    //                            // create a new bitmap image context
+                    //                            UIGraphicsBeginImageContext(cell.imgView.image.size);
+                    //
+                    //                            // draw original image into the context
+                    //                            [cell.imgView.image drawAtPoint:CGPointZero];
+                    //
+                    //                            // draw icon
+                    //                            UIImage *ico = [UIImage imageNamed:@"task-video-overlay"];
+                    //
+                    //                            // see http://stackoverflow.com/questions/8858404/uiimage-aspect-fit-when-using-drawinrect
+                    //                            CGFloat aspect = cell.imgView.image.size.width / cell.imgView.image.size.height;
+                    //
+                    //                            CGPoint p = CGPointMake(cell.imgView.image.size.width, cell.imgView.image.size.height);
+                    //
+                    //                            if (ico.size.width / aspect <= ico.size.width) {
+                    //                                CGSize s = CGSizeMake(ico.size.width, ico.size.width/(aspect));
+                    //                                [ico drawInRect:CGRectMake(p.x-s.width-2, 2, s.width, s.height)];
+                    //                            }else {
+                    //                                CGSize s = CGSizeMake(ico.size.height*aspect, ico.size.height);
+                    //                                [ico drawInRect:CGRectMake(p.x-s.width-2, 2, s.width, s.height)];
+                    //                            }
+                    //
+                    //                            // make image out of bitmap context
+                    //                            UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();
+                    //
+                    //                            // free the context
+                    //                            UIGraphicsEndImageContext();
+                    //
+                    //                            cell.imgView.image = retImage;
+                    
+                    //                        } else {
+                    
+                    cell.imageView.image = [UIImage imageNamed:@"task-video"];
+                    cell.detailTextLabel.text = [response.responseId stringValue];
+
+                    //                        }
+                    
+                } else if (self.withAudio && [response.responseType isEqualToNumber:[NSNumber numberWithInt:AUDIO]]) {
+                    cell.imageView.image = [UIImage imageNamed:@"task-record"];
+                    cell.detailTextLabel.text = [response.responseId stringValue];
+                }
+            } else {
+                if (response.value) {
+                    if (self.withText  && [response.responseType isEqualToNumber:[NSNumber numberWithInt:TEXT]]) {
+                        cell.imageView.image = [UIImage imageNamed:@"task-text"];
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"text"]];
+                    } else if (self.withValue  && [response.responseType isEqualToNumber:[NSNumber numberWithInt:NUMBER]]) {
+                        cell.imageView.image = [UIImage imageNamed:@"task-explore"];
+                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"value"]];
                     }
-                } else {
-                    if (response.value) {
-                        if ((self.withText  && [response.responseType isEqualToNumber:[NSNumber numberWithInt:TEXT]]) ||
-                            (self.withValue && [response.responseType isEqualToNumber:[NSNumber numberWithInt:NUMBER]])) {
-                            
-                            NSString *txt;
-                            NSError * error = nil;
-                            NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
-                            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
-                                                                                       options: NSJSONReadingMutableContainers
-                                                                                         error:&error];
-                            
-                            if ([dictionary valueForKey:@"text"]) {
-                                txt = [dictionary valueForKey:@"text"];
-                            }else if ([dictionary valueForKey:@"value"]) {
-                                txt = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"value"]];
-                            }else {
-                                txt = [NSString stringWithFormat:@"%@", response.value];
-                            }
-                            
-                            // Log(@"%f x %F", [self getCellSize].width, [self getCellSize].height);
-                            
-                            UIGraphicsBeginImageContextWithOptions(CGSizeMake(100,100), NO, 0.0);
-                            cell.imgView.image = UIGraphicsGetImageFromCurrentImageContext();
-                            UIGraphicsEndImageContext();
-                            
-                            cell.imgView.image  = [self drawText:txt inImage:cell.imgView.image atPoint:CGPointZero];
-                        }
-                    }
+                    
+
+                    //                    if ((self.withText  && [response.responseType isEqualToNumber:[NSNumber numberWithInt:TEXT]]) ||
+                    //                        (self.withValue && [response.responseType isEqualToNumber:[NSNumber numberWithInt:NUMBER]])) {
+                    //
+                    //                        NSString *txt;
+                    //                        NSError * error = nil;
+                    //                        NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
+                    //                        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
+                    //                                                                                   options: NSJSONReadingMutableContainers
+                    //                                                                                     error:&error];
+                    //
+                    //                        if ([dictionary valueForKey:@"text"]) {
+                    //                            txt = [dictionary valueForKey:@"text"];
+                    //                        } else if ([dictionary valueForKey:@"value"]) {
+                    //                            txt = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"value"]];
+                    //                        } else {
+                    //                            txt = [NSString stringWithFormat:@"%@", response.value];
+                    //                        }
+                    //
+                    //                        // Log(@"%f x %F", [self getCellSize].width, [self getCellSize].height);
+                    //
+                    //                        UIGraphicsBeginImageContextWithOptions(CGSizeMake(100,100), NO, 0.0);
+                    //                        cell.imageView.image = UIGraphicsGetImageFromCurrentImageContext();
+                    //                        UIGraphicsEndImageContext();
+                    //
+                    //                        cell.imageView.image  = [self drawText:txt inImage:cell.imageView.image atPoint:CGPointZero];
                 }
             }
-                break;
         }
+            break;
     }
     
     return cell;
 }
 
-- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
-{
-    UICollectionReusableView *reusableview = nil;
-    
-    if (kind == UICollectionElementKindSectionHeader) {
-        ARLNarratorItemHeaderViewController *headerView = [collectionView
-                                                           dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader
-                                                           withReuseIdentifier:@"NarratorHeader"
-                                                           forIndexPath:indexPath];
-        
-        NSString *description = [ARLUtils cleanHtml:self.activeItem.richText];
-        if ([description length] == 0) {
-            [headerView.headerText setText:self.activeItem.name];
-        } else {
-            [headerView.headerText setText:description];
-        }
-        
-        reusableview = headerView;
-    }
-    
-    return reusableview;
-}
-
-#pragma mark - UICollectionViewDelegateFlowLayout.
-
-- (CGSize)getCellSize {
-    // noColumns
-    CGFloat w = self.collectionView.bounds.size.width - ((self.noColumns) * self.columnInset);
-    w /= self.noColumns;
-    w-= 1 + (2 * self.noColumns);
-    
-    // 2
-    CGSize retval = CGSizeMake(w, w);
-    
-    return retval;
-}
-
-// 1
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-    return [self getCellSize];
-}
-
-// 3
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    
-    return UIEdgeInsetsMake(self.columnInset, self.columnInset, self.columnInset, self.columnInset);
-}
-
-// 4
-/*- (UICollectionReusableView *)collectionView:
- (UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
- {
- return [[UICollectionReusableView alloc] init];
- }*/
-
-#pragma mark - UICollectionViewDelegate
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
-    
-    NSDate *stamp = [NSDate dateWithTimeIntervalSince1970:[response.timeStamp doubleValue]/1000.f];
-    NSString *who;
-    if (response.account) {
-        who = [NSString stringWithFormat:@"by %@ %@ at %@",response.account.givenName, response.account.familyName, stamp];
-    } else {
-        who = [NSString stringWithFormat:@"at %@", stamp];
-    }
-    
-    if (response.fileName) {
-        BOOL http = [[response.fileName lowercaseString] hasPrefix:@"http://"] || [[response.fileName lowercaseString] hasPrefix:@"https://"] ;
-        
-        // if (http) {
-        CGSize size = [[UIScreen mainScreen] bounds].size;
-        CGFloat screenScale = [[UIScreen mainScreen] scale];
-        
-        ARLWebViewController *controller = (ARLWebViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"WebViewController"];
-        
-        switch ([response.responseType intValue]) {
-            case PHOTO: {
-                if (http && ARLNetworking.networkAvailable /*&& !response.thumb*/) {
-                    controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><img src='%@?thumbnail=1600&crop=true' style='width:100%%;' /><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
-                                       response.fileName, [response.fileName pathExtension], who];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    switch (indexPath.section) {
+        case RESPONSES : {
+            Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
+            
+            NSDate *stamp = [NSDate dateWithTimeIntervalSince1970:[response.timeStamp doubleValue]/1000.f];
+            NSString *who;
+            if (response.account) {
+                who = [NSString stringWithFormat:@"by %@ %@ at %@",response.account.givenName, response.account.familyName, stamp];
+            } else {
+                who = [NSString stringWithFormat:@"at %@", stamp];
+            }
+            
+            if (response.fileName) {
+                BOOL http = [[response.fileName lowercaseString] hasPrefix:@"http://"] || [[response.fileName lowercaseString] hasPrefix:@"https://"] ;
+                
+                // if (http) {
+                CGSize size = [[UIScreen mainScreen] bounds].size;
+                CGFloat screenScale = [[UIScreen mainScreen] scale];
+                
+                ARLWebViewController *controller = (ARLWebViewController *)[self.storyboard instantiateViewControllerWithIdentifier:@"WebViewController"];
+                
+                switch ([response.responseType intValue]) {
+                    case PHOTO: {
+                        if (http && ARLNetworking.networkAvailable /*&& !response.thumb*/) {
+                            controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><img src='%@?thumbnail=1600&crop=true' style='width:100%%;' /><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
+                                               response.fileName, [response.fileName pathExtension], who];
+                        } else {
+                            // NSString *strEncoded = [Base64 encode:data];
+                            controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><img src='data:%@;base64,%@' style='width:100%%;' /><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
+                                               response.contentType,
+                                               [ARLUtils base64forData:response.thumb], [response.fileName pathExtension], who];
+                        }
+                    }
+                        break;
+                        
+                    case VIDEO: {
+                        // See http://www.iandevlin.com/blog/2012/09/html5/html5-media-and-data-uri
+                        controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><div style='text-align:center;'><video src='%@' controls autoplay width='%f' height='%f' type='%@'/></div><br/><br/><br/><hr/><div><h2 style='text-align: center;'>%@, by %@ %@ at %@</h2></div></body></html>",
+                                           response.fileName, size.width * screenScale, size.height * screenScale, response.contentType, [response.fileName pathExtension], response.account.givenName, response.account.familyName, stamp];
+                    }
+                        break;
+                        
+                    case AUDIO: {
+                        // Log(@"%@", response.fileName);
+                        controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head><script type='text/javascript'>function play() { document.getElementById('audio').play();}</script></head><body onload='play();'><div style='text-align:center; margin-top:100px;'><audio id='audio' src='%@' controls type='%@'></audio></div><br/><br/><br/><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
+                                           response.fileName, response.contentType, [response.fileName pathExtension], who];
+                        /*
+                         NSError *error = nil;
+                         
+                         // See http://www.raywenderlich.com/69369/audio-tutorial-ios-playing-audio-programatically-2014-edition
+                         self.audioSession = [AVAudioSession sharedInstance];
+                         [self.audioSession setCategory:AVAudioSessionCategoryPlayback error:&error];
+                         
+                         ELog(error);
+                         
+                         NSString *audioString = [response.fileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                         NSURL *audioUrl = [[NSURL alloc] initWithString:audioString];
+                         NSData *audioFile = [[NSData alloc] initWithContentsOfURL:audioUrl options:NSDataReadingMappedIfSafe error:&error];
+                         
+                         self.audioPlayer = [[AVAudioPlayer alloc] initWithData:audioFile error:&error];
+                         self.audioPlayer.volume=1.0;
+                         
+                         [self.audioPlayer prepareToPlay];
+                         [self.audioPlayer play];
+                         */
+                    }
+                        break;
+                }
+                
+                if (controller && controller.html) {
+                    [self.navigationController pushViewController:controller animated:FALSE];
                 } else {
-                    // NSString *strEncoded = [Base64 encode:data];
-                    controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><img src='data:%@;base64,%@' style='width:100%%;' /><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
-                                       response.contentType,
-                                       [ARLUtils base64forData:response.thumb], [response.fileName pathExtension], who];
+                    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
+                                                                          message:NSLocalizedString(@"NotSynced", @"NotSynced")
+                                                                         delegate:nil
+                                                                cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                                otherButtonTitles:nil, nil];
+                    [myAlertView show];
+                }
+                
+            } else {
+                
+                //TODO: Textarea does not forward clicks.
+                
+                // SEE http://iphonedevsdk.com/forum/iphone-sdk-development/82096-onclick-event-in-textfield.html
+                //  (void)textFieldDidBeginEditing:(UITextField *)textField
+                
+                if (response.value) {
+                    NSError *error = nil;
+                    NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
+                    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
+                                                                               options: NSJSONReadingMutableContainers
+                                                                                 error:&error];
+                    NSString *msg;
+                    
+                    if ([dictionary valueForKey:@"text"]) {
+                        msg = [NSString stringWithFormat:@"%@\r\n\r\n%@", [dictionary valueForKey:@"text"], who];
+                    } else if ([dictionary valueForKey:@"value"]) {
+                        msg = [NSString stringWithFormat:@"%@\r\n\r\n%@", [dictionary valueForKey:@"value"], who];
+                    } else {
+                        msg = [NSString stringWithFormat:@"%@\r\n\r\n%@", response.value, who];
+                    }
+                    
+                    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Value", @"Value")
+                                                                          message:msg
+                                                                         delegate:nil
+                                                                cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                                otherButtonTitles:nil, nil];
+                    [myAlertView show];
                 }
             }
-                break;
-                
-            case VIDEO: {
-                // See http://www.iandevlin.com/blog/2012/09/html5/html5-media-and-data-uri
-                controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><div style='text-align:center;'><video src='%@' controls autoplay width='%f' height='%f' type='%@'/></div><br/><br/><br/><hr/><div><h2 style='text-align: center;'>%@, by %@ %@ at %@</h2></div></body></html>",
-                                   response.fileName, size.width * screenScale, size.height * screenScale, response.contentType, [response.fileName pathExtension], response.account.givenName, response.account.familyName, stamp];
-            }
-                break;
-                
-            case AUDIO: {
-                // Log(@"%@", response.fileName);
-                controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head><script type='text/javascript'>function play() { document.getElementById('audio').play();}</script></head><body onload='play();'><div style='text-align:center; margin-top:100px;'><audio id='audio' src='%@' controls type='%@'></audio></div><br/><br/><br/><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
-                                   response.fileName, response.contentType, [response.fileName pathExtension], who];
-                /*
-                 NSError *error = nil;
-                 
-                 // See http://www.raywenderlich.com/69369/audio-tutorial-ios-playing-audio-programatically-2014-edition
-                 self.audioSession = [AVAudioSession sharedInstance];
-                 [self.audioSession setCategory:AVAudioSessionCategoryPlayback error:&error];
-                 
-                 ELog(error);
-                 
-                 NSString *audioString = [response.fileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                 NSURL *audioUrl = [[NSURL alloc] initWithString:audioString];
-                 NSData *audioFile = [[NSData alloc] initWithContentsOfURL:audioUrl options:NSDataReadingMappedIfSafe error:&error];
-                 
-                 self.audioPlayer = [[AVAudioPlayer alloc] initWithData:audioFile error:&error];
-                 self.audioPlayer.volume=1.0;
-                 
-                 [self.audioPlayer prepareToPlay];
-                 [self.audioPlayer play];
-                 */
-            }
-                break;
         }
-        
-        if (controller && controller.html) {
-            [self.navigationController pushViewController:controller animated:FALSE];
-        } else {
-            UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
-                                                                  message:NSLocalizedString(@"NotSynced", @"NotSynced")
-                                                                 delegate:nil
-                                                        cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                        otherButtonTitles:nil, nil];
-            [myAlertView show];
-        }
-        
-    } else {
-        
-        //TODO: Textarea does not forward clicks.
-        
-        // SEE http://iphonedevsdk.com/forum/iphone-sdk-development/82096-onclick-event-in-textfield.html
-        //  (void)textFieldDidBeginEditing:(UITextField *)textField
-        
-        if (response.value) {
-            NSError *error = nil;
-            NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
-                                                                       options: NSJSONReadingMutableContainers
-                                                                         error:&error];
-            NSString *msg;
-            
-            if ([dictionary valueForKey:@"text"]) {
-                msg = [NSString stringWithFormat:@"%@\r\n\r\n%@", [dictionary valueForKey:@"text"], who];
-            } else if ([dictionary valueForKey:@"value"]) {
-                msg = [NSString stringWithFormat:@"%@\r\n\r\n%@", [dictionary valueForKey:@"value"], who];
-            } else {
-                msg = [NSString stringWithFormat:@"%@\r\n\r\n%@", response.value, who];
-            }
-            
-            UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Value", @"Value")
-                                                                  message:msg
-                                                                 delegate:nil
-                                                        cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                        otherButtonTitles:nil, nil];
-            [myAlertView show];
-        }
+            break;
     }
-}
-
-- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath :(NSIndexPath *)indexPath {
-    // TODO: Deselect item
 }
 
 #pragma mark - UIImagePickerControllerDelegate
@@ -661,6 +605,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     CGRect newBounds = webView.bounds;
     newBounds.size.height = webView.scrollView.contentSize.height;
     webView.bounds = newBounds;
+    
+    [self applyConstraints];
 }
 
 #pragma mark - Properties
@@ -671,7 +617,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
  *  @return The Cell Identifier.
  */
 -(NSString *) cellIdentifier {
-    return  @"imageItemCell";
+    return  @"ResponseItemCell";
 }
 
 - (void)setActiveItem:(GeneralItem *)activeItem {
@@ -696,25 +642,61 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     return _runId;
 }
 
-/*!
- *  Getter
- *
- *  @return The Number of Columns.
- */
--(CGFloat) noColumns {
-    return  4.0f;
-}
-
-/*!
- *  Getter
- *
- *  @return The Column Inset.
- */
--(CGFloat) columnInset {
-    return  10.0f;
-}
-
 #pragma mark - Methods
+
+- (void) applyConstraints {
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.view,             @"view",
+                                     
+                                     self.backgroundImage,  @"backgroundImage",
+                                     
+                                     self.itemsTable,       @"itemsTable",
+                                     self.descriptionText,  @"descriptionText",
+                                     
+                                     nil];
+    
+    // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
+    
+    self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    self.itemsTable.translatesAutoresizingMaskIntoConstraints = NO;
+    self.descriptionText.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // Fix Background.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    // Fix itemsTable Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[itemsTable]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    // Fix descriptionText Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    
+    // Fix itemsTable/descriptionText Vertically.
+    if (self.descriptionText.isHidden) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[itemsTable]-|"
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    } else {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[itemsTable]-|",
+                                                                                   self.descriptionText.bounds.size.height]
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    }
+}
 
 /*!
  *  Create a UIBarButton with a background image depending on the enabled state.
@@ -844,9 +826,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
     
 #warning SOMETIMES BAD-ACCES HERE.
+    
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
     
-    NSFetchRequest *request =  [Response MR_requestAllSortedBy:nil
+    NSFetchRequest *request =  [Response MR_requestAllSortedBy:@"timeStamp"
                                                      ascending:YES
                                                  withPredicate:predicate
                                                      inContext:ctx];
@@ -1121,7 +1104,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     Response *textResponse = [self responseWithDictionary:data];
 
-    [self.collectionView reloadData];
+    [self.itemsTable reloadData];
 }
 
 #warning TODO Port NarratorItem
@@ -1144,7 +1127,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     Response *valueResponse = [self responseWithDictionary:data];
     
-    [self.collectionView reloadData];
+    [self.itemsTable reloadData];
 }
 
 - (void) createImageResponse:(NSData *)data
@@ -1196,7 +1179,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     [self responseWithDictionary:jsonDict];
     
-    [self.collectionView reloadData];
+    [self.itemsTable reloadData];
 }
 
 - (void) createAudioResponse:(NSData *)data
@@ -1309,7 +1292,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         // if (cntBefore!=cntAfter) {
         // Log(@"Responses: %d -> %d", cntBefore, cntAfter);
         
-        [self.collectionView reloadData];
+        [self.itemsTable reloadData];
         // }
     }
 }
