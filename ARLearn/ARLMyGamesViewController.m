@@ -266,22 +266,54 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case MYGAMES: {
-            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+
+            //            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            //
+            //            if (newViewController) {
+            //                NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+            //
+            //                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+            //
+            //                // Move to another UINavigationController or UITabBarController etc.
+            //                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+            //                [self.navigationController pushViewController:newViewController animated:NO];
+            //            }
             
-            if (newViewController) {
-                NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+                ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
                 
-                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
-                
-                // Move to another UINavigationController or UITabBarController etc.
-                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                [self.navigationController pushViewController:newViewController animated:NO];
-      
-                break;
-            }
+                if (newViewController) {
+                    newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+                    
+                    // Fetch RunId too.
+                    NSString *query = @"myRuns/participate";
+                    
+                    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:query];
+                    
+                    NSError *error = nil;
+                    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+                    
+                    ELog(error);
+                    
+                    for (NSDictionary *run in [json valueForKey:@"runs"]) {
+                        if ([[run valueForKey:@"gameId"] longLongValue] == [newViewController.gameId longLongValue]) {
+                            newViewController.runId = [run valueForKey:@"runId"];
+                            DLog(@"runID = %@", newViewController.runId);
+                            
+                            // Move to another UINavigationController or UITabBarController etc.
+                            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                            [self.navigationController pushViewController:newViewController animated:YES];
+                            
+                            break;
+                        }
+                    }
+                    
+                    newViewController = nil;
+                }
+            
             break;
         }
-      }
+    }
 }
 
 /*!

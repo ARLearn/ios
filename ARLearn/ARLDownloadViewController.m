@@ -43,7 +43,7 @@ NSInteger downloaded = 0;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.navigationController setNavigationBarHidden:YES];
+    [self.navigationController setNavigationBarHidden:NO];
     [self.navigationController setToolbarHidden:NO];
     
     self.navigationItem.title = @"Download";
@@ -797,6 +797,8 @@ NSInteger downloaded = 0;
     self.progressBar.progress = 1.0f;
     
     [timer invalidate];
+    
+    [self playButtonAction:self.playButton];
 }
 
 /*!

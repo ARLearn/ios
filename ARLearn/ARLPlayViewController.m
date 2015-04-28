@@ -163,7 +163,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     
     //insert your back button handling logic here
     // let the pop happen
-    [ARLUtils popToViewControllerOnNavigationController:[ARLGameViewController class]
+    [ARLUtils popToViewControllerOnNavigationController:[ARLMyGamesViewController class]
                                    navigationController:self.navigationController
                                                animated:YES];
     
@@ -882,7 +882,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (IBAction)backButtonTapped:(UIBarButtonItem *)sender {
     // Log(@"back button pressed");
     
-    [ARLUtils popToViewControllerOnNavigationController:[ARLGameViewController class]
+    [ARLUtils popToViewControllerOnNavigationController:[ARLMyGamesViewController class]
                                    navigationController:self.navigationController
                                                animated:YES];
 }
