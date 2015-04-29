@@ -48,7 +48,6 @@ NSInteger downloaded = 0;
     
     self.navigationItem.title = @"Download";
     
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(syncProgress:)
                                                  name:ARL_SYNCPROGRESS
@@ -90,15 +89,21 @@ NSInteger downloaded = 0;
         [ARLSynchronisation DownloadGeneralItems:self.gameId];
     }];
     
+    // BEWARE Due to synchronized, first publish then download.
     NSBlockOperation *backBO5 =[NSBlockOperation blockOperationWithBlock:^{
-        [ARLSynchronisation DownloadRuns:self.gameId];
+        [ARLSynchronisation PublishActionsToServer];
     }];
-    
+
     NSBlockOperation *backBO6 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation DownloadActions:self.runId];
     }];
     
+    // BEWARE Due to synchronized, first publish then download.
     NSBlockOperation *backBO7 =[NSBlockOperation blockOperationWithBlock:^{
+        [ARLSynchronisation PublishResponsesToServer];
+    }];
+
+    NSBlockOperation *backBO8 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation DownloadResponses:self.runId];
     }];
     
@@ -110,7 +115,7 @@ NSInteger downloaded = 0;
                                         repeats:NO];
     }];
     
-    // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> back04 -> back05 -> back06 -> foreBO.
+    // Add dependencies: backBO0 -> backBO1 -> backBO2 -> backBO3 -> back04 -> back05 -> back06 -> back07 -> back08 -> foreBO.
     [backBO1 addDependency:backBO0];
     [backBO2 addDependency:backBO1];
     [backBO3 addDependency:backBO2];
@@ -118,11 +123,13 @@ NSInteger downloaded = 0;
     [backBO5 addDependency:backBO4];
     [backBO6 addDependency:backBO5];
     [backBO7 addDependency:backBO6];
-    
-    [foreBO  addDependency:backBO7];
+    [backBO8 addDependency:backBO7];
+   
+    [foreBO  addDependency:backBO8];
     
     [[NSOperationQueue mainQueue] addOperation:foreBO];
     
+    [[ARLAppDelegate theOQ] addOperation:backBO8];
     [[ARLAppDelegate theOQ] addOperation:backBO7];
     [[ARLAppDelegate theOQ] addOperation:backBO6];
     [[ARLAppDelegate theOQ] addOperation:backBO5];
@@ -230,11 +237,11 @@ NSInteger downloaded = 0;
     
     NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
                                 // Json,                        CoreData
-                                @"description",                  @"richTextDescription",
+                                @"description",                 @"richTextDescription",
                                 nil];
     
     NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                                // Data,                                                        CoreData
+                                // Data,                        CoreData
                                 nil];
     
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
@@ -468,9 +475,7 @@ NSInteger downloaded = 0;
     if ([NSStringFromClass([GeneralItemVisibility class]) isEqualToString:recordType]) {
         //
     } else if ([NSStringFromClass([Run class]) isEqualToString:recordType]) {
-        if (!self.runId) {
-            self.runId = [notification.userInfo valueForKey:@"runId"];
-        }
+        //
     } else if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
         //
     } else if ([NSStringFromClass([GeneralItem class]) isEqualToString:recordType]) {

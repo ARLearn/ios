@@ -31,7 +31,7 @@
  *
  *  Runs in a background thread.
  */
-+(void) DownloadRuns:(NSNumber *)gameId;
++(void) DownloadRuns;
 
 +(void) PublishResponsesToServer;
 

@@ -85,7 +85,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     self.navigationController.navigationBarHidden = NO;
     self.navigationController.toolbarHidden = NO;
     
-    [self performQuery];
+    [self performQuery1];
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
@@ -150,14 +150,126 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     //           ]
     //}
     
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+    
     NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
-    self.results = (NSArray *)[json objectForKey:@"games"];
+    BeanIds bid = [ARLBeanNames beanTypeToBeanId:[json valueForKey:@"type"]];
+    
+    switch (bid) {
+        case GameList: {
+            
+            self.results = (NSArray *)[json objectForKey:@"games"];
+            
+            NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        // Data,                                                        CoreData
+                                        nil];
+            
+            NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        // Json,                        CoreData
+                                        @"description",                  @"richTextDescription",
+                                        nil];
+            
+            for (NSDictionary *dict in self.results) {
+                Game *game = [Game MR_findFirstByAttribute:@"gameId"
+                                                 withValue:[dict valueForKey:@"gameId"]];
+                
+                if (game) {
+                    game = (Game *)[ARLUtils UpdateManagedObjectFromDictionary:dict
+                                                                 managedobject:game
+                                                                    nameFixups:namefixups
+                                                                    dataFixups:datafixups
+                                                                managedContext:ctx];
+                    
+                } else {
+                    game = (Game *)[ARLUtils ManagedObjectFromDictionary:dict
+                                                              entityName:[Game MR_entityName]
+                                                              nameFixups:namefixups
+                                                              dataFixups:datafixups                                                  managedContext:ctx];
+                }
+                
+                game.hasMap = [[dict valueForKey:@"config"] valueForKey:@"mapAvailable"];
+            }
+        }
+            // Chain myRuns/participate.
+            [self performQuery2];
+            
+            break;
+            
+        case RunList: {
+            NSDictionary *runs = [json objectForKey:@"runs"];
+            
+            for (NSDictionary *dict in runs) {
+                NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            // Json,                         CoreData
+                                            nil];
+                
+                NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                            // Data,                         CoreData
+                                            // Relations cannot be done here easily due to context changes.
+                                            // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
+                                            nil];
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"runId==%@", [dict valueForKey:@"runId"]];
+                
+                Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
+                
+                if (run) {
+                    if (([dict valueForKey:@"deleted"] && [[dict valueForKey:@"deleted"] integerValue] != 0) ||
+                        ([dict valueForKey:@"revoked"] && [[dict valueForKey:@"revoked"] integerValue] != 0)) {
+                        DLog(@"Deleting Run: %@", [dict valueForKey:@"title"])
+                        [run MR_deleteEntity];
+                    } else {
+                        DLog(@"Updating Run: %@", [dict valueForKey:@"title"])
+                        run = (Run *)[ARLUtils UpdateManagedObjectFromDictionary:dict
+                                                                    managedobject:run
+                                                                       nameFixups:namefixups
+                                                                       dataFixups:datafixups
+                                                                   managedContext:ctx];
+                        
+                        // We can only update if both objects share the same context.
+                        Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                                        withValue:[dict valueForKey:@"gameId"]
+                                                        inContext:ctx];
+                        run.game = game;
+                        run.revoked = [NSNumber numberWithBool:NO];
+                    }
+                } else {
+                    if (([dict valueForKey:@"deleted"] && [[dict valueForKey:@"deleted"] integerValue] != 0) ||
+                        ([dict valueForKey:@"revoked"] && [[dict valueForKey:@"revoked"] integerValue] != 0)) {
+                        // Skip creating deleted records.
+                        DLog(@"Skipping deleted Run: %@", [dict valueForKey:@"title"])
+                    } else {
+                        // Uses MagicalRecord for Creation and Saving!
+                        DLog(@"Creating Run: %@", [dict valueForKey:@"title"])
+                        run = (Run *)[ARLUtils ManagedObjectFromDictionary:dict
+                                                                 entityName:[Run MR_entityName] //@"Run"
+                                                                 nameFixups:namefixups
+                                                                 dataFixups:datafixups
+                                                             managedContext:ctx];
+                        
+                        // We can only update if both objects share the same context.
+                        Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                                        withValue:[dict valueForKey:@"gameId"]
+                                                        inContext:ctx];
+                        run.game = game;
+                        run.revoked = [NSNumber numberWithBool:NO];
+                    }
+                }
+            }
+        }
+            break;
+            
+        default:
+            break;
+    }
+    
+    [ctx MR_saveToPersistentStoreAndWait];
     
     [self.table reloadData];
 }
 
-- (void)performQuery {
+- (void)performQuery1 {
     NSString *cacheIdentifier = [ARLNetworking generateGetDescription:@"myGames/participate"];
     
     NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
@@ -170,6 +282,18 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     }
 }
 
+- (void)performQuery2 {
+    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:@"myRuns/participate"];
+    
+    NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+    
+    if (!response) {
+        [ARLNetworking sendHTTPGetWithDelegate:self withService:@"myRuns/participate"];
+    } else {
+        NSLog(@"Using cached query data");
+        [self processData:response];
+    }
+}
 /*!
  *  Refresh (and Reload) the Table.
  *
@@ -180,7 +304,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     NSLog(@"Refreshing");
     
     // Reload cached data.
-    [self performQuery];
+    [self performQuery1];
     
     // End Refreshing
     [(UIRefreshControl *)sender endRefreshing];
@@ -274,7 +398,11 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
         case MYGAMES: {
             NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
 
-            //            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            Run *run = [Run MR_findFirstByAttribute:@"gameId"
+                                           withValue:[dict valueForKey:@"gameId"]];
+            
+            if (run) {
+            // ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             //
             //            if (newViewController) {
             //                NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
@@ -290,48 +418,25 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
                 
                 if (newViewController) {
                     newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+                    newViewController.runId = run.runId;
                     
-                    // Fetch RunId too.
-                    NSString *query = @"myRuns/participate";
-                    
-                    NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:query];
-                    
-                    NSError *error = nil;
-                    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-                    
-                    ELog(error);
-                    
-                    for (NSDictionary *run in [json valueForKey:@"runs"]) {
-                        if ([[run valueForKey:@"gameId"] longLongValue] == [newViewController.gameId longLongValue]) {
-                            newViewController.runId = [run valueForKey:@"runId"];
-                            DLog(@"runID = %@", newViewController.runId);
-                            
-                            // Move to another UINavigationController or UITabBarController etc.
-                            // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                            [self.navigationController pushViewController:newViewController animated:YES];
-                            
-                            break;
-                        }
-                    }
+                    // Move to another UINavigationController or UITabBarController etc.
+                    // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                    [self.navigationController pushViewController:newViewController animated:YES];
                     
                     newViewController = nil;
                 }
-            
+            } else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                                message:NSLocalizedString(@"Could not find a run",@"Could not find a run")
+                                                               delegate:self
+                                                      cancelButtonTitle:nil
+                                                      otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
+                [alert show];
+            }
             break;
         }
     }
-}
-
-/*!
- *  Tap on row accessory
- *
- *  @param tableView <#tableView description#>
- *  @param indexPath <#indexPath description#>
- */
-- (void) tableView: (UITableView *) tableView accessoryButtonTappedForRowWithIndexPath: (NSIndexPath *) indexPath {
-    DLog(@"");
-
-    //TODO
 }
 
 #pragma mark - NSURLSessionDataDelegate

@@ -590,6 +590,8 @@
  *  Runs in a background thread.
  */
 +(void) DownloadActions:(NSNumber *)runId {
+     Log(@"DownloadActions:%@", runId);
+    
     if (runId) {
         NSString *service = [NSString stringWithFormat:@"actions/runId/%@", runId];
         NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
@@ -748,11 +750,12 @@
  *
  *  Runs in a background thread.
  */
-+(void) DownloadRuns:(NSNumber *)gameId {
++(void) DownloadRuns {
+    Log(@"DownloadRuns");
+    
     NSString *service = @"myRuns/participate";
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
-    NSNumber *_runId;
-    
+
     NSError *error = nil;
     
     NSDictionary *response = data ? [NSJSONSerialization JSONObjectWithData:data
@@ -781,8 +784,6 @@
         //        @property (nonatomic, retain) NSSet *messages;
         //        @property (nonatomic, retain) NSSet *responses;
         
-        if ([(NSNumber *)[run valueForKey:@"gameId"] longLongValue] == [gameId longLongValue])
-        {
             NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
                                         // Json,                         CoreData
                                         nil];
@@ -793,7 +794,7 @@
                                         // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
                                         nil];
             
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@ && runId==%@", gameId, [run valueForKey:@"runId"]];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"runId==%@", [run valueForKey:@"runId"]];
             
             Run *item = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
             
@@ -811,10 +812,11 @@
                                                                managedContext:ctx];
                     
                     // We can only update if both objects share the same context.
-                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:gameId inContext:ctx];
+                    Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                                    withValue:[run valueForKey:@"gameId"]
+                                                    inContext:ctx];
                     item.game = game;
-                    
-                    _runId = item.runId;
+                    item.revoked = [NSNumber numberWithBool:NO];
                 }
             } else {
                 if (([run valueForKey:@"deleted"] && [[run valueForKey:@"deleted"] integerValue] != 0) ||
@@ -831,14 +833,14 @@
                                                          managedContext:ctx];
                     
                     // We can only update if both objects share the same context.
-                    Game *game =[Game MR_findFirstByAttribute:@"gameId" withValue:gameId inContext:ctx];
+                    Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                                    withValue:[run valueForKey:@"gameId"]
+                                                    inContext:ctx];
                     item.game = game;
-                    
-                    _runId = item.runId;
+                    item.revoked = [NSNumber numberWithBool:NO];
                 }
             }
         }
-    }
     
     // Saves any modification made after ManagedObjectFromDictionary.
     [ctx MR_saveToPersistentStoreAndWait];
@@ -846,13 +848,12 @@
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
-                                                        object:NSStringFromClass([Run class])
-                                                      userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                _runId, @"runId",
-                                                                nil]];
+                                                        object:NSStringFromClass([Run class])];
 }
 
 +(void) PublishResponsesToServer {
+    Log(@"PublishResponsesToServer");
+    
     if (ARLNetworking.networkAvailable) {
         NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
 
@@ -861,7 +862,20 @@
                                                 inContext:ctx];
 
         for (Response *response in responses) {
-            if (response.value) {
+            
+            if ([response.revoked isEqualToNumber:[NSNumber numberWithBool:YES]]) {
+                // Deleted Revoked Responses.
+                
+                //if (ARLAppDelegate.SyncAllowed) {
+                [ARLNetworking executeARLearnDeleteWithAuthorization:
+                 [NSString stringWithFormat:@"response/responseId/%lld", [response.responseId longLongValue]]];
+                
+                [response MR_deleteEntityInContext:ctx];
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCPROGRESS
+                                                                    object:NSStringFromClass([Response class])];
+                //}
+            } else if (response.value) {
                 // Text
                 // Number
                 [ARLSynchronisation publishResponse:response.run.runId
@@ -939,7 +953,7 @@
                                                                 object:NSStringFromClass([Response class])];
         }
 
-        // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY

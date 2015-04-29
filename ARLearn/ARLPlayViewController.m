@@ -84,19 +84,11 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
     self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
     
-    [self UpdateItemVisibility];
-    
-    [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
-    
-    if (self.descriptionText.isHidden) {
-        [self applyConstraints];
-    }
-    
-    [ARLSynchronisation PublishActionsToServer];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(syncProgress:)
                                                  name:ARL_SYNCPROGRESS
@@ -106,6 +98,39 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
                                              selector:@selector(syncReady:)
                                                  name:ARL_SYNCREADY
                                                object:nil];
+
+    [self UpdateItemVisibility];
+    
+    [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
+    
+    if (self.descriptionText.isHidden) {
+        [self applyConstraints];
+    }
+    
+    NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
+        [ARLSynchronisation PublishActionsToServer];
+    }];
+    
+    NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
+        [ARLSynchronisation PublishResponsesToServer];
+    }];
+    
+    NSBlockOperation *backBO2 =[NSBlockOperation blockOperationWithBlock:^{
+        [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
+    }];
+    
+    NSBlockOperation *backBO3 =[NSBlockOperation blockOperationWithBlock:^{
+        [ARLSynchronisation DownloadActions:self.runId];
+    }];
+    
+    [backBO1 addDependency:backBO0];
+    [backBO2 addDependency:backBO1];
+    [backBO3 addDependency:backBO2];
+
+    [[ARLAppDelegate theOQ] addOperation:backBO0];
+    [[ARLAppDelegate theOQ] addOperation:backBO1];
+    [[ARLAppDelegate theOQ] addOperation:backBO2];
+    [[ARLAppDelegate theOQ] addOperation:backBO3];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -115,12 +140,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     [self.itemsTable addSubview:self.refreshControl];
-    
-    NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
-        [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
-    }];
-    
-    [[ARLAppDelegate theOQ] addOperation:backBO0];
 }
 
 - (void) viewWillDisappear:(BOOL)animated {
@@ -333,14 +352,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
             break;
         }
     }
-    
-    [self UpdateItemVisibility];
-    
-    // TODO Find a better spot to publish actions (and make it a NSOperation)!
-    [ARLSynchronisation PublishActionsToServer];
-    
-    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
-    [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
 }
 
 #pragma mark - UIWebViewDelegate
@@ -422,11 +433,6 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     [ARLCoreDataUtils CreateOrUpdateAction:self.runId
                                 activeItem:self.activeItem
                                       verb:read_action];
-        
-    // TODO Find a better spot to publish actions (and make it a NSOperation)!
-    [ARLSynchronisation PublishActionsToServer];
-    
-    [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
 }
 
 /*!
@@ -759,7 +765,16 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     NSString *recordType = notification.object;
     
     Log(@"syncReady: %@", recordType);
-    if ([NSStringFromClass([GeneralItemVisibility class]) isEqualToString:recordType]) {
+    
+    if ([NSStringFromClass([Action class]) isEqualToString:recordType]) {
+        [self UpdateItemVisibility];
+        
+        [self.itemsTable reloadData];
+    } else if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
+        [self UpdateItemVisibility];
+        
+        [self.itemsTable reloadData];
+    } else if ([NSStringFromClass([GeneralItemVisibility class]) isEqualToString:recordType]) {
         [self UpdateItemVisibility];
         
         [self.itemsTable reloadData];

@@ -386,6 +386,59 @@ static NSString *_twitterLoginString;
     return data;
 }
 
+//+ (NSMutableURLRequest *)prepareRequest:(NSString *)method
+//                          requestWithUrl:(NSString *)url {
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: url]
+//                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+//                                                       timeoutInterval:60.0];
+//    [request setHTTPMethod:method];
+//    [request setValue:applicationjson forHTTPHeaderField:acceptHeader];
+//    
+//    return request;
+//}
+
++ (NSData *)executeARLearnDeleteWithAuthorization:(NSString *)service {
+    NSURL *url = [NSURL URLWithString:[ARLNetworking MakeRestUrl:service]];
+    
+    // DLog(@"%@", urlString);
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url
+                                                              cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+                                                          timeoutInterval:60.0];
+    [urlRequest setHTTPMethod:@"DELETE"];
+    [urlRequest setValue:applicationjson forHTTPHeaderField:acceptHeader];
+    
+    NSString * authorizationString = [NSString stringWithFormat:@"GoogleLogin auth=%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"auth"]];
+    [urlRequest setValue:authorizationString forHTTPHeaderField:@"Authorization"];
+    
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] init];
+    
+    NSError *error = nil;
+    NSData *jsonData = [NSURLConnection sendSynchronousRequest:urlRequest
+                                             returningResponse:&response
+                                                         error:&error];
+    ELog(error);
+    
+    if (response.statusCode!=200) {
+        DLog(@"%@ %d", response.URL, response.statusCode);
+    }
+    
+    //error = nil;
+    
+    // [self dumpJsonData:jsonData url:urlString];
+    //    id json = jsonData ? [NSJSONSerialization JSONObjectWithData:jsonData
+    //                                                         options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves error:&error] : nil;
+    
+    //ELog(error);
+    
+    //    if (jsonData!=nil && error!=nil) {
+    //        //        NSString* data = [[NSString alloc] initWithData:jsonData
+    //        //                                               encoding:NSUTF8StringEncoding];
+    //        DLog(@"Error: %@", url);
+    //    }
+    
+    return jsonData;
+}
+
 /**
  *  Get and process OAUTH Info from ARLearn server.
  */

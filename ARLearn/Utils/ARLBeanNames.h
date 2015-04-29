@@ -35,6 +35,7 @@ typedef enum {
     ConfigBean,
     GameBean,
     GameFileBean,
+    GameList,
     
     // Run
     RunBean,

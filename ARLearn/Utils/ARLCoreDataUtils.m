@@ -78,11 +78,11 @@
         DLog(@"Generalitem %@ for Run %@ is already marked as %@", generalItemId, runId, action.action);
     }
     
-    // TODO Find a better spot to publish actions (and make it a NSOperation)!
-    [ARLSynchronisation PublishActionsToServer];
-    
-    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
-    [ARLSynchronisation DownloadGeneralItemVisibilities:runId];
+//    // TODO Find a better spot to publish actions (and make it a NSOperation)!
+//    [ARLSynchronisation PublishActionsToServer];
+//    
+//    // TODO Find a better spot to sync visibility (and make it a NSOperation)!
+//    [ARLSynchronisation DownloadGeneralItemVisibilities:runId];
 }
 
 @end

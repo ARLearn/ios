@@ -84,6 +84,17 @@ typedef NS_ENUM(NSInteger, responses) {
     
     [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
     
+    //create long press gesture recognizer(gestureHandler will be triggered after gesture is detected)
+    UILongPressGestureRecognizer* longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(gestureHandler:)];
+    
+    //adjust time interval(floating value CFTimeInterval in seconds)
+    longPressGesture.minimumPressDuration = 1.5;
+    longPressGesture.delegate = self;
+    longPressGesture.delaysTouchesBegan = YES;
+    
+    //add gesture to view you want to listen for it(note that if you want whole view to "listen" for gestures you should add gesture to self.view instead)
+    [self.itemsTable addGestureRecognizer:longPressGesture];
+    
     // Do any additional setup after loading the view.
 //    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND revoked=%@", self.runId, self.activeItem.generalItemId, @NO];
 //    
@@ -240,12 +251,6 @@ typedef NS_ENUM(NSInteger, responses) {
             }
             cell.detailTextLabel.text = @"";
 
-            NSError * error = nil;
-            NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
-                                                                       options: NSJSONReadingMutableContainers
-                                                                         error:&error];
-
             if (response.fileName) {
                 
                 if (self.withPicture && [response.responseType isEqualToNumber:[NSNumber numberWithInt:PHOTO]]) {
@@ -312,6 +317,13 @@ typedef NS_ENUM(NSInteger, responses) {
                 }
             } else {
                 if (response.value) {
+                    NSError * error = nil;
+                    NSData *JSONdata = [response.value dataUsingEncoding:NSUTF8StringEncoding];
+                    
+                    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSONdata
+                                                                               options: NSJSONReadingMutableContainers
+                                                                                 error:&error];
+                    
                     if (self.withText  && [response.responseType isEqualToNumber:[NSNumber numberWithInt:TEXT]]) {
                         cell.imageView.image = [UIImage imageNamed:@"task-text"];
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"text"]];
@@ -616,6 +628,135 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self applyConstraints];
 }
 
+#pragma mark - UIAlertViewDelegate
+
+/*!
+ *  Click At Button Handler.
+ *
+ *  @param alertView   <#alertView description#>
+ *  @param buttonIndex <#buttonIndex description#>
+ */
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if ([title isEqualToString:NSLocalizedString(@"OK", @"OK")]) {
+        UITextField *alertTextField = [alertView textFieldAtIndex:0];
+        
+        NSString *trimmed = [alertTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        switch (alertView.tag) {
+            case 1: {
+                
+                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+                [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+                NSString *decimalSymbol = [formatter decimalSeparator];
+                
+                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"." withString:decimalSymbol];
+                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"," withString:decimalSymbol];
+                
+                NSNumber *number = [formatter numberFromString:trimmed];
+                
+                if (number != nil) {
+                    [self createValueResponse:trimmed //[trimmed stringByReplacingOccurrencesOfString:decimalSymbol withString:@"."]
+                                      withRun:self.run
+                              withGeneralItem:self.activeItem];
+                } else {
+                    // Invalid Number.
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"Error")
+                                                                    message:NSLocalizedString(@"Invalid Number", @"Invalid Number")
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                          otherButtonTitles:nil, nil];
+                    [alert show];
+                }
+            }
+                break;
+            case 2:
+                [self createTextResponse: trimmed
+                                 withRun:self.run
+                         withGeneralItem:self.activeItem];
+                break;
+        }
+        
+        [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                    activeItem:self.activeItem
+                                          verb:answer_given_action];
+        
+        if (ARLNetworking.networkAvailable) {
+#warning TODO Port NarratorItem
+            // [ARLCloudSynchronizer  :self.activeItem.managedObjectContext];
+        }
+        
+        NSError *error = nil;
+        [self.fetchedResultsController performFetch:&error];
+        
+        ELog(error);
+        
+        Log(@"RESPONSES: %d",[self.fetchedResultsController.fetchedObjects count]);
+    } else if ([alertView.message isEqualToString: NSLocalizedString(@"Delete Collected Item?", @"Delete Collected Item?")]) {
+        if ([title isEqualToString:NSLocalizedString(@"YES", @"YES")]) {
+            NSIndexPath *path = [NSIndexPath indexPathForItem:alertView.tag inSection:RESPONSES];
+            
+            Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:path];
+            
+            response.revoked = @YES;
+            response.synchronized = @NO;
+            
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+
+            NSError *error;
+            [self.fetchedResultsController performFetch:&error];
+            ELog(error);
+            
+            [self.itemsTable reloadData];
+        } else {
+            // Log("NOT Deleting Item %d", alertView.tag);
+        }
+    }
+
+}
+
+#pragma mark UIGestureRecognizer.
+
+-(void)gestureHandler:(UISwipeGestureRecognizer *)gestureRecognizer
+{
+    if(UIGestureRecognizerStateBegan == gestureRecognizer.state)
+    {//your code here
+        
+        /*uncomment this to get which exact row was long pressed */
+        CGPoint location = [gestureRecognizer locationInView:self.itemsTable];
+        
+        NSIndexPath *indexPath = [self.itemsTable indexPathForRowAtPoint:location];
+        
+        if (indexPath) {
+            // Check Ownership of Collected Item.
+            
+            // Log(@"CollectionItem: %@", indexPath);
+            
+            Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
+
+            if ([ARLNetworking isLoggedIn] && response.account == [ARLNetworking CurrentAccount]) {
+                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
+                                                                      message:NSLocalizedString(@"Delete Collected Item?", @"Delete Collected Item?")
+                                                                     delegate:self
+                                                            cancelButtonTitle:NSLocalizedString(@"NO", @"NO")
+                                                            otherButtonTitles:NSLocalizedString(@"YES", @"YES"), nil];
+                myAlertView.tag = indexPath.row;
+                
+                [myAlertView show];
+            } else {
+                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
+                                                                      message:NSLocalizedString(@"You can only delete your own collected items.", @"You can only delete your own collected items.")
+                                                                     delegate:nil
+                                                            cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                            otherButtonTitles:nil, nil];
+                [myAlertView show];
+            }
+        }
+    }
+}
+
 #pragma mark - Properties
 
 /*!
@@ -828,10 +969,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
     NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
 //    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue], @NO];
-    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",
+    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked!=%@",
                                  [self.runId longLongValue],
                                  [self.activeItem.generalItemId longLongValue],
-                                 @NO];
+                                 @YES];
     
     // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
@@ -1005,73 +1146,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
 #pragma mark - Actions
 
-/*!
- *  Click At Button Handler.
- *
- *  @param alertView   <#alertView description#>
- *  @param buttonIndex <#buttonIndex description#>
- */
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
-    
-    if ([title isEqualToString:NSLocalizedString(@"OK", @"OK")]) {
-        UITextField *alertTextField = [alertView textFieldAtIndex:0];
-        
-        NSString *trimmed = [alertTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        
-        switch (alertView.tag) {
-            case 1: {
-                
-                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-                [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-                NSString *decimalSymbol = [formatter decimalSeparator];
-                
-                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"." withString:decimalSymbol];
-                trimmed = [trimmed stringByReplacingOccurrencesOfString:@"," withString:decimalSymbol];
-                
-                NSNumber *number = [formatter numberFromString:trimmed];
-                
-                if (number != nil) {
-                    [self createValueResponse:trimmed //[trimmed stringByReplacingOccurrencesOfString:decimalSymbol withString:@"."]
-                                          withRun:self.run
-                                  withGeneralItem:self.activeItem];
-                } else {
-                    // Invalid Number.
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", @"Error")
-                                                                    message:NSLocalizedString(@"Invalid Number", @"Invalid Number")
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
-                                                          otherButtonTitles:nil, nil];
-                    [alert show];
-                }
-            }
-                break;
-            case 2:
-                [self createTextResponse: trimmed
-                                     withRun:self.run
-                             withGeneralItem:self.activeItem];
-                break;
-        }
-        
-        [ARLCoreDataUtils CreateOrUpdateAction:self.runId
-                                    activeItem:self.activeItem
-                                          verb:answer_given_action];
-        
-        if (ARLNetworking.networkAvailable) {
-#warning TODO Port NarratorItem
-            // [ARLCloudSynchronizer  :self.activeItem.managedObjectContext];
-        }
-
-        NSError *error = nil;
-        [self.fetchedResultsController performFetch:&error];
-        
-        ELog(error);
-
-        Log(@"RESPONSES: %d",[self.fetchedResultsController.fetchedObjects count]);
-    }
-}
-
 // See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
 - (void) showCamera: (id) sender {
     self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
@@ -1109,8 +1183,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                           nil];
     
     Response *textResponse = [self responseWithDictionary:data];
-
-    [self.itemsTable reloadData];
 }
 
 #warning TODO Port NarratorItem
@@ -1132,8 +1204,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                           nil];
     
     Response *valueResponse = [self responseWithDictionary:data];
-    
-    [self.itemsTable reloadData];
 }
 
 - (void) createImageResponse:(NSData *)data
@@ -1161,14 +1231,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                              nil];
     
     [self responseWithDictionary:jsonDict];
-    
-    [self.itemsTable reloadData];
-    
-    // TEST CODE
-    //    NSError *error = nil;
-    //    [self.fetchedResultsController performFetch:&error];
-    //    
-//  [self.collectionView reloadData];
 }
 
 - (void) createVideoResponse:(NSData *)data {
@@ -1186,8 +1248,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                              nil];
     
     [self responseWithDictionary:jsonDict];
-    
-    [self.itemsTable reloadData];
 }
 
 - (void) createAudioResponse:(NSData *)data
@@ -1249,17 +1309,23 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     response.account = [[ARLNetworking CurrentAccount] MR_inContext:ctx];
     response.generalItem = [self.activeItem MR_inContext:ctx];
     response.run = [self.run MR_inContext:ctx];
+    response.synchronized = @NO;
+    response.revoked = @NO;
     
     [ctx MR_saveToPersistentStoreAndWait];
     
     // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
-    [ARLSynchronisation PublishResponsesToServer];
+    // [ARLSynchronisation PublishResponsesToServer];
     
 #warning This Code Fails without a PublishResponsesToServer.
-    // NSError *error = nil;
-    // [self.fetchedResultsController performFetch:&error];
-    // ELog(error);
+    NSError *error = nil;
+    [self.fetchedResultsController performFetch:&error];
+    ELog(error);
+    
+    Log("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+    
+    [self.itemsTable reloadData];
     
     return response;
 }

@@ -120,6 +120,8 @@ typedef NS_ENUM(NSInteger, services) {
                               withAccept:(NSString *)withAccept
                          withContentType:(NSString *)withContentType;
 
++ (NSData *)executeARLearnDeleteWithAuthorization:(NSString *)service;
+
 + (void) setupOauthInfo;
 
 + (BOOL)networkAvailable;
