@@ -18,10 +18,12 @@
     
     // TODO Filter on runId too?
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"synchronized=%@", @NO];
-    
     if ([ARLNetworking networkAvailable]) {
-        for (Action *action in [Action MR_findAllWithPredicate:predicate]) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"synchronized!=%@", @YES];
+        
+        NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+        
+        for (Action *action in [Action MR_findAllWithPredicate:predicate inContext:ctx]) {
             NSString *userEmail = [NSString stringWithFormat:@"%@:%@", action.account.accountType, action.account.localId];
             
             NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -36,11 +38,16 @@
             [ARLNetworking sendHTTPPostWithAuthorization:@"actions" json:dict];
             
             action.synchronized = [NSNumber numberWithBool:YES];
+            
+            // Saves any modification made after ManagedObjectFromDictionary.
+            [ctx MR_saveToPersistentStoreAndWait];
         }
         
-        // Saves any modification made after ManagedObjectFromDictionary.
-        [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
+                                                            object:NSStringFromClass([Action class])];
     }
 }
 
