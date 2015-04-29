@@ -233,6 +233,10 @@ Class _class;
             
             cell.textLabel.text = text;
             
+#warning TODO Different Icons for GeneralItem Types (match Android).
+            
+            cell.imageView.image = [UIImage imageNamed:@"task-explore"];
+            
             // DLog(@"%@=%@",[item.generalItemId stringValue], [self.visibility valueForKey:[item.generalItemId stringValue]]);
             
             NSDictionary* dependsOn = [json valueForKey:@"dependsOn"];
