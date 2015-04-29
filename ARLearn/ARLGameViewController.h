@@ -13,7 +13,7 @@
 
 #import "Game.h"
 
-@interface ARLGameViewController : UIViewController <NSURLSessionDataDelegate, UIAlertViewDelegate>
+@interface ARLGameViewController : UIViewController <NSURLSessionDataDelegate, UIAlertViewDelegate, UIWebViewDelegate>
 
 @property (strong, nonatomic) NSNumber *gameId;
 

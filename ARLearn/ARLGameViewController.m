@@ -17,8 +17,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *downloadButton;
 @property (weak, nonatomic) IBOutlet UIView *barOne;
 @property (weak, nonatomic) IBOutlet UIPageControl *ratingControl;
+@property (weak, nonatomic) IBOutlet UIWebView *summaryText;
 @property (weak, nonatomic) IBOutlet UILabel *languageLabel;
-@property (weak, nonatomic) IBOutlet UITextView *summaryText;
 @property (weak, nonatomic) IBOutlet UIView *barTwo;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *releaseLabel;
@@ -355,7 +355,7 @@ didCompleteWithError:(NSError *)error
             
             self.titleLabel.text = [self.game objectForKey:@"title"];
             self.languageLabel.text = [self.game objectForKey:@"language"];
-            self.summaryText.text = [self.game objectForKey:@"description"];
+            [self.summaryText loadHTMLString:[self.game objectForKey:@"description"] baseURL:nil];
             self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDateTime:[self.game objectForKey:@"lastModificationDate"]]];
             
             Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
