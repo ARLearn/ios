@@ -14,6 +14,6 @@
 #import "ARLQueryCache.h"
 #import "ARLDownloadViewController.h"
 
-@interface ARLMyGamesViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate>
+@interface ARLMyGamesViewController : UITableViewController <UITableViewDataSource, NSURLSessionDataDelegate, UIAlertViewDelegate>
 
 @end

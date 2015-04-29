@@ -11,6 +11,6 @@
 #import "ARLButton.h"
 #import "ARLNetworking.h"
 
-@interface ARLCategoriesViewController : UIViewController
+@interface ARLCategoriesViewController : UIViewController <UIAlertViewDelegate>
 
 @end

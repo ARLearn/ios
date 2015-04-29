@@ -333,6 +333,16 @@ didCompleteWithError:(NSError *)error
                     break;
                 }
             }
+            
+            if (!self.runId) {
+                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                                      message:NSLocalizedString(@"No Run found", @"No Run found")
+                                                                     delegate:nil
+                                                            cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                            otherButtonTitles:nil, nil];
+                [myAlertView show];
+
+            }
         }
             break;
             

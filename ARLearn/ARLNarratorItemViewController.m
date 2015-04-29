@@ -439,7 +439,7 @@ typedef NS_ENUM(NSInteger, responses) {
                 if (controller && controller.html) {
                     [self.navigationController pushViewController:controller animated:FALSE];
                 } else {
-                    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
+                    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
                                                                           message:NSLocalizedString(@"NotSynced", @"NotSynced")
                                                                          delegate:nil
                                                                 cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
@@ -737,7 +737,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
 
             if ([ARLNetworking isLoggedIn] && response.account == [ARLNetworking CurrentAccount]) {
-                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
+                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
                                                                       message:NSLocalizedString(@"Delete Collected Item?", @"Delete Collected Item?")
                                                                      delegate:self
                                                             cancelButtonTitle:NSLocalizedString(@"NO", @"NO")
@@ -746,7 +746,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                 
                 [myAlertView show];
             } else {
-                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PIM", @"PIM")
+                UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
                                                                       message:NSLocalizedString(@"You can only delete your own collected items.", @"You can only delete your own collected items.")
                                                                      delegate:nil
                                                             cancelButtonTitle:NSLocalizedString(@"OK", @"OK")

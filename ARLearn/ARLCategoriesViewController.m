@@ -198,7 +198,7 @@
 
 - (IBAction)CategoryButtonAction:(ARLButton *)sender {
     DLog(@"");
-    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Notice"
+    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Info"
     //                                                    message:@"Message:"
     //                                                   delegate:self
     //                                          cancelButtonTitle:@"OK1"

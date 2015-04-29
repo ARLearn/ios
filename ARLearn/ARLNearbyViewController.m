@@ -327,6 +327,7 @@ didCompleteWithError:(NSError *)error
                 NSDictionary *game = [self.results objectAtIndex:indexPath.item];
                 
                 newViewController.gameId = (NSNumber *)[game valueForKey:@"gameId"];
+                [newViewController setBackViewControllerClass:[self class]];
                 
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
