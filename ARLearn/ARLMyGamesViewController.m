@@ -419,6 +419,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
                 if (newViewController) {
                     newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
                     newViewController.runId = run.runId;
+                    [newViewController setBackViewControllerClass:[self class]];
                     
                     // Move to another UINavigationController or UITabBarController etc.
                     // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6

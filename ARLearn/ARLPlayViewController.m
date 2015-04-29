@@ -49,6 +49,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 @synthesize runId;
 @synthesize items;
 
+Class _class;
+
 #pragma mark - ViewController
 
 - (void)viewDidLoad {
@@ -106,6 +108,8 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
+    
+    Log(@"Synchronizing runtime data");
     
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation PublishActionsToServer];
@@ -368,6 +372,10 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 
 -(NSString *) cellIdentifier {
     return  @"GeneralItem";
+}
+
+- (void) setBackViewControllerClass:(Class)viewControllerClass{
+    _class = viewControllerClass;
 }
 
 #pragma mark - Methods
@@ -728,7 +736,7 @@ typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
 - (IBAction)backButtonTapped:(UIBarButtonItem *)sender {
     // Log(@"back button pressed");
     
-    [ARLUtils popToViewControllerOnNavigationController:[ARLMyGamesViewController class]
+    [ARLUtils popToViewControllerOnNavigationController:_class
                                    navigationController:self.navigationController
                                                animated:YES];
 }

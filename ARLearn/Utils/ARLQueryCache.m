@@ -88,10 +88,12 @@ static NSTimer *expireTimer;
 
 -(void)expire:(NSTimer *)aTimer
 {
-    NSLog(@"Expiring @ %@", [aTimer fireDate]);
+    // NSLog(@"Expiring @ %@", [aTimer fireDate]);
     @synchronized(queryCache) {
         @autoreleasepool {
             NSDate *then = [NSDate dateWithTimeIntervalSinceNow:-CACHINGTIME];
+            
+            NSInteger oldcnt = queryCache.count;
             
             for (int i=queryCache.count-1;i>=0;i--) {
                 ARLQueryCache *item = (ARLQueryCache *)[queryCache objectAtIndex:i];
@@ -105,16 +107,19 @@ static NSTimer *expireTimer;
                 }
             }
             
-            switch (queryCache.count) {
-                case 0:
-                    NSLog(@"No Queries Cached");
-                    break;
-                case 1:
-                    NSLog(@"%d Query Cached", queryCache.count);
-                    break;
-                default:
-                    NSLog(@"%d Queries Cached", queryCache.count);
-                    break;
+            if (oldcnt != queryCache.count) {
+                NSLog(@"Chached itemcount changed @ %@", [aTimer fireDate]);
+                switch (queryCache.count) {
+                    case 0:
+                        NSLog(@"No Queries Cached");
+                        break;
+                    case 1:
+                        NSLog(@"%d Query Cached", queryCache.count);
+                        break;
+                    default:
+                        NSLog(@"%d Queries Cached", queryCache.count);
+                        break;
+                }
             }
         }
     }

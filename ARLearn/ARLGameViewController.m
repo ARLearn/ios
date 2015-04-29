@@ -36,7 +36,9 @@
 @implementation ARLGameViewController
 
 @synthesize game;
-@synthesize runId;
+@synthesize runId = _runId;
+
+Class _class;
 
 #pragma mark - ViewController
 
@@ -55,6 +57,8 @@
     
     DLog(@"GameID = %@", self.gameId);
  
+    [self.downloadButton setEnabled:NO];
+
     [self applyConstraints];
 }
 
@@ -66,7 +70,7 @@
     self.navigationController.navigationBarHidden=NO;
     self.navigationController.toolbarHidden=NO;
     
-    [self performQuery];
+    [self performQuery1];
 }
 
 
@@ -87,7 +91,7 @@
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+    // NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
@@ -135,6 +139,20 @@ didCompleteWithError:(NSError *)error
 }
 
 #pragma mark - Properties
+
+- (void)setRunId:(NSNumber *)runId {
+    _runId = runId;
+    
+    [self.downloadButton setEnabled:YES];
+}
+
+- (NSNumber *)runId {
+    return _runId;
+}
+
+- (void) setBackViewControllerClass:(Class)viewControllerClass{
+    _class = viewControllerClass;
+}
 
 #pragma mark - Methods
 
@@ -308,9 +326,6 @@ didCompleteWithError:(NSError *)error
     
     switch (bid) {
         case RunList: {
-            
-#warning FOR NOW TAKE THE FIRST RUN IF ANY.
-#warning RUNLIST IS TO SMALL, only two runs are returned (AUTHORISATION PROBLEMS?).
             for (NSDictionary *run in [json valueForKey:@"runs"]) {
                 if ([[run valueForKey:@"gameId"] longLongValue] == [self.gameId longLongValue]) {
                     self.runId = [run valueForKey:@"runId"];
@@ -332,20 +347,16 @@ didCompleteWithError:(NSError *)error
             self.languageLabel.text = [self.game objectForKey:@"language"];
             self.summaryText.text = [self.game objectForKey:@"description"];
             self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDateTime:[self.game objectForKey:@"lastModificationDate"]]];
+            
             Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
             
-            // Fetch RunId too.
-            NSString *query = @"myRuns/participate";
+            Run *run = [Run MR_findFirstByAttribute:@"gameId"
+                                          withValue:[json valueForKey:@"gameId"]];
             
-            NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
-            
-            NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
-            
-            if (!response) {
-                [ARLNetworking sendHTTPGetWithDelegate:self withService:query];
-            } else {
-                NSLog(@"Using cached query data");
-                [self processData:response];
+            if (run) {
+                self.runId = run.runId;
+            }else {
+                [self performQuery2];
             }
         }
             break;
@@ -355,8 +366,23 @@ didCompleteWithError:(NSError *)error
     }
 }
 
-- (void)performQuery {
+- (void)performQuery1 {
     NSString *query = [NSString stringWithFormat:@"myGames/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
+    
+    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
+    
+    NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
+    
+    if (!response) {
+        [ARLNetworking sendHTTPGetWithDelegate:self withService:query];
+    } else {
+        NSLog(@"Using cached query data");
+        [self processData:response];
+    }
+}
+
+- (void)performQuery2 {
+    NSString *query = @"myRuns/participate";
     
     NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
     
@@ -375,7 +401,7 @@ didCompleteWithError:(NSError *)error
 - (IBAction)downloadButtonAction:(UIButton *)sender {
     
     if (self.runId) {
-        ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
+        ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
         
         if (newViewController) {
             // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
@@ -384,6 +410,7 @@ didCompleteWithError:(NSError *)error
             
             newViewController.gameId = self.gameId;
             newViewController.runId = self.runId;
+            [newViewController setBackViewControllerClass:_class];
             
             // Move to another UINavigationController or UITabBarController etc.
             // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6

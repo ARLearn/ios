@@ -9,10 +9,14 @@
 #import "ARLNetworking.h"
 #import "ARLBeanNames.h"
 
+#import "ARLDownloadViewController.h"
+
 #import "Game.h"
 
 @interface ARLGameViewController : UIViewController <NSURLSessionDataDelegate>
 
 @property (strong, nonatomic) NSNumber *gameId;
+
+- (void) setBackViewControllerClass:(Class)viewControllerClass;
 
 @end

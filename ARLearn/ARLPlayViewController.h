@@ -27,4 +27,6 @@
 
 @property (strong, nonatomic) NSNumber *runId;
 
+- (void) setBackViewControllerClass:(Class)viewControllerClass;
+
 @end

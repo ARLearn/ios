@@ -210,7 +210,8 @@ NSArray *ids;
             
             if (newViewController) {
                 newViewController.gameId = (NSNumber *)[ids objectAtIndex:indexPath.row];
-                
+                [newViewController setBackViewControllerClass:[self class]];
+
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
                 [self.navigationController pushViewController:newViewController animated:YES];

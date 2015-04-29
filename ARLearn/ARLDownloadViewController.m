@@ -28,6 +28,8 @@
 
 NSInteger downloaded = 0;
 
+Class _class;
+
 #pragma mark - ViewController
 
 - (void)viewDidLoad {
@@ -165,6 +167,10 @@ NSInteger downloaded = 0;
 
 -(NSString *) cellIdentifier {
     return  @"DownloadItem";
+}
+
+- (void) setBackViewControllerClass:(Class)viewControllerClass{
+    _class = viewControllerClass;
 }
 
 #pragma mark - Methods
@@ -333,10 +339,15 @@ NSInteger downloaded = 0;
                 
                 [self.backgroundImage performSelectorOnMainThread:@selector(setImage:)
                                                        withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
+            } else {
+                NSString *local = [ARLUtils GenerateResourceFileName:gameId path:path];
+                
+                [self.backgroundImage performSelectorOnMainThread:@selector(setImage:)
+                                                       withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
             }
             
-                [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE]
-                                       forKey:path];
+            [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE]
+                                   forKey:path];
             
             [self performSelectorOnMainThread:@selector(updateProgress:)
                                    withObject:[NSNumber numberWithBool:cached]
@@ -360,12 +371,12 @@ NSInteger downloaded = 0;
                                       gameFile:gameFile];
         
         if (!cached) {
-        [ARLUtils DownloadResource:self.gameId
-                          gameFile:gameFile];
+            [ARLUtils DownloadResource:self.gameId
+                              gameFile:gameFile];
         }
         
         [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE]
-                               forKey: path];
+                               forKey:path];
         
         [self performSelectorOnMainThread:@selector(updateProgress:)
                                withObject:[NSNumber numberWithBool:cached]
@@ -427,9 +438,9 @@ NSInteger downloaded = 0;
     
     if (newViewController) {
 
-#warning There is no selection of runs nor creation when missing yet. Code expects one run to be present!
         newViewController.gameId = self.gameId;
         newViewController.runId = self.runId;
+        [newViewController setBackViewControllerClass:_class];
         
         // Move to another UINavigationController or UITabBarController etc.
         // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
