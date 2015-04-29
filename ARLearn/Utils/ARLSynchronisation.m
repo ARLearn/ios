@@ -678,7 +678,8 @@
             NSString *accountType = [userComponents objectAtIndex:0];
             NSString *accountId =[userComponents objectAtIndex:1];
             
-            NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"run.runId==%lld && generalItem.generalItemId==%lld && account.accountType==%@ && account.localId==%@",
+            NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"action=%@ AND run.runId=%lld AND generalItem.generalItemId=%lld AND account.accountType=%@ AND account.localId=%@",
+                                       [item valueForKey:@"action"],
                                        [[item valueForKey:@"runId"] longLongValue],
                                        [[item valueForKey:@"generalItemId"] longLongValue],
                                        accountType,
@@ -739,9 +740,12 @@
                         action.account = a;
                     }
                 }
-                
-                [ctx MR_saveToPersistentStoreAndWait];
+            } else {
+#warning Update TimeStamp Here (to keep single actions)?
+//                if (action.time<)
             }
+            
+            [ctx MR_saveToPersistentStoreAndWait];
         }
         
         // Saves any modification made after ManagedObjectFromDictionary.

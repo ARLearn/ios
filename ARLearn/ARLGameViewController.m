@@ -356,7 +356,7 @@ didCompleteWithError:(NSError *)error
             self.titleLabel.text = [self.game objectForKey:@"title"];
             self.languageLabel.text = [self.game objectForKey:@"language"];
             [self.summaryText loadHTMLString:[self.game objectForKey:@"description"] baseURL:nil];
-            self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDateTime:[self.game objectForKey:@"lastModificationDate"]]];
+            self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDate:[self.game objectForKey:@"lastModificationDate"]]];
             
             Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
             

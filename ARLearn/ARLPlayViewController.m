@@ -79,13 +79,12 @@ Class _class;
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
     
     self.items = [GeneralItem MR_findAllSortedBy:@"sortKey"
-                                       ascending:NO
+                                       ascending:YES
                                    withPredicate:predicate1];
     
     // Again Sort....
-    NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
-    self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
-    
+//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
+//        self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -102,6 +101,7 @@ Class _class;
                                                object:nil];
 
     [self UpdateItemVisibility];
+    [self.itemsTable reloadData];
     
     [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
     
@@ -491,6 +491,8 @@ Class _class;
     Log(@"Now: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:now] stringValue]]);
     
     for (GeneralItem *item in self.items) {
+        Log(@"Examing GeneralItem: %@", item.name);
+        
         NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
         
         long long int satisfiedAt = 0l;
@@ -547,7 +549,8 @@ Class _class;
             }
             
             if ([giv.status isEqualToNumber:VISIBLE] && ![self.visibility containsObject:[item.generalItemId stringValue]]) {
-                [self.visibility addObject:[item.generalItemId stringValue]];
+                Log("Adding %@ to Visibility", item.name);
+                [self.visibility insertObject:[item.generalItemId stringValue] atIndex:0];
             }
         }
     }
@@ -779,33 +782,33 @@ Class _class;
         
         [self.itemsTable reloadData];
     } else if ([NSStringFromClass([Response class]) isEqualToString:recordType]) {
-        [self UpdateItemVisibility];
+        //[self UpdateItemVisibility];
         
-        [self.itemsTable reloadData];
+        //[self.itemsTable reloadData];
     } else if ([NSStringFromClass([GeneralItemVisibility class]) isEqualToString:recordType]) {
-        [self UpdateItemVisibility];
+        //[self UpdateItemVisibility];
         
-        [self.itemsTable reloadData];
+        //[self.itemsTable reloadData];
     } else if ([NSStringFromClass([GeneralItem class]) isEqualToString:recordType]) {
-        NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
-        
-        self.items = [GeneralItem MR_findAllSortedBy:@"sortKey"
-                                           ascending:NO
-                                       withPredicate:predicate1];
-        
-        // Again Sort....
-        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
-        self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
-        
-        [self UpdateItemVisibility];
-        
-        [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
-        
-        if (self.descriptionText.isHidden) {
-            [self applyConstraints];
-        }
-        
-        [self.itemsTable reloadData];
+//        NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
+//        
+//        self.items = [GeneralItem MR_findAllSortedBy:@"sortKey"
+//                                           ascending:NO
+//                                       withPredicate:predicate1];
+//        
+//        // Again Sort....
+//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"sortKey" ascending:NO];
+//        self.items = [self.items sortedArrayUsingDescriptors:@[sort]];
+//        
+//        [self UpdateItemVisibility];
+//        
+//        [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
+//        
+//        if (self.descriptionText.isHidden) {
+//            [self applyConstraints];
+//        }
+//        
+//        [self.itemsTable reloadData];
     } else {
         DLog(@"syncReady, unhandled recordType: %@", recordType);
     }

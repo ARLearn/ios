@@ -743,8 +743,19 @@ static NSCondition *_theAbortLock;
  */
 +(NSString *)formatDateTime:(NSString *)format withUnixTime:(NSString *)stamp {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
+    [dateFormatter setDateFormat:format];
     return [dateFormatter stringFromDate: [NSDate dateWithTimeIntervalSince1970:[stamp doubleValue]/1000.0f]];
+}
+
+/*!
+ *  Format a double as a Date.
+ *
+ *  @param stamp        <#stamp description#>
+ *
+ *  @return <#return value description#>
+ */
++(NSString *)formatDate:(NSString *)stamp {
+    return    [ARLUtils formatDateTime:@"dd-MMM-yyyy" withUnixTime:stamp];
 }
 
 /*!
@@ -755,7 +766,7 @@ static NSCondition *_theAbortLock;
  *  @return <#return value description#>
  */
 +(NSString *)formatDateTime:(NSString *)stamp {
-    return    [ARLUtils formatDateTime:@"dd-MMM-yyyy" withUnixTime:stamp];
+    return    [ARLUtils formatDateTime:@"dd-MMM-yyyy HH:mm" withUnixTime:stamp];
 }
 
 ///*!

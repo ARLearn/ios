@@ -271,6 +271,15 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
  *
  *  @return <#return value description#>
  */
++(NSString *)formatDate:(NSString *)stamp;
+
+/*!
+ *  Format a double as a Date/Time.
+ *
+ *  @param stamp        <#stamp description#>
+ *
+ *  @return <#return value description#>
+ */
 +(NSString *)formatDateTime:(NSString *)stamp;
 
 /*!
