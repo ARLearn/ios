@@ -194,6 +194,21 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     [self applyConstraints];
 }
 
+#pragma mark - UIAlertViewDelegate
+
+/*!
+ *  Click At Button Handler.
+ *
+ *  @param alertView   <#alertView description#>
+ *  @param buttonIndex <#buttonIndex description#>
+ */
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    // NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 #warning TODO is to visablize the tasks to do
 
 // See weSPOT PIM
@@ -380,6 +395,8 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
 
 - (IBAction)saveButtonAction:(UIBarButtonItem *)sender {
     
+    BeanIds bid = [ARLBeanNames beanTypeToBeanId:self.activeItem.type];
+    
     for (int i=0; i<self.answers.count;i++) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForItem:i inSection:ANSWER];
         
@@ -391,12 +408,42 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
             [ARLCoreDataUtils MarkAnswerAsGiven:self.runId
                                   generalItemid:self.activeItem.generalItemId
                                        answerId:[answer valueForKey:@"id"]];
+            //{
+            //    answer = "twee en veertig";
+            //    feedback = prima;
+            //    id = aHjTIkkje57loHj;
+            //    isCorrect = 1;
+            //    type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+            //}
+            
+            if (bid == SingleChoiceTest && [answer valueForKey:@"isCorrect"]) {
+                
+                switch ([[answer valueForKey:@"isCorrect"] integerValue]) {
+                    case 0: {
+                        UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                                              message:NSLocalizedString(@"Wrong", @"Wrong")
+                                                                             delegate:nil
+                                                                    cancelButtonTitle:NSLocalizedString(@"Continue", @"Continue")
+                                                                    otherButtonTitles:nil, nil];
+                        [myAlertView show];
+                    }
+                        break;
+                    case 1: {
+                        UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                                              message:NSLocalizedString(@"Correct", @"Correct")
+                                                                             delegate:self
+                                                                    cancelButtonTitle:NSLocalizedString(@"Continue", @"Continue")
+                                                                    otherButtonTitles:nil, nil];
+                        [myAlertView show];
+
+                    }
+                        break;
+                }
+            }
             
             Log(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
         }
     };
-    
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Events
