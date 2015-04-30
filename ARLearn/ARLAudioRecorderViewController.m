@@ -23,29 +23,6 @@
 
     [self.controller performSelector:NSSelectorFromString(@"createAudioResponse:fileName:") withObject:audioData withObject:self.recorder.tmpFileName];
     
-//    [self.controller createAudioResponse:audioData fileName:self.recorder.tmpFileName];
-    
-#warning TODO DataCollection Tasks
-    
-//    [Response createAudioResponse:audioData withRun:self.inquiry.run withGeneralItem:self.generalItem fileName:self.recorder.tmpFileName];
-//   
-//    [Action initAction:answer_given_action forRun:self.inquiry.run forGeneralItem:self.generalItem inManagedObjectContext:self.generalItem.managedObjectContext];
-//    
-//    [INQLog SaveNLogAbort:self.generalItem.managedObjectContext func:[NSString stringWithFormat:@"%s",__func__]];
-//    
-//    [self.generalItem.managedObjectContext.parentContext performBlock:^{
-//        [INQLog SaveNLogAbort:self.generalItem.managedObjectContext.parentContext func:[NSString stringWithFormat:@"%s",__func__]];
-//    }];
-//    
-//    if (ARLNetwork.networkAvailable) {
-//        
-//        [ARLFileCloudSynchronizer syncMyResponseData:self.generalItem.managedObjectContext
-//         //generalItemId:self.generalItem.generalItemId
-//                                        responseType:[NSNumber numberWithInt:AUDIO]];
-//        
-//        [ARLCloudSynchronizer syncResponses: self.generalItem.managedObjectContext];
-//    }
-    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

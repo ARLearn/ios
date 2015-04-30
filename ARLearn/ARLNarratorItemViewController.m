@@ -391,7 +391,7 @@ typedef NS_ENUM(NSInteger, responses) {
                 switch ([response.responseType intValue]) {
                     case PHOTO: {
                         if (http && ARLNetworking.networkAvailable /*&& !response.thumb*/) {
-                            controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><img src='%@?thumbnail=1600&crop=true' style='width:100%%;' /><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
+                            controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head></head><body><img src='%@?thumbnail=1600&crop=true' style='width:100%%;' alt='Loading...'/><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
                                                response.fileName, [response.fileName pathExtension], who];
                         } else {
                             // NSString *strEncoded = [Base64 encode:data];

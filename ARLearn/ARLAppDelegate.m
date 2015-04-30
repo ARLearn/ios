@@ -68,9 +68,9 @@ static NSCondition *_theAbortLock;
     // Setup CoreData with MagicalRecord
     // Step 1. Setup Core Data Stack with Magical Record
     // Step 2. Relax. Why not have a beer? Surely all this talk of beer is making you thirsty…
-    
-//    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:managedObjectStore.persistentStoreCoordinator];
-//    [NSManagedObjectContext MR_setRootSavingContext:managedObjectStore.persistentStoreManagedObjectContext];
+    //
+    //    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:managedObjectStore.persistentStoreCoordinator];
+    //    [NSManagedObjectContext MR_setRootSavingContext:managedObjectStore.persistentStoreManagedObjectContext];
     
     [MagicalRecord setShouldAutoCreateDefaultPersistentStoreCoordinator:YES];
     
