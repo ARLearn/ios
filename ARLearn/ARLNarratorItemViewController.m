@@ -981,7 +981,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
 #warning SOMETIMES BAD-ACCES HERE?
     
-    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context]; //was MR_DefaultContext
     
     NSFetchRequest *request =  [Response MR_requestAllSortedBy:@"timeStamp"
                                                      ascending:YES
@@ -1043,6 +1043,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
    // TODO Move saving to code into viewcontroller?
     controller.activeItem = self.activeItem;
     controller.run = self.run;
+    controller.controller = self;
     
     [self.navigationController pushViewController:controller animated:TRUE];
 }
@@ -1182,7 +1183,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                           [NSNumber numberWithInt:TEXT],                                          @"responseType",
                           nil];
     
-    Response *textResponse = [self responseWithDictionary:data];
+    [self responseWithDictionary:data];
 }
 
 #warning TODO Port NarratorItem
@@ -1203,7 +1204,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                           [NSNumber numberWithInt:NUMBER],                                        @"responseType",
                           nil];
     
-    Response *valueResponse = [self responseWithDictionary:data];
+    [self responseWithDictionary:data];
 }
 
 - (void) createImageResponse:(NSData *)data
@@ -1252,30 +1253,27 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
 - (void) createAudioResponse:(NSData *)data
                     fileName:(NSString *)fileName {
-#warning TODO Port NarratorItem
+    NSString *contentType = @"audio/aac";
+    
+    if ([fileName hasSuffix:@".m4a"]) {
+        contentType = @"audio/aac";
+    } else  if ([fileName hasSuffix:@".mp3"]) {
+        contentType = @"audio/mp3";
+    } else  if ([fileName hasSuffix:@".amr"]) {
+        contentType = @"audio/amr";
+    }
 
-//    Response *response = [Response initResponse:run
-//                                 forGeneralItem:generalItem
-//                                       withData:data
-//                         inManagedObjectContext:generalItem.managedObjectContext];
-//    
-//    if ([fileName hasSuffix:@".m4a"]) {
-//        response.contentType = @"audio/aac";
-//    } else  if ([fileName hasSuffix:@".mp3"]) {
-//        response.contentType = @"audio/mp3";
-//    } else  if ([fileName hasSuffix:@".amr"]) {
-//        response.contentType = @"audio/amr";
-//    } else {
-//        // Fallback.
-//        response.contentType = @"audio/aac";
-//    }
-//    
-//    response.responseType = [NSNumber numberWithInt:AUDIO];
-//    
-//    //    u_int32_t random = arc4random();
-//    response.fileName = fileName;//[NSString stringWithFormat:@"%u.%@", random, @"mp3"];
-//    
-//    response.account = [ARLNetworking CurrentAccount];
+    NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
+                             data,                                                                   @"data",
+                             [NSNumber numberWithInt:0],                                             @"responseId",
+                             [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]*1000], @"timeStamp",
+                             [NSNumber numberWithBool:NO],                                           @"synchronized",
+                             contentType,                                                            @"contentType",
+                             [NSNumber numberWithInt:AUDIO],                                         @"responseType",
+                             fileName,                                                               @"fileName",
+                             nil];
+    
+    [self responseWithDictionary:jsonDict];
 }
 
 - (Response *)responseWithDictionary:(NSDictionary *)respDict
@@ -1314,11 +1312,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     [ctx MR_saveToPersistentStoreAndWait];
     
-    // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
-    // [ARLSynchronisation PublishResponsesToServer];
-    
-#warning This Code Fails without a PublishResponsesToServer.
+    // Update Query annd Table.
     NSError *error = nil;
     [self.fetchedResultsController performFetch:&error];
     ELog(error);

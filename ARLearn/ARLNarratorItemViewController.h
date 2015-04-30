@@ -36,4 +36,7 @@
 
 @property (strong, nonatomic) GeneralItem *activeItem;
 
+- (void) createAudioResponse:(NSData *)data
+                    fileName:(NSString *)fileName;
+
 @end

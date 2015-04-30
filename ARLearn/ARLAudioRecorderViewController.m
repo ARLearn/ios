@@ -17,9 +17,14 @@
 
 @synthesize run = _run;
 @synthesize activeItem = _activeItem;
+@synthesize controller;
 
 - (void) clickedSaveButton: (NSData*) audioData {
 
+    [self.controller performSelector:NSSelectorFromString(@"createAudioResponse:fileName:") withObject:audioData withObject:self.recorder.tmpFileName];
+    
+//    [self.controller createAudioResponse:audioData fileName:self.recorder.tmpFileName];
+    
 #warning TODO DataCollection Tasks
     
 //    [Response createAudioResponse:audioData withRun:self.inquiry.run withGeneralItem:self.generalItem fileName:self.recorder.tmpFileName];

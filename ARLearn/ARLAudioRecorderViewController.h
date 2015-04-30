@@ -10,6 +10,7 @@
 
 #import "ARLAudioRecorder.h"
 #import "ARLAudioRecordButtons.h"
+// #import "ARLNarratorItemViewController.h"
 
 @class ARLAudioRecorder;
 @class ARLAudioRecordButtons;
@@ -27,4 +28,7 @@
 @property (nonatomic, strong) ARLAudioRecordButtons *recordButtons;
 
 - (void) clickedSaveButton: (NSData*) audioData;
+
+@property (nonatomic, strong) UIViewController *controller;
+
 @end
