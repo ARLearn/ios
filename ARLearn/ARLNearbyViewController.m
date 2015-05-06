@@ -73,12 +73,11 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 {
     [super viewDidLoad];
  
+    // Do any additional setup after loading the view.
+    
     // Setting a footer hides empty cels at the bottom.
     self.nearbyGamesTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-
     
-    // Do any additional setup after loading the view.
-
 #pragma warning Set initial viewport to correct search distance around center point (this removed the initial zoom).
 #pragma warning Set viewport to search distance when moving around.
 #pragma warning Debug why we not always get games in response (search has that issue too).

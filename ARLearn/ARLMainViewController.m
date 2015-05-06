@@ -65,7 +65,6 @@
                                             endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
                                                                       isEnabled:[self.StoreButton isEnabled]]];
     
-    // [self.QrScanButton setEnabled:NO];
     [self.QrScanButton makeButtonWithImageAndGradient:@"QrScan"
                                             titleText:NSLocalizedString(@"ScanQrCode", @"ScanQrCode")
                                            titleColor:[UIColor whiteColor]

@@ -65,11 +65,10 @@ NSArray *ids;
     // Setting a footer hides empty cels at the bottom.
     self.featuredTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
-#warning Hardcoded Value.
     ids = [NSArray arrayWithObjects:
-           [NSNumber numberWithLongLong:13876002],
-           [NSNumber numberWithLongLong:20536006],
-           [NSNumber numberWithLongLong:5248241780129792],
+           // [NSNumber numberWithLongLong:13876002],
+           // [NSNumber numberWithLongLong:20536006],
+           // [NSNumber numberWithLongLong:5248241780129792],
            nil];
     
     [self applyConstraints];
@@ -81,31 +80,42 @@ NSArray *ids;
     [self.SearchButton makeButtonWithImageAndGradient:@"Search"
                                             titleText:NSLocalizedString(@"SearchLabel", @"SearchLabel")
                                            titleColor:[UIColor whiteColor]
-                                           startColor:UIColorFromRGB(0xff664c)
-                                             endColor:UIColorFromRGB(0xe94a35)];
+                                           startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xff664c)
+                                                                       isEnabled:[self.SearchButton isEnabled]]
+                                             endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
+                                                                       isEnabled:[self.SearchButton isEnabled]]];
     
+    [self.CategoryButton setEnabled:NO];
     [self.CategoryButton makeButtonWithImageAndGradient:@"Category"
                                               titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
                                              titleColor:[UIColor whiteColor]
-                                             startColor:UIColorFromRGB(0xff664c)
-                                               endColor:UIColorFromRGB(0xe94a35)];
+                                             startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xff664c)
+                                                                         isEnabled:[self.CategoryButton isEnabled]]
+                                               endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
+                                                                         isEnabled:[self.CategoryButton isEnabled]]];
     
+    [self.TopGamesButton setEnabled:NO];
     [self.TopGamesButton makeButtonWithImageAndGradient:@"TopGames"
                                               titleText:NSLocalizedString(@"TopGamesLabel", @"TopGamesLabel")
                                              titleColor:[UIColor whiteColor]
-                                             startColor:UIColorFromRGB(0xff664c)
-                                               endColor:UIColorFromRGB(0xe94a35)];
+                                             startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xff664c)
+                                                                         isEnabled:[self.TopGamesButton isEnabled]]
+                                               endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
+                                                                         isEnabled:[self.TopGamesButton isEnabled]]];
     
     [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
                                             titleText:NSLocalizedString(@"NearByLabel", @"NearByLabel")
                                            titleColor:[UIColor whiteColor]
-                                           startColor:UIColorFromRGB(0xff664c)
-                                             endColor:UIColorFromRGB(0xe94a35)];
+                                           startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xff664c)
+                                                                       isEnabled:[self.NearByButton isEnabled]]
+                                             endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
+                                                                       isEnabled:[self.NearByButton isEnabled]]];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+    
     // Dispose of any resources that can be recreated.
 }
 
