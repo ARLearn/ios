@@ -52,26 +52,36 @@
     [self.MyGamesButton makeButtonWithImageAndGradient:@"MyGames"
                                              titleText:NSLocalizedString(@"MyGames", @"MyGames")
                                             titleColor:[UIColor whiteColor]
-                                            startColor:UIColorFromRGB(0x419cd7)
-                                              endColor:UIColorFromRGB(0x217eba)];
+                                            startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0x419cd7)
+                                                                        isEnabled:[self.MyGamesButton isEnabled]]
+                                              endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0x217eba)
+                                                                        isEnabled:[self.MyGamesButton isEnabled]]];
     
     [self.StoreButton makeButtonWithImageAndGradient:@"Store"
                                            titleText:NSLocalizedString(@"Store", @"Store")
                                           titleColor:[UIColor whiteColor]
-                                          startColor:UIColorFromRGB(0xff664c)
-                                            endColor:UIColorFromRGB(0xe94a35)];
+                                          startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xff664c)
+                                                                      isEnabled:[self.StoreButton isEnabled]]
+                                            endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
+                                                                      isEnabled:[self.StoreButton isEnabled]]];
     
+    // [self.QrScanButton setEnabled:NO];
     [self.QrScanButton makeButtonWithImageAndGradient:@"QrScan"
                                             titleText:NSLocalizedString(@"ScanQrCode", @"ScanQrCode")
                                            titleColor:[UIColor whiteColor]
-                                           startColor:UIColorFromRGB(0x3fd8b7)
-                                             endColor:UIColorFromRGB(0x00bc9c)];
+                                           startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0x3fd8b7)
+                                                                       isEnabled:[self.QrScanButton isEnabled]]
+                                             endColor:[ARLUtils ColorOrGrayScale: UIColorFromRGB(0x00bc9c)
+                                                                       isEnabled:[self.QrScanButton isEnabled]]];
     
+    [self.NearByButton setEnabled:NO];
     [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
                                             titleText:NSLocalizedString(@"NearBy", @"NearBy")
                                            titleColor:[UIColor whiteColor]
-                                           startColor:UIColorFromRGB(0x4c6078)
-                                             endColor:UIColorFromRGB(0x33485f)];
+                                           startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0x4c6078)
+                                                                       isEnabled:[self.NearByButton isEnabled]]
+                                             endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0x33485f)
+                                                                       isEnabled:[self.NearByButton isEnabled]]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -191,6 +201,7 @@
     UIViewController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
     
     // If animated we get an error about unfinished animations in the ARLLOginViewController when is silently jumps to ARLMyGameSViewController.
+    // Note we swap the current viewcontroller for a new one.
     [self.navigationController presentViewController:mvc animated:ARLNetworking.isLoggedIn ? NO : YES completion:nil];
 }
 

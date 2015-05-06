@@ -371,11 +371,8 @@
 }
 
 - (IBAction)backButtonAction:(UIBarButtonItem *)sender {
-    UINavigationController *mvc = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
-    
-    if (mvc) {
-        [self.navigationController pushViewController:mvc animated:YES];
-    }
+    // Note: this is the countepart of presentViewController!
+    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
 }
 
 @end

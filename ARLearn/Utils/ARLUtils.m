@@ -919,4 +919,22 @@ static BOOL _NO_ = NO;
     return value ? &_YES_:&_NO_;
 }
 
++ (UIColor *)ColorToGrayScale:(UIColor *)color
+{
+    CGFloat red, green, blue, alpha;
+    
+    [color getRed:&red green:&green blue:&blue alpha:&alpha];
+    
+    CGFloat y = ((red*77)+(green*151)+(blue*28)) / 256.0;
+
+    // undo the scale by 256 and write to memory:
+    return [UIColor colorWithRed:y green:y blue:y alpha:1.0];
+}
+
++(UIColor *)ColorOrGrayScale:(UIColor *)color
+                   isEnabled:(BOOL)isEnabled
+{
+    return isEnabled ? color : [ARLUtils ColorToGrayScale:color];
+}
+
 @end

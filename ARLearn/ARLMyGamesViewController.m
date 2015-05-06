@@ -497,7 +497,7 @@ didCompleteWithError:(NSError *)error
 #pragma mark Actions
 
 - (IBAction)logoutButtonAction:(UIBarButtonItem *)sender {
-    UIViewController *newViewController;
+    // UIViewController *newViewController;
     
     if (ARLNetworking.isLoggedIn) {
         ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -507,29 +507,39 @@ didCompleteWithError:(NSError *)error
         // [self adjustLoginButton];
         
         if (ARLNetworking.isLoggedIn) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info") message:NSLocalizedString(@"Could not log-out",@"Could not log-out") delegate:self cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                            message:NSLocalizedString(@"Could not log-out",@"Could not log-out")
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                                  otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
             [alert show];
+            
+            return;
         } else {
             DLog(@"->RootNavigationController");
             
-            newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"RootNavigationController"];
+            // newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"RootNavigationController"];
         }
     } else {
-        newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
+        // newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginNavigationController"];
     }
     
-    if (newViewController) {
-        // Move to another UINavigationController or UITabBarController etc.
-        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-        [self.navigationController presentViewController:newViewController animated:NO completion:nil];
-        
-        newViewController = nil;
-    }
+    // if (newViewController) {
+    // Move to another UINavigationController or UITabBarController etc.
+    // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+    //        [self.navigationController presentViewController:newViewController animated:NO completion:nil];
+    
+#warning We should use the presentViewController counterpart here as thats how we came here.
+    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
+    
+    // newViewController = nil;
+    // }
 }
 
 - (IBAction)backButtonAction:(UIBarButtonItem *)sender {
     UIViewController *newViewController;
     
+#warning this seems wrong as there is no counterpart of presentViewController (i.e. dismissViewControllerAnimated) used here.
     newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"RootNavigationController"];
     
     if (newViewController) {
@@ -538,7 +548,7 @@ didCompleteWithError:(NSError *)error
         [self.navigationController presentViewController:newViewController animated:NO completion:nil];
         
         newViewController = nil;
-    }
+        }
 }
 
 @end

@@ -309,4 +309,9 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 
 + (BOOL *)boolToBoolPointer:(BOOL) value;
 
++ (UIColor *)ColorToGrayScale:(UIColor *)color;
+
++(UIColor *)ColorOrGrayScale:(UIColor *)color
+                   isEnabled:(BOOL)isEnabled;
+
 @end

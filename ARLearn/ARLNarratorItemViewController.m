@@ -96,7 +96,7 @@ typedef NS_ENUM(NSInteger, responses) {
     [self.itemsTable addGestureRecognizer:longPressGesture];
     
     // Do any additional setup after loading the view.
-//    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND revoked=%@", self.runId, self.activeItem.generalItemId, @NO];
+//    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND (revoked=NULL OR revoked=%@)", self.runId, self.activeItem.generalItemId, @NO];
 //    
 //    self.items = [Response MR_findAllSortedBy:@"sortKey"
 //                                       ascending:NO
@@ -965,19 +965,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         tmp = [NSMutableArray arrayWithArray:[tmp arrayByAddingObject:
                                               [NSPredicate predicateWithFormat:@"responseType=%@", [NSNumber numberWithInt:NUMBER]]]];
     }
-#warning DEBUG CODE
+
     // See http://stackoverflow.com/questions/4476026/add-additional-argument-to-an-existing-nspredicate
     NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:tmp];
-//    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked=%@",[self.runId longLongValue], [self.activeItem.generalItemId longLongValue], @NO];
-    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND revoked!=%@",
+    NSPredicate *andPredicate = [NSPredicate predicateWithFormat:@"run.runId = %lld AND generalItem.generalItemId = %lld AND (revoked=NULL OR revoked=%@)",
                                  [self.runId longLongValue],
                                  [self.activeItem.generalItemId longLongValue],
-                                 @YES];
-    
-    // Example Predicate: (run.runId == 5860462742732800 AND generalItem.generalItemId == 3713019) AND (contentType == "application/jpg" OR contentType == "video/quicktime" OR contentType == "audio/aac")
+                                 @NO];
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
-    
-   // NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"run.runId = %@ AND revoked = %@", run.runId, @NO];
     
 #warning SOMETIMES BAD-ACCES HERE?
     
