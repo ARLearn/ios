@@ -409,6 +409,8 @@ static NSCondition *_theAbortLock;
     
     [Account MR_deleteAllMatchingPredicate:predicate];
     
+    [Account MR_truncateAll];
+    
     [Action MR_truncateAll];
     [CurrentItemVisibility MR_truncateAll];
     [Game MR_truncateAll];
