@@ -14,6 +14,7 @@ static NSString *_facebookLoginString;
 static NSString *_googleLoginString;
 static NSString *_linkedInLoginString;
 static NSString *_twitterLoginString;
+static NSString *_ecoLoginString;
 
 #pragma mark Properties
 
@@ -31,6 +32,10 @@ static NSString *_twitterLoginString;
 
 + (NSString *) twitterLoginString {
     return _twitterLoginString;
+}
+
++ (NSString *) ecoLoginString {
+    return _ecoLoginString;
 }
 
 + (NSString *) MakeRestUrl:(NSString *) service {
@@ -445,8 +450,48 @@ static NSString *_twitterLoginString;
 +(void) setupOauthInfo {
     NSData *data = [ARLNetworking sendHTTPGet:@"oauth/getOauthInfo"];
     
+    //{
+    //    oauthInfoList =     (
+    //                         {
+    //                             clientId = 122952504562527;
+    //                             providerId = 1;
+    //                             redirectUri = "http://streetlearn.appspot.com/oauth/facebook";
+    //                             type = "org.celstec.arlearn2.beans.oauth.OauthInfo";
+    //                         },
+    //                         {
+    //                             clientId = "594104153413-8ddgvbqp0g21pid8fm8u2dau37521b16.apps.googleusercontent.com";
+    //                             providerId = 2;
+    //                             redirectUri = "http://streetlearn.appspot.com/oauth/google";
+    //                             type = "org.celstec.arlearn2.beans.oauth.OauthInfo";
+    //                         },
+    //                         {
+    //                             clientId = z9pd19znus63;
+    //                             providerId = 3;
+    //                             redirectUri = "http://streetlearn.appspot.com/oauth/linkedin";
+    //                             type = "org.celstec.arlearn2.beans.oauth.OauthInfo";
+    //                         },
+    //                         {
+    //                             clientId = shQECwR5G7S3dBBY5w8PA;
+    //                             providerId = 4;
+    //                             redirectUri = "http://streetlearn.appspot.com/oauth/twitter";
+    //                             type = "org.celstec.arlearn2.beans.oauth.OauthInfo";
+    //                         },
+    //                         {
+    //                             clientId = wespotstreetlearnid;
+    //                             providerId = 5;
+    //                             redirectUri = "https://streetlearn.appspot.com/oauth/wespot";
+    //                             type = "org.celstec.arlearn2.beans.oauth.OauthInfo";
+    //                         },
+    //                         {
+    //                             clientId = "arlearn.prod";
+    //                             providerId = 6;
+    //                             redirectUri = "http://streetlearn.appspot.com/oauth/eco";
+    //                             type = "org.celstec.arlearn2.beans.oauth.OauthInfo";
+    //                         }
+    //                         );
+    //    type = "org.celstec.arlearn2.beans.oauth.OauthInfoList";
+    //}
     NSError *error = nil;
-    
     NSDictionary* network = data ? [NSJSONSerialization JSONObjectWithData:data
                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
                                                                      error:&error] : nil;
@@ -456,19 +501,36 @@ static NSString *_twitterLoginString;
     for (NSDictionary* dict in [network objectForKey:@"oauthInfoList"]) {
         switch ([(NSNumber*)[dict objectForKey:@"providerId"] intValue]) {
             case FACEBOOK:
-                _facebookLoginString = [NSString stringWithFormat:@"https://graph.facebook.com/oauth/authorize?client_id=%@&display=page&redirect_uri=%@&scope=publish_stream,email", [dict objectForKey:@"clientId"], [dict objectForKey:@"redirectUri"]];
+                _facebookLoginString = [NSString stringWithFormat:@"https://graph.facebook.com/oauth/authorize?client_id=%@&display=page&redirect_uri=%@&scope=publish_stream,email",
+                                        [dict objectForKey:@"clientId"],
+                                        [dict objectForKey:@"redirectUri"]];
                 break;
                 
             case GOOGLE:
-                _googleLoginString = [NSString stringWithFormat:@"https://accounts.google.com/o/oauth2/auth?redirect_uri=%@&response_type=code&client_id=%@&approval_prompt=force&scope=profile+email", [dict objectForKey:@"redirectUri"], [dict objectForKey:@"clientId"]];
+                _googleLoginString = [NSString stringWithFormat:@"https://accounts.google.com/o/oauth2/auth?redirect_uri=%@&response_type=code&client_id=%@&approval_prompt=force&scope=profile+email",
+                                      [dict objectForKey:@"redirectUri"],
+                                      [dict objectForKey:@"clientId"]];
                 break;
                 
             case LINKEDIN:
-                _linkedInLoginString = [NSString stringWithFormat:@"https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=%@&scope=r_fullprofile+r_emailaddress+r_network&state=BdhOU9fFb6JcK5BmoDeOZbaY58&redirect_uri=%@", [dict objectForKey:@"clientId"], [dict objectForKey:@"redirectUri"]];
+                _linkedInLoginString = [NSString stringWithFormat:@"https://www.linkedin.com/uas/oauth2/authorization?response_type=code&client_id=%@&scope=r_fullprofile+r_emailaddress+r_network&state=BdhOU9fFb6JcK5BmoDeOZbaY58&redirect_uri=%@",
+                                        [dict objectForKey:@"clientId"],
+                                        [dict objectForKey:@"redirectUri"]];
                 break;
                 
             case TWITTER:
-                _twitterLoginString = [NSString stringWithFormat:@"%@?twitter=init", [dict objectForKey:@"redirectUri"]];
+                _twitterLoginString = [NSString stringWithFormat:@"%@?twitter=init",
+                                       [dict objectForKey:@"redirectUri"]];
+                break;
+                
+            case WESPOT:
+                break;
+                
+            case ECO:
+               _ecoLoginString = [NSString stringWithFormat:@"http://idp.ecolearning.eu/authorize?response_type=code&redirect_uri=%@&scope=openid+profile+email&client_id=%@",
+                                  [dict objectForKey:@"redirectUri"],
+                                  [dict objectForKey:@"clientId"]];
+                                  
                 break;
                 
         }
@@ -478,6 +540,7 @@ static NSString *_twitterLoginString;
     //    DLog(@"%@", self.googleLoginString);
     //    DLog(@"%@", self.linkedInLoginString);
     //    DLog(@"%@", self.twitterLoginString);
+    //    DLog(@"%@", self.ecoLoginString);
 }
 
 #pragma mark AbortMessage

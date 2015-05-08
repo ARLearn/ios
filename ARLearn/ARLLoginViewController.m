@@ -10,7 +10,7 @@
 
 @interface ARLLoginViewController ()
 
-- (IBAction)wespotButtonAction:(UIButton *)sender;
+- (IBAction)ecoButtonAction:(UIButton *)sender;
 - (IBAction)facebookButtonAction:(UIButton *)sender;
 - (IBAction)googleButtonAction:(UIButton *)sender;
 - (IBAction)linkinButtonAction:(UIButton *)sender;
@@ -19,7 +19,7 @@
 - (IBAction)backButtonAction:(UIBarButtonItem *)sender;
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
-@property (weak, nonatomic) IBOutlet UIButton *wespotButton;
+@property (weak, nonatomic) IBOutlet UIButton *ecoButton;
 @property (weak, nonatomic) IBOutlet UILabel *orLabel;
 @property (weak, nonatomic) IBOutlet UIButton *facebookButton;
 @property (weak, nonatomic) IBOutlet UIButton *googleButton;
@@ -47,7 +47,7 @@
     // Do any additional setup after loading the view.
     
     // Hide buttons until we're sure we need to use them.
-    [self.wespotButton setHidden:YES];
+    [self.ecoButton setHidden:YES];
     [self.orLabel setHidden:YES];
     [self.googleButton setHidden:YES];
     [self.facebookButton setHidden:YES];
@@ -109,6 +109,7 @@
     }
     
     // Show buttons now we're sure we need to use them.
+    [self.ecoButton setHidden:NO];
     [self.orLabel setHidden:NO];
     [self.googleButton setHidden:NO];
     [self.facebookButton setHidden:NO];
@@ -162,7 +163,7 @@
 - (void) addConstraints {
     NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
                                      self.backgroundImage,  @"background",
-                                     self.wespotButton,     @"wespotButton",
+                                     self.ecoButton,        @"ecoButton",
                                      self.orLabel,          @"orLabel",
                                      self.facebookButton,   @"facebookButton",
                                      self.googleButton,     @"googleButton",
@@ -177,7 +178,7 @@
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     
-    self.wespotButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.ecoButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.orLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.facebookButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.googleButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -186,7 +187,7 @@
     
     // Order vertically
     [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat: @"V:[wespotButton]-[orLabel]-[facebookButton]-[googleButton]-[linkedinButton]-[twitterButton]-|"
+                               constraintsWithVisualFormat: @"V:[ecoButton]-[orLabel]-[facebookButton]-[googleButton]-[linkedinButton]-[twitterButton]-|"
                                options:NSLayoutFormatDirectionLeadingToTrailing
                                metrics:nil
                                views:viewsDictionary]];
@@ -194,7 +195,7 @@
     // Align around vertical center.
     // see http://stackoverflow.com/questions/20020592/centering-view-with-visual-format-nslayoutconstraints?rq=1
     [self.view addConstraint:[NSLayoutConstraint
-                              constraintWithItem:self.wespotButton
+                              constraintWithItem:self.ecoButton
                               attribute:NSLayoutAttributeCenterX
                               relatedBy:NSLayoutRelationEqual
                               toItem:self.view
@@ -244,7 +245,7 @@
     
     // Fix Widths
     [self.view addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"H:[wespotButton(==300)]"
+                               constraintsWithVisualFormat:@"H:[ecoButton(==300)]"
                                options:NSLayoutFormatDirectionLeadingToTrailing
                                metrics:nil
                                views:viewsDictionary]];
@@ -330,18 +331,21 @@
         case TWITTER:
             [oauthService loadAuthenticateUrl:ARLNetworking.twitterLoginString name:@"Twitter" delegate:oauthService];
             break;
+        case ECO:
+            [oauthService loadAuthenticateUrl:ARLNetworking.ecoLoginString name:@"Eco" delegate:oauthService];
+            break;
     }
 }
 
 #pragma mark Actions
 
 /*!
- *  weSpot (native) Login.
+ *  ECO Login.
  *
  *  @param sender <#sender description#>
  */
-- (IBAction)wespotButtonAction:(UIButton *)sender {
-    // Sould not happen.
+- (IBAction)ecoButtonAction:(UIButton *)sender {
+   [self performLogin:ECO];
 }
 
 /*!
