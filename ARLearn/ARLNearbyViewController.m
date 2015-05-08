@@ -173,7 +173,7 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
     MKPinAnnotationView *annView=[[MKPinAnnotationView alloc]
                                   initWithAnnotation:annotation reuseIdentifier:@"pin"];
    
-    NSLog(@"%d %@", [[self.mapView annotations] indexOfObject:annotation], [annotation title]);
+    DLog(@"%d %@", [[self.mapView annotations] indexOfObject:annotation], [annotation title]);
 
     if ([annotation isKindOfClass:[ARLGamePin class]]) {
         annView.pinColor = (MKPinAnnotationColor)((ARLGamePin *)annotation).pinColor;
@@ -193,13 +193,12 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-#pragma warning USE THIS ACCUMULATING CODE EVERWHERE!!!
-    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+    // NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
 
-    // NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    // DLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -208,7 +207,7 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    // NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
+    // DLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
 // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
@@ -227,7 +226,7 @@ didReceiveResponse:(NSURLResponse *)response
               task:(NSURLSessionTask *)task
 didCompleteWithError:(NSError *)error
 {
-    // NSLog(@"Completed HTTP Task");
+    // DLog(@"Completed HTTP Task");
     
     if (error == nil)
     {
@@ -236,10 +235,10 @@ didCompleteWithError:(NSError *)error
         [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
 
         // Update UI Here?
-        // NSLog(@"Download is Succesfull");
+        // DLog(@"Download is Succesfull");
     }
     else {
-        NSLog(@"Error %@",[error userInfo]);
+        ELog(error);
     }
     
     // Invalidate Session
@@ -400,7 +399,7 @@ didCompleteWithError:(NSError *)error
                 [ARLNetworking sendHTTPGetWithDelegate:self withService:self.query];
             }
         } else {
-            NSLog(@"Using cached query data");
+            DLog(@"Using cached query data");
             [self processData:response];
         }
     }

@@ -277,7 +277,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     if (!response) {
         [ARLNetworking sendHTTPGetWithDelegate:self withService:@"myGames/participate"];
     } else {
-        NSLog(@"Using cached query data");
+        DLog(@"Using cached query data");
         [self processData:response];
     }
 }
@@ -290,7 +290,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     if (!response) {
         [ARLNetworking sendHTTPGetWithDelegate:self withService:@"myRuns/participate"];
     } else {
-        NSLog(@"Using cached query data");
+        DLog(@"Using cached query data");
         [self processData:response];
     }
 }
@@ -301,7 +301,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
  */
 - (void)refresh:(id)sender
 {
-    NSLog(@"Refreshing");
+    DLog(@"Refreshing");
     
     // Reload cached data.
     [self performQuery1];
@@ -452,7 +452,7 @@ didReceiveResponse:(NSURLResponse *)response
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
     
-    // NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    // DLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -461,7 +461,7 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    // NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
+    // DLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
@@ -476,7 +476,7 @@ didReceiveResponse:(NSURLResponse *)response
               task:(NSURLSessionTask *)task
 didCompleteWithError:(NSError *)error
 {
-    // NSLog(@"Completed HTTP Task");
+    // DLog(@"Completed HTTP Task");
     
     if (error == nil)
     {
@@ -485,9 +485,9 @@ didCompleteWithError:(NSError *)error
         [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
         
         // Update UI Here?
-        // NSLog(@"Download is Succesfull");
+        // DLog(@"Download is Succesfull");
     } else {
-        NSLog(@"Error %@",[error userInfo]);
+        ELog(error);
     }
     
     // Invalidate Session

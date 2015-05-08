@@ -17,7 +17,7 @@
 
 @implementation ARLLog
 
-static BOOL _logOn = YES;
+static BOOL _logOn = NO;
 
 //+ (void)setLogOn:(BOOL *)value
 //{
@@ -25,9 +25,9 @@ static BOOL _logOn = YES;
 //    
 //}
 
-+ (BOOL *)LogOn {
-    _logOn = [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING];
-    return &_logOn;
++ (BOOL)LogOn {
+    _logOn = [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING] == YES;
+    return _logOn;
 }
 
 /*!

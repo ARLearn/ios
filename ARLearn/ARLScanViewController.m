@@ -247,7 +247,7 @@
     CGFloat sw = self.screenWidth;
     CGFloat sh = self.screenHeight;
     
-    // NSLog(@"ScreenWidth: %f", sw); //320
+    // DLog(@"ScreenWidth: %f", sw); //320
    
     // UIDeviceOrientation o = [[UIDevice currentDevice] orientation];
     
@@ -451,7 +451,7 @@
 - (void) scanViewController:(ARLScanViewController *) aCtler
        didTapToFocusOnPoint:(CGPoint) aPoint {
   
-        NSLog(@"%@", NSStringFromCGPoint(aPoint));
+        DLog(@"%@", NSStringFromCGPoint(aPoint));
 }
 
 - (void) scanViewController:(ARLScanViewController *) aCtler

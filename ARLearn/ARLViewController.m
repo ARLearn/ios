@@ -126,14 +126,14 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
  *  Reload the Persons and Table.
  */
 //- (void)reloadPersons {
-//    // Log(@"reloadPersons %@", [NSThread currentThread]);
+//    // DLog(@"reloadPersons %@", [NSThread currentThread]);
 //    
 //    // Clear Persons backing fields to trigger a reload.
 //    @synchronized(self)
 //    {
 //        _persons = nil;
 //
-//        // Log(@"Count: %d", [self.persons count]);
+//        // DLog(@"Count: %d", [self.persons count]);
 //    }
 //    
 //    [self.table reloadData];
@@ -146,7 +146,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
  */
 //- (void)refresh:(id)sender
 //{
-//    NSLog(@"Refreshing");
+//    DLog(@"Refreshing");
 //    
 //    // Reload cached data.
 //    [self reloadPersons];
@@ -216,7 +216,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 //    
 //    //TESTCODE: Clear all TestAccount records.
 //    {
-//        // Log(@"%@", [MagicalRecord currentStack]);
+//        // DLog(@"%@", [MagicalRecord currentStack]);
 //
 //        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
 //            // Log(@"saveWithBlockAndWait");
@@ -227,10 +227,10 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 //    
 //    //TESTCODE: Add/Save a record in the backgrounnd and reload data.
 //    {
-//        // Log(@"%@", [MagicalRecord currentStack]);
+//        // DLog(@"%@", [MagicalRecord currentStack]);
 //        
 //        [MagicalRecord saveWithBlock:^(NSManagedObjectContext *localContext) {
-//            // Log(@"saveWithBlockAndWait");
+//            // DLog(@"saveWithBlockAndWait");
 //            
 //            TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
 //            ta.name = @"Wim van der Vegt";
@@ -268,19 +268,19 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 //                                                                     nameFixups:fixups
 //                                                                 managedContext:ctx];
 //        
-//        // Log(@"%@ %@", acc.name, acc.email);
+//        // DLog(@"%@ %@", acc.name, acc.email);
 //        
 //        [self reloadPersons];
 //        
-//        Log(@"\n%@", [ARLUtils DictionaryFromManagedObject:acc nameFixups:fixups]);
+//        DLog(@"\n%@", [ARLUtils DictionaryFromManagedObject:acc nameFixups:fixups]);
 //    }
 //    
 //    //TESTCODE: Add/Save/Waitfor a record in the background queue.
 //    {
 //        //[[ARLAppDelegate theOQ] addOperationWithBlock:^ {
-//        //    Log(@"justAdding %@", [NSThread currentThread]);
+//        //    DLog(@"justAdding %@", [NSThread currentThread]);
 //        //    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//        //        Log(@"saveWithBlockAndWait %@", [NSThread currentThread]);
+//        //        DLog(@"saveWithBlockAndWait %@", [NSThread currentThread]);
 //        //
 //        //        TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
 //        //        ta.name = @"wim van der Vegt";
@@ -292,17 +292,17 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 //    //TESTCODE: Add/Save/Waitfor a record. Use dependend tasks to update the UI using the main thread queue.
 //    {
 //        NSBlockOperation *backBO =[NSBlockOperation blockOperationWithBlock:^{
-//            // Log(@"backBO %@", [NSThread currentThread]);
+//            // DLog(@"backBO %@", [NSThread currentThread]);
 //            
 //            [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-//                // Log(@"backBO.saveWithBlockAndWait %@", [NSThread currentThread]);
+//                // DLog(@"backBO.saveWithBlockAndWait %@", [NSThread currentThread]);
 //                
 //                // Note: Operations MUST use localContext or they will not be saved.
 //                // [TestAccount MR_truncateAllInContext:localContext];
 //                
 //                [NSThread sleepForTimeInterval:5.0];
 //                
-//                // Log(@"Awake again");
+//                // DLog(@"Awake again");
 //                TestAccount *ta = [TestAccount MR_createEntityInContext:localContext];
 //                ta.name = @"G.W van der Vegt";
 //                ta.email = @"wim.vandervegt@ou.nl";
@@ -310,8 +310,8 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 //        }];
 //        
 //        NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
-//            // Log(@"foreBO %@", [NSThread currentThread]);
-//            Log(@"Records:%d", [TestAccount MR_countOfEntities]);
+//            // DLog(@"foreBO %@", [NSThread currentThread]);
+//            DLog(@"Records:%d", [TestAccount MR_countOfEntities]);
 //        }];
 //        
 //        NSInvocationOperation *foreIV = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(reloadPersons) object:nil];
@@ -330,7 +330,7 @@ typedef NS_ENUM(NSInteger, ARLViewControllerGroups) {
 //        [[ARLAppDelegate theOQ] addOperation:backBO];
 //    }
 //    
-//    // Log(@"MainThread %@", [NSThread currentThread]);
+//    // DLog(@"MainThread %@", [NSThread currentThread]);
 //}
 
 /***************************************************************************************************************/

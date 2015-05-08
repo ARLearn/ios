@@ -73,7 +73,7 @@
     
     NSString *urlAsString =request.URL.description;
     
-    Log(@"%@", urlAsString);
+    DLog(@"%@", urlAsString);
     
     if (!urlAsString)
     {
@@ -91,7 +91,7 @@
             
             listItems = [lastObject componentsSeparatedByString:@"&"];
             
-            // Log("Creating new Account");
+            // DLog("Creating new Account");
             
             //! Store acessToken !
             [[NSUserDefaults standardUserDefaults] setObject:[listItems objectAtIndex:0] forKey:@"auth"];

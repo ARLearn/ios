@@ -47,7 +47,7 @@
 
 @interface ARLLog : NSObject
 
-+ (BOOL *)LogOn;
++ (BOOL)LogOn;
 
 + (BOOL *)SaveNLogAbort:(NSManagedObjectContext *)managedObjectContext func:(NSString *)func;
 

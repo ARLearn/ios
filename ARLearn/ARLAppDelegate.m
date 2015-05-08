@@ -50,7 +50,7 @@ static NSCondition *_theAbortLock;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    Log(@"didFinishLaunchingWithOptions");
+    DLog(@"didFinishLaunchingWithOptions");
     
     //TODO: Register and Process APN's found in the launchOptions.
     
@@ -64,6 +64,8 @@ static NSCondition *_theAbortLock;
                                                object:nil];
     
     Reachability *reach = [Reachability reachabilityWithHostname:serverUrl];
+    
+    [reach startNotifier];
     
     // Setup CoreData with MagicalRecord
     // Step 1. Setup Core Data Stack with Magical Record
@@ -79,19 +81,12 @@ static NSCondition *_theAbortLock;
     //[MagicalRecord setupAutoMigratingCoreDataStack];
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
     
-    DLog(@"%@", [MagicalRecord currentStack]);
+    Log(@"%@", [MagicalRecord currentStack]);
     
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:ENABLE_LOGGING];
     
-#warning DEBUG Code (Delete all records handled sofar)
-     
-    //[Game MR_truncateAll];
-    //[Run MR_truncateAll];
-    //[GeneralItem MR_truncateAll];
-    //[[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
-#warning FORCING LOGGING.
-    
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:TRUE] forKey:ENABLE_LOGGING];
+    // Log(@"Logging: %d", [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING]);
+    // Log(@"Logging: %@", [NSNumber numberWithBool:[ARLLog LogOn]]);
     
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
                                                                            UIRemoteNotificationTypeAlert |
@@ -124,7 +119,7 @@ static NSCondition *_theAbortLock;
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 
-    // Log(@"%@", @"applicationWillResignActive");
+    // DLog(@"%@", @"applicationWillResignActive");
     
     // TODO Save Database.
 }
@@ -143,7 +138,7 @@ static NSCondition *_theAbortLock;
 
     // 2) PRESSING HOME.
     
-    // Log(@"%@", @"applicationDidEnterBackground");
+    // DLog(@"%@", @"applicationDidEnterBackground");
     
     [MagicalRecord cleanUp];
 }
@@ -179,7 +174,7 @@ static NSCondition *_theAbortLock;
     // 1) AFTER STARTUP.
     // 4) REACTIVATIONS #2.
     
-    // Log(@"%@", @"applicationDidBecomeActive");
+    // DLog(@"%@", @"applicationDidBecomeActive");
 
 }
 
@@ -192,7 +187,7 @@ static NSCondition *_theAbortLock;
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     
-    // Log(@"%@", @"applicationWillTerminate");
+    // DLog(@"%@", @"applicationWillTerminate");
     
     [MagicalRecord cleanUp];
 }
@@ -233,7 +228,7 @@ static NSCondition *_theAbortLock;
  */
 - (void)application:(UIApplication *)app didReceiveRemoteNotification:(UILocalNotification *)notif {
     //TODO: Implement
-    Log(@"didReceiveRemoteNotification: %@", notif.userInfo);
+    DLog(@"didReceiveRemoteNotification: %@", notif.userInfo);
     
     //    NSString *itemName = [notif.userInfo objectForKey:ToDoItemKey];
     //    [viewController displayItem:itemName];  // custom method
@@ -259,8 +254,8 @@ static NSCondition *_theAbortLock;
     //!!!: This UID behaves very different on iOS 1-6 and iOS 7.
     UIDevice *device = [UIDevice currentDevice];
 
-    Log(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", newToken);
-    Log(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", [device.identifierForVendor UUIDString]);
+    DLog(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", newToken);
+    DLog(@"didRegisterForRemoteNotificationsWithDeviceToken: %@", [device.identifierForVendor UUIDString]);
    
     [[NSUserDefaults standardUserDefaults] setObject:[device.identifierForVendor UUIDString]
                                                forKey:@"deviceUniqueIdentifier"];
@@ -277,7 +272,7 @@ static NSCondition *_theAbortLock;
  */
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 {
-    Log(@"didRegisterUserNotificationSettings");
+    DLog(@"didRegisterUserNotificationSettings");
     
     // Register to receive notifications
     [application registerForRemoteNotifications];
@@ -302,7 +297,7 @@ static NSCondition *_theAbortLock;
  */
 - (void)Implement:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     //TODO: Implement
-    Log(@"didFailToRegisterForRemoteNotificationsWithError: %@", error.description);
+    DLog(@"didFailToRegisterForRemoteNotificationsWithError: %@", error.description);
 }
 
 #pragma mark - Properties
@@ -515,7 +510,7 @@ static CLLocationCoordinate2D currentCoordinates;
  *  @return If TRUE the user is logged-in.
  */
 - (NSNumber *)networkAvailable {
-    // Log(@"networkAvailable: %@", _networkAvailable);
+    // DLog(@"networkAvailable: %@", _networkAvailable);
     
     return _networkAvailable;
 }

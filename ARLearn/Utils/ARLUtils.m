@@ -416,9 +416,9 @@ static NSCondition *_theAbortLock;
 - (void)saveContext {
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
         if (success) {
-            Log(@"You successfully saved your context.");
+            DLog(@"You successfully saved your context.");
         } else if (error) {
-            Log(@"Error saving context: %@", error.description);
+            DLog(@"Error saving context: %@", error.description);
         }
     }];
 }
@@ -440,16 +440,16 @@ static NSCondition *_theAbortLock;
                               JSONObjectWithData:jsonData
                               options:kNilOptions
                               error:&error];
-        Log(@"[JSON]");
+        DLog(@"[JSON]");
         if (url) {
-            Log(@"URL: %@", url);
+            DLog(@"URL: %@", url);
         }
         if (error==nil && json!=nil) {
-            Log(@"JSON:\r%@", json);
-            // Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+            DLog(@"JSON:\r%@", json);
+            // DLog(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
         } else {
             NSString *errorString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            Log(@"ERROR: %@", errorString);
+            DLog(@"ERROR: %@", errorString);
         }
     }
 }
@@ -466,9 +466,9 @@ static NSCondition *_theAbortLock;
     //http://stackoverflow.com/questions/7097842/xcode-how-to-nslog-a-json
     
     if (jsonDictionary) {
-        Log(@"[JSON]");
+        DLog(@"[JSON]");
         if (url) {
-            Log(@"URL: %@", url);
+            DLog(@"URL: %@", url);
         }
         // Log(@"JSON:\r%@", jsonDictionary);
         
@@ -479,10 +479,10 @@ static NSCondition *_theAbortLock;
 //                            error:&error];
 
         if (error==nil) {
-            Log(@"JSON:\r%@", jsonDictionary);
+            DLog(@"JSON:\r%@", jsonDictionary);
             // Log(@"JSON:\r%@", [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
         } else {
-            Log(@"ERROR:\r%@", jsonDictionary);
+            DLog(@"ERROR:\r%@", jsonDictionary);
         }
     }
 }

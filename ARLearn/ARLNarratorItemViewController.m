@@ -141,7 +141,7 @@ typedef NS_ENUM(NSInteger, responses) {
     [self.fetchedResultsController performFetch:&error];
     ELog(error);
     
-    Log("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+    DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
     
     [self.itemsTable reloadData];
     
@@ -245,7 +245,7 @@ typedef NS_ENUM(NSInteger, responses) {
         case RESPONSES : {
             Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
             
-            // Log(@"%@ - %@ %@", response.fileName, response.value, response.contentType);
+            // DLog(@"%@ - %@ %@", response.fileName, response.value, response.contentType);
             if (response.account) {
                 cell.textLabel.text = [NSString stringWithFormat:@"Author: %@ %@", response.account.givenName, response.account.familyName];
             }
@@ -350,7 +350,7 @@ typedef NS_ENUM(NSInteger, responses) {
                     //                            txt = [NSString stringWithFormat:@"%@", response.value];
                     //                        }
                     //
-                    //                        // Log(@"%f x %F", [self getCellSize].width, [self getCellSize].height);
+                    //                        // DLog(@"%f x %F", [self getCellSize].width, [self getCellSize].height);
                     //
                     //                        UIGraphicsBeginImageContextWithOptions(CGSizeMake(100,100), NO, 0.0);
                     //                        cell.imageView.image = UIGraphicsGetImageFromCurrentImageContext();
@@ -410,7 +410,7 @@ typedef NS_ENUM(NSInteger, responses) {
                         break;
                         
                     case AUDIO: {
-                        // Log(@"%@", response.fileName);
+                        // DLog(@"%@", response.fileName);
                         controller.html = [NSString stringWithFormat:@"<!DOCTYPE html><html><head><script type='text/javascript'>function play() { document.getElementById('audio').play();}</script></head><body onload='play();'><div style='text-align:center; margin-top:100px;'><audio id='audio' src='%@' controls type='%@'></audio></div><br/><br/><br/><hr/><div><h2 style='text-align: center;'>%@, %@</h2></div></body></html>",
                                            response.fileName, response.contentType, [response.fileName pathExtension], who];
                         /*
@@ -693,7 +693,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         
         ELog(error);
         
-        Log(@"RESPONSES: %d",[self.fetchedResultsController.fetchedObjects count]);
+        DLog(@"RESPONSES: %d",[self.fetchedResultsController.fetchedObjects count]);
     } else if ([alertView.message isEqualToString: NSLocalizedString(@"Delete Collected Item?", @"Delete Collected Item?")]) {
         if ([title isEqualToString:NSLocalizedString(@"YES", @"YES")]) {
             NSIndexPath *path = [NSIndexPath indexPathForItem:alertView.tag inSection:RESPONSES];
@@ -711,7 +711,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             
             [self.itemsTable reloadData];
         } else {
-            // Log("NOT Deleting Item %d", alertView.tag);
+            // DLog("NOT Deleting Item %d", alertView.tag);
         }
     }
 
@@ -732,7 +732,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         if (indexPath) {
             // Check Ownership of Collected Item.
             
-            // Log(@"CollectionItem: %@", indexPath);
+            // DLog(@"CollectionItem: %@", indexPath);
             
             Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
 
@@ -1312,7 +1312,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self.fetchedResultsController performFetch:&error];
     ELog(error);
     
-    Log("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+    DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
     
     [self.itemsTable reloadData];
     
@@ -1357,7 +1357,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         [self.fetchedResultsController performFetch:&error];
         ELog(error);
         
-        Log("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+        DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
         
         [self.itemsTable reloadData];
     } else {

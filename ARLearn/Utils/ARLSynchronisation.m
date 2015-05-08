@@ -14,7 +14,7 @@
  *  Post all unsynced Actions to the server.
  */
 +(void) PublishActionsToServer {
-    Log(@"PublishActionsToServer");
+    DLog(@"PublishActionsToServer");
     
     // TODO Filter on runId too?
     
@@ -57,7 +57,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadGeneralItemVisibilities:(NSNumber *)runId {
-    Log(@"DownloadGeneralItemVisibilities:%@", runId);
+    DLog(@"DownloadGeneralItemVisibilities:%@", runId);
 
     // TODO Add TimeStamp to url retrieve less records?
     
@@ -139,7 +139,7 @@
                                                              withValue:giv.generalItemId
                                                              inContext:ctx];
                 
-                Log(@"Created GeneralItemVisibility for %@ ('%@') with status %@", giv.generalItemId, giv.generalItem.name, giv.status);
+                DLog(@"Created GeneralItemVisibility for %@ ('%@') with status %@", giv.generalItemId, giv.generalItem.name, giv.status);
             } else {
                 if (!giv.correspondingRun) {
                     giv.correspondingRun = [Run MR_findFirstByAttribute:@"runId"
@@ -157,7 +157,7 @@
                     giv.status = [item valueForKey:@"status"];
                     giv.timeStamp = [item valueForKey:@"timeStamp"];
                     
-                    Log(@"Updated GeneralItemVisibility of %@ ('%@') to status %@", giv.generalItemId, giv.generalItem.name, giv.status);
+                    DLog(@"Updated GeneralItemVisibility of %@ ('%@') to status %@", giv.generalItemId, giv.generalItem.name, giv.status);
                 }
                 
                 [ctx MR_saveToPersistentStoreAndWait];
@@ -181,7 +181,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadResponses:(NSNumber *)runId {
-    Log(@"DownloadResponses:%@", runId);
+    DLog(@"DownloadResponses:%@", runId);
 
     NSString *service = [NSString stringWithFormat:@"response/runId/%@",
                          runId];
@@ -597,7 +597,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadActions:(NSNumber *)runId {
-     Log(@"DownloadActions:%@", runId);
+     DLog(@"DownloadActions:%@", runId);
     
     if (runId) {
         NSString *service = [NSString stringWithFormat:@"actions/runId/%@", runId];
@@ -693,53 +693,54 @@
             Account *a;
             
             // if (action==nil) {
-            Log(@"Creating Action");
+            DLog(@"Creating Action");
             Action *action = (Action *)[ARLUtils ManagedObjectFromDictionary:item
                                                                   entityName:[Action MR_entityName] // @"Action"
                                                               managedContext:ctx];
             
             // Manual Fixups;
             {
-#warning BAD-ACCESS can occur.
+                // #warning BAD-ACCESS can occur.
                 action.synchronized = [NSNumber numberWithBool:YES];
-            }
-            
-            if ([item valueForKey:@"runId"] && [[item valueForKey:@"runId"] longLongValue] != 0)
-            {
-                r = [Run MR_findFirstByAttribute:@"runId"
-                                       withValue:[item valueForKey:@"runId"]
-                                       inContext:ctx];
-                if (r) {
-                    action.run = r;
-                } else {
-                    Log("Run %@ for Action not found", [item valueForKey:@"runId"]);
-                }
-            }
-            
-            if ([item valueForKey:@"generalItemId"] && [[item valueForKey:@"generalItemId"] longLongValue] != 0)
-            {
-                gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                withValue:[item valueForKey:@"generalItemId"]
-                                                inContext:ctx];
-                if (gi) {
-                    action.generalItem = gi;
-                } else {
-                    Log("GeneralItem %@ for Action not found", [item valueForKey:@"generalItemId"]);
-                }
-            }
-            
-            {
-                NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"accountType==%@ && localId==%@",
-                                           accountType,
-                                           accountId];
                 
-                a = [Account MR_findFirstWithPredicate:predicate2
-                                             inContext:ctx];
+                if ([item valueForKey:@"runId"] && [[item valueForKey:@"runId"] longLongValue] != 0)
+                {
+                    r = [Run MR_findFirstByAttribute:@"runId"
+                                           withValue:[item valueForKey:@"runId"]
+                                           inContext:ctx];
+                    if (r) {
+                        action.run = r;
+                    } else {
+                        DLog("Run %@ for Action not found", [item valueForKey:@"runId"]);
+                    }
+                }
                 
-                if (a) {
-                    action.account = a;
+                if ([item valueForKey:@"generalItemId"] && [[item valueForKey:@"generalItemId"] longLongValue] != 0)
+                {
+                    gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                    withValue:[item valueForKey:@"generalItemId"]
+                                                    inContext:ctx];
+                    if (gi) {
+                        action.generalItem = gi;
+                    } else {
+                        DLog("GeneralItem %@ for Action not found", [item valueForKey:@"generalItemId"]);
+                    }
+                }
+                
+                {
+                    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"accountType==%@ && localId==%@",
+                                               accountType,
+                                               accountId];
+                    
+                    a = [Account MR_findFirstWithPredicate:predicate2
+                                                 inContext:ctx];
+                    
+                    if (a) {
+                        action.account = a;
+                    }
                 }
             }
+
             //            } else {
             //#warning Update TimeStamp Here (to keep single actions)?
             ////                if (action.time<)
@@ -762,7 +763,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadRuns {
-    Log(@"DownloadRuns");
+    DLog(@"DownloadRuns");
     
     NSString *service = @"myRuns/participate";
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
@@ -863,7 +864,7 @@
 }
 
 +(void) PublishResponsesToServer {
-    Log(@"PublishResponsesToServer");
+    DLog(@"PublishResponsesToServer");
     
     if (ARLNetworking.networkAvailable) {
         NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
@@ -905,7 +906,7 @@
                     NSString* uploadUrl = [ARLSynchronisation RequestUploadUrl:imageName
                                                                        withRun:response.run.runId];
                     
-                    Log(@"Upload URL: %@", uploadUrl);
+                    DLog(@"Upload URL: %@", uploadUrl);
                     
                     [ARLSynchronisation PerfomUploadToServer:uploadUrl
                                                 withFileName:imageName
@@ -921,7 +922,7 @@
                     
                     response.fileName = uploadedUrl;
                     
-                    // Log(@"Uploaded: %@", serverUrl);
+                    // DLog(@"Uploaded: %@", serverUrl);
                     
                     NSDictionary *myDictionary;
                     

@@ -109,7 +109,7 @@ Class _class;
         [self applyConstraints];
     }
     
-    Log(@"Synchronizing runtime data");
+    DLog(@"Synchronizing runtime data");
     
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation PublishActionsToServer];
@@ -175,7 +175,7 @@ Class _class;
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar
         shouldPopItem:(UINavigationItem *)item
 {
-    Log(@"shouldPopItem");
+    DLog(@"shouldPopItem");
     
     //insert your back button handling logic here
     // let the pop happen
@@ -353,7 +353,7 @@ Class _class;
                     
                 default:
                     //Should not happen
-                    Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
+                    DLog("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
                     break;
             }
             
@@ -492,10 +492,10 @@ Class _class;
     
     long long int now = [ARLUtils Now];
     
-    Log(@"Now: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:now] stringValue]]);
+    DLog(@"Now: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:now] stringValue]]);
     
     for (GeneralItem *item in self.items) {
-        Log(@"Examing GeneralItem: %@", item.name);
+        DLog(@"Examing GeneralItem: %@", item.name);
         
         NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
         
@@ -508,7 +508,7 @@ Class _class;
                                   dependsOn:dependsOn
                                         ctx:ctx];
 
-            Log(@"SatisfiedAt: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:satisfiedAt] stringValue]]);
+            DLog(@"SatisfiedAt: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:satisfiedAt] stringValue]]);
         }
         
         if (satisfiedAt<now && satisfiedAt != -1)
@@ -539,7 +539,7 @@ Class _class;
                     
                     [ctx MR_saveToPersistentStoreAndWait];
                     
-                    Log(@"GeneralItem: %@ ('%@') created and status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                    DLog(@"GeneralItem: %@ ('%@') created and status set to VISIBLE at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
                 }
             } else {
                 // update timestamp if not INVISIBLE.
@@ -548,12 +548,12 @@ Class _class;
                     
                     [ctx MR_saveToPersistentStoreAndWait];
                     
-                    Log(@"GeneralItem: %@ ('%@') timestamp updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
+                    DLog(@"GeneralItem: %@ ('%@') timestamp updated at %@", giv.generalItemId, giv.generalItem.name, giv.timeStamp);
                 }
             }
             
             if ([giv.status isEqualToNumber:VISIBLE] && ![self.visibility containsObject:[item.generalItemId stringValue]]) {
-                Log("Adding %@ to Visibility", item.name);
+                DLog("Adding %@ to Visibility", item.name);
                 [self.visibility insertObject:[item.generalItemId stringValue] atIndex:0];
             }
         }
@@ -603,8 +603,8 @@ Class _class;
                     
                     minSatisfiedAt = MIN(minSatisfiedAt, newValue);
 
-                    Log(@"newValue: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:newValue] stringValue]]);
-                    Log(@"minSatisfiedAt: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:minSatisfiedAt] stringValue]]);
+                    DLog(@"newValue: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:newValue] stringValue]]);
+                    DLog(@"minSatisfiedAt: %@", [ARLUtils formatDateTime:[[NSNumber numberWithLongLong:minSatisfiedAt] stringValue]]);
                     
                 }
                 
@@ -720,7 +720,7 @@ Class _class;
 {
     if (self.refreshControl && !self.refreshControl.isRefreshing) {
         NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
-            Log(@"refresh calls UpdateItemVisibility");
+            DLog(@"refresh calls UpdateItemVisibility");
             [ARLSynchronisation DownloadGeneralItemVisibilities:self.runId];
         }];
         
@@ -728,7 +728,7 @@ Class _class;
             [self UpdateItemVisibility];
         }];
         
-        Log(@"refresh schedules DownloadGeneralItemVisibilities");
+        DLog(@"refresh schedules DownloadGeneralItemVisibilities");
         
         [foreBO addDependency:backBO0];
         
@@ -741,7 +741,7 @@ Class _class;
 }
 
 - (IBAction)backButtonTapped:(UIBarButtonItem *)sender {
-    // Log(@"back button pressed");
+    // DLog(@"back button pressed");
     
     [ARLUtils popToViewControllerOnNavigationController:_class
                                    navigationController:self.navigationController
@@ -761,7 +761,7 @@ Class _class;
     
     NSString *recordType = notification.object;
     
-    Log(@"syncProgress: %@", recordType);
+    DLog(@"syncProgress: %@", recordType);
     
     if ([NSStringFromClass([GeneralItem class]) isEqualToString:recordType]) {
         //
@@ -779,7 +779,7 @@ Class _class;
     
     NSString *recordType = notification.object;
     
-    Log(@"syncReady: %@", recordType);
+    DLog(@"syncReady: %@", recordType);
     
     if ([NSStringFromClass([Action class]) isEqualToString:recordType]) {
         [self UpdateItemVisibility];

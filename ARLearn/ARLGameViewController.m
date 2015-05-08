@@ -96,7 +96,7 @@ didReceiveResponse:(NSURLResponse *)response
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
     
-    // NSLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    // DLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -105,7 +105,7 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
-    // NSLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
+    // DLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
     
@@ -120,7 +120,7 @@ didReceiveResponse:(NSURLResponse *)response
               task:(NSURLSessionTask *)task
 didCompleteWithError:(NSError *)error
 {
-    // NSLog(@"Completed HTTP Task");
+    // DLog(@"Completed HTTP Task");
     
     if (error == nil)
     {
@@ -129,9 +129,9 @@ didCompleteWithError:(NSError *)error
         [ARLQueryCache addQuery:task.taskDescription withResponse:self.accumulatedData];
         
         // Update UI Here?
-        // NSLog(@"Download is Succesfull");
+        // DLog(@"Download is Succesfull");
     } else {
-        NSLog(@"Error %@",[error userInfo]);
+        ELog(error);
     }
     
     // Invalidate Session
@@ -358,7 +358,7 @@ didCompleteWithError:(NSError *)error
             [self.summaryText loadHTMLString:[self.game objectForKey:@"description"] baseURL:nil];
             self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDate:[self.game objectForKey:@"lastModificationDate"]]];
             
-            Log(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
+            DLog(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);
             
             Run *run = [Run MR_findFirstByAttribute:@"gameId"
                                           withValue:[json valueForKey:@"gameId"]];
@@ -386,7 +386,7 @@ didCompleteWithError:(NSError *)error
     if (!response) {
         [ARLNetworking sendHTTPGetWithDelegate:self withService:query];
     } else {
-        NSLog(@"Using cached query data");
+        DLog(@"Using cached query data");
         [self processData:response];
     }
 }
@@ -401,7 +401,7 @@ didCompleteWithError:(NSError *)error
     if (!response) {
         [ARLNetworking sendHTTPGetWithDelegate:self withService:query];
     } else {
-        NSLog(@"Using cached query data");
+        DLog(@"Using cached query data");
         [self processData:response];
     }
 }

@@ -55,7 +55,7 @@ static NSTimer *expireTimer;
     @synchronized(queryCache) {
         ARLQueryCache *item = [[ARLQueryCache alloc] initWithQuery:aquery withResponse:aresponse];
         
-        NSLog(@"Adding Query '%@' to Cache at %@", item.query, item.stamp);
+        DLog(@"Adding Query '%@' to Cache at %@", item.query, item.stamp);
         
         [queryCache addObject:item];
     }
@@ -77,7 +77,7 @@ static NSTimer *expireTimer;
             if ([item.query isEqualToString:aquery]) {
                 NSTimeInterval age = [[NSDate date] timeIntervalSinceDate:item.stamp];
                 
-                NSLog(@"Using cached query '%@' (aged %d [s])", aquery, (int)age);
+                DLog(@"Using cached query '%@' (aged %d [s])", aquery, (int)age);
                 
                 return item.response;
             }
@@ -88,7 +88,7 @@ static NSTimer *expireTimer;
 
 -(void)expire:(NSTimer *)aTimer
 {
-    // NSLog(@"Expiring @ %@", [aTimer fireDate]);
+    // DLog(@"Expiring @ %@", [aTimer fireDate]);
     @synchronized(queryCache) {
         @autoreleasepool {
             NSDate *then = [NSDate dateWithTimeIntervalSinceNow:-CACHINGTIME];
@@ -101,23 +101,23 @@ static NSTimer *expireTimer;
                 if ([item.stamp compare:then] != NSOrderedDescending) {
                     NSTimeInterval age = [[NSDate date] timeIntervalSinceDate:item.stamp];
                     
-                    NSLog(@"Deleted Cached Query '%@' (aged %d [s])", item.query, (int)age);
+                    DLog(@"Deleted Cached Query '%@' (aged %d [s])", item.query, (int)age);
                     
                     [queryCache removeObjectAtIndex:i];
                 }
             }
             
             if (oldcnt != queryCache.count) {
-                NSLog(@"Chached itemcount changed @ %@", [aTimer fireDate]);
+                DLog(@"Chached itemcount changed @ %@", [aTimer fireDate]);
                 switch (queryCache.count) {
                     case 0:
-                        NSLog(@"No Queries Cached");
+                        DLog(@"No Queries Cached");
                         break;
                     case 1:
-                        NSLog(@"%d Query Cached", queryCache.count);
+                        DLog(@"%d Query Cached", queryCache.count);
                         break;
                     default:
-                        NSLog(@"%d Queries Cached", queryCache.count);
+                        DLog(@"%d Queries Cached", queryCache.count);
                         break;
                 }
             }

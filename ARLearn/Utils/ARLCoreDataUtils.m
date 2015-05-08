@@ -13,7 +13,7 @@
 + (void)CreateOrUpdateAction:(NSNumber *)runId
                   activeItem:(GeneralItem *)activeItem
                         verb:(NSString *)verb {
-    Log(@"CreateOrUpdateAction");
+    DLog(@"CreateOrUpdateAction");
     
 //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
 //                              runId, activeItem.generalItemId, verb];
@@ -48,7 +48,7 @@
 + (void)MarkAnswerAsGiven:(NSNumber*)runId
             generalItemid:(NSNumber *)generalItemId
                  answerId:(NSString *)answerId {
-    Log(@"MarkAnswerAsGiven");
+    DLog(@"MarkAnswerAsGiven");
     
     //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
     //                              runId, generalItemId, answerId];

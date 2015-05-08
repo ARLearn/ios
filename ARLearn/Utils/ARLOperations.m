@@ -13,7 +13,7 @@
 
 - (void)main {
     if ([self isCancelled]) {
-        NSLog(@"** operation cancelled **");
+        DLog(@"** operation cancelled **");
     }
     
     //[ARLUtils DownloadResource:self.gameId gameFile:gameFile];

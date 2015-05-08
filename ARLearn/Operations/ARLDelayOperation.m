@@ -35,7 +35,7 @@
 {
     self = [super init];
     if(self) {
-        NSLog(@"_init: %@", self);
+        DLog(@"_init: %@", self);
         theDelay = delay;
     }
     return self;

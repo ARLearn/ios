@@ -441,7 +441,7 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
                 }
             }
             
-            Log(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
+            DLog(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
         }
     };
 }
