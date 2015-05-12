@@ -38,7 +38,7 @@ static BOOL _logOn = NO;
  *
  *  @return <#return value description#>
  */
-+ (BOOL *)SaveNLogAbort:(NSManagedObjectContext *)managedObjectContext func:(NSString *)func {
++ (BOOL)SaveNLogAbort:(NSManagedObjectContext *)managedObjectContext func:(NSString *)func {
     BOOL result = YES;
     
     NSError *error = nil;

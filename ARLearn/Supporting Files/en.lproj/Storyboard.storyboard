@@ -296,13 +296,12 @@
                                 <rect key="frame" x="0.0" y="-66" width="320" height="591"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <webView contentMode="scaleToFill" id="bJY-Ti-cYV">
-                                <rect key="frame" x="16" y="20" width="282" height="208"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </webView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MyGames" id="hzc-cG-iUr" userLabel="GameIcon">
+                                <rect key="frame" x="110" y="20" width="100" height="100"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="ThX-lV-hOi">
-                                <rect key="frame" x="16" y="236" width="288" height="204"/>
+                                <rect key="frame" x="16" y="117" width="288" height="323"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -345,7 +344,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="backgroundImage" destination="2HH-i7-DUR" id="75m-5S-7cZ"/>
-                        <outlet property="descriptionText" destination="bJY-Ti-cYV" id="inw-Yb-VEj"/>
+                        <outlet property="gameIcon" destination="hzc-cG-iUr" id="1yo-YU-ttM"/>
                         <outlet property="itemsTable" destination="ThX-lV-hOi" id="gRq-Hm-TXU"/>
                     </connections>
                 </viewController>

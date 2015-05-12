@@ -21,7 +21,7 @@
 #import "ARLAudioPlayer.h"
 #import "ARLSynchronisation.h"
 
-@interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate, NSFetchedResultsControllerDelegate, UINavigationControllerDelegate, UIWebViewDelegate>
+@interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate, NSFetchedResultsControllerDelegate, UINavigationControllerDelegate>
 
 @property (strong, nonatomic) NSNumber *gameId;
 

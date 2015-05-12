@@ -12,7 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UITableView *itemsTable;
-@property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
+@property (weak, nonatomic) IBOutlet UIImageView *gameIcon;
 
 @property (strong, nonatomic) NSArray *items;
 @property (strong, nonatomic) NSMutableArray *visibility;
@@ -58,22 +58,6 @@ Class _class;
 
     // Setting a footer hides empty cels at the bottom.
     self.itemsTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    // The ContentSize of the UIWebView will only grow so start small.
-    CGRect newBounds =  self.descriptionText.bounds;
-    newBounds.size.height = 10;
-    self.descriptionText.bounds = newBounds;
-    
-    self.descriptionText.delegate = self;
-    
-    Game *game= [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId];
-    
-    if (game && TrimmedStringLength(game.richTextDescription) != 0) {
-        self.descriptionText.hidden = NO;
-        [self.descriptionText loadHTMLString:game.richTextDescription baseURL:nil];
-    } else {
-        self.descriptionText.hidden = YES;
-    }
     
     // Do any additional setup after loading the view.
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId=%@", self.gameId];
@@ -362,16 +346,6 @@ Class _class;
     }
 }
 
-#pragma mark - UIWebViewDelegate
-
--(void)webViewDidFinishLoad:(UIWebView *)webView {
-    CGRect newBounds = webView.bounds;
-    newBounds.size.height = webView.scrollView.contentSize.height;
-    webView.bounds = newBounds;
-    
-    [self applyConstraints];
-}
-
 #pragma mark - Properties
 
 -(NSString *) cellIdentifier {
@@ -391,7 +365,7 @@ Class _class;
                                      self.backgroundImage,  @"backgroundImage",
                                      
                                      self.itemsTable,       @"itemsTable",
-                                     self.descriptionText,  @"descriptionText",
+                                     self.gameIcon,         @"gameIcon",
                                      
                                      nil];
     
@@ -400,7 +374,7 @@ Class _class;
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     self.itemsTable.translatesAutoresizingMaskIntoConstraints = NO;
-    self.descriptionText.translatesAutoresizingMaskIntoConstraints = NO;
+    self.gameIcon.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
@@ -418,24 +392,18 @@ Class _class;
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Fix descriptionText Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.gameIcon
+                                                          attribute:NSLayoutAttributeCenterY
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.view
+                                                          attribute:NSLayoutAttributeCenterY
+                                                         multiplier:1
+                                                           constant:0]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gameIcon]-[itemsTable]-|",
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    
-    // Fix itemsTable/descriptionText Vertically.
-    if (self.descriptionText.isHidden) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[itemsTable]-|"
-                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                          metrics:nil
-                                                                            views:viewsDictionary]];
-    } else {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[itemsTable]-|",
-                                                                                   self.descriptionText.bounds.size.height]
-                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                          metrics:nil
-                                                                            views:viewsDictionary]];
-    }
 }
 
 /*!
