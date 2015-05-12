@@ -46,6 +46,7 @@
 		8D219A86196D341F0044616A /* Todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8D219A85196D341F0044616A /* Todo.txt */; };
 		8D2F959B1A5AA70E00B57C8B /* GeneralItems.json in Resources */ = {isa = PBXBuildFile; fileRef = 8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */; };
 		8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */; };
+		8D3D07D41B0262B000830851 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D3D07D31B0262B000830851 /* CoreMedia.framework */; };
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
 		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
@@ -199,6 +200,7 @@
 		8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = GeneralItems.json; sourceTree = "<group>"; };
 		8D2F959C1A5AC90D00B57C8B /* ARLPlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLPlayViewController.h; sourceTree = "<group>"; };
 		8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLPlayViewController.m; sourceTree = "<group>"; };
+		8D3D07D31B0262B000830851 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8D4233E1196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNotificationSubscriber.h; sourceTree = "<group>"; };
@@ -326,6 +328,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D3D07D41B0262B000830851 /* CoreMedia.framework in Frameworks */,
 				8DBFE4321AE590AD000F61F2 /* MediaPlayer.framework in Frameworks */,
 				8DBFE4301AE59094000F61F2 /* MobileCoreServices.framework in Frameworks */,
 				8D6FB70F1A0A65760085ABA5 /* SystemConfiguration.framework in Frameworks */,
@@ -365,6 +368,7 @@
 		8D219643196D26080044616A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8D3D07D31B0262B000830851 /* CoreMedia.framework */,
 				8DBFE4311AE590AD000F61F2 /* MediaPlayer.framework */,
 				8DBFE42F1AE59094000F61F2 /* MobileCoreServices.framework */,
 				8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */,

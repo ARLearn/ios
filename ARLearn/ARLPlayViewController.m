@@ -89,9 +89,7 @@ Class _class;
     
     [ARLUtils setBackButton:self action:@selector(backButtonTapped:)];
     
-    if (self.descriptionText.isHidden) {
-        [self applyConstraints];
-    }
+    [self applyConstraints];
     
     DLog(@"Synchronizing runtime data");
     
@@ -391,16 +389,16 @@ Class _class;
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    // Fix descriptionText Horizontal.
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.gameIcon
-                                                          attribute:NSLayoutAttributeCenterY
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:self.view
-                                                          attribute:NSLayoutAttributeCenterY
-                                                         multiplier:1
-                                                           constant:0]];
+    // Fix descriptionText Horizontal. FAILS ???
+//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.gameIcon
+//                                                          attribute:NSLayoutAttributeCenterY
+//                                                          relatedBy:NSLayoutRelationEqual
+//                                                             toItem:self.backgroundImage
+//                                                          attribute:NSLayoutAttributeCenterY
+//                                                         multiplier:1
+//                                                           constant:0]];
 
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gameIcon]-[itemsTable]-|",
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gameIcon]-[itemsTable]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];

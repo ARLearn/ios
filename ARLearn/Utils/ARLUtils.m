@@ -536,6 +536,9 @@ static NSCondition *_theAbortLock;
         }
     }
     
+    if ([filename isEqualToString:@"/audio"]) {
+        filename = [filename stringByAppendingString:@".mp3"];
+    }
     NSString *filePath = [NSString stringWithFormat:@"%@%@", cachePath, filename];
     
     return filePath;
@@ -567,6 +570,8 @@ static NSCondition *_theAbortLock;
     NSString *gameFilePath = [gameFile objectForKey:@"path"];
 
     NSString *filePath = [ARLUtils GenerateResourceFileName:gameId path:gameFilePath];
+    
+    Log(@"DownloadResource: %@",filePath);
     
     if ([[NSFileManager defaultManager] isReadableFileAtPath:filePath]) {
         NSError *error;

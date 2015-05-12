@@ -23,15 +23,19 @@
 - (IBAction)sliderAction:(UISlider *)sender;
 - (IBAction)isScrubbing:(UISlider *)sender;
 
-@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+//@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 
 @property (readonly, nonatomic) NSTimeInterval CurrentAudioTime;
 @property (readonly, nonatomic) NSNumber *AudioDuration;
 
 @property BOOL isPaused;
 @property BOOL scrubbing;
-
 @property NSTimer *timer;
+
+@property AVURLAsset *avAsset;
+@property AVPlayerItem *playerItem;
+@property AVPlayer *avPlayer;
+@property id playbackTimeObserver;
 
 @end
 
@@ -71,29 +75,62 @@
                                 activeItem:self.activeItem
                                       verb:read_action];
     
+#warning FIND BETTER WAY TO SEE WETHER FEED IS PART OF GAMEFILES.
+    
     NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
     
-    NSString *audioFeed = [json valueForKey:@"audioFeed"];
+    NSString *audioFile = [json valueForKey:@"audioFeed"];
+    NSURL *audioUrl;
     
-    NSRange index = [audioFeed rangeOfString:[self.activeItem.gameId stringValue]];
+    NSRange index = [audioFile rangeOfString:[self.activeItem.gameId stringValue]];
     
-    NSString *path = [audioFeed substringFromIndex:index.location + index.length];
+    if (index.length != 0) {
+        //https://dl.dropboxusercontent.com/u/20911418/ELENA%20pilot%20october%202013/Audio/Voice0001.aac
+        // index = 0x7ffffff,0
+        NSString *path = [audioFile substringFromIndex:index.location + index.length];
+        path = [path stringByAppendingString:@".mp3"];
+        audioFile = [ARLUtils GenerateResourceFileName:self.activeItem.gameId
+                                                  path:path];
+
+        audioUrl = [[NSURL alloc] initFileURLWithPath:audioFile];
+    } else {
+        audioUrl = [NSURL URLWithString:audioFile];
+    }
     
-    NSString *audioFile = [ARLUtils GenerateResourceFileName:self.activeItem.gameId
-                                                        path:path];
+    //http://stackoverflow.com/questions/3635792/play-audio-from-internet-using-avaudioplayer
+    //http://stackoverflow.com/questions/5501670/how-to-play-movie-files-with-no-file-extension-on-ios-with-mpmovieplayercontroll
     
-    NSURL *audioUrl = [[NSURL alloc] initFileURLWithPath:audioFile];
+    self.avAsset = [AVURLAsset URLAssetWithURL:audioUrl
+                                       options:nil];
+  
+    self.playerItem = [AVPlayerItem playerItemWithAsset:self.avAsset];
     
-    // See http://stackoverflow.com/questions/1973902/play-mp3-files-with-iphone-sdk
-    // See http://www.raywenderlich.com/69369/audio-tutorial-ios-playing-audio-programatically-2014-edition
-    // See http://stackoverflow.com/questions/9683547/avaudioplayer-throws-breakpoint-in-debug-mode
-    NSError *error;
-    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:audioUrl error:&error];
+    self.avPlayer = [AVPlayer playerWithPlayerItem:self.playerItem];
     
-    ELog(error);
+    // CMTime interval = CMTimeMakeWithSeconds(1.0, NSEC_PER_SEC); // 1 second
     
-    [self.audioPlayer setDelegate:self];
-    [self.audioPlayer prepareToPlay];
+    // self.playbackTimeObserver = [self.avPlayer addPeriodicTimeObserverForInterval:interval
+//                                                                            queue:NULL
+//                                                                       usingBlock:^(CMTime time) {
+//                                                                           // update slider value here...
+//                                                                       }];
+//    
+    // FAILS when used together with the two observers below:
+//    //
+//        [self.avPlayer addObserver:self.playbackTimeObserver
+//                        forKeyPath:@"status"
+//                           options:0
+//                           context:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(itemDidFinishPlaying:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:self.avPlayer];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(itemDidFailPlaying:)
+                                                 name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                               object:self.avPlayer];
     
     //init the Player to get file properties to set the time labels
     self.playerSlider.value = 0.0;
@@ -105,8 +142,6 @@
     
     self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
     
-    // [self.playerButton setTitle:@"" forState:UIControlStateNormal];
-    
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
@@ -116,6 +151,16 @@
     [super viewWillDisappear:animated];
     
     [self stopAudio];
+    
+    // [self.avPlayer removeTimeObserver:self.playbackTimeObserver];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVPlayerItemDidPlayToEndTimeNotification
+                                                  object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                  object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -124,44 +169,6 @@
     
     // Dispose of any resources that can be recreated.
 }
-
-#pragma mark - AVAudioPlayerDelegate
-
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
-    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
-                                activeItem:self.activeItem
-                                      verb:complete_action];
-    
-    [self.timer invalidate];
-    
-    [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
-                                 forState:UIControlStateNormal];
-
-    self.playerSlider.value = 0.0;
-    self.CurrentAudioTime = self.playerSlider.value;
-
-    self.elapsedLabel.text = @"0:00";
-    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
-
-    self.isPaused = FALSE;
-}
-
-- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
-
-    [self.timer invalidate];
-    
-    [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
-                                 forState:UIControlStateNormal];
-
-    self.playerSlider.value = 0.0;
-    self.CurrentAudioTime = self.playerSlider.value;
-
-    self.elapsedLabel.text = @"0:00";
-    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
-
-    self.isPaused = FALSE;
-}
-
 
 #pragma mark - UIWebViewDelegate
 
@@ -188,26 +195,33 @@
  * playing audio File
  */
 - (void)setCurrentAudioTime:(NSTimeInterval)value {
-    [self.audioPlayer setCurrentTime:value];
+    //[self.avlayer setCurrentTime:value];
+    CMTime current = CMTimeMakeWithSeconds(value, 1);
+    
+    [self.avPlayer seekToTime:current];
 }
 
 - (NSTimeInterval)CurrentAudioTime {
-    return [self.audioPlayer currentTime];
+    CMTime current = self.avPlayer.currentTime;
+    
+    if (CMTIME_IS_VALID(current)) {
+        return [[NSNumber numberWithDouble:current.value/current.timescale] doubleValue];
+    }
+    return [[NSNumber numberWithDouble:0.0] doubleValue];
 }
 
 /*
  * Get the whole length of the audio file
  */
 - (NSNumber *)AudioDuration {
-    return [NSNumber numberWithFloat:[self.audioPlayer duration]];
+    CMTime duration = self.avPlayer.currentItem.asset.duration;
+    
+    if (CMTIME_IS_VALID(duration)) {
+        return [NSNumber numberWithFloat:duration.value/duration.timescale];
+    }
+    return [NSNumber numberWithInt:0];
 }
 
-//[self.audioPlayer setDelegate:self];
-//[self.audioPlayer prepareToPlay];
-//[self.audioPlayer play];
-//
-//[self.itemsTable setUserInteractionEnabled:NO];
-//}
 #pragma mark - Methods
 
 /*
@@ -317,21 +331,21 @@
  * Simply fire the play Event
  */
 - (void)playAudio {
-    [self.audioPlayer play];
+    [self.avPlayer play];
 }
 
 /*
  * Simply fire the pause Event
  */
 - (void)pauseAudio {
-    [self.audioPlayer pause];
+    [self.avPlayer pause];
 }
 
 /*
  * Simply fire the stop Event
  */
 - (void)stopAudio {
-    [self.audioPlayer stop];
+    [self.avPlayer pause];
 }
 
 /*
@@ -363,7 +377,7 @@
                                      forState:UIControlStateNormal];
         
         //start a timer to update the time label display
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5
                                                       target:self
                                                     selector:@selector(updateTime:)
                                                     userInfo:nil
@@ -398,6 +412,34 @@
 
 - (IBAction)isScrubbing:(UISlider *)sender {
     self.scrubbing = TRUE;
+}
+
+#pragma mark - Observers
+
+-(void)itemDidFailPlaying:(NSNotification *) notification {
+    [self.timer invalidate];
+    
+    [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
+                                 forState:UIControlStateNormal];
+    
+    self.playerSlider.value = 0.0;
+    self.CurrentAudioTime = self.playerSlider.value;
+    
+    self.elapsedLabel.text = @"0:00";
+    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+    
+    self.isPaused = FALSE;
+}
+
+-(void)itemDidFinishPlaying:(NSNotification *) notification {
+    // Will be called when AVPlayer finishes playing playerItem
+    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                activeItem:self.activeItem
+                                      verb:complete_action];
+    
+    // This notification contains the rest of the code at en-of-play.
+    //
+    [self itemDidFailPlaying:notification];
 }
 
 @end

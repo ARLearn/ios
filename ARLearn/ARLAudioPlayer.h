@@ -13,7 +13,7 @@
 #include "ARLCoreDataUtils.h"
 #include "ARLBeanNames.h"
 
-@interface ARLAudioPlayer : UIViewController <AVAudioPlayerDelegate, UIWebViewDelegate>
+@interface ARLAudioPlayer : UIViewController <UIWebViewDelegate>
 
 @property (strong, nonatomic) GeneralItem *activeItem;
 
