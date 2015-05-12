@@ -8,6 +8,8 @@
 
 #import "ARLNetworking.h"
 
+#include "ARLBeanNames.h"
+
 @implementation ARLNetworking
 
 static NSString *_facebookLoginString;
@@ -322,8 +324,8 @@ static NSString *_ecoLoginString;
     
     return [ARLNetworking sendHTTPPostWithAuthorization:service
                                                    data:data
-                                             withAccept:@"application/json"
-                                        withContentType:@"application/json"];
+                                             withAccept:applicationjson
+                                        withContentType:applicationjson];
 }
 
 /*!
@@ -552,7 +554,9 @@ static NSString *_ecoLoginString;
     //NSRunLoop *run_loop = [NSRunLoop currentRunLoop];
     
     if ([appDelegate respondsToSelector:@selector(ShowAbortMessage:message:)]) {
-        [appDelegate performSelector:@selector(ShowAbortMessage:message:) withObject:title withObject:message];
+        [appDelegate performSelector:@selector(ShowAbortMessage:message:)
+                          withObject:title
+                          withObject:message];
     }
     
     // Lock the Condition
@@ -592,6 +596,23 @@ static NSString *_ecoLoginString;
                         userId:(NSString *)userId
                     providerId:(NSString *)providerId {
     return [self sendHTTPGetWithAuthorization:[NSString stringWithFormat:@"users/runId/%@/account/%@:%@", runId, providerId, userId]];
+}
+
++ (NSData *) createRun:(NSNumber *)gameId
+             withTitle:(NSString *)runTitle {
+    NSDictionary *runDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                             [ARLBeanNames beanIdToBeanType:RunBean],   @"type",
+                             gameId,                                    @"gameId",
+                             runTitle,                                  @"title",
+                             nil];
+    
+    NSData *postData = [NSJSONSerialization dataWithJSONObject:runDict options:0 error:nil];
+   
+    
+    return [self sendHTTPPostWithAuthorization:@"myRuns"
+                                          data:postData
+                                    withAccept:applicationjson
+                               withContentType:applicationjson];
 }
 
 @end

@@ -36,7 +36,8 @@
     [[NSManagedObjectContext MR_context] MR_saveToPersistentStoreAndWait];
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
-    DLog(@"Marked Generalitem %@ as '%@' for Run %@",activeItem.generalItemId, verb, runId);
+    Log(@"Created Generalitem %@ as '%@' for Run %@",activeItem.generalItemId, verb, runId);
+    
     //    } else {
     //        DLog(@"Generalitem %@ for Run %@ is already marked as %@", activeItem.generalItemId, runId, verb);
 //    }

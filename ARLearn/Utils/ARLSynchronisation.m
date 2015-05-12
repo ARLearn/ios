@@ -35,7 +35,8 @@
                                   action.generalItem.type,              @"generalItemType",
                                   nil];
             
-            [ARLNetworking sendHTTPPostWithAuthorization:@"actions" json:dict];
+            [ARLNetworking sendHTTPPostWithAuthorization:@"actions"
+                                                    json:dict];
             
             action.synchronized = [NSNumber numberWithBool:YES];
             

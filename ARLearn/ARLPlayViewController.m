@@ -125,6 +125,7 @@ Class _class;
     // See http://stackoverflow.com/questions/16852227/how-to-add-pull-tableview-up-to-refresh-data-inside-the-uitableview
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    
     [self.itemsTable addSubview:self.refreshControl];
 }
 
@@ -613,10 +614,6 @@ Class _class;
                 // See Android's DependencyLocalObject:timeSatisfiedAt
                 NSArray *deps = [dependsOn valueForKey:@"offset"];
                 
-                if ([deps count]==0) {
-                    return -1;
-                }
-                
                 //#error this halts on the new test game
                 //            {
                 //                generalItemId = 5774370509160448;
@@ -624,7 +621,21 @@ Class _class;
                 //                type = "org.celstec.arlearn2.beans.dependencies.ActionDependency";
                 //            }
                 
-                NSDictionary *dep = (NSDictionary *)[deps firstObject];
+                NSDictionary *dep;
+                
+                if([deps isKindOfClass:[NSArray class]]){
+                    //Is array
+                    if ([deps count]==0) {
+                        return -1;
+                    }
+                    dep =  (NSDictionary *)[deps firstObject];
+                } else if([deps isKindOfClass:[NSDictionary class]]){
+                    //is dictionary
+                    dep = (NSDictionary *)deps;
+                } else {
+                    //is something else
+                    EELog();
+                }
                 
                 long long int satisfiedAt = [self satisfiedAt:forRunId
                                                     dependsOn:dep

@@ -57,7 +57,7 @@ Class _class;
     
     DLog(@"GameID = %@", self.gameId);
  
-    [self.downloadButton setEnabled:NO];
+    [self.downloadButton setEnabled:[ARLNetworking isLoggedIn]];
 
     [self applyConstraints];
 }
@@ -136,6 +136,49 @@ didCompleteWithError:(NSError *)error
     
     // Invalidate Session
     [session finishTasksAndInvalidate];
+}
+
+#pragma mark - UIAlertViewDelegate
+
+/*!
+ *  Click At Button Handler.
+ *
+ *  @param alertView   <#alertView description#>
+ *  @param buttonIndex <#buttonIndex description#>
+ */
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if ([title isEqualToString:NSLocalizedString(@"YES", @"YES")]) {
+        NSData *data = [ARLNetworking createRun:self.gameId
+                                      withTitle:@"Personal Run"];
+
+        NSError *error = nil;
+        
+        NSDictionary *dict = data ? [NSJSONSerialization JSONObjectWithData:data
+                                                                    options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                      error:&error] : nil;
+        ELog(error);
+        
+        //{
+        //    deleted = 0;
+        //    gameId = 632029;
+        //    runId = 5830252722913280;
+        //    serverCreationTime = 1431460860733;
+        //    startTime = 1431460860733;
+        //    title = "Personal Run";
+        //    type = "org.celstec.arlearn2.beans.run.Run";
+        //}
+        
+        if (dict && [dict valueForKey:@"runId"]) {
+            self.runId = [NSNumber numberWithLongLong:[[dict valueForKey:@"runId"] longLongValue]];
+            
+            [self downloadButtonAction:self.downloadButton];
+        }
+        
+        // Log(@"%@", dict);
+    }
 }
 
 #pragma mark - Properties
@@ -318,7 +361,9 @@ didCompleteWithError:(NSError *)error
     //1422536899756 (arlearn)
     
     NSError *error = nil;
-    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+    NSDictionary *json = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:data
+                                                                         options:0
+                                                                           error:&error];
     
     ELog(error);
     
@@ -334,14 +379,13 @@ didCompleteWithError:(NSError *)error
                 }
             }
             
-            if (!self.runId) {
+            if (![ARLNetworking isLoggedIn]) {
                 UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
                                                                       message:NSLocalizedString(@"No Run found", @"No Run found")
                                                                      delegate:nil
                                                             cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
                                                             otherButtonTitles:nil, nil];
                 [myAlertView show];
-
             }
         }
             break;
@@ -427,6 +471,15 @@ didCompleteWithError:(NSError *)error
             [self.navigationController pushViewController:newViewController animated:YES];
             
             newViewController = nil;
+        }
+    } else {
+        if ([ARLNetworking isLoggedIn]) {
+            UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                                  message:NSLocalizedString(@"Create a run", @"Create a run")
+                                                                 delegate:self
+                                                        cancelButtonTitle:NSLocalizedString(@"NO", @"NO")
+                                                        otherButtonTitles:NSLocalizedString(@"YES", @"YES"), nil];
+            [myAlertView show];
         }
     }
 }

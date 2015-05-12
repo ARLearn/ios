@@ -50,6 +50,9 @@ typedef enum {
 @property (nonatomic, readonly)  NSDictionary *beanNames;
 
 +(BeanIds) beanTypeToBeanId:(NSString *)type;
+
 +(NSString *) beanIdToBeanName:(BeanIds)bid;
+
++(NSString *) beanIdToBeanType:(BeanIds)bid;
 
 @end

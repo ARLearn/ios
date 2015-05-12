@@ -447,7 +447,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+    // NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];

@@ -79,4 +79,15 @@
     return [ARLBeanNames beanIdToBeanName:Invalid];
 }
 
++(NSString *) beanIdToBeanType:(BeanIds)bid {
+    for (NSString *key in ARLBeanNames.beanNames) {
+        int val = [[ARLBeanNames.beanNames valueForKey:key] intValue];
+        if (val == (int)bid) {
+            return key;
+        }
+    }
+    
+    return [ARLBeanNames beanIdToBeanType:Invalid];
+}
+
 @end

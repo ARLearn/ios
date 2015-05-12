@@ -79,6 +79,12 @@
     
     NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
     
+#warning what to do with iconUrl field (and it's MD5 hash)?
+    
+    //    NSString *iconUrl = [json valueForKey:@"iconUrl"];
+    //
+    //    UIImage *icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:iconUrl]]];
+    
     NSString *audioFile = [json valueForKey:@"audioFeed"];
     NSURL *audioUrl;
     
@@ -132,6 +138,8 @@
                                                  name:AVPlayerItemFailedToPlayToEndTimeNotification
                                                object:self.avPlayer];
     
+    [self.avPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
+    
     //init the Player to get file properties to set the time labels
     self.playerSlider.value = 0.0;
     self.playerSlider.maximumValue = [self.AudioDuration floatValue];
@@ -145,6 +153,10 @@
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
+    
+    if (![[json objectForKey:@"autoPlay"] boolValue]) {
+        [self togglePlaying];
+    }
 }
 
 -(void) viewWillDisappear:(BOOL)animated {
@@ -152,7 +164,7 @@
     
     [self stopAudio];
     
-    // [self.avPlayer removeTimeObserver:self.playbackTimeObserver];
+    [self.avPlayer removeObserver:self forKeyPath:@"rate"];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:AVPlayerItemDidPlayToEndTimeNotification
@@ -240,6 +252,35 @@
                       initWithFormat:@"%d:%02d",
                       roundedMinutes, roundedSeconds];
     return time;
+}
+
+
+- (void)togglePlaying {
+    [self.timer invalidate];
+    
+    if (!self.isPaused) {
+        [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_pause"]
+                                     forState:UIControlStateNormal];
+        
+        //start a timer to update the time label display
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(updateTime:)
+                                                    userInfo:nil
+                                                     repeats:YES];
+        
+        [self playAudio];
+        
+        self.isPaused = TRUE;
+    } else {
+        //player is paused and Button is pressed again
+        [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
+                                     forState:UIControlStateNormal];
+        
+        [self pauseAudio];
+        
+        self.isPaused = FALSE;
+    }
 }
 
 - (void) applyConstraints {
@@ -370,31 +411,7 @@
   * the play/pause Text of the Button
   */
 - (IBAction)playerAction:(UIButton *)sender {
-    [self.timer invalidate];
-    
-    if (!self.isPaused) {
-        [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_pause"]
-                                     forState:UIControlStateNormal];
-        
-        //start a timer to update the time label display
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5
-                                                      target:self
-                                                    selector:@selector(updateTime:)
-                                                    userInfo:nil
-                                                     repeats:YES];
-        
-        [self playAudio];
-        
-        self.isPaused = TRUE;
-    } else {
-        //player is paused and Button is pressed again
-        [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
-                                     forState:UIControlStateNormal];
-        
-        [self pauseAudio];
-        
-        self.isPaused = FALSE;
-    }
+    [self togglePlaying];
 }
 
 - (IBAction)sliderAction:(UISlider *)sender {
@@ -440,6 +457,41 @@
     // This notification contains the rest of the code at en-of-play.
     //
     [self itemDidFailPlaying:notification];
+}
+
+- (void)observeValueForKeyPath:(NSString*)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary*)change
+                       context:(void*)context {
+    if ([keyPath isEqualToString:@"rate"]) {
+        if (self.avPlayer.rate == 0.0) {
+            CMTime time = self.avPlayer.currentTime;
+            NSTimeInterval timeSeconds = CMTimeGetSeconds(time);
+            CMTime duration = self.avPlayer.currentItem.asset.duration;
+            NSTimeInterval durationSeconds = CMTimeGetSeconds(duration);
+            
+            if (timeSeconds >= durationSeconds - 1.0) {
+                //song reached end
+                
+                [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                            activeItem:self.activeItem
+                                                  verb:complete_action];
+                
+                [self.timer invalidate];
+                
+                [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
+                                             forState:UIControlStateNormal];
+                
+                self.playerSlider.value = 0.0;
+                self.CurrentAudioTime = self.playerSlider.value;
+                
+                self.elapsedLabel.text = @"0:00";
+                self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+                
+                self.isPaused = FALSE;
+            }
+        }
+    }
 }
 
 @end

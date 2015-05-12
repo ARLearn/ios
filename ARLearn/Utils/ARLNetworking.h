@@ -148,4 +148,7 @@ typedef NS_ENUM(NSInteger, services) {
                         userId:(NSString *)userId
                     providerId:(NSString *)providerId;
 
++ (NSData *) createRun:(NSNumber *)gameId
+             withTitle:(NSString *)runTitle;
+
 @end
