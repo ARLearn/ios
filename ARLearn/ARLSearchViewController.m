@@ -303,13 +303,26 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
             if (newViewController) {
                 NSDictionary *dict =  (NSDictionary *)[self.searchResults objectAtIndex:indexPath.row];
                 
-                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
-                
                 NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
                 
-                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"game.gameId==%@", [dict valueForKey:@"gameId"]];
                 
-                Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
+                NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"gameId==%@", [dict valueForKey:@"gameId"]];
+                
+                Game *game = [Game MR_findFirstWithPredicate: predicate1 inContext:ctx];
+                
+                if (!game) {
+                    [ARLCoreDataUtils processGameDictionaryItem:dict ctx:ctx];
+                    
+                    game = [Game MR_findFirstWithPredicate: predicate1 inContext:ctx];
+
+                    [ctx MR_saveToPersistentStoreAndWait];
+                }
+
+                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+                
+                NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"gameId==%@", [dict valueForKey:@"gameId"]];
+                
+                Run *run = [Run MR_findFirstWithPredicate: predicate2 inContext:ctx];
                 
                 if (run) {
                     newViewController.runId = run.runId;

@@ -58,6 +58,9 @@
 {
     [super viewWillAppear:animated];
     
+    [self.torchLabel setHidden:YES];
+    [self.torchSwitch setHidden:YES];
+    
     if (![self isCameraAvailable]) {
         [self setupNoCameraView];
     }
@@ -100,7 +103,7 @@
     
     self.delegate = nil;
     
-    [self.torchSwitch setOn:NO];
+    // [self.torchSwitch setOn:NO];
     
     [self stopScanning];
 
@@ -461,6 +464,8 @@
     if (![self.scannedLabel.text isEqualToString:aScannedValue]) {
         self.scannedLabel.text = aScannedValue;
        
+#warning parse url of format http://...gameId/<gameId>
+        
         NSOperation *delay = [[ARLDelayOperation alloc] initWithDelay:1000];
     
         NSBlockOperation *glow = [NSBlockOperation blockOperationWithBlock:^{

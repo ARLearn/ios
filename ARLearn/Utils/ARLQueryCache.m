@@ -125,4 +125,10 @@ static NSTimer *expireTimer;
     }
 }
 
++(void)clearCache {
+    @synchronized(queryCache) {
+        [queryCache removeAllObjects];
+    }
+}
+
 @end

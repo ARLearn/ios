@@ -35,7 +35,7 @@
 @implementation ARLGameViewController
 
 @synthesize game;
-@synthesize runId; // = _runId;
+@synthesize runId;
 
 Class _class;
 
@@ -54,7 +54,8 @@ Class _class;
 {
     [super viewDidLoad];
     
-    DLog(@"GameID = %@", self.gameId);
+    Log(@"GameID = %@", self.gameId);
+    Log(@"RunID = %@", self.runId);
  
     [self.downloadButton setEnabled:[ARLNetworking isLoggedIn]];
 
@@ -189,6 +190,9 @@ didCompleteWithError:(NSError *)error
                 [self.downloadButton setTitle:@"Play" forState:UIControlStateNormal];
             }
             
+            Log(@"GameID = %@", self.gameId);
+            Log(@"RunID = %@", self.runId);
+
             //[self downloadButtonAction:self.downloadButton];
         }
         

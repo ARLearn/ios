@@ -402,6 +402,8 @@ static NSCondition *_theAbortLock;
                               [[NSUserDefaults standardUserDefaults] objectForKey:@"accountLocalId"],
                               [[[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"]   intValue]];
     
+    [ARLQueryCache clearCache];
+    
     [Account MR_deleteAllMatchingPredicate:predicate];
     
     [Account MR_truncateAll];

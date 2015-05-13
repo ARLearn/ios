@@ -20,4 +20,6 @@
 
 + (void) addQuery:(NSString *)aquery withResponse:(NSData *)aresponse;
 
++(void)clearCache;
+
 @end
