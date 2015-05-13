@@ -544,6 +544,14 @@ static NSCondition *_theAbortLock;
     return filePath;
 }
 
++(BOOL) GameHasCache:(NSNumber *)gameId {
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", [ARLUtils GenerateTempDirectory], gameId];
+    
+    BOOL isDir = YES;
+    
+    return [[NSFileManager defaultManager] fileExistsAtPath:cachePath isDirectory:&isDir];
+}
+
 /*!
  *
  *  Download a GameFile.

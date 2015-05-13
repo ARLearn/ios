@@ -86,4 +86,95 @@
 //    [ARLSynchronisation DownloadGeneralItemVisibilities:runId];
 }
 
++ (void)processGameDictionaryItem:(NSDictionary *)dict ctx:(NSManagedObjectContext *)ctx
+{
+    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Data,                                                        CoreData
+                                nil];
+    
+    NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Json,                        CoreData
+                                @"description",                  @"richTextDescription",
+                                nil];
+    
+    Game *game = [Game MR_findFirstByAttribute:@"gameId"
+                                     withValue:[dict valueForKey:@"gameId"]];
+    
+    if (game) {
+        game = (Game *)[ARLUtils UpdateManagedObjectFromDictionary:dict
+                                                     managedobject:game
+                                                        nameFixups:namefixups
+                                                        dataFixups:datafixups
+                                                    managedContext:ctx];
+        
+    } else {
+        game = (Game *)[ARLUtils ManagedObjectFromDictionary:dict
+                                                  entityName:[Game MR_entityName]
+                                                  nameFixups:namefixups
+                                                  dataFixups:datafixups                                                  managedContext:ctx];
+    }
+    
+    game.hasMap = [[dict valueForKey:@"config"] valueForKey:@"mapAvailable"];
+}
+
++ (void)processRunDictionaryItem:(NSDictionary *)dict ctx:(NSManagedObjectContext *)ctx
+{
+    NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Json,                         CoreData
+                                nil];
+    
+    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+                                // Data,                         CoreData
+                                // Relations cannot be done here easily due to context changes.
+                                // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
+                                nil];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"runId==%@", [dict valueForKey:@"runId"]];
+    
+    Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
+    
+    if (run) {
+        if (([dict valueForKey:@"deleted"] && [[dict valueForKey:@"deleted"] integerValue] != 0) ||
+            ([dict valueForKey:@"revoked"] && [[dict valueForKey:@"revoked"] integerValue] != 0)) {
+            DLog(@"Deleting Run: %@", [dict valueForKey:@"title"])
+            [run MR_deleteEntity];
+        } else {
+            DLog(@"Updating Run: %@", [dict valueForKey:@"title"])
+            run = (Run *)[ARLUtils UpdateManagedObjectFromDictionary:dict
+                                                       managedobject:run
+                                                          nameFixups:namefixups
+                                                          dataFixups:datafixups
+                                                      managedContext:ctx];
+            
+            // We can only update if both objects share the same context.
+            Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                            withValue:[dict valueForKey:@"gameId"]
+                                            inContext:ctx];
+            run.game = game;
+            run.revoked = [NSNumber numberWithBool:NO];
+        }
+    } else {
+        if (([dict valueForKey:@"deleted"] && [[dict valueForKey:@"deleted"] integerValue] != 0) ||
+            ([dict valueForKey:@"revoked"] && [[dict valueForKey:@"revoked"] integerValue] != 0)) {
+            // Skip creating deleted records.
+            DLog(@"Skipping deleted Run: %@", [dict valueForKey:@"title"])
+        } else {
+            // Uses MagicalRecord for Creation and Saving!
+            DLog(@"Creating Run: %@", [dict valueForKey:@"title"])
+            run = (Run *)[ARLUtils ManagedObjectFromDictionary:dict
+                                                    entityName:[Run MR_entityName] //@"Run"
+                                                    nameFixups:namefixups
+                                                    dataFixups:datafixups
+                                                managedContext:ctx];
+            
+            // We can only update if both objects share the same context.
+            Game *game =[Game MR_findFirstByAttribute:@"gameId"
+                                            withValue:[dict valueForKey:@"gameId"]
+                                            inContext:ctx];
+            run.game = game;
+            run.revoked = [NSNumber numberWithBool:NO];
+        }
+    }
+}
+
 @end

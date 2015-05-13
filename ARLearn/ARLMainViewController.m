@@ -75,7 +75,7 @@
     
     [self.NearByButton setEnabled:NO];
     [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
-                                            titleText:NSLocalizedString(@"NearBy", @"NearBy")
+                                            titleText:NSLocalizedString(@"Settings", @"Settings")
                                            titleColor:[UIColor whiteColor]
                                            startColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0x4c6078)
                                                                        isEnabled:[self.NearByButton isEnabled]]

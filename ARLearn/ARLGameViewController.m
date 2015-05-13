@@ -26,7 +26,6 @@
 - (IBAction)downloadButtonAction:(UIButton *)sender;
 
 @property (retain, nonatomic) NSDictionary *game;
-@property (strong, nonatomic) NSNumber *runId;
 
 @property (retain, nonatomic) NSMutableData *accumulatedData;
 @property (nonatomic) long long accumulatedSize;
@@ -36,7 +35,7 @@
 @implementation ARLGameViewController
 
 @synthesize game;
-@synthesize runId = _runId;
+@synthesize runId; // = _runId;
 
 Class _class;
 
@@ -59,6 +58,12 @@ Class _class;
  
     [self.downloadButton setEnabled:[ARLNetworking isLoggedIn]];
 
+    if (self.runId && [ARLUtils GameHasCache:self.gameId]) {
+        [self.downloadButton setTitle:@"Play" forState:UIControlStateNormal];
+    } else {
+        [self.downloadButton setTitle:@"Download" forState:UIControlStateNormal];
+    }
+    
     [self applyConstraints];
 }
 
@@ -174,7 +179,17 @@ didCompleteWithError:(NSError *)error
         if (dict && [dict valueForKey:@"runId"]) {
             self.runId = [NSNumber numberWithLongLong:[[dict valueForKey:@"runId"] longLongValue]];
             
-            [self downloadButtonAction:self.downloadButton];
+            if (self.runId) {
+                NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+                
+                [ARLCoreDataUtils processRunDictionaryItem:dict ctx:ctx];
+                
+                [ctx MR_saveToPersistentStoreAndWait];
+
+                [self.downloadButton setTitle:@"Play" forState:UIControlStateNormal];
+            }
+            
+            //[self downloadButtonAction:self.downloadButton];
         }
         
         // Log(@"%@", dict);
@@ -183,15 +198,15 @@ didCompleteWithError:(NSError *)error
 
 #pragma mark - Properties
 
-- (void)setRunId:(NSNumber *)runId {
-    _runId = runId;
-    
-    [self.downloadButton setEnabled:YES];
-}
-
-- (NSNumber *)runId {
-    return _runId;
-}
+//- (void)setRunId:(NSNumber *)runId {
+//    _runId = runId;
+//    
+//    [self.downloadButton setEnabled:YES];
+//}
+//
+//- (NSNumber *)runId {
+//    return _runId;
+//}
 
 - (void) setBackViewControllerClass:(Class)viewControllerClass{
     _class = viewControllerClass;
@@ -455,6 +470,24 @@ didCompleteWithError:(NSError *)error
 - (IBAction)downloadButtonAction:(UIButton *)sender {
     
     if (self.runId) {
+        //        if ([ARLUtils GameHasCache:self.gameId]) {
+        //            ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlayView"];
+        //
+        //            if (newViewController) {
+        //                // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
+        //                //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
+        //                // }
+        //
+        //                newViewController.gameId = self.gameId;
+        //                newViewController.runId = self.runId;
+        //                [newViewController setBackViewControllerClass:_class];
+        //
+        //                // Move to another UINavigationController or UITabBarController etc.
+        //                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+        //                [self.navigationController pushViewController:newViewController animated:YES];
+        //
+        //                newViewController = nil;
+        //        } else {
         ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
         
         if (newViewController) {
@@ -464,13 +497,14 @@ didCompleteWithError:(NSError *)error
             
             newViewController.gameId = self.gameId;
             newViewController.runId = self.runId;
-            [newViewController setBackViewControllerClass:_class];
+            [newViewController setBackViewControllerClass:[self class]];
             
             // Move to another UINavigationController or UITabBarController etc.
             // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
             [self.navigationController pushViewController:newViewController animated:YES];
             
             newViewController = nil;
+            //            }
         }
     } else {
         if ([ARLNetworking isLoggedIn]) {

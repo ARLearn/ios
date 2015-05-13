@@ -24,4 +24,9 @@
 + (void)MarkAnswerAsGiven:(NSNumber*)runId
             generalItemid:(NSNumber *)generalItemId
                  answerId:(NSString *)answerId;
+
++ (void)processGameDictionaryItem:(NSDictionary *)dict ctx:(NSManagedObjectContext *)ctx;
+
++ (void)processRunDictionaryItem:(NSDictionary *)dict ctx:(NSManagedObjectContext *)ctx;
+
 @end

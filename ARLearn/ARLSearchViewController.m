@@ -305,6 +305,16 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
                 
                 newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
                 
+                NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"game.gameId==%@", [dict valueForKey:@"gameId"]];
+                
+                Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
+                
+                if (run) {
+                    newViewController.runId = run.runId;
+                }
+                
                 // Move to another UINavigationController or UITabBarController etc.
                 // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
                 [self.navigationController pushViewController:newViewController animated:YES];

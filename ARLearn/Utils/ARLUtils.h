@@ -207,6 +207,15 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 +(NSString *) GenerateResourceFileName:(NSNumber *)gameId path:(NSString *)path;
 
 /*!
+ *  Checks if the base cache directory exists.
+ *
+ *  @param gameId The GameID
+ *
+ *  @return TRUE if the directory exists
+ */
++(BOOL) GameHasCache:(NSNumber *)gameId;
+
+/*!
  *  Download a GameFile.
  *
  *  @param gameId   The GameId
