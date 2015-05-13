@@ -113,21 +113,6 @@
     
     self.avPlayer = [AVPlayer playerWithPlayerItem:self.playerItem];
     
-    // CMTime interval = CMTimeMakeWithSeconds(1.0, NSEC_PER_SEC); // 1 second
-    
-    // self.playbackTimeObserver = [self.avPlayer addPeriodicTimeObserverForInterval:interval
-//                                                                            queue:NULL
-//                                                                       usingBlock:^(CMTime time) {
-//                                                                           // update slider value here...
-//                                                                       }];
-//    
-    // FAILS when used together with the two observers below:
-//    //
-//        [self.avPlayer addObserver:self.playbackTimeObserver
-//                        forKeyPath:@"status"
-//                           options:0
-//                           context:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(itemDidFinishPlaying:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification
@@ -368,6 +353,7 @@
 }
 
 #pragma mark - Actions.
+
 /*
  * Simply fire the play Event
  */

@@ -24,6 +24,8 @@ typedef NS_ENUM(NSInteger, responses) {
     numResponses
 };
 
+// openQuestion
+
 @property (weak, nonatomic) IBOutlet UITableView *itemsTable;
 @property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
@@ -45,10 +47,9 @@ typedef NS_ENUM(NSInteger, responses) {
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
-//@property (readonly, nonatomic) CGFloat noColumns;
-//@property (readonly, nonatomic) CGFloat columnInset;
-
 @property (readwrite, nonatomic) UIImagePickerControllerCameraCaptureMode mode;
+
+// audioFeed
 
 @property (strong, nonatomic) AVAudioSession *audioSession;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
@@ -56,7 +57,29 @@ typedef NS_ENUM(NSInteger, responses) {
 @property (strong, nonatomic) NSDictionary *openQuestion;
 @property (strong, nonatomic) Run *run;
 
-//@property (strong, nonatomic) NSArray *items;
+@property (weak, nonatomic) IBOutlet UIButton *playerButton;
+@property (weak, nonatomic) IBOutlet UISlider *playerSlider;
+
+@property (weak, nonatomic) IBOutlet UILabel *durationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *elapsedLabel;
+
+- (IBAction)playerAction:(UIButton *)sender;
+- (IBAction)sliderAction:(UISlider *)sender;
+- (IBAction)isScrubbing:(UISlider *)sender;
+
+@property (readonly, nonatomic) NSTimeInterval CurrentAudioTime;
+@property (readonly, nonatomic) NSNumber *AudioDuration;
+
+@property BOOL isPaused;
+@property BOOL scrubbing;
+@property NSTimer *timer;
+
+@property AVURLAsset *avAsset;
+@property AVPlayerItem *playerItem;
+@property AVPlayer *avPlayer;
+@property id playbackTimeObserver;
+
+@property BeanIds beanId;
 
 @end
 
@@ -66,7 +89,9 @@ typedef NS_ENUM(NSInteger, responses) {
 @synthesize runId = _runId;
 @synthesize run;
 
-//@synthesize items;
+@synthesize CurrentAudioTime;
+@synthesize AudioDuration;
+@synthesize beanId;
 
 #pragma mark - ViewController
 
@@ -80,9 +105,23 @@ typedef NS_ENUM(NSInteger, responses) {
     newBounds.size.height = 10;
     self.descriptionText.bounds = newBounds;
     
+    if (self.activeItem) {
+        if (TrimmedStringLength(self.activeItem.richText) != 0) {
+            self.descriptionText.hidden = NO;
+            [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+        } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
+            self.descriptionText.hidden = NO;
+            [self.descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
+        }
+    }else {
+        self.descriptionText.hidden = YES;
+    }
+    
     self.descriptionText.delegate = self;
     
-    [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                activeItem:self.activeItem
+                                      verb:read_action];
     
     //create long press gesture recognizer(gestureHandler will be triggered after gesture is detected)
     UILongPressGestureRecognizer* longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(gestureHandler:)];
@@ -109,6 +148,74 @@ typedef NS_ENUM(NSInteger, responses) {
     self.itemsTable.delegate = self;
     self.itemsTable.dataSource = self;
     
+    NSDictionary *jsonDict = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+    
+    self.navigationItem.title = self.activeItem.name;
+    
+    self.beanId = [ARLBeanNames beanTypeToBeanId:[jsonDict valueForKey:@"type"]];
+    
+    Log(@"BeanId: %@", [jsonDict valueForKey:@"type"]);
+    
+    // Plays:
+    //  org.celstec.arlearn2.beans.generalItem.NarratorItem
+    //  org.celstec.arlearn2.beans.generalItem.AudioObject
+    
+    if ([jsonDict valueForKey:@"audioFeed"]) {
+        NSString *audioFile = [jsonDict valueForKey:@"audioFeed"];
+        NSURL *audioUrl;
+        
+        NSRange index = [audioFile rangeOfString:[self.activeItem.gameId stringValue]];
+        
+        if (index.length != 0) {
+            //https://dl.dropboxusercontent.com/u/20911418/ELENA%20pilot%20october%202013/Audio/Voice0001.aac
+            // index = 0x7ffffff,0
+            NSString *path = [audioFile substringFromIndex:index.location + index.length];
+            path = [path stringByAppendingString:@".mp3"];
+            audioFile = [ARLUtils GenerateResourceFileName:self.activeItem.gameId
+                                                      path:path];
+            
+            audioUrl = [[NSURL alloc] initFileURLWithPath:audioFile];
+        } else {
+            audioUrl = [NSURL URLWithString:audioFile];
+        }
+        
+        //http://stackoverflow.com/questions/3635792/play-audio-from-internet-using-avaudioplayer
+        //http://stackoverflow.com/questions/5501670/how-to-play-movie-files-with-no-file-extension-on-ios-with-mpmovieplayercontroll
+        
+        self.avAsset = [AVURLAsset URLAssetWithURL:audioUrl
+                                           options:nil];
+        
+        self.playerItem = [AVPlayerItem playerItemWithAsset:self.avAsset];
+        
+        self.avPlayer = [AVPlayer playerWithPlayerItem:self.playerItem];
+        
+        [self resetPlayer];
+        
+        //init the Player to get file properties to set the time labels
+        //        self.playerSlider.value = 0.0;
+        //        self.playerSlider.maximumValue = [self.AudioDuration floatValue];
+        //
+        //        //init the current timedisplay and the labels. if a current time was stored
+        //        //for this player then take it and update the time display
+        //        self.elapsedLabel.text = @"0:00";
+        //
+        //        self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+        
+        if (![[jsonDict objectForKey:@"autoPlay"] boolValue]) {
+            [self togglePlaying];
+        }
+    } else {
+        [self.playerButton setHidden:YES];
+        [self.playerSlider setHidden:YES];
+        [self.durationLabel setHidden:YES];
+        [self.elapsedLabel setHidden:YES];
+    }
+    
+    if (![jsonDict objectForKey:@"openQuestion"]) {
+        [self.itemsTable setHidden:YES];
+        self.navigationController.toolbarHidden = YES;
+    }
+    
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
@@ -117,39 +224,53 @@ typedef NS_ENUM(NSInteger, responses) {
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    NSDictionary *jsonDict = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+    if (!self.playerButton.isHidden) {
+        [self.avPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFinishPlaying:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:self.avPlayer];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFailPlaying:)
+                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                   object:self.avPlayer];
+    }
     
-    self.navigationItem.title = self.activeItem.name;
-    
-    [self processJsonSetup:[jsonDict objectForKey:@"openQuestion"]];
-    
-    self.navigationController.toolbarHidden = NO;
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(syncProgress:)
-                                                 name:ARL_SYNCPROGRESS
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(syncReady:)
-                                                 name:ARL_SYNCREADY
+    if (!self.itemsTable.isHidden) {
+        NSDictionary *jsonDict = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
+        
+        [self processJsonSetup:[jsonDict objectForKey:@"openQuestion"]];
+        
+        self.navigationController.toolbarHidden = NO;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(syncProgress:)
+                                                     name:ARL_SYNCPROGRESS
                                                    object:nil];
-    
-    [self setupFetchedResultsController];
-
-    NSError *error = nil;
-    [self.fetchedResultsController performFetch:&error];
-    ELog(error);
-    
-    DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
-    
-    [self.itemsTable reloadData];
-    
-    NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
-        [ARLSynchronisation DownloadResponses:self.runId];
-    }];
-    
-    [[ARLAppDelegate theOQ] addOperation:backBO1];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(syncReady:)
+                                                     name:ARL_SYNCREADY
+                                                   object:nil];
+        
+        [self setupFetchedResultsController];
+        
+        NSError *error = nil;
+        [self.fetchedResultsController performFetch:&error];
+        ELog(error);
+        
+        DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+        
+        [self.itemsTable reloadData];
+        
+        NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
+            [ARLSynchronisation DownloadResponses:self.runId];
+        }];
+        
+        [[ARLAppDelegate theOQ] addOperation:backBO1];
+    }
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -190,13 +311,30 @@ typedef NS_ENUM(NSInteger, responses) {
 - (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCPROGRESS object:nil];
+    if (!self.itemsTable.isHidden) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCPROGRESS object:nil];
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCREADY object:nil];
+        
+        self.fetchedResultsController = nil;
+    }
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ARL_SYNCREADY object:nil];
-    
-    // self.navigationController.toolbarHidden = YES;
-    
-    self.fetchedResultsController = nil;
+    if (!self.playerButton.isHidden) {
+        
+        [self.avPlayer removeObserver:self forKeyPath:@"rate"];
+        
+        if (self.avPlayer.rate != 0.0) {
+            [self stopAudio];
+        }
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:AVPlayerItemDidPlayToEndTimeNotification
+                                                      object:nil];
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                      object:nil];
+    }
 }
 
 /*!
@@ -790,6 +928,38 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     return _runId;
 }
 
+/*
+ * To set the current Position of the
+ * playing audio File
+ */
+- (void)setCurrentAudioTime:(NSTimeInterval)value {
+    //[self.avlayer setCurrentTime:value];
+    CMTime current = CMTimeMakeWithSeconds(value, 1);
+    
+    [self.avPlayer seekToTime:current];
+}
+
+- (NSTimeInterval)CurrentAudioTime {
+    CMTime current = self.avPlayer.currentTime;
+    
+    if (CMTIME_IS_VALID(current)) {
+        return [[NSNumber numberWithDouble:current.value/current.timescale] doubleValue];
+    }
+    return [[NSNumber numberWithDouble:0.0] doubleValue];
+}
+
+/*
+ * Get the whole length of the audio file
+ */
+- (NSNumber *)AudioDuration {
+    CMTime duration = self.avPlayer.currentItem.asset.duration;
+    
+    if (CMTIME_IS_VALID(duration)) {
+        return [NSNumber numberWithFloat:duration.value/duration.timescale];
+    }
+    return [NSNumber numberWithInt:0];
+}
+
 #pragma mark - Methods
 
 - (void) applyConstraints {
@@ -801,6 +971,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                      self.itemsTable,       @"itemsTable",
                                      self.descriptionText,  @"descriptionText",
                                      
+                                     self.playerButton,     @"playerButton",
+                                     self.playerSlider,     @"playerSlider",
+                                     self.durationLabel,    @"durationLabel",
+                                     self.elapsedLabel,     @"elapsedLabel",
+                                     
                                      nil];
     
     // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
@@ -809,6 +984,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     self.itemsTable.translatesAutoresizingMaskIntoConstraints = NO;
     self.descriptionText.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.playerButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.playerSlider.translatesAutoresizingMaskIntoConstraints = NO;
+    self.durationLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.elapsedLabel.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
@@ -833,16 +1013,63 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     // Fix itemsTable/descriptionText Vertically.
     if (self.descriptionText.isHidden) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[itemsTable]-|"
-                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                          metrics:nil
-                                                                            views:viewsDictionary]];
+        if (self.playerButton.isHidden) {
+            [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[itemsTable]-|"
+                                                                              options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                              metrics:nil
+                                                                                views:viewsDictionary]];
+        } else {
+            [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[playerButton(==70)]-[itemsTable]-|"
+                                                                              options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                              metrics:nil
+                                                                                views:viewsDictionary]];
+        }
     } else {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[itemsTable]-|",
-                                                                                   self.descriptionText.bounds.size.height]
+        if (self.playerButton.isHidden) {
+            [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[itemsTable]-|",
+                                                                                       self.descriptionText.bounds.size.height]
+                                                                              options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                              metrics:nil
+                                                                                views:viewsDictionary]];
+        } else {
+            [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[playerButton(==70)]-[itemsTable]-|",
+                                                                                       self.descriptionText.bounds.size.height]
+                                                                              options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                              metrics:nil
+                                                                                views:viewsDictionary]];
+        }
+    }
+    
+    
+    if (!self.playerButton.isHidden) {
+        // Fix player Horizontal.
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[playerButton(==70)]-[durationLabel]-[playerSlider]-[elapsedLabel]-|"
                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
                                                                           metrics:nil
                                                                             views:viewsDictionary]];
+        
+        // Vertical Center rest of player.
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
+                                                              attribute:NSLayoutAttributeCenterY
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self.durationLabel
+                                                              attribute:NSLayoutAttributeCenterY
+                                                             multiplier:1
+                                                               constant:0]];
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
+                                                              attribute:NSLayoutAttributeCenterY
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self.playerSlider
+                                                              attribute:NSLayoutAttributeCenterY
+                                                             multiplier:1
+                                                               constant:0]];
+        [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
+                                                              attribute:NSLayoutAttributeCenterY
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:self.elapsedLabel
+                                                              attribute:NSLayoutAttributeCenterY
+                                                             multiplier:1
+                                                               constant:0]];
     }
 }
 
@@ -973,9 +1200,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
                                  [self.activeItem.generalItemId longLongValue],
                                  @NO];
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:andPredicate, orPredicate, nil]];
-    
-#warning SOMETIMES BAD-ACCES HERE?
-    
+
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context]; //was MR_DefaultContext
     
     NSFetchRequest *request =  [Response MR_requestAllSortedBy:@"timeStamp"
@@ -1032,7 +1257,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (void) collectAudio {
     ARLAudioRecorderViewController *controller = [[ARLAudioRecorderViewController alloc] init];
     
-#warning TODO Port NarratorItem
     // controller.inquiry = self.inquiry;
   
    // TODO Move saving to code into viewcontroller?
@@ -1140,29 +1364,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     }
 }
 
-#pragma mark - Actions
-
-// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
-- (void) showCamera: (id) sender {
-    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-}
-
-// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
-- (void) showLibrary: (id) sender {
-    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-}
-
-// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
-- (void) showRoll: (id) sender {
-    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-}
-
-// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
-- (void) cancelBtn: (id) sender {
-    // self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    [self.imagePickerController dismissViewControllerAnimated:YES completion:NULL];
-}
-
 - (void) createTextResponse:(NSString *)text
                     withRun:(Run*)run
             withGeneralItem:(GeneralItem *)generalItem {
@@ -1180,8 +1381,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     [self responseWithDictionary:data];
 }
-
-#warning TODO Port NarratorItem
 
 - (void) createValueResponse:(NSString *)value
                      withRun:(Run *)run
@@ -1209,7 +1408,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     u_int32_t random = arc4random();
     NSString *fileName =[NSString stringWithFormat:@"%u.%@", random, @"jpg"];
     
-    //    // Create thumb here...
+    // Create thumb here...
     UIImage *img = [[UIImage alloc] initWithData:data];
     NSData *thumb = UIImageJPEGRepresentation([img thumbnailImage:320 transparentBorder:0 cornerRadius:0 interpolationQuality:kCGInterpolationDefault], 1.0);
     
@@ -1257,7 +1456,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     } else  if ([fileName hasSuffix:@".amr"]) {
         contentType = @"audio/amr";
     }
-
+    
     NSDictionary *jsonDict= [[NSDictionary alloc] initWithObjectsAndKeys:
                              data,                                                                   @"data",
                              [NSNumber numberWithInt:0],                                             @"responseId",
@@ -1291,7 +1490,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     //    @property (nonatomic, retain) Run *run;
     
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
-
+    
     Response *response = (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
                                                                 entityName:[Response MR_entityName]
                                                                 nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
@@ -1317,6 +1516,155 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self.itemsTable reloadData];
     
     return response;
+}
+
+/*
+ * Format the float time values like duration
+ * to format with minutes and seconds
+ */
+-(NSString*)timeFormat:(NSNumber *)value {
+    
+    float minutes = floor(lroundf([value floatValue])/60);
+    float seconds = lroundf([value floatValue]) - (minutes * 60);
+    
+    int roundedSeconds = lroundf(seconds);
+    int roundedMinutes = lroundf(minutes);
+    
+    NSString *time = [[NSString alloc]
+                      initWithFormat:@"%d:%02d",
+                      roundedMinutes, roundedSeconds];
+    return time;
+}
+
+
+- (void)togglePlaying {
+    [self.timer invalidate];
+    
+    if (!self.isPaused) {
+        [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_pause"]
+                                     forState:UIControlStateNormal];
+        
+        //start a timer to update the time label display
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(updateTime:)
+                                                    userInfo:nil
+                                                     repeats:YES];
+        
+        [self playAudio];
+        
+        self.isPaused = TRUE;
+    } else {
+        //player is paused and Button is pressed again
+        [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
+                                     forState:UIControlStateNormal];
+        
+        [self pauseAudio];
+        
+        self.isPaused = FALSE;
+    }
+}
+
+/*
+ * Simply fire the play Event
+ */
+- (void)playAudio {
+    [self.avPlayer play];
+}
+
+/*
+ * Simply fire the pause Event
+ */
+- (void)pauseAudio {
+    [self.avPlayer pause];
+}
+
+/*
+ * Simply fire the stop Event
+ */
+- (void)stopAudio {
+    [self.avPlayer pause];
+}
+
+- (void)resetPlayer {
+    [self.timer invalidate];
+    
+    [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
+                                 forState:UIControlStateNormal];
+    
+    self.playerSlider.value = 0.0;
+    self.playerSlider.maximumValue = [self.AudioDuration floatValue];
+    self.CurrentAudioTime = 0.0;
+    
+    self.elapsedLabel.text = @"0:00";
+    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+    
+    self.isPaused = FALSE;
+}
+
+#pragma mark - Actions
+
+// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
+- (void) showCamera: (id) sender {
+    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+}
+
+// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
+- (void) showLibrary: (id) sender {
+    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+}
+
+// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
+- (void) showRoll: (id) sender {
+    self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+}
+
+// See http://stackoverflow.com/questions/8528880/enabling-the-photo-library-button-on-the-uiimagepickercontroller
+- (void) cancelBtn: (id) sender {
+    // self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    [self.imagePickerController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+/*
+  * Updates the time label display and
+  * the current value of the slider
+  * while audio is playing
+  */
+- (void)updateTime:(NSTimer *)timer {
+    //to don't update every second. When scrubber is mouseDown the the slider will not set
+    if (!self.scrubbing) {
+        self.playerSlider.value = self.CurrentAudioTime;
+    }
+    self.elapsedLabel.text = [NSString stringWithFormat:@"%@",
+                              [self timeFormat:[NSNumber numberWithDouble:self.CurrentAudioTime]]];
+    self.durationLabel.text = [NSString stringWithFormat:@"-%@",
+                               [self timeFormat:@([self.AudioDuration doubleValue] - self.CurrentAudioTime)]];
+}
+
+/*
+  * PlayButton is pressed
+  * plays or pauses the audio and sets
+  * the play/pause Text of the Button
+  */
+- (IBAction)playerAction:(UIButton *)sender {
+    [self togglePlaying];
+}
+
+- (IBAction)sliderAction:(UISlider *)sender {
+    //if scrubbing update the timestate, call updateTime faster not to wait a second and dont repeat it
+    [NSTimer scheduledTimerWithTimeInterval:0.01
+                                     target:self
+                                   selector:@selector(updateTime:)
+                                   userInfo:nil
+                                    repeats:NO];
+    
+    self.CurrentAudioTime = self.playerSlider.value;
+    
+    self.scrubbing = FALSE;
+}
+
+- (IBAction)isScrubbing:(UISlider *)sender {
+    self.scrubbing = TRUE;
 }
 
 #pragma mark - Notifications.
@@ -1362,6 +1710,45 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         [self.itemsTable reloadData];
     } else {
         DLog(@"syncReady, unhandled recordType: %@", recordType);
+    }
+}
+
+#pragma mark - Observers
+
+-(void)itemDidFailPlaying:(NSNotification *) notification {
+    [self resetPlayer];
+}
+
+-(void)itemDidFinishPlaying:(NSNotification *) notification {
+    // Will be called when AVPlayer finishes playing playerItem
+    [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                activeItem:self.activeItem
+                                      verb:complete_action];
+    
+    [self resetPlayer];
+}
+
+- (void)observeValueForKeyPath:(NSString*)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary*)change
+                       context:(void*)context {
+    if ([keyPath isEqualToString:@"rate"]) {
+        if (self.avPlayer.rate == 0.0) {
+            CMTime time = self.avPlayer.currentTime;
+            NSTimeInterval timeSeconds = CMTimeGetSeconds(time);
+            CMTime duration = self.avPlayer.currentItem.asset.duration;
+            NSTimeInterval durationSeconds = CMTimeGetSeconds(duration);
+            
+            if (timeSeconds >= durationSeconds - 1.0) {
+                //song reached end
+                
+                [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                            activeItem:self.activeItem
+                                                  verb:complete_action];
+                
+                [self resetPlayer];
+            }
+        }
     }
 }
 

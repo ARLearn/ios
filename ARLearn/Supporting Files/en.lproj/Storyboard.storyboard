@@ -1155,15 +1155,47 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <webView contentMode="scaleToFill" id="Ym0-D8-J3x">
-                                <rect key="frame" x="16" y="20" width="288" height="205"/>
+                                <rect key="frame" x="16" y="20" width="288" height="132"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <outlet property="delegate" destination="JDp-fB-IrL" id="RWi-sk-cPp"/>
                                 </connections>
                             </webView>
+                            <button autoresizesSubviews="NO" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="sKI-ME-jrb">
+                                <rect key="frame" x="9" y="160" width="46" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" backgroundImage="black_play">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="playerAction:" destination="JDp-fB-IrL" eventType="touchUpInside" id="RhX-y1-A8H"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dgg-zA-g8m">
+                                <rect key="frame" x="63" y="164" width="52" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="OGE-Yo-QkO">
+                                <rect key="frame" x="246" y="164" width="51" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" id="7Vk-sk-FTu">
+                                <rect key="frame" x="121" y="161" width="119" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="isScrubbing:" destination="JDp-fB-IrL" eventType="touchDragInside" id="Aej-1O-0sK"/>
+                                    <action selector="sliderAction:" destination="JDp-fB-IrL" eventType="touchUpInside" id="QkQ-zG-J2A"/>
+                                </connections>
+                            </slider>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Qcc-k1-nwa">
-                                <rect key="frame" x="16" y="233" width="288" height="207"/>
+                                <rect key="frame" x="16" y="214" width="288" height="226"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -1204,7 +1236,11 @@
                     <connections>
                         <outlet property="backgroundImage" destination="4q4-V0-yBP" id="MJE-8x-W7c"/>
                         <outlet property="descriptionText" destination="Ym0-D8-J3x" id="x2x-sS-gsZ"/>
+                        <outlet property="durationLabel" destination="dgg-zA-g8m" id="o74-mf-ToM"/>
+                        <outlet property="elapsedLabel" destination="OGE-Yo-QkO" id="vC2-q0-Vyx"/>
                         <outlet property="itemsTable" destination="Qcc-k1-nwa" id="rix-2U-PF8"/>
+                        <outlet property="playerButton" destination="sKI-ME-jrb" id="CTS-M7-eCT"/>
+                        <outlet property="playerSlider" destination="7Vk-sk-FTu" id="ojP-WV-liY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ow1-io-0iK" userLabel="First Responder" sceneMemberID="firstResponder"/>

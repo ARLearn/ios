@@ -319,7 +319,7 @@ Class _class;
                     // Contains Audio + openQuestion (or nothing).
                 case AudioObject:
                 {
-                    ARLAudioPlayer *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"AudioPlayer"];
+                    ARLAudioPlayer *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"]; //@"AudioPlayer"
                     
                     if (newViewController) {
                         newViewController.runId = self.runId;
