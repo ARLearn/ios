@@ -334,6 +334,8 @@ Class _class;
                                           gameFile:gameFile];
             
             if (!cached) {
+                Log(@"Downloading: %@",gameFile);
+                
                 NSString *local = [ARLUtils DownloadResource:self.gameId
                                                     gameFile:gameFile];
                 
@@ -341,7 +343,9 @@ Class _class;
                                                        withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
             } else {
                 NSString *local = [ARLUtils GenerateResourceFileName:gameId path:path];
-                
+
+                Log(@"Reusing: %@%@",self.gameId, path);
+
                 [self.backgroundImage performSelectorOnMainThread:@selector(setImage:)
                                                        withObject:[UIImage imageWithContentsOfFile:local] waitUntilDone:NO];
             }
@@ -371,8 +375,12 @@ Class _class;
                                       gameFile:gameFile];
         
         if (!cached) {
+            Log(@"Downloading: %@",gameFile);
+
             [ARLUtils DownloadResource:self.gameId
                               gameFile:gameFile];
+        } else {
+            Log(@"Reusing: %@%@",self.gameId, path);
         }
         
         [self.downloadStatus setValue:[NSNumber numberWithBool:TRUE]
