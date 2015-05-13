@@ -112,8 +112,10 @@ typedef NS_ENUM(NSInteger, responses) {
         } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
             self.descriptionText.hidden = NO;
             [self.descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
+        } else {
+            self.descriptionText.hidden = YES;
         }
-    }else {
+    } else {
         self.descriptionText.hidden = YES;
     }
     
@@ -215,15 +217,16 @@ typedef NS_ENUM(NSInteger, responses) {
         [self.itemsTable setHidden:YES];
         self.navigationController.toolbarHidden = YES;
     }
-    
-    if (self.descriptionText.isHidden) {
-        [self applyConstraints];
-    }
 }
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    
+    if (self.descriptionText.isHidden) {
+        [self applyConstraints];
+    }
+
     if (!self.playerButton.isHidden) {
         [self.avPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
         
