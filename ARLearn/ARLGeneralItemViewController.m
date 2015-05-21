@@ -194,6 +194,19 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     [self applyConstraints];
 }
 
+// See http://stackoverflow.com/questions/8490038/open-target-blank-links-outside-of-uiwebview-in-safari
+//
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    if (navigationType == UIWebViewNavigationTypeLinkClicked)
+    {
+        [[UIApplication sharedApplication] openURL:request.URL];
+        return false;
+    }
+    
+    return true;
+}
+
 #pragma mark - UIAlertViewDelegate
 
 /*!

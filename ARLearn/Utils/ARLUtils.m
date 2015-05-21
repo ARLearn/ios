@@ -167,34 +167,40 @@ static NSCondition *_theAbortLock;
 {
     
     // 1) Make sure we can modify object inside the MagicalRecord block.
-    __block NSManagedObject *object;
-
-    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        
-        // 2) Create a NSManagedObject by Name.
-        object = [NSEntityDescription insertNewObjectForEntityForName:entity inManagedObjectContext:localContext];
-        
-        // 3) Get its Attributes
-        NSDictionary *attributes = [[NSEntityDescription
-                                     entityForName:entity
-                                     inManagedObjectContext:localContext]  attributesByName /*propertiesByName*/];
-        
-        // propertiesByName also returns relations but they proof hard to do here as contexts are mixed, so do them at the caller.
-
-        // 4) Enumerate over Attributes
-        for (NSString *attr in attributes) {
-            if ([data valueForKey:attr]) {
-                // 4a) Foreign Data (must come first).
-                [object setValue:[data valueForKey:attr] forKey:attr];
-            } else if ([fixups valueForKey:attr]) {
-                // 4b) Name Mapping.
-                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
-            } else {
-                // 4c) 1:1 Mapping & Data.
-                [object setValue:[dict valueForKey:attr] forKey:attr];
-            }
+    //__block NSManagedObject *object;
+    
+    // removed
+    //[MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    
+    // 2) Create a NSManagedObject by Name.
+    NSManagedObject *object = [NSEntityDescription insertNewObjectForEntityForName:entity
+                                                            inManagedObjectContext:ctx];
+    
+    // 3) Get its Attributes
+    NSDictionary *attributes = [[NSEntityDescription
+                                 entityForName:entity
+                                 inManagedObjectContext:ctx]  attributesByName /*propertiesByName*/];
+    
+    // propertiesByName also returns relations but they proof hard to do here as contexts are mixed, so do them at the caller.
+    
+    // 4) Enumerate over Attributes
+    for (NSString *attr in attributes) {
+        if ([data valueForKey:attr]) {
+            // 4a) Foreign Data (must come first).
+            [object setValue:[data valueForKey:attr] forKey:attr];
+        } else if ([fixups valueForKey:attr]) {
+            // 4b) Name Mapping.
+            [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
+        } else {
+            // 4c) 1:1 Mapping & Data.
+            [object setValue:[dict valueForKey:attr] forKey:attr];
         }
-    }];
+    }
+    
+    // new
+    [ctx MR_saveToPersistentStoreAndWait];
+    
+    //}];
 
     // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
     return [object MR_inContext:ctx];
@@ -220,36 +226,40 @@ static NSCondition *_theAbortLock;
 {
     
     //    // 1) Make sure we can modify object inside the MagicalRecord block.
-    __block NSManagedObject *object;
+    // __block NSManagedObject *object;
     
-    [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        
-        // 2) Create a NSManagedObject by Name.
-        object = [managedobject MR_inContext:localContext];
-        
-        // 3) Get its Attributes
-        NSDictionary *attributes = [[NSEntityDescription
-                                     entityForName:[[object entity] name]
-                                     inManagedObjectContext:localContext] attributesByName /*propertiesByName*/];
-
-        // propertiesByName also returns relations but they proof hard to do here as contexts are mixed, so do them at the caller.
-        
-        //TODO: Add Key <-> Property Name Lookup.
-        
-        // 4) Enumerate over Attributes
-        for (NSString *attr in attributes) {
-            if ([data valueForKey:attr]) {
-                // 4a) Foreign Data (must come first).
-                [object setValue:[data valueForKey:attr] forKey:attr];
-            } else if ([fixups valueForKey:attr]) {
-                // 4b) Name Mapping.
-                [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
-            } else {
-                // 4c) 1:1 Mapping & Data.
-                [object setValue:[dict valueForKey:attr] forKey:attr];
-            }
+    // removed
+    // [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+    
+    // 2) Create a NSManagedObject by Name.
+    NSManagedObject *object = [managedobject MR_inContext:ctx];
+    
+    // 3) Get its Attributes
+    NSDictionary *attributes = [[NSEntityDescription
+                                 entityForName:[[object entity] name]
+                                 inManagedObjectContext:ctx] attributesByName /*propertiesByName*/];
+    
+    // propertiesByName also returns relations but they proof hard to do here as contexts are mixed, so do them at the caller.
+    
+    //TODO: Add Key <-> Property Name Lookup.
+    
+    // 4) Enumerate over Attributes
+    for (NSString *attr in attributes) {
+        if ([data valueForKey:attr]) {
+            // 4a) Foreign Data (must come first).
+            [object setValue:[data valueForKey:attr] forKey:attr];
+        } else if ([fixups valueForKey:attr]) {
+            // 4b) Name Mapping.
+            [object setValue:[dict valueForKey:[fixups valueForKey:attr]] forKey:attr];
+        } else {
+            // 4c) 1:1 Mapping & Data.
+            [object setValue:[dict valueForKey:attr] forKey:attr];
         }
-    }];
+    }
+    // }];
+    
+    // new
+    [ctx MR_saveToPersistentStoreAndWait];
     
     // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
     return [object MR_inContext:ctx];

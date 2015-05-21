@@ -67,22 +67,8 @@ static NSCondition *_theAbortLock;
     
     [reach startNotifier];
     
-    // Setup CoreData with MagicalRecord
-    // Step 1. Setup Core Data Stack with Magical Record
-    // Step 2. Relax. Why not have a beer? Surely all this talk of beer is making you thirsty…
-    //
-    //    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:managedObjectStore.persistentStoreCoordinator];
-    //    [NSManagedObjectContext MR_setRootSavingContext:managedObjectStore.persistentStoreManagedObjectContext];
-    
-    [MagicalRecord setShouldAutoCreateDefaultPersistentStoreCoordinator:YES];
-    
-    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:[NSPersistentStoreCoordinator MR_defaultStoreCoordinator]];
-    
-    //[MagicalRecord setupAutoMigratingCoreDataStack];
-    [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
-    
-    Log(@"%@", [MagicalRecord currentStack]);
-    
+    [self setup_MR_DB];
+
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:ENABLE_LOGGING];
     
     // Log(@"Logging: %d", [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING]);
@@ -97,7 +83,6 @@ static NSCondition *_theAbortLock;
     
     _networkAvailable = [NSNumber numberWithBool:[self connected] && [self serverok]];
     
-
     if (ARLNetworking.networkAvailable) {
         [ARLNetworking setupOauthInfo];
     }
@@ -119,7 +104,7 @@ static NSCondition *_theAbortLock;
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 
-    // DLog(@"%@", @"applicationWillResignActive");
+    DLog(@"%@", @"applicationWillResignActive");
     
     // TODO Save Database.
 }
@@ -138,9 +123,9 @@ static NSCondition *_theAbortLock;
 
     // 2) PRESSING HOME.
     
-    // DLog(@"%@", @"applicationDidEnterBackground");
+    DLog(@"%@", @"applicationDidEnterBackground");
     
-    [MagicalRecord cleanUp];
+    // [MagicalRecord cleanUp];
 }
 
 /*!
@@ -151,7 +136,10 @@ static NSCondition *_theAbortLock;
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-
+    DLog(@"%@", @"applicationWillEnterForeground");
+    
+    // [self setup_MR_DB];
+    
     // 3) REACTIVATIONS #1.
     _networkAvailable = [NSNumber numberWithBool:[self connected] && [self serverok]];
     
@@ -170,6 +158,8 @@ static NSCondition *_theAbortLock;
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+  
+    Log(@"%@", @"applicationDidBecomeActive");
     
     // 1) AFTER STARTUP.
     // 4) REACTIVATIONS #2.
@@ -187,7 +177,7 @@ static NSCondition *_theAbortLock;
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     
-    // DLog(@"%@", @"applicationWillTerminate");
+    Log(@"%@", @"applicationWillTerminate");
     
     [MagicalRecord cleanUp];
 }
@@ -374,6 +364,25 @@ static NSCondition *_theAbortLock;
 }
 
 #pragma mark - Methods
+
+- (void)setup_MR_DB
+{
+    // Setup CoreData with MagicalRecord
+    // Step 1. Setup Core Data Stack with Magical Record
+    // Step 2. Relax. Why not have a beer? Surely all this talk of beer is making you thirsty…
+    //
+    //    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:managedObjectStore.persistentStoreCoordinator];
+    //    [NSManagedObjectContext MR_setRootSavingContext:managedObjectStore.persistentStoreManagedObjectContext];
+    
+    [MagicalRecord setShouldAutoCreateDefaultPersistentStoreCoordinator:YES];
+    
+    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:[NSPersistentStoreCoordinator MR_defaultStoreCoordinator]];
+    
+    //[MagicalRecord setupAutoMigratingCoreDataStack];
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"ARLearn.sqlite"];
+    
+    Log(@"%@", [MagicalRecord currentStack]);
+}
 
 /*!
  *  Because CurrentAccount is a read-only property

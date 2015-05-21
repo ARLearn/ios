@@ -769,6 +769,19 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self applyConstraints];
 }
 
+// See http://stackoverflow.com/questions/8490038/open-target-blank-links-outside-of-uiwebview-in-safari
+//
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    if (navigationType == UIWebViewNavigationTypeLinkClicked)
+    {
+        [[UIApplication sharedApplication] openURL:request.URL];
+        return false;
+    }
+    
+    return true;
+}
+
 #pragma mark - UIAlertViewDelegate
 
 /*!
@@ -1341,6 +1354,14 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         }
         
         [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
+    } else {
+        UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                              message:NSLocalizedString(@"No Camera available",@"No Camera available")
+                                                             delegate:nil
+                                                    cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                    otherButtonTitles:nil];
+        
+        [myAlertView show];
     }
 }
 
@@ -1361,9 +1382,17 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         } else {
             self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         }
-
+        
         // Place image picker on the screen
         [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
+    } else {
+        UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
+                                                              message:NSLocalizedString(@"No Camera available",@"No Camera available")
+                                                             delegate:nil
+                                                    cancelButtonTitle:NSLocalizedString(@"OK", @"OK")
+                                                    otherButtonTitles:nil];
+        
+        [myAlertView show];
     }
 }
 
