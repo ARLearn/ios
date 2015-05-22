@@ -14,7 +14,7 @@
  *  Post all unsynced Actions to the server.
  */
 +(void) PublishActionsToServer {
-    DLog(@"PublishActionsToServer");
+    Log(@"PublishActionsToServer");
     
     // TODO Filter on runId too?
     
@@ -51,7 +51,7 @@
                                                             object:NSStringFromClass([Action class])];
     }
     
-    DLog(@"PublishActionsToServer Ready");
+    Log(@"PublishActionsToServer Ready");
 }
 
 /*!
@@ -60,7 +60,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadGeneralItemVisibilities:(NSNumber *)runId {
-    DLog(@"DownloadGeneralItemVisibilities:%@", runId);
+    Log(@"DownloadGeneralItemVisibilities:%@", runId);
 
     // TODO Add TimeStamp to url retrieve less records?
     
@@ -177,7 +177,7 @@
     
     // [self performSelectorOnMainThread:@selector(UpdateItemVisibility) withObject:nil waitUntilDone:YES];
     
-    DLog(@"DownloadGeneralItemVisibilities Ready:%@", runId);
+    Log(@"DownloadGeneralItemVisibilities Ready:%@", runId);
 }
 
 /*!
@@ -604,7 +604,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadActions:(NSNumber *)runId {
-     DLog(@"DownloadActions:%@", runId);
+     Log(@"DownloadActions:%@", runId);
     
     if (runId) {
         NSString *service = [NSString stringWithFormat:@"actions/runId/%@", runId];
@@ -782,7 +782,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Action class])];
     
-    DLog(@"DownloadActions Ready:%@", runId);
+    Log(@"DownloadActions Ready:%@", runId);
 }
 
 /*!
@@ -892,7 +892,7 @@
 }
 
 +(void) PublishResponsesToServer {
-    DLog(@"PublishResponsesToServer");
+    Log(@"PublishResponsesToServer");
     
     if (ARLNetworking.networkAvailable) {
         NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
@@ -999,7 +999,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Response class])];
 
-    DLog(@"PublishResponsesToServer Ready");
+    Log(@"PublishResponsesToServer Ready");
 }
 
 + (void) publishResponse:(NSNumber *)runId

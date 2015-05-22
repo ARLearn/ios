@@ -11,7 +11,6 @@
 @interface ARLGeneralItemViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
-@property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
 @property (weak, nonatomic) IBOutlet UITableView *answersTable;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 
@@ -24,9 +23,14 @@
  */
 typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     /*!
-     *  General Item.
+     *  Question/Description.
      */
-    ANSWER = 0,
+    QUESTION = 0,
+    
+    /*!
+     *  Answers.
+     */
+    ANSWER = 1,
     
     /*!
      *  Number of Groups
@@ -43,34 +47,20 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
 
 #pragma mark - ViewController
 
+CGFloat wbheight = 0.1f;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    wbheight = 0.1f;
     
     // Setting a footer hides empty cels at the bottom.
     self.answersTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
-    // The ContentSize of the UIWebView will only grow so start small.
-    CGRect newBounds =  self.descriptionText.bounds;
-    newBounds.size.height = 10;
-    self.descriptionText.bounds = newBounds;
     
-    self.descriptionText.delegate = self;
-    
-    if (self.activeItem) {
-        if (TrimmedStringLength(self.activeItem.richText) != 0) {
-            self.descriptionText.hidden = NO;
-            [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
-        } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
-            self.descriptionText.hidden = NO;
-            [self.descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
-        }
-    } else {
-        self.descriptionText.hidden = YES;
-    }
-    
-    if (self.descriptionText.isHidden) {
-        [self applyConstraints];
-    }
+    // if (self.descriptionText.isHidden) {
+    [self applyConstraints];
+    //}
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -87,10 +77,27 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
 
 #pragma mark - UITableViewDataSource
 
+/*!
+ *  The number of sections in a Table.
+ *
+ *  @param tableView The Table to be served.
+ *
+ *  @return The number of sections.
+ */
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    
+    return numARLGeneralItemViewControllerGroups;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
     switch (section) {
+        case QUESTION:
+            return 1;
+            
         case ANSWER : {
             return [self.answers count];
         }
@@ -104,8 +111,41 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
-        case ANSWER : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: self.cellIdentifier forIndexPath:indexPath];
+        case QUESTION: {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier1
+                                                                    forIndexPath:indexPath];
+       
+            UIWebView *descriptionText = (UIWebView *)[cell.contentView viewWithTag:1];
+            
+            // The ContentSize of the UIWebView will only grow so start small.
+            //    CGRect newBounds =  self.descriptionText.bounds;
+            //    newBounds.size.height = 10;
+            //    self.descriptionText.bounds = newBounds;
+            
+            // wbheight = 0.1f;
+            
+            if (self.activeItem) {
+                // no nice but te initial 0.1f becomes 0.1000000001 !
+                if (wbheight<0.2f) {
+                    descriptionText.delegate = self;
+                    
+                    if (TrimmedStringLength(self.activeItem.richText) != 0) {
+                        descriptionText.hidden = NO;
+                        [descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+                    } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
+                        descriptionText.hidden = NO;
+                        [descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
+                    }
+                }
+            } else {
+                descriptionText.hidden = YES;
+            }
+            
+            return cell;
+        }
+            
+        case ANSWER: {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: self.cellIdentifier2 forIndexPath:indexPath];
           
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:self.activeItem.type];
             
@@ -184,6 +224,24 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     }
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Log(@"heightForRowAtIndexPath %@",indexPath);
+    
+    CGFloat rh = tableView.rowHeight==-1 ? 44.0f : tableView.rowHeight;
+    
+    switch (indexPath.section) {
+        case QUESTION:
+            return wbheight;
+            
+        case ANSWER:
+            return rh;
+    }
+    
+    // Error
+    return rh;
+}
+
 #pragma mark - UIWebViewDelegate
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
@@ -191,7 +249,14 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     newBounds.size.height = webView.scrollView.contentSize.height;
     webView.bounds = newBounds;
     
-    [self applyConstraints];
+    // NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
+
+    // Log(@"%@", html);
+    
+    wbheight = newBounds.size.height;
+    
+    // [self applyConstraints];
+    // [self.answersTable reloadData];
 }
 
 // See http://stackoverflow.com/questions/8490038/open-target-blank-links-outside-of-uiwebview-in-safari
@@ -222,7 +287,7 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#warning TODO is to visablize the tasks to do
+#warning TODO is to visualize the tasks to do
 
 // See weSPOT PIM
 //
@@ -328,7 +393,11 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
 
 #pragma mark - Properties
 
--(NSString *) cellIdentifier {
+-(NSString *) cellIdentifier1 {
+    return  @"QuestionItem";
+}
+
+-(NSString *) cellIdentifier2 {
     return  @"AnswerItem";
 }
 
@@ -356,7 +425,6 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
                                      self.backgroundImage,  @"backgroundImage",
                                      
                                      self.answersTable,     @"answersTable",
-                                     self.descriptionText,  @"descriptionText",
                                      
                                      nil];
     
@@ -365,7 +433,6 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     self.answersTable.translatesAutoresizingMaskIntoConstraints = NO;
-    self.descriptionText.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
@@ -383,24 +450,24 @@ typedef NS_ENUM(NSInteger, ARLGeneralItemViewControllerGroups) {
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Fix descriptionText Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+//    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
+//                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+//                                                                      metrics:nil
+//                                                                        views:viewsDictionary]];
     
     // Fix itemsTable/descriptionText Vertically.
-    if (self.descriptionText.isHidden) {
+    //if (self.descriptionText.isHidden) {
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[answersTable]-|"
                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
                                                                           metrics:nil
                                                                             views:viewsDictionary]];
-    } else {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[answersTable]-|",
-                                                                                   self.descriptionText.bounds.size.height]
-                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                          metrics:nil
-                                                                            views:viewsDictionary]];
-    }
+//    } else {
+//        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[answersTable]-|",
+//                                                                                   self.descriptionText.bounds.size.height]
+//                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+//                                                                          metrics:nil
+//                                                                            views:viewsDictionary]];
+//    }
 }
 
 
