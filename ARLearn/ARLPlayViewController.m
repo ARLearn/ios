@@ -12,7 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UITableView *itemsTable;
-@property (weak, nonatomic) IBOutlet UIImageView *gameIcon;
 
 @property (strong, nonatomic) NSArray *items;
 @property (strong, nonatomic) NSMutableArray *visibility;
@@ -31,10 +30,15 @@
  */
 typedef NS_ENUM(NSInteger, ARLPlayViewControllerGroups) {
     /*!
+     *  Icon Item.
+     */
+    ICONITEM = 0,
+    
+    /*!
      *  General Item.
      */
-    GENERALITEM = 0,
-    
+    GENERALITEM = 1,
+
     /*!
      *  Number of Groups
      */
@@ -171,27 +175,81 @@ Class _class;
 
 #pragma mark - UITableViewDelegate
 
+
 #pragma mark - UITableViewDataSource
 
+/*!
+ *  The number of sections in a Table.
+ *
+ *  @param tableView The Table to be served.
+ *
+ *  @return The number of sections.
+ */
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    
+    return numARLPlayViewControllerGroups;
+}
+
+/*!
+ *  Return the number of rows in a section of the Tavble.
+ *
+ *  @param tableView <#tableView description#>
+ *  @param section   <#section description#>
+ *
+ *  @return <#return value description#>
+ */
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
     switch (section) {
-        case GENERALITEM : {
+        case ICONITEM :
+            return 1;
+            
+        case GENERALITEM :
             return [self getVisibleItems].count;
-        }
     }
     
     // Should not happen!!
     return 0;
 }
 
+/*!
+ *  Return Title of Section. See http://stackoverflow.com/questions/9737616/uitableview-hide-header-from-empty-section
+ *
+ *  @param tableView <#tableView description#>
+ *  @param section   <#section description#>
+ *
+ *  @return <#return value description#>
+ */
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    switch (section){
+        case ICONITEM:
+            return nil;
+        case GENERALITEM:
+            return nil;
+    }
+    
+    // Error
+    return nil;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.section) {
+        case ICONITEM: {
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier1
+                                                                    forIndexPath:indexPath];
+#pragma warn Update Game Icon here.
+            // UIImageView *imageView = (UIImageView *)[cell.contentView viewWithTag:1];
+
+            return cell;
+        }
+            
         case GENERALITEM : {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier2
                                                                     forIndexPath:indexPath];
             
             GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
@@ -265,13 +323,16 @@ Class _class;
  */
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
+        case ICONITEM:
+            break;
+            
         case GENERALITEM: {
             self.activeItem = [self getGeneralItemForRow:indexPath.row];
-
+            
             [ARLCoreDataUtils CreateOrUpdateAction:self.runId
                                         activeItem:self.activeItem
                                               verb:read_action];
-
+            
             // NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
             // [ARLUtils LogJsonDictionary:json url:nil];
             
@@ -346,9 +407,61 @@ Class _class;
     }
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Log(@"heightForRowAtIndexPath %@",indexPath);
+    
+    CGFloat rh = tableView.rowHeight==-1 ? 44.0f : tableView.rowHeight;
+    
+    switch (indexPath.section) {
+        case ICONITEM:
+            return 2*rh;
+        case GENERALITEM:
+            return rh;
+    }
+    
+    // Error
+    return rh;
+}
+
+/*!
+ *  Hide Section Headers (see http://stackoverflow.com/questions/9737616/uitableview-hide-header-from-empty-section)
+ *
+ *  @param tableView <#tableView description#>
+ *  @param section   <#section description#>
+ *
+ *  @return <#return value description#>
+ */
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    switch (section) {
+        case ICONITEM:
+            return nil;
+        case GENERALITEM:
+            return nil;
+    }
+    
+    return nil;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    
+    switch (section) {
+        case ICONITEM:
+            return 0.0f;
+        case GENERALITEM:
+            return 0.0f;
+    }
+    
+    return 0.0f;
+}
+
 #pragma mark - Properties
 
--(NSString *) cellIdentifier {
+-(NSString *) cellIdentifier1 {
+    return  @"IconItem";
+}
+
+-(NSString *) cellIdentifier2 {
     return  @"GeneralItem";
 }
 
@@ -365,7 +478,6 @@ Class _class;
                                      self.backgroundImage,  @"backgroundImage",
                                      
                                      self.itemsTable,       @"itemsTable",
-                                     self.gameIcon,         @"gameIcon",
                                      
                                      nil];
     
@@ -374,7 +486,7 @@ Class _class;
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     self.itemsTable.translatesAutoresizingMaskIntoConstraints = NO;
-    self.gameIcon.translatesAutoresizingMaskIntoConstraints = NO;
+    // self.gameIcon.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
@@ -400,7 +512,7 @@ Class _class;
 //                                                         multiplier:1
 //                                                           constant:0]];
 
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gameIcon]-[itemsTable]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[itemsTable]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];

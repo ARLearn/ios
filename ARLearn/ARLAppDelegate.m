@@ -71,8 +71,8 @@ static NSCondition *_theAbortLock;
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:ENABLE_LOGGING];
     
-    // Log(@"Logging: %d", [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING]);
-    // Log(@"Logging: %@", [NSNumber numberWithBool:[ARLLog LogOn]]);
+    // DLog(@"Logging: %d", [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING]);
+    // DLog(@"Logging: %@", [NSNumber numberWithBool:[ARLLog LogOn]]);
     
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
                                                                            UIRemoteNotificationTypeAlert |

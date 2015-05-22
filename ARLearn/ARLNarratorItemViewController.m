@@ -156,7 +156,7 @@ typedef NS_ENUM(NSInteger, responses) {
     
     self.beanId = [ARLBeanNames beanTypeToBeanId:[jsonDict valueForKey:@"type"]];
     
-    Log(@"BeanId: %@", [jsonDict valueForKey:@"type"]);
+    DLog(@"BeanId: %@", [jsonDict valueForKey:@"type"]);
     
     // Plays:
     //  org.celstec.arlearn2.beans.generalItem.NarratorItem

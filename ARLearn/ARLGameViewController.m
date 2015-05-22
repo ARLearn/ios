@@ -54,8 +54,8 @@ Class _class;
 {
     [super viewDidLoad];
     
-    Log(@"GameID = %@", self.gameId);
-    Log(@"RunID = %@", self.runId);
+    DLog(@"GameID = %@", self.gameId);
+    DLog(@"RunID = %@", self.runId);
  
     [self.downloadButton setEnabled:[ARLNetworking isLoggedIn]];
 
@@ -190,8 +190,8 @@ didCompleteWithError:(NSError *)error
                 [self.downloadButton setTitle:@"Play" forState:UIControlStateNormal];
             }
             
-            Log(@"GameID = %@", self.gameId);
-            Log(@"RunID = %@", self.runId);
+            DLog(@"GameID = %@", self.gameId);
+            DLog(@"RunID = %@", self.runId);
 
             //[self downloadButtonAction:self.downloadButton];
         }

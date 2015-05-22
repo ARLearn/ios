@@ -589,7 +589,7 @@ static NSCondition *_theAbortLock;
 
     NSString *filePath = [ARLUtils GenerateResourceFileName:gameId path:gameFilePath];
     
-    Log(@"DownloadResource: %@",filePath);
+    DLog(@"DownloadResource: %@",filePath);
     
     if ([[NSFileManager defaultManager] isReadableFileAtPath:filePath]) {
         NSError *error;
