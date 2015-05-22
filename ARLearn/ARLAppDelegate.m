@@ -159,7 +159,7 @@ static NSCondition *_theAbortLock;
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
   
-    Log(@"%@", @"applicationDidBecomeActive");
+    DLog(@"%@", @"applicationDidBecomeActive");
     
     // 1) AFTER STARTUP.
     // 4) REACTIVATIONS #2.
@@ -177,7 +177,7 @@ static NSCondition *_theAbortLock;
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     
-    Log(@"%@", @"applicationWillTerminate");
+    DLog(@"%@", @"applicationWillTerminate");
     
     [MagicalRecord cleanUp];
 }
@@ -365,6 +365,9 @@ static NSCondition *_theAbortLock;
 
 #pragma mark - Methods
 
+/*!
+ *  Setup Magical Records controlled database.
+ */
 - (void)setup_MR_DB
 {
     // Setup CoreData with MagicalRecord

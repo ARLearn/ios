@@ -890,7 +890,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
             
             Response *response = (Response *)[self.fetchedResultsController objectAtIndexPath:indexPath];
 
-            if ([ARLNetworking isLoggedIn] && response.account == [ARLNetworking CurrentAccount]) {
+            if ([ARLNetworking isLoggedIn] &&
+                response.account &&
+                response.account.localId == [ARLNetworking CurrentAccount].localId &&
+                response.account.accountType == [ARLNetworking CurrentAccount].accountType
+                ) {
                 UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
                                                                       message:NSLocalizedString(@"Delete Collected Item?", @"Delete Collected Item?")
                                                                      delegate:self
@@ -1337,22 +1341,30 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
  *  Record Video.
  */
 - (void) collectVideo {
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] ||
+        [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
         if (!self.imagePickerController) {
             self.imagePickerController = [[UIImagePickerController alloc] init];
             self.imagePickerController.delegate = self;
             self.mode = UIImagePickerControllerCameraCaptureModeVideo;
         }
         
-        self.imagePickerController.sourceType =  UIImagePickerControllerSourceTypeCamera;
-        self.imagePickerController.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
-        
-        if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
-            self.imagePickerController.cameraDevice= UIImagePickerControllerCameraDeviceRear;
+        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+            self.imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+            
+            self.imagePickerController.sourceType =  UIImagePickerControllerSourceTypeCamera;
+            
+            if([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
+                self.imagePickerController.cameraDevice= UIImagePickerControllerCameraDeviceRear;
+            } else {
+                self.imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+            }
         } else {
-            self.imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+            self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         }
-        
+
+        self.imagePickerController.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
+
         [self.navigationController presentViewController:self.imagePickerController animated:YES completion:nil];
     } else {
         UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
