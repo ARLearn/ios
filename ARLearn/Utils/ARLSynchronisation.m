@@ -50,6 +50,8 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                             object:NSStringFromClass([Action class])];
     }
+    
+    DLog(@"PublishActionsToServer Ready");
 }
 
 /*!
@@ -174,6 +176,8 @@
                                                         object:NSStringFromClass([GeneralItemVisibility class])];
     
     // [self performSelectorOnMainThread:@selector(UpdateItemVisibility) withObject:nil waitUntilDone:YES];
+    
+    DLog(@"DownloadGeneralItemVisibilities Ready:%@", runId);
 }
 
 /*!
@@ -441,6 +445,8 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Response class])];
+    
+    DLog(@"DownloadResponses Ready:%@", runId);
 }
 
 /*!
@@ -678,76 +684,95 @@
             
             NSString *accountType = [userComponents objectAtIndex:0];
             NSString *accountId =[userComponents objectAtIndex:1];
-            
-            //            NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"action=%@ AND run.runId=%lld AND generalItem.generalItemId=%lld AND account.accountType=%@ AND account.localId=%@",
-            //                                       [item valueForKey:@"action"],
-            //                                       [[item valueForKey:@"runId"] longLongValue],
-            //                                       [[item valueForKey:@"generalItemId"] longLongValue],
-            //                                       accountType,
-            //                                       accountId
-            //                                       ];
-            //
-            //            Action *action = [Action MR_findFirstWithPredicate:predicate1 inContext:ctx];
-            
-            Run *r;
-            GeneralItem *gi;
-            Account *a;
-            
-            // if (action==nil) {
-            DLog(@"Creating Action");
-            Action *action = (Action *)[ARLUtils ManagedObjectFromDictionary:item
-                                                                  entityName:[Action MR_entityName] // @"Action"
-                                                              managedContext:ctx];
-            
-            // Manual Fixups;
-            {
-                // #warning BAD-ACCESS can occur.
-                action.synchronized = [NSNumber numberWithBool:YES];
-                
-                if ([item valueForKey:@"runId"] && [[item valueForKey:@"runId"] longLongValue] != 0)
-                {
-                    r = [Run MR_findFirstByAttribute:@"runId"
-                                           withValue:[item valueForKey:@"runId"]
-                                           inContext:ctx];
-                    if (r) {
-                        action.run = r;
-                    } else {
-                        DLog("Run %@ for Action not found", [item valueForKey:@"runId"]);
-                    }
-                }
-                
-                if ([item valueForKey:@"generalItemId"] && [[item valueForKey:@"generalItemId"] longLongValue] != 0)
-                {
-                    gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
-                                                    withValue:[item valueForKey:@"generalItemId"]
-                                                    inContext:ctx];
-                    if (gi) {
-                        action.generalItem = gi;
-                    } else {
-                        DLog("GeneralItem %@ for Action not found", [item valueForKey:@"generalItemId"]);
-                    }
-                }
-                
-                {
-                    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"accountType==%@ && localId==%@",
-                                               accountType,
-                                               accountId];
-                    
-                    a = [Account MR_findFirstWithPredicate:predicate2
-                                                 inContext:ctx];
-                    
-                    if (a) {
-                        action.account = a;
-                    }
-                }
-            }
 
-            //            } else {
-            //#warning Update TimeStamp Here (to keep single actions)?
-            ////                if (action.time<)
-            //            }
+//            {
+//                action = read;
+//                deleted = 0;
+//                generalItemId = 5800061720068096;
+//                generalItemType = "org.celstec.arlearn2.beans.generalItem.NarratorItem";
+//                identifier = 4552134343262208;
+//                runId = 5777243095695360;
+//                time = 1432220165225;
+//                timestamp = 1432220165225;
+//                type = "org.celstec.arlearn2.beans.run.Action";
+//                userEmail = "2:103021572104496509774";
+//            }
             
-            [ctx MR_saveToPersistentStoreAndWait];
+            NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"action=%@ AND time=%lld AND run.runId=%lld AND generalItem.generalItemId=%lld AND account.accountType=%@ AND account.localId=%@",
+                                       [item valueForKey:@"action"],
+                                       [[item valueForKey:@"time"] longLongValue],
+                                       [[item valueForKey:@"runId"] longLongValue],
+                                       [[item valueForKey:@"generalItemId"] longLongValue],
+                                       accountType,
+                                       accountId
+                                       ];
+            
+            Action *action = [Action MR_findFirstWithPredicate:predicate1 inContext:ctx];
+            
+            if (action==nil) {
+                DLog(@"Creating Action");
+
+                Run *r;
+                GeneralItem *gi;
+                Account *a;
+                
+                Action *action = (Action *)[ARLUtils ManagedObjectFromDictionary:item
+                                                                      entityName:[Action MR_entityName] // @"Action"
+                                                                  managedContext:ctx];
+                
+                // Manual Fixups;
+                {
+                    // #warning BAD-ACCESS can occur.
+                    action.synchronized = [NSNumber numberWithBool:YES];
+                    
+                    if ([item valueForKey:@"runId"] && [[item valueForKey:@"runId"] longLongValue] != 0)
+                    {
+                        r = [Run MR_findFirstByAttribute:@"runId"
+                                               withValue:[item valueForKey:@"runId"]
+                                               inContext:ctx];
+                        if (r) {
+                            action.run = r;
+                        } else {
+                            DLog("Run %@ for Action not found", [item valueForKey:@"runId"]);
+                        }
+                    }
+                    
+                    if ([item valueForKey:@"generalItemId"] && [[item valueForKey:@"generalItemId"] longLongValue] != 0)
+                    {
+                        gi = [GeneralItem MR_findFirstByAttribute:@"generalItemId"
+                                                        withValue:[item valueForKey:@"generalItemId"]
+                                                        inContext:ctx];
+                        if (gi) {
+                            action.generalItem = gi;
+                        } else {
+                            DLog("GeneralItem %@ for Action not found", [item valueForKey:@"generalItemId"]);
+                        }
+                    }
+                    
+                    {
+                        NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"accountType==%@ && localId==%@",
+                                                   accountType,
+                                                   accountId];
+                        
+                        a = [Account MR_findFirstWithPredicate:predicate2
+                                                     inContext:ctx];
+                        
+                        if (a) {
+                            action.account = a;
+                        }
+                    }
+                }
+                
+                [ctx MR_saveToPersistentStoreAndWait];
+            } else {
+#warning Update Deleted/Revoked Here (to keep single actions)?
+                // Update deleted state?
+//                if ([[item valueForKey:@"deleted"] boolValue]) {
+//                    action.deleted = [NSNumber numberWithBool:YES];
+//                    
+//                    [ctx MR_saveToPersistentStoreAndWait];
+//                }
+            }
         }
         
         // Saves any modification made after ManagedObjectFromDictionary.
@@ -756,6 +781,8 @@
 
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Action class])];
+    
+    DLog(@"DownloadActions Ready:%@", runId);
 }
 
 /*!
@@ -971,6 +998,8 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Response class])];
+
+    DLog(@"PublishResponsesToServer Ready");
 }
 
 + (void) publishResponse:(NSNumber *)runId

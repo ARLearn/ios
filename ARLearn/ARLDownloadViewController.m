@@ -219,6 +219,7 @@ Class _class;
  *  Runs in a background thread.
  */
 -(void) DownloadGame {
+    DLog(@"%@", @"DownloadGame");
     NSString *service = [NSString stringWithFormat:@"myGames/gameId/%@", self.gameId];
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
     
@@ -288,9 +289,13 @@ Class _class;
     [ctx MR_saveToPersistentStoreAndWait];
     
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
+    DLog(@"%@", @"DownloadGame Ready");
 }
 
 -(void) DownloadGameContent {
+    DLog(@"%@", @"DownloadGameContent");
+
     NSString *query = [NSString stringWithFormat:@"myGames/gameContent/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
     
     NSString *cacheIdentifier = [ARLNetworking generateGetDescription:query];
@@ -318,6 +323,8 @@ Class _class;
         
         self.downloadStatus = dict;
     }
+    
+    DLog(@"%@", @"DownloadGameContent Ready");
 }
 
 /*!
@@ -326,6 +333,8 @@ Class _class;
  *  Runs in a background thread.
  */
 -(void) DownloadSplashScreen {
+    DLog(@"%@", @"DownloadSplashScreen");
+
     for (NSDictionary *gameFile in self.gameFiles) {
         NSString *path = [gameFile valueForKey:@"path"];
         
@@ -360,6 +369,8 @@ Class _class;
             break;
         }
     }
+    
+    DLog(@"%@", @"DownloadSplashScreen Ready");
 }
 
 /*!
@@ -368,6 +379,8 @@ Class _class;
  *  Runs in a background thread.
  */
 -(void) DownloadGameFiles {
+    DLog(@"%@", @"DownloadGameFiles");
+
     for (NSDictionary *gameFile in self.gameFiles) {
         NSString *path = [gameFile valueForKey:@"path"];
         
@@ -390,6 +403,8 @@ Class _class;
                                withObject:[NSNumber numberWithBool:cached]
                             waitUntilDone:YES];
     }
+    
+    DLog(@"%@", @"DownloadGameFiles Ready");
 }
 
 /*!
@@ -414,6 +429,8 @@ Class _class;
  *  @param cached <#cached description#>
  */
 - (void)updateProgress:(NSNumber *) cached {
+    DLog(@"%@", @"updateProgress");
+
     int cnt = 0;
     
     for (NSString *key in [self.downloadStatus keyEnumerator])

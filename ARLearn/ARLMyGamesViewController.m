@@ -158,9 +158,10 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     
     switch (bid) {
         case GameList: {
-            
+            [self.table setUserInteractionEnabled:NO];
+             
             self.results = (NSArray *)[json objectForKey:@"games"];
-            
+         
             for (NSDictionary *dict in self.results) {
                 [ARLCoreDataUtils processGameDictionaryItem:dict ctx:ctx];
             }
@@ -176,6 +177,8 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
             for (NSDictionary *dict in runs) {
                 [ARLCoreDataUtils processRunDictionaryItem:dict ctx:ctx];
             }
+
+            [self.table setUserInteractionEnabled:YES];
         }
             break;
             

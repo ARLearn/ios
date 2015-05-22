@@ -215,6 +215,7 @@ Class _class;
             // [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];
             
             cell.textLabel.text = text;
+            cell.detailTextLabel.text = @"";
             
 #warning TODO Different Icons for GeneralItem Types (match Android).
             
@@ -229,13 +230,13 @@ Class _class;
             NSNumber *dependsOnItem = ( NSNumber *)[dependsOn valueForKey:@"generalItemId"];
             
             if (bid!=Invalid) {
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
+                // cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
             } else {
                 bid = [ARLBeanNames beanTypeToBeanId:item.type];
                 if (bid!=Invalid) {
-                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Type: %@ (%lld)", [ARLBeanNames beanIdToBeanName:bid], [item.generalItemId longLongValue]];
+                    // cell.detailTextLabel.text = [NSString stringWithFormat:@"Type: %@ (%lld)", [ARLBeanNames beanIdToBeanName:bid], [item.generalItemId longLongValue]];
                 } else {
-                    cell.detailTextLabel.text = [ARLBeanNames beanIdToBeanName:bid];
+                    // cell.detailTextLabel.text = [ARLBeanNames beanIdToBeanName:bid];
                 }
             }
             
