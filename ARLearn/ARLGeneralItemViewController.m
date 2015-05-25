@@ -107,6 +107,27 @@ CGFloat wbheight = 0.1f;
     return 0;
 }
 
+/*!
+ *  Return Title of Section. See http://stackoverflow.com/questions/9737616/uitableview-hide-header-from-empty-section
+ *
+ *  @param tableView <#tableView description#>
+ *  @param section   <#section description#>
+ *
+ *  @return <#return value description#>
+ */
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    switch (section){
+        case QUESTION:
+            return nil;
+        case ANSWER:
+            return nil;
+    }
+    
+    // Error
+    return nil;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -116,6 +137,12 @@ CGFloat wbheight = 0.1f;
                                                                     forIndexPath:indexPath];
        
             UIWebView *descriptionText = (UIWebView *)[cell.contentView viewWithTag:1];
+            
+            //NSString *html = [descriptionText stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
+            
+            // Log(@"%@", html);
+            
+            [descriptionText setUserInteractionEnabled:NO];
             
             // The ContentSize of the UIWebView will only grow so start small.
             //    CGRect newBounds =  self.descriptionText.bounds;
@@ -232,7 +259,7 @@ CGFloat wbheight = 0.1f;
     
     switch (indexPath.section) {
         case QUESTION:
-            return wbheight;
+            return MAX(rh, wbheight);
             
         case ANSWER:
             return rh;
@@ -242,9 +269,23 @@ CGFloat wbheight = 0.1f;
     return rh;
 }
 
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//    
+//    switch (section) {
+//        case QUESTION:
+//            return wbheight;
+//        case ANSWER:
+//            return 0.0f;
+//    }
+//    
+//    return 0.0f;
+//}
+
 #pragma mark - UIWebViewDelegate
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
+    CGFloat rh = self.answersTable.rowHeight==-1 ? 44.0f : self.answersTable.rowHeight;
+    
     CGRect newBounds = webView.bounds;
     newBounds.size.height = webView.scrollView.contentSize.height;
     webView.bounds = newBounds;
@@ -253,7 +294,8 @@ CGFloat wbheight = 0.1f;
 
     // Log(@"%@", html);
     
-    wbheight = newBounds.size.height;
+    wbheight = rh < webView.scrollView.contentSize.height ? webView.scrollView.contentSize.height : rh;
+    //newBounds.size.height;
     
     // [self applyConstraints];
     // [self.answersTable reloadData];

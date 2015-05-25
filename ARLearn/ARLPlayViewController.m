@@ -235,6 +235,7 @@ Class _class;
     // Error
     return nil;
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {

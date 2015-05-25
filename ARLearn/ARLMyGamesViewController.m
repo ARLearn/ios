@@ -85,6 +85,8 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     self.navigationController.navigationBarHidden = NO;
     self.navigationController.toolbarHidden = NO;
     
+#pragma warning Won't work off-line.
+    
     [self performQuery1];
 }
 
@@ -166,6 +168,8 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
                 [ARLCoreDataUtils processGameDictionaryItem:dict ctx:ctx];
             }
         }
+#pragma warning Won't work off-line.
+            
             // Chain myRuns/participate.
             [self performQuery2];
             
@@ -191,6 +195,9 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     [self.table reloadData];
 }
 
+/*!
+ *  Won't work off-line.
+ */
 - (void)performQuery1 {
     NSString *cacheIdentifier = [ARLNetworking generateGetDescription:@"myGames/participate"];
     
@@ -204,6 +211,9 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     }
 }
 
+/*!
+ *  Won't work off-line.
+ */
 - (void)performQuery2 {
     NSString *cacheIdentifier = [ARLNetworking generateGetDescription:@"myRuns/participate"];
     
@@ -224,6 +234,8 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 - (void)refresh:(id)sender
 {
     DLog(@"Refreshing");
+    
+#pragma warning Won't work off-line.
     
     // Reload cached data.
     [self performQuery1];

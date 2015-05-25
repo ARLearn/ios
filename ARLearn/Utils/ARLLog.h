@@ -42,8 +42,15 @@
  *  @param fmt The Format String
  *  @param ... The Arguments.
  */
-#define Log(fmt, ...) CFShow((__bridge CFTypeRef)[NSString stringWithFormat:@"[%s:%d]| "fmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__]);
+#define Log(fmt, ...) CFShow((__bridge CFTypeRef)[NSString stringWithFormat:@"[%d]| "fmt, __LINE__, ##__VA_ARGS__]);
 
+/*!
+ *  Log with date-time stamp using NSLog.
+ *
+ *  @param fmt The Format String
+ *  @param ... The Arguments.
+ */
+#define TLog(fmt, ...) NSLog(@"[%s:%d] "fmt, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
 
 @interface ARLLog : NSObject
 

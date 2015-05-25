@@ -110,7 +110,7 @@ Class _class;
     }];
     
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
-        [NSTimer scheduledTimerWithTimeInterval:(downloaded==0 ? 0.1 : 2.5)
+        [NSTimer scheduledTimerWithTimeInterval:(downloaded==0 ? 0.1 : 0.5)
                                          target:self
                                        selector:@selector(splashDone:)
                                        userInfo:nil
@@ -443,12 +443,12 @@ Class _class;
     if ([self.downloadStatus count]>0) {
         self.progressBar.progress = (float)cnt/[self.downloadStatus count];
     } else {
-        self.progressBar.progress =0.0f;
+        self.progressBar.progress = 0.0f;
     }
     
-    if (![cached boolValue]) {
-        downloaded++;
-    }
+    //if (![cached boolValue]) {
+    downloaded++;
+    //}
 }
 
 #pragma mark - Actions

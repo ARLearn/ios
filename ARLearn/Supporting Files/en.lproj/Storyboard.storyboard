@@ -373,13 +373,13 @@
                                 <rect key="frame" x="0.0" y="-11" width="320" height="591"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="wB8-7f-707">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="wB8-7f-707">
                                 <rect key="frame" x="16" y="233" width="288" height="207"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="QuestionItem" id="Xnq-Rs-MW1">
-                                        <rect key="frame" x="0.0" y="22" width="288" height="44"/>
+                                        <rect key="frame" x="0.0" y="50" width="288" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xnq-Rs-MW1" id="ySp-kV-169">
                                             <rect key="frame" x="0.0" y="0.0" width="288" height="43"/>
@@ -394,7 +394,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="checkmark" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="AnswerItem" textLabel="oWl-jy-jXl" style="IBUITableViewCellStyleDefault" id="C9W-ox-vRv">
-                                        <rect key="frame" x="0.0" y="66" width="288" height="44"/>
+                                        <rect key="frame" x="0.0" y="94" width="288" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C9W-ox-vRv" id="fzn-ld-0Eb">
                                             <rect key="frame" x="0.0" y="0.0" width="249" height="43"/>

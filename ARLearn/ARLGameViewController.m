@@ -444,6 +444,8 @@ didCompleteWithError:(NSError *)error
             if (run) {
                 self.runId = run.runId;
             }else {
+#pragma warning Won't work off-line.
+                
                 [self performQuery2];
             }
         }
@@ -454,6 +456,9 @@ didCompleteWithError:(NSError *)error
     }
 }
 
+/*!
+ *  Won't work off-line.
+ */
 - (void)performQuery1 {
     NSString *query = [NSString stringWithFormat:@"myGames/gameId/%@", [NSNumber numberWithLongLong:[self.gameId longLongValue]]];
     
@@ -469,6 +474,9 @@ didCompleteWithError:(NSError *)error
     }
 }
 
+/*!
+ *  Won't work off-line.
+ */
 - (void)performQuery2 {
     NSString *query = @"myRuns/participate";
     

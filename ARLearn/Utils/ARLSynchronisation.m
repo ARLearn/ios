@@ -14,7 +14,7 @@
  *  Post all unsynced Actions to the server.
  */
 +(void) PublishActionsToServer {
-    Log(@"PublishActionsToServer");
+    TLog(@"PublishActionsToServer");
     
     // TODO Filter on runId too?
     
@@ -35,6 +35,8 @@
                                   action.generalItem.type,              @"generalItemType",
                                   nil];
             
+            TLog(@"PublishActionsToServer %@", action.action);
+            
             [ARLNetworking sendHTTPPostWithAuthorization:@"actions"
                                                     json:dict];
             
@@ -51,7 +53,7 @@
                                                             object:NSStringFromClass([Action class])];
     }
     
-    Log(@"PublishActionsToServer Ready");
+    TLog(@"PublishActionsToServer Ready");
 }
 
 /*!
@@ -60,7 +62,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadGeneralItemVisibilities:(NSNumber *)runId {
-    Log(@"DownloadGeneralItemVisibilities:%@", runId);
+    TLog(@"DownloadGeneralItemVisibilities:%@", runId);
 
     // TODO Add TimeStamp to url retrieve less records?
     
@@ -177,7 +179,7 @@
     
     // [self performSelectorOnMainThread:@selector(UpdateItemVisibility) withObject:nil waitUntilDone:YES];
     
-    Log(@"DownloadGeneralItemVisibilities Ready:%@", runId);
+    TLog(@"DownloadGeneralItemVisibilities Ready:%@", runId);
 }
 
 /*!
@@ -186,7 +188,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadResponses:(NSNumber *)runId {
-    DLog(@"DownloadResponses:%@", runId);
+    TLog(@"DownloadResponses:%@", runId);
 
     NSString *service = [NSString stringWithFormat:@"response/runId/%@",
                          runId];
@@ -446,7 +448,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Response class])];
     
-    DLog(@"DownloadResponses Ready:%@", runId);
+    TLog(@"DownloadResponses Ready:%@", runId);
 }
 
 /*!
@@ -455,6 +457,8 @@
  *  Runs in a background thread.
  */
 +(void) DownloadGeneralItems:(NSNumber *)gameId {
+    TLog(@"DownloadGeneralItems:%@", gameId);
+
     NSString *service = [NSString stringWithFormat:@"generalItems/gameId/%@", gameId];
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
     
@@ -565,7 +569,7 @@
                 ([generalItem valueForKey:@"revoked"] && [[generalItem valueForKey:@"revoked"] integerValue] != 0)) {
                 // Skip creating deleted records.
                 DLog(@"Skipping deleted GeneralItem: %@", [generalItem valueForKey:@"name"])
-            }else {
+            } else {
                 // Uses MagicalRecord for Creation and Saving!
                 DLog(@"Creating GeneralItem: %@", [generalItem valueForKey:@"name"])
                 item = (GeneralItem *)[ARLUtils ManagedObjectFromDictionary:generalItem
@@ -596,6 +600,7 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([GeneralItem class])];
+    TLog(@"DownloadGeneralItems Ready:%@", gameId);
 }
 
 /*!
@@ -604,7 +609,9 @@
  *  Runs in a background thread.
  */
 +(void) DownloadActions:(NSNumber *)runId {
-     Log(@"DownloadActions:%@", runId);
+    TLog(@"DownloadActions:%@", runId);
+    
+#pragma warning Takes 3sec+.
     
     if (runId) {
         NSString *service = [NSString stringWithFormat:@"actions/runId/%@", runId];
@@ -782,7 +789,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Action class])];
     
-    Log(@"DownloadActions Ready:%@", runId);
+    TLog(@"DownloadActions Ready:%@", runId);
 }
 
 /*!
@@ -791,7 +798,7 @@
  *  Runs in a background thread.
  */
 +(void) DownloadRuns {
-    DLog(@"DownloadRuns");
+    TLog(@"DownloadRuns");
     
     NSString *service = @"myRuns/participate";
     NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
@@ -889,10 +896,11 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Run class])];
+    TLog(@"DownloadRuns Ready");
 }
 
 +(void) PublishResponsesToServer {
-    Log(@"PublishResponsesToServer");
+    TLog(@"PublishResponsesToServer");
     
     if (ARLNetworking.networkAvailable) {
         NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
@@ -999,7 +1007,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
                                                         object:NSStringFromClass([Response class])];
 
-    Log(@"PublishResponsesToServer Ready");
+    TLog(@"PublishResponsesToServer Ready");
 }
 
 + (void) publishResponse:(NSNumber *)runId

@@ -166,10 +166,11 @@ static NSCondition *_theAbortLock;
                                    managedContext:(NSManagedObjectContext *)ctx
 {
     
+#pragma warning Recoded without MagicalRecord saveWithBlockAndWait:.
+    
     // 1) Make sure we can modify object inside the MagicalRecord block.
     //__block NSManagedObject *object;
     
-    // removed
     //[MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
     
     // 2) Create a NSManagedObject by Name.
@@ -198,7 +199,8 @@ static NSCondition *_theAbortLock;
     }
     
     // new
-    [ctx MR_saveToPersistentStoreAndWait];
+    //[ctx MR_saveToPersistentStoreAndWait];
+    [ctx MR_saveWithOptions:MRSaveParentContexts|MRSaveSynchronously completion:nil];
     
     //}];
 
@@ -225,10 +227,11 @@ static NSCondition *_theAbortLock;
                                          managedContext:(NSManagedObjectContext *)ctx
 {
     
+#pragma warning Recoded without MagicalRecord saveWithBlockAndWait:.
+
     //    // 1) Make sure we can modify object inside the MagicalRecord block.
     // __block NSManagedObject *object;
     
-    // removed
     // [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
     
     // 2) Create a NSManagedObject by Name.
@@ -259,8 +262,9 @@ static NSCondition *_theAbortLock;
     // }];
     
     // new
-    [ctx MR_saveToPersistentStoreAndWait];
-    
+    //[ctx MR_saveToPersistentStoreAndWait];
+    [ctx MR_saveWithOptions:MRSaveParentContexts|MRSaveSynchronously completion:nil];
+
     // 5) Return the result (in the correct context, or we cannot modify/save it anymore !!! ). See http://stackoverflow.com/questions/24755734/nsmanagedobject-wont-be-updated-after-saving-with-magical-record
     return [object MR_inContext:ctx];
 }
