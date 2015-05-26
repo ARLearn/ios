@@ -107,19 +107,6 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="Ffc-W6-PE1">
-                                <rect key="frame" x="70" y="453" width="51" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <connections>
-                                    <action selector="torchSwitchAction:" destination="0ly-fY-awO" eventType="valueChanged" id="WoM-U5-uOy"/>
-                                </connections>
-                            </switch>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Torch" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Rk-83-sug">
-                                <rect key="frame" x="20" y="463" width="42" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uYr-Ls-0gy">
                                 <rect key="frame" x="20" y="270" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -136,8 +123,6 @@
                     <connections>
                         <outlet property="backgroundImage" destination="Xd0-cB-0nm" id="ytM-p4-Rso"/>
                         <outlet property="scannedLabel" destination="Seg-jD-yQc" id="QZa-WX-EYX"/>
-                        <outlet property="torchLabel" destination="2Rk-83-sug" id="SUD-gj-S2X"/>
-                        <outlet property="torchSwitch" destination="Ffc-W6-PE1" id="lRz-0Q-6Lc"/>
                         <outlet property="typeLabel" destination="uYr-Ls-0gy" id="fzT-t5-iIa"/>
                     </connections>
                 </viewController>

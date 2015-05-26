@@ -17,12 +17,8 @@
 @property (strong, nonatomic) AVCaptureSession *session;
 
 @property (weak, nonatomic) IBOutlet UILabel *scannedLabel;
-@property (weak, nonatomic) IBOutlet UISwitch *torchSwitch;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
-@property (weak, nonatomic) IBOutlet UILabel *torchLabel;
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
-
-- (IBAction)torchSwitchAction:(UISwitch *)sender;
 
 #define VIDEOSIZE 200.0f
 
@@ -54,14 +50,25 @@
     return self;
 }
 
+/*!
+ *  viewDidLoad
+ */
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    [self applyConstraints];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-    [self.torchLabel setHidden:YES];
-    [self.torchSwitch setHidden:YES];
+    self.delegate = self;
     
-    if (![self isCameraAvailable]) {
+    if ([self isCameraAvailable]) {
+        [self setupScanner];
+    } else {
         [self setupNoCameraView];
     }
 }
@@ -78,22 +85,6 @@
 }
 
 /*!
- *  viewDidLoad
- */
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    [self applyConstraints];
-
-    self.delegate = self;
-
-    if ([self isCameraAvailable]) {
-        [self setupScanner];
-    }
-}
-
-/*!
  *  viewWillDisappear
  *
  *  @param animated <#animated description#>
@@ -102,11 +93,8 @@
     [super viewWillDisappear:animated];
     
     self.delegate = nil;
-    
-    // [self.torchSwitch setOn:NO];
-    
-    [self stopScanning];
 
+    [self stopScanning];
 }
 
 /*!
@@ -149,16 +137,12 @@
                                      
                                      self.backgroundImage,  @"backgroundImage",
                                      self.scannedLabel,     @"scannedLabel",
-                                     self.torchSwitch,      @"torchSwitch",
-                                     self.torchLabel,       @"torchLabel",
                                      self.typeLabel,        @"typeLabel",
                                      
                                      nil];
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     self.scannedLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.torchSwitch.translatesAutoresizingMaskIntoConstraints = NO;
-    self.torchLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.typeLabel.translatesAutoresizingMaskIntoConstraints = NO;
     
     // CGFloat bw = sw/2 - 3*8.0;
@@ -178,23 +162,7 @@
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
 
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[torchLabel]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[torchSwitch]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[torchLabel]-[torchSwitch]"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-   
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[scannedLabel]-|"
+     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[scannedLabel]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
@@ -295,13 +263,9 @@
     
     [labelNoCam sizeToFit];
     
-#warning Set Label at same spot as video inside a rectangle!
-    
     labelNoCam.center = self.view.center;
     
     [self.scannedLabel setHidden:YES];
-    [self.torchLabel setHidden:YES];
-    [self.torchSwitch setHidden:YES];
 }
 
 /*!
@@ -463,11 +427,11 @@
 {
     if (![self.scannedLabel.text isEqualToString:aScannedValue]) {
         self.scannedLabel.text = aScannedValue;
-       
-#warning parse url of format http://...gameId/<gameId>
+        
+        __block NSString *qrcode = aScannedValue;
         
         NSOperation *delay = [[ARLDelayOperation alloc] initWithDelay:1000];
-    
+        
         NSBlockOperation *glow = [NSBlockOperation blockOperationWithBlock:^{
             self.scannedLabel.layer.shadowColor = [[UIColor greenColor] CGColor];
             self.scannedLabel.layer.shadowRadius = 8.0f;
@@ -487,25 +451,57 @@
             self.scannedLabel.font = [UIFont systemFontOfSize:self.scannedLabel.font.pointSize];
         }];
         
+        NSBlockOperation *jump = [NSBlockOperation blockOperationWithBlock:^{
+            // Parse url of format http://...gameId/<gameId>
+            
+            // NSString *str = @"http://ou.nl/gameId/5248241780129792"; //aScannedValue;
+            
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"/gameId/(\\d+)" options:0 error:NULL];
+            NSTextCheckingResult *match = [regex firstMatchInString:qrcode options:0 range:NSMakeRange(0, [qrcode length])];
+            
+            // [match rangeAtIndex:1] gives the range of the group in parentheses
+            //Log(@"%@", [str substringWithRange:[match rangeAtIndex:1]]); //ives the first captured group in this example
+            NSString *capture = [qrcode substringWithRange:[match rangeAtIndex:1]];
+            
+            if (capture && [capture length]>0) {
+                NSNumber *gameId = [NSNumber numberWithLongLong:[capture longLongValue]];
+                Log(@"Game Id Scanned: %@",gameId);
+                
+                ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+                
+                if (newViewController) {
+                    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+                    
+                    newViewController.gameId = gameId;
+                    
+                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", gameId];
+                    
+                    Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
+                    
+                    if (run) {
+                        newViewController.runId = run.runId;
+                    }
+                    
+                    // Move to another UINavigationController or UITabBarController etc.
+                    // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                    [self.navigationController pushViewController:newViewController animated:YES];
+                }
+            }
+        }];
+        
         [delay addDependency:glow];
         [noglow addDependency:delay];
+        [jump addDependency:noglow];
         
         [[NSOperationQueue currentQueue] addOperations: @[delay] waitUntilFinished:NO];
         [[NSOperationQueue mainQueue] addOperations: @[noglow, glow] waitUntilFinished:NO];
+        [[NSOperationQueue mainQueue] addOperations: @[jump] waitUntilFinished:NO];
+        
     }
-
+    
     self.typeLabel.text = aScannedType;
 }
 
 #pragma mark - Actions
-
-/*!
- *  Action for the Torch button.
- *
- *  @param sender <#sender description#>
- */
-- (IBAction)torchSwitchAction:(UISwitch *)sender {
-    [self setTorch:self.torchSwitch.isOn];
-}
 
 @end
