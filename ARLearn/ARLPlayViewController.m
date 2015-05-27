@@ -342,6 +342,8 @@ Class _class;
             switch (bid) {
                     // Contains Text + Choice.
                 case SingleChoiceTest:
+
+                    // Contains Text + Choice.
                 case MultipleChoiceTest: {
                     ARLGeneralItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GeneralItemView"];
                     
@@ -396,6 +398,9 @@ Class _class;
                     }
                 }
                     break;
+                    
+                case ScanTag:
+                    //
                     
                 default:
                     //Should not happen

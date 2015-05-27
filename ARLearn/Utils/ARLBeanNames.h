@@ -14,21 +14,21 @@ typedef enum {
     Invalid,
     
     // Dependencies
-    ActionDependency,
+    ActionDependency,       //ok
     ProximityDependency,
-    TimeDependency,
-    OrDependency,
-    AndDependency,
+    TimeDependency,             //??
+    OrDependency,           //ok
+    AndDependency,          //ok
     
     // GeneralItems
-    AudioObject,
-    GeneralItemList,
-    NarratorItem,
-    FileReference,
-    ScanTag,
-    OpenQuestion,
-    SingleChoiceTest,
-    MultipleChoiceTest,
+    AudioObject,            //ok
+    GeneralItemList,            //??
+    NarratorItem,           //ok
+    FileReference,              //??
+    ScanTag,                    //??
+    OpenQuestion,               //??
+    SingleChoiceTest,       //ok
+    MultipleChoiceTest,     //ok
     MultipleChoiceAnswerItem,
     
     // Game

@@ -15,6 +15,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
 
 @property (nonatomic, strong) NSArray *results;
+@property (nonatomic, strong) NSArray *games;
 
 @property (retain, nonatomic) NSMutableData *accumulatedData;
 @property (nonatomic) long long accumulatedSize;
@@ -71,9 +72,12 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     self.table.dataSource = self;
     
     // _query = @"";
-    
-    [self.table reloadData];
 
+#pragma mark use predicate to filter games without a run.
+    self.games = [Game MR_findAll];
+
+    [self.table reloadData];
+    
     //[self.refreshControl addTarget:self
     //                        action:@selector(refresh:)
       //            forControlEvents:UIControlEventValueChanged];
@@ -85,9 +89,9 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     self.navigationController.navigationBarHidden = NO;
     self.navigationController.toolbarHidden = NO;
     
-#pragma warning Won't work off-line.
-    
-    [self performQuery1];
+    if ([ARLNetworking networkAvailable]) {
+        [self performQuery1];
+    }
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
@@ -160,18 +164,18 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     
     switch (bid) {
         case GameList: {
-            [self.table setUserInteractionEnabled:NO];
-             
             self.results = (NSArray *)[json objectForKey:@"games"];
          
             for (NSDictionary *dict in self.results) {
                 [ARLCoreDataUtils processGameDictionaryItem:dict ctx:ctx];
             }
         }
-#pragma warning Won't work off-line.
             
             // Chain myRuns/participate.
-            [self performQuery2];
+            //
+            if ([ARLNetworking networkAvailable]) {
+                [self performQuery2];
+            }
             
             break;
             
@@ -181,18 +185,24 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
             for (NSDictionary *dict in runs) {
                 [ARLCoreDataUtils processRunDictionaryItem:dict ctx:ctx];
             }
-
+            
+            [ctx MR_saveToPersistentStoreAndWait];
+            
+            [self.table setUserInteractionEnabled:NO];
+            {
+                self.games = [Game MR_findAll];
+                
+                [self.table reloadData];
+            }
             [self.table setUserInteractionEnabled:YES];
+            
+            Log(@"Games and Runs Updates");
         }
             break;
             
         default:
             break;
     }
-    
-    [ctx MR_saveToPersistentStoreAndWait];
-    
-    [self.table reloadData];
 }
 
 /*!
@@ -269,7 +279,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case MYGAMES : {
-            return [self.results count];
+            return [self.games count];
         }
     }
     
@@ -297,21 +307,22 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
                                               reuseIdentifier:self.cellIdentifier];
             }
             
-            NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
-            cell.textLabel.text = [dict valueForKey:@"title"];
+            Game *game = [self.games objectAtIndex:indexPath.row];
             
-            if ([dict valueForKey:@"lng"] && [dict valueForKey:@"lat"]) {
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@] - lat:%@, lng:%@", [dict valueForKey:@"language"],[dict valueForKey:@"lat"],[dict valueForKey:@"lng"]];
-            } else {
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", [dict valueForKey:@"language"]];
-            }
+            //NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+            cell.textLabel.text = game.title; //[dict valueForKey:@"title"];
+            
+//            if (game.:@"lng"] && [dict valueForKey:@"lat"]) {
+//                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@] - lat:%@, lng:%@", [dict valueForKey:@"language"],[dict valueForKey:@"lat"],[dict valueForKey:@"lng"]];
+//            } else {
+//                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", [dict valueForKey:@"language"]];
+//            }
+
             cell.detailTextLabel.textColor = [UIColor grayColor];
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             cell.imageView.image = [UIImage imageNamed:@"MyGames"];
-            
-            // [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:NO];
             
             return cell;
         }
@@ -330,10 +341,10 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     switch (indexPath.section) {
         case MYGAMES: {
-            NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
-
+            Game *game = (Game *)[self.games objectAtIndex:indexPath.row]; // kNSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+            
             Run *run = [Run MR_findFirstByAttribute:@"gameId"
-                                           withValue:[dict valueForKey:@"gameId"]];
+                                          withValue:game.gameId];
             
             if (run) {
             // ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
@@ -351,7 +362,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
                 ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
                 
                 if (newViewController) {
-                    newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+                    newViewController.gameId = game.gameId;
                     newViewController.runId = run.runId;
                     
                     [newViewController setBackViewControllerClass:[self class]];
