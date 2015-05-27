@@ -519,53 +519,113 @@ CGFloat wbheight = 0.1f;
     
     BeanIds bid = [ARLBeanNames beanTypeToBeanId:self.activeItem.type];
     
+    NSString *feedback = @"";
+    NSString *title = @"";
+
+//    BOOL incompleteAnswer = FALSE;
+//    BOOL hascorrectAnswer = FALSE;
+    
+    NSInteger correct = 0;
+    NSInteger wrong = 0;
+    NSInteger answered = 0;
+    
     for (int i=0; i<self.answers.count;i++) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForItem:i inSection:ANSWER];
         
         UITableViewCell *cell = [self.answersTable cellForRowAtIndexPath:indexPath];
         
+        //{
+        //    answer = "twee en veertig";
+        //    feedback = prima;
+        //    id = aHjTIkkje57loHj;
+        //    isCorrect = 1;
+        //    type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
+        //}
+
         NSDictionary *answer = [self.answers objectAtIndex:i];
         
-        if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
-            [ARLCoreDataUtils MarkAnswerAsGiven:self.runId
-                                  generalItemid:self.activeItem.generalItemId
-                                       answerId:[answer valueForKey:@"id"]];
-            //{
-            //    answer = "twee en veertig";
-            //    feedback = prima;
-            //    id = aHjTIkkje57loHj;
-            //    isCorrect = 1;
-            //    type = "org.celstec.arlearn2.beans.generalItem.MultipleChoiceAnswerItem";
-            //}
-            
-            if (bid == SingleChoiceTest && [answer valueForKey:@"isCorrect"]) {
-                
-                switch ([[answer valueForKey:@"isCorrect"] integerValue]) {
-                    case 0: {
-                        UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
-                                                                              message:NSLocalizedString(@"Wrong", @"Wrong")
-                                                                             delegate:nil
-                                                                    cancelButtonTitle:NSLocalizedString(@"Continue", @"Continue")
-                                                                    otherButtonTitles:nil, nil];
-                        [myAlertView show];
-                    }
-                        break;
-                    case 1: {
-                        UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
-                                                                              message:NSLocalizedString(@"Correct", @"Correct")
-                                                                             delegate:self
-                                                                    cancelButtonTitle:NSLocalizedString(@"Continue", @"Continue")
-                                                                    otherButtonTitles:nil, nil];
-                        [myAlertView show];
+        // Count number of answers, number of correct answers and number of wrong answers.
+        // Prepare feedback if present (value & feedback).
+        //
+        switch (bid) {
+            case SingleChoiceTest: {
+                correct += [[answer valueForKey:@"isCorrect"] boolValue] ? 1 : 0;
 
+                if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
+                    
+                    if ([answer valueForKey:@"feedback"]) {
+                        feedback = [[answer valueForKey:@"isCorrect"] boolValue] ? [answer valueForKey:@"feedback"] : @"";
                     }
-                        break;
+
+                    answered++;
+
+                    wrong += [[answer valueForKey:@"isCorrect"] boolValue] ? 0 : 1;
+                    
+                    [ARLCoreDataUtils MarkAnswerAsGiven:self.runId
+                                          generalItemid:self.activeItem.generalItemId
+                                               answerId:[answer valueForKey:@"id"]];
+                    
+                    DLog(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
                 }
             }
-            
-            DLog(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
+                break;
+                
+            case MultipleChoiceTest:
+            {
+                correct += [[answer valueForKey:@"isCorrect"] boolValue] ? 1 : 0;
+                
+                if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
+                    if ([answer valueForKey:@"feedback"]) {
+                        feedback = [[feedback stringByAppendingString:[answer valueForKey:@"answer"]] stringByAppendingString:@"\n"];
+                        feedback = [[feedback stringByAppendingString:[answer valueForKey:@"feedback"]] stringByAppendingString:@"\n\n"];
+                    }
+                    
+                    answered++;
+                    
+                    wrong += [[answer valueForKey:@"isCorrect"] boolValue] ? 0 : 1;
+                    
+                    [ARLCoreDataUtils MarkAnswerAsGiven:self.runId
+                                          generalItemid:self.activeItem.generalItemId
+                                               answerId:[answer valueForKey:@"id"]];
+                    
+                    DLog(@"Selected Answer(s): %@ [%@]", [answer valueForKey:@"answer"], [answer valueForKey:@"id"]);
+                }
+            }
+                break;
+                
+            default:
+                return;
         }
-    };
+    }
+    
+    BOOL answeredOk = (answered == correct) && (wrong == 0);
+   
+    title = answeredOk ? NSLocalizedString(@"Correct", @"Correct") : NSLocalizedString(@"Wrong", @"Wrong");
+    
+    NSString *message = [feedback stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    
+    // Only show extra feedback when there are no incorrect answers present and not all correct ones are selected.
+    //
+    if (bid == MultipleChoiceTest && (answered < correct) && (wrong == 0)) {
+        message = [[message stringByAppendingString:@"\n\n"] stringByAppendingString:@"At least one correct answer is missing"];
+    }
+    
+    // Show feedback and return to previous screen if the MC has been answered correctly.
+    //
+    UIAlertView *myAlertView = [[UIAlertView alloc] initWithTitle:title
+                                                          message:message
+                                                         delegate:answeredOk ? self : nil
+                                                cancelButtonTitle:NSLocalizedString(@"Continue", @"Continue")
+                                                otherButtonTitles:nil, nil];
+    
+    // Fails for iOS 7+
+    //    for (UIView *view in myAlertView.subviews) {
+    //        if([[view class] isSubclassOfClass:[UILabel class]]) {
+    //            ((UILabel*)view).textAlignment = NSTextAlignmentLeft;
+    //        }
+    //    }
+    
+    [myAlertView show];
 }
 
 #pragma mark - Events
