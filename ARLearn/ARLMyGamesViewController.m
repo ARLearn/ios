@@ -16,13 +16,13 @@
 
 @property (nonatomic, strong) NSArray *results;
 @property (nonatomic, strong) NSArray *games;
+@property (nonatomic, strong) NSPredicate *predicate;
 
 @property (retain, nonatomic) NSMutableData *accumulatedData;
 @property (nonatomic) long long accumulatedSize;
 
 - (IBAction)logoutButtonAction:(UIBarButtonItem *)sender;
 - (IBAction)backButtonAction:(UIBarButtonItem *)sender;
-
 
 /*!
  *  ID's and order of the cells.
@@ -72,9 +72,8 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     self.table.dataSource = self;
     
     // _query = @"";
-
-#pragma mark use predicate to filter games without a run.
-    self.games = [Game MR_findAll];
+    self.predicate = [NSPredicate predicateWithFormat:@"correspondingRuns.@count!=%d",0];
+    self.games = [Game MR_findAllWithPredicate:self.predicate];
 
     [self.table reloadData];
     
@@ -236,6 +235,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
         [self processData:response];
     }
 }
+
 /*!
  *  Refresh (and Reload) the Table.
  *
@@ -245,10 +245,12 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 {
     DLog(@"Refreshing");
     
-#pragma warning Won't work off-line.
+#warning Won't work off-line.
     
     // Reload cached data.
-    [self performQuery1];
+    if ([ARLNetworking networkAvailable]) {
+        [self performQuery1];
+    }
     
     // End Refreshing
     [(UIRefreshControl *)sender endRefreshing];
@@ -317,7 +319,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
 //            } else {
 //                cell.detailTextLabel.text = [NSString stringWithFormat:@"[%@]", [dict valueForKey:@"language"]];
 //            }
-
+    
             cell.detailTextLabel.textColor = [UIColor grayColor];
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -359,6 +361,8 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
             //                [self.navigationController pushViewController:newViewController animated:NO];
             //            }
             
+                Log(@"Selected Run: %@ for Game: %@", run.runId, game.gameId);
+                
                 ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
                 
                 if (newViewController) {

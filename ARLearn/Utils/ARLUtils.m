@@ -166,7 +166,7 @@ static NSCondition *_theAbortLock;
                                    managedContext:(NSManagedObjectContext *)ctx
 {
     
-#pragma warning Recoded without MagicalRecord saveWithBlockAndWait:.
+#warning Recoded without MagicalRecord saveWithBlockAndWait:.
     
     // 1) Make sure we can modify object inside the MagicalRecord block.
     //__block NSManagedObject *object;
@@ -227,7 +227,7 @@ static NSCondition *_theAbortLock;
                                          managedContext:(NSManagedObjectContext *)ctx
 {
     
-#pragma warning Recoded without MagicalRecord saveWithBlockAndWait:.
+#warning Recoded without MagicalRecord saveWithBlockAndWait:.
 
     //    // 1) Make sure we can modify object inside the MagicalRecord block.
     // __block NSManagedObject *object;

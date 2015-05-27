@@ -78,9 +78,9 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
     // Setting a footer hides empty cels at the bottom.
     self.nearbyGamesTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-#pragma warning Set initial viewport to correct search distance around center point (this removed the initial zoom).
-#pragma warning Set viewport to search distance when moving around.
-#pragma warning Debug why we not always get games in response (search has that issue too).
+#warning Set initial viewport to correct search distance around center point (this removed the initial zoom).
+#warning Set viewport to search distance when moving around.
+#warning Debug why we not always get games in response (search has that issue too).
     
     // See https://developers.google.com/maps/documentation/ios/start
 

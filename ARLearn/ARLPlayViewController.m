@@ -255,7 +255,7 @@ Class _class;
             
             GeneralItem *item = [self getGeneralItemForRow:indexPath.row];
             
-            NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
+            // NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:item.json];
             
             NSPredicate *predicate2 = [NSPredicate predicateWithFormat:
                                        @"run.runId=%@ AND generalItem.generalItemId=%@ AND action=%@",
@@ -264,11 +264,12 @@ Class _class;
                                        read_action];
             
             NSString *text = item.name;
-           
+            
             if ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0) {
-                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                cell.textLabel.textColor = [UIColor grayColor];
             } else {
-                 cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.accessoryType = UITableViewCellAccessoryNone;
             }
             
             // [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];
@@ -282,22 +283,22 @@ Class _class;
             
             // DLog(@"%@=%@",[item.generalItemId stringValue], [self.visibility valueForKey:[item.generalItemId stringValue]]);
             
-            NSDictionary* dependsOn = [json valueForKey:@"dependsOn"];
-            
-            BeanIds bid = [ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]];
-           
-            NSNumber *dependsOnItem = ( NSNumber *)[dependsOn valueForKey:@"generalItemId"];
-            
-            if (bid!=Invalid) {
-                // cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
-            } else {
-                bid = [ARLBeanNames beanTypeToBeanId:item.type];
-                if (bid!=Invalid) {
-                    // cell.detailTextLabel.text = [NSString stringWithFormat:@"Type: %@ (%lld)", [ARLBeanNames beanIdToBeanName:bid], [item.generalItemId longLongValue]];
-                } else {
-                    // cell.detailTextLabel.text = [ARLBeanNames beanIdToBeanName:bid];
-                }
-            }
+            //            NSDictionary* dependsOn = [json valueForKey:@"dependsOn"];
+            //
+            //            BeanIds bid = [ARLBeanNames beanTypeToBeanId:[dependsOn valueForKey:@"type"]];
+            //
+            //            NSNumber *dependsOnItem = ( NSNumber *)[dependsOn valueForKey:@"generalItemId"];
+            //
+            //            if (bid!=Invalid) {
+            //                // cell.detailTextLabel.text = [NSString stringWithFormat:@"Depends on type: %d (%lld)", bid, [dependsOnItem longLongValue]];
+            //            } else {
+            //                bid = [ARLBeanNames beanTypeToBeanId:item.type];
+            //                if (bid!=Invalid) {
+            //                    // cell.detailTextLabel.text = [NSString stringWithFormat:@"Type: %@ (%lld)", [ARLBeanNames beanIdToBeanName:bid], [item.generalItemId longLongValue]];
+            //                } else {
+            //                    // cell.detailTextLabel.text = [ARLBeanNames beanIdToBeanName:bid];
+            //                }
+            //            }
             
             // See http://stackoverflow.com/questions/12296904/accessorybuttontappedforrowwithindexpath-not-getting-called
             // workaround for accessoryButtonTappedForRowWithIndexPath
@@ -724,7 +725,7 @@ Class _class;
                     }
                 }
 
-#pragma warning is LLONG_MAX here correct?
+#warning is LLONG_MAX here correct?
                 
                 return minSatisfiedAt == LLONG_MAX ? -1 : minSatisfiedAt;
             }
@@ -760,7 +761,7 @@ Class _class;
                                                     dependsOn:dep
                                                           ctx:ctx];
                 
-                return satisfiedAt == -1 ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longLongValue];
+                return satisfiedAt == LLONG_MAX ? -1 : satisfiedAt + [[dependsOn valueForKey:@"timeDelta"] longLongValue];
             }
                 
             case OrDependency: {

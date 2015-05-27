@@ -52,7 +52,7 @@ static BOOL _logOn = NO;
         [ARLUtils ShowAbortMessage:error fromMethod:func];
     }
     
-    return [ARLUtils boolToBoolPointer:result];
+    return result; //[ARLUtils boolToBoolPointer:result];
 }
 
 @end

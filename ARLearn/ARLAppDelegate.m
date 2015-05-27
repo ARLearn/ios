@@ -427,7 +427,8 @@ static NSCondition *_theAbortLock;
     [GeneralItemData MR_truncateAll];
     [GeneralItemVisibility MR_truncateAll];
     
-#pragma warning include Inquiry table in ARLearn?
+#warning include Inquiry table in ARLearn?
+        
     [Inquiry MR_truncateAll];
     [Message MR_truncateAll];
     [Response MR_truncateAll];

@@ -611,7 +611,7 @@
 +(void) DownloadActions:(NSNumber *)runId {
     TLog(@"DownloadActions:%@", runId);
     
-#pragma warning Takes 3sec+.
+#warning Takes 3sec+.
     
     if (runId) {
         NSString *service = [NSString stringWithFormat:@"actions/runId/%@", runId];

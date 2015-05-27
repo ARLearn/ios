@@ -371,7 +371,7 @@ didReceiveResponse:(NSURLResponse *)response
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
     
-    // DLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    DLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
