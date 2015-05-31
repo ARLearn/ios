@@ -270,6 +270,7 @@ Class _class;
                 cell.textLabel.textColor = [UIColor grayColor];
             } else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.textLabel.textColor = [UIColor blackColor];
             }
             
             // [NSString stringWithFormat:@"%@ %@", ([Action MR_countOfEntitiesWithPredicate:predicate2] != 0)? checkBoxEnabledChecked:emptySpace, item.name];

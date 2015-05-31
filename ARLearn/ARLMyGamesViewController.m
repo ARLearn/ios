@@ -164,18 +164,19 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     switch (bid) {
         case GameList: {
             self.results = (NSArray *)[json objectForKey:@"games"];
-         
+            
             for (NSDictionary *dict in self.results) {
                 [ARLCoreDataUtils processGameDictionaryItem:dict ctx:ctx];
             }
-        }
+            
+            [ctx MR_saveToPersistentStoreAndWait];
             
             // Chain myRuns/participate.
             //
             if ([ARLNetworking networkAvailable]) {
                 [self performQuery2];
             }
-            
+        }
             break;
             
         case RunList: {

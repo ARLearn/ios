@@ -234,14 +234,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" id="D7i-pF-UbO">
-                                <rect key="frame" x="16" y="450" width="288" height="2"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </progressView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="okq-a7-kMc">
                                 <rect key="frame" x="0.0" y="-23" width="320" height="591"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" id="D7i-pF-UbO">
+                                <rect key="frame" x="16" y="450" width="288" height="2"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </progressView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" id="pHk-uG-HXq">
+                                <rect key="frame" x="16" y="434" width="288" height="2"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </progressView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -261,6 +265,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="backgroundImage" destination="okq-a7-kMc" id="UfY-c3-Yxp"/>
+                        <outlet property="phaseBar" destination="pHk-uG-HXq" id="EYg-fm-Pek"/>
                         <outlet property="playButton" destination="KzK-Wh-nuo" id="xIg-fs-JnH"/>
                         <outlet property="progressBar" destination="D7i-pF-UbO" id="Fbk-MK-dEe"/>
                     </connections>

@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *playButton;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
+@property (weak, nonatomic) IBOutlet UIProgressView *phaseBar;
 
 - (IBAction)playButtonAction:(UIBarButtonItem *)sender;
 
@@ -27,6 +28,7 @@
 @synthesize runId;
 
 NSInteger downloaded = 0;
+NSInteger phases = 9;
 
 Class _class;
 
@@ -45,8 +47,8 @@ Class _class;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.navigationController setNavigationBarHidden:NO];
-    [self.navigationController setToolbarHidden:NO];
+    [self.navigationController setNavigationBarHidden:YES];
+    [self.navigationController setToolbarHidden:YES];
     
     self.navigationItem.title = @"Download";
     
@@ -73,40 +75,76 @@ Class _class;
     
     NSBlockOperation *backBO0 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGame];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:1]
+                            waitUntilDone:YES];
     }];
     
     NSBlockOperation *backBO1 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGameContent];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:2]
+                            waitUntilDone:YES];
     }];
     
     NSBlockOperation *backBO2 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadSplashScreen];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:3]
+                            waitUntilDone:YES];
     }];
     
     NSBlockOperation *backBO3 =[NSBlockOperation blockOperationWithBlock:^{
         [self DownloadGameFiles];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:4]
+                            waitUntilDone:YES];
     }];
     
     NSBlockOperation *backBO4 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation DownloadGeneralItems:self.gameId];
-    }];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:5]
+                            waitUntilDone:YES];
+   }];
     
     // BEWARE Due to synchronized, first publish then download.
     NSBlockOperation *backBO5 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation PublishActionsToServer];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:6]
+                            waitUntilDone:YES];
     }];
 
     NSBlockOperation *backBO6 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation DownloadActions:self.runId];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:7]
+                            waitUntilDone:YES];
     }];
     
     // BEWARE Due to synchronized, first publish then download.
     NSBlockOperation *backBO7 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation PublishResponsesToServer];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:8]
+                            waitUntilDone:YES];
     }];
 
     NSBlockOperation *backBO8 =[NSBlockOperation blockOperationWithBlock:^{
         [ARLSynchronisation DownloadResponses:self.runId];
+        
+        [self performSelectorOnMainThread:@selector(updatePhase:)
+                               withObject:[NSNumber numberWithInt:9]
+                            waitUntilDone:YES];
     }];
     
     NSBlockOperation *foreBO =[NSBlockOperation blockOperationWithBlock:^{
@@ -182,6 +220,7 @@ Class _class;
                                      self.backgroundImage,  @"backgroundImage",
                                      
                                      self.progressBar,      @"progressBar",
+                                     self.phaseBar,         @"phaseBar",
                                      
                                      nil];
     
@@ -190,6 +229,7 @@ Class _class;
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
     self.progressBar.translatesAutoresizingMaskIntoConstraints = NO;
+    self.phaseBar.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
@@ -206,8 +246,14 @@ Class _class;
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
-    // Fix ProgressBar Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[progressBar]-(8)-|"
+    
+    // Fix phaseBar Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[phaseBar]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    // Fix ProgressBar and phaseBar Vertically.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[phaseBar]-[progressBar]-(%f)-|", self.navigationController.toolbar.frame.size.height + 4.0f]
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
@@ -323,7 +369,7 @@ Class _class;
         
         self.downloadStatus = dict;
     }
-    
+
     DLog(@"%@", @"DownloadGameContent Ready");
 }
 
@@ -369,7 +415,7 @@ Class _class;
             break;
         }
     }
-    
+  
     DLog(@"%@", @"DownloadSplashScreen Ready");
 }
 
@@ -411,16 +457,29 @@ Class _class;
  *  Update after the splash screen period has elapsed.
  */
 -(void)splashDone:(NSTimer *)timer {
+    
+    [self.phaseBar setHidden:YES];
+    [self.progressBar setHidden:YES];
+    
     [self.navigationController setNavigationBarHidden:NO];
     [self.navigationController setToolbarHidden:NO];
     
-    [self.playButton setEnabled:YES];
-    
-    self.progressBar.progress = 1.0f;
+    // self.progressBar.progress = 1.0f;
     
     [timer invalidate];
     
     [self playButtonAction:self.playButton];
+}
+
+/*!
+ *  Update the progressbar and keep track of phases.
+ *
+ *  @param cached <#cached description#>
+ */
+- (void)updatePhase:(NSNumber *) phase {
+    DLog(@"%@", @"updatePhase");
+    
+    self.phaseBar.progress = [phase floatValue] / phases;
 }
 
 /*!
