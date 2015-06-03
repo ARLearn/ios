@@ -95,7 +95,7 @@
             // Move to another UINavigationController or UITabBarController etc.
             // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
             
-#warning loggged in part via another navigationcontroller.
+#warning logged in part via another navigationcontroller.
             // Beware we cnnot have a chain of two animated view transitions.
             
             [self.navigationController presentViewController:newViewController animated:YES completion:nil];

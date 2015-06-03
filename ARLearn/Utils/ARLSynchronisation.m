@@ -350,9 +350,9 @@
             // 2) Update Account
             NSArray *userComponents = [[response valueForKey:@"userEmail"] componentsSeparatedByString:@":"];
             
-            NSString *accountType = [userComponents objectAtIndex:0];
-            NSString *accountId =[userComponents objectAtIndex:1];
-            
+            NSString *accountType = (userComponents.count==1) ? @"" : [userComponents objectAtIndex:0];
+            NSString *accountId = (userComponents.count==1) ? [userComponents objectAtIndex:0] : [userComponents objectAtIndex:1];
+
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(localId = %@) AND (accountType = %@)", accountId, accountType];
             
             Account *account = [Account MR_findFirstWithPredicate:predicate inContext:ctx];
@@ -685,12 +685,14 @@
             // @property (nonatomic, retain) GeneralItem *generalItem;   manual
             // @property (nonatomic, retain) Run *run;                   manual
             
+            // ellenrusman bij elena voor arlearn9.
+            
             NSString *userEmail = (NSString *)[item valueForKey:@"userEmail"];
             
             NSArray *userComponents = [userEmail componentsSeparatedByString:@":"];
             
-            NSString *accountType = [userComponents objectAtIndex:0];
-            NSString *accountId =[userComponents objectAtIndex:1];
+            NSString *accountType = (userComponents.count==1) ? @"" : [userComponents objectAtIndex:0];
+            NSString *accountId = (userComponents.count==1) ? [userComponents objectAtIndex:0] : [userComponents objectAtIndex:1];
 
 //            {
 //                action = read;
