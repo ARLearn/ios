@@ -19,6 +19,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *scannedLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UILabel *typeLabel;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *useCode;
+
+- (IBAction)useCodeAction:(UIBarButtonItem *)sender;
+
+@property (strong, nonatomic) NSString *qrCode;
 
 #define VIDEOSIZE 200.0f
 
@@ -37,6 +42,10 @@
  */
 
 @implementation ARLScanViewController
+
+@synthesize activeItem;
+@synthesize runId;
+@synthesize qrCode;
 
 #pragma mark - ViewController
 
@@ -64,6 +73,10 @@
 {
     [super viewWillAppear:animated];
     
+    [self.navigationController setToolbarHidden:NO];
+    
+    [self.useCode setEnabled:NO];
+    
     self.delegate = self;
     
     if ([self isCameraAvailable]) {
@@ -77,6 +90,8 @@
 {
     [super viewDidAppear:animated];
   
+    [self.useCode setEnabled:NO];
+    
     [self setVideoFrame];
     
     [self setVideoOrientation];
@@ -428,7 +443,7 @@
     if (![self.scannedLabel.text isEqualToString:aScannedValue]) {
         self.scannedLabel.text = aScannedValue;
         
-        __block NSString *qrcode = aScannedValue;
+        self.qrCode = aScannedValue;
         
         NSOperation *delay = [[ARLDelayOperation alloc] initWithDelay:1000];
         
@@ -451,52 +466,20 @@
             self.scannedLabel.font = [UIFont systemFontOfSize:self.scannedLabel.font.pointSize];
         }];
         
-        NSBlockOperation *jump = [NSBlockOperation blockOperationWithBlock:^{
-            // Parse url of format http://...gameId/<gameId>
-            
-            // NSString *str = @"http://ou.nl/gameId/5248241780129792"; //aScannedValue;
-            
-            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"/gameId/(\\d+)" options:0 error:NULL];
-            NSTextCheckingResult *match = [regex firstMatchInString:qrcode options:0 range:NSMakeRange(0, [qrcode length])];
-            
-            // [match rangeAtIndex:1] gives the range of the group in parentheses
-            //Log(@"%@", [str substringWithRange:[match rangeAtIndex:1]]); //ives the first captured group in this example
-            NSString *capture = [qrcode substringWithRange:[match rangeAtIndex:1]];
-            
-            if (capture && [capture length]>0) {
-                NSNumber *gameId = [NSNumber numberWithLongLong:[capture longLongValue]];
-                Log(@"Game Id Scanned: %@",gameId);
-                
-                ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
-                
-                if (newViewController) {
-                    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
-                    
-                    newViewController.gameId = gameId;
-                    
-                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", gameId];
-                    
-                    Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
-                    
-                    if (run) {
-                        newViewController.runId = run.runId;
-                    }
-                    
-                    // Move to another UINavigationController or UITabBarController etc.
-                    // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                    [self.navigationController pushViewController:newViewController animated:YES];
-                }
-            }
+        NSBlockOperation *enabeUseButton = [NSBlockOperation blockOperationWithBlock:^{
+            [self.useCode setEnabled:YES];
         }];
         
         [delay addDependency:glow];
         [noglow addDependency:delay];
-        [jump addDependency:noglow];
+        [enabeUseButton addDependency:noglow];
         
-        [[NSOperationQueue currentQueue] addOperations: @[delay] waitUntilFinished:NO];
-        [[NSOperationQueue mainQueue] addOperations: @[noglow, glow] waitUntilFinished:NO];
-        [[NSOperationQueue mainQueue] addOperations: @[jump] waitUntilFinished:NO];
-        
+        [[NSOperationQueue currentQueue] addOperations:@[delay]
+                                     waitUntilFinished:NO];
+        [[NSOperationQueue mainQueue] addOperations:@[noglow, glow]
+                                  waitUntilFinished:NO];
+        [[NSOperationQueue mainQueue] addOperations: @[enabeUseButton]
+                                  waitUntilFinished:NO];
     }
     
     self.typeLabel.text = aScannedType;
@@ -504,4 +487,49 @@
 
 #pragma mark - Actions
 
+- (IBAction)useCodeAction:(UIBarButtonItem *)sender {
+    if (self.activeItem) {
+        [ARLCoreDataUtils CreateOrUpdateAction:self.runId
+                                    activeItem:self.activeItem
+                                          verb:self.qrCode];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        // Parse url of format http://...gameId/<gameId>
+        
+        // NSString *str = @"http://ou.nl/gameId/5248241780129792"; //aScannedValue;
+        
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"/gameId/(\\d+)" options:0 error:NULL];
+        NSTextCheckingResult *match = [regex firstMatchInString:self.qrCode options:0 range:NSMakeRange(0, [self.qrCode length])];
+        
+        // [match rangeAtIndex:1] gives the range of the group in parentheses
+        //Log(@"%@", [str substringWithRange:[match rangeAtIndex:1]]); //ives the first captured group in this example
+        NSString *capture = [self.qrCode substringWithRange:[match rangeAtIndex:1]];
+        
+        if (capture && [capture length]>0) {
+            NSNumber *gameId = [NSNumber numberWithLongLong:[capture longLongValue]];
+            Log(@"Game Id Scanned: %@",gameId);
+            
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+            
+            if (newViewController) {
+                NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+                
+                newViewController.gameId = gameId;
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"gameId==%@", gameId];
+                
+                Run *run = [Run MR_findFirstWithPredicate: predicate inContext:ctx];
+                
+                if (run) {
+                    newViewController.runId = run.runId;
+                }
+                
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+            }
+        }
+    }
+}
 @end

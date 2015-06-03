@@ -91,9 +91,9 @@
         <!--Scan Code-->
         <scene sceneID="1Iw-kg-vNo">
             <objects>
-                <viewController title="Scan Code" id="0ly-fY-awO" customClass="ARLScanViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="QRScannerView" title="Scan Code" id="0ly-fY-awO" customClass="ARLScanViewController" sceneMemberID="viewController">
                     <view key="view" opaque="NO" contentMode="scaleToFill" id="wAs-Fe-CVR">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="Xd0-cB-0nm">
@@ -117,13 +117,23 @@
                         </subviews>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="rzQ-DA-wxt"/>
+                        <barButtonItem title="Use Code" id="RxZ-yh-sbI">
+                            <connections>
+                                <action selector="useCodeAction:" destination="0ly-fY-awO" id="4u4-sS-Jeh"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" title="Scan Code" id="Ijg-AB-GgH">
                         <barButtonItem key="backBarButtonItem" title="Home" id="yVs-UM-184"/>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="backgroundImage" destination="Xd0-cB-0nm" id="ytM-p4-Rso"/>
                         <outlet property="scannedLabel" destination="Seg-jD-yQc" id="QZa-WX-EYX"/>
                         <outlet property="typeLabel" destination="uYr-Ls-0gy" id="fzT-t5-iIa"/>
+                        <outlet property="useCode" destination="RxZ-yh-sbI" id="Q7e-oS-pbN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JLa-UY-udg" userLabel="First Responder" sceneMemberID="firstResponder"/>

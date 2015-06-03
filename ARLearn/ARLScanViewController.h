@@ -40,6 +40,10 @@
  */
 @interface ARLScanViewController : UIViewController <AMScanViewControllerDelegate,AVCaptureMetadataOutputObjectsDelegate>
 
+@property (strong, nonatomic) GeneralItem *activeItem;
+
+@property (strong, nonatomic) NSNumber *runId;
+
 @property (nonatomic, weak) id<AMScanViewControllerDelegate> delegate;
 
 @property (assign, nonatomic) BOOL touchToFocusEnabled;

@@ -35,6 +35,7 @@
 @implementation ARLGameViewController
 
 @synthesize game;
+@synthesize gameId;
 @synthesize runId;
 
 Class _class;
