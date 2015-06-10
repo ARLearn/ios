@@ -233,7 +233,9 @@
         int i = 1;
 
         for (NSDictionary *response in responses) {
-            TLog("DownloadResponse: %d + %d of %d", j, i++, responses.count);
+            // TLog("DownloadResponse: %d + %d of %d", j, i++, responses.count);
+            
+            i++;
             
             // Sample JSON:
             //{
@@ -466,6 +468,8 @@
         } //for
         
         j += i - 1;
+        
+        TLog("DownloadResponses: %d", j);
         
         [ctx MR_saveToPersistentStoreAndWait];
         
@@ -746,7 +750,9 @@
             int i = 1;
             
             for (NSDictionary *item in actions) {
-                TLog("DownloadAction: %d + %d of %d", j, i++, actions.count);
+                // TLog("DownloadAction: %d + %d of %d", j, i++, actions.count);
+                
+                i++;
                 
                 // @property (nonatomic, retain) NSString * action;          mapped
                 // @property (nonatomic, retain) NSNumber * synchronized;    yes (hardcoded value as it comes from the server)
@@ -854,7 +860,6 @@
                     //                }
                 }
                 
-                
                 [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCPROGRESS
                                                                     object:NSStringFromClass([Action class])];
                 
@@ -862,6 +867,8 @@
             } //for
             
             j += i - 1;
+            
+            TLog("DownloadActions: %d", j);
             
             [ctx MR_saveToPersistentStoreAndWait];
             
