@@ -203,12 +203,12 @@
     NSString *token = @"";
     NSNumber *serverTime = @0;
 
-    int j=0;
+    int j = 0;
     
     do {
         NSString *service = (token && token.length!=0) ?
-        [NSString stringWithFormat:@"response/runId/%@?from=%@",runId, lastDate] :
-        [NSString stringWithFormat:@"response/runId/%@?from=%@&resumptionToken=%@",runId, lastDate, token];
+        [NSString stringWithFormat:@"response/runId/%@?from=%@&resumptionToken=%@",runId, lastDate, token] :
+        [NSString stringWithFormat:@"response/runId/%@?from=%@",runId, lastDate];
         
         NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
         
@@ -230,7 +230,7 @@
         
         NSDictionary *responses = [rlist objectForKey:@"responses"];
 
-        int i=1;
+        int i = 1;
 
         for (NSDictionary *response in responses) {
             TLog("DownloadResponse: %d + %d of %d", j, i++, responses.count);
@@ -465,21 +465,23 @@
             }
         } //for
         
-        j += i;
-        
-        if (serverTime && [serverTime intValue] != 0) {
-            if (!sync) {
-                sync = [SynchronizationBookKeeping MR_createEntityInContext:ctx];
-                
-                sync.type = [Response MR_entityName];
-                sync.context = runId;
-            }
-            sync.lastSynchronization = serverTime;
-        }
+        j += i - 1;
         
         [ctx MR_saveToPersistentStoreAndWait];
         
     } while (token && token.length>0);
+    
+    if (serverTime && [serverTime intValue] != 0) {
+        if (!sync) {
+            sync = [SynchronizationBookKeeping MR_createEntityInContext:ctx];
+            
+            sync.type = [Response MR_entityName];
+            sync.context = runId;
+        }
+        sync.lastSynchronization = serverTime;
+    }
+    
+    [ctx MR_saveToPersistentStoreAndWait];
     
     // Saves any modification made after ManagedObjectFromDictionary.
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
@@ -666,12 +668,12 @@
         NSString *token = @"";
         NSNumber *serverTime = @0;
         
-        int j=0;
+        int j = 0;
         
         do {
             NSString *service = (token && token.length!=0) ?
-            [NSString stringWithFormat:@"actions/runId/%@?from=%@",runId, lastDate] :
-            [NSString stringWithFormat:@"actions/runId/%@?from=%@&resumptionToken=%@",runId, lastDate, token];
+                [NSString stringWithFormat:@"actions/runId/%@?from=%@&resumptionToken=%@",runId, lastDate, token] :
+                [NSString stringWithFormat:@"actions/runId/%@?from=%@",runId, lastDate];
             
             NSData *data = [ARLNetworking sendHTTPGetWithAuthorization:service];
             
@@ -681,6 +683,8 @@
                                                                             options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
                                                                               error:&error] : nil;
             ELog(error);
+//CjkKDwoEdGltZRIHCP6xk93YJxIiag1zfnN0cmVldGxlYXJuchELEglBY3Rpb25KRE8Y_olDDBgAIAA
+//            1362660721091
             
             //#pragma warn Debug Code
             // [ARLUtils LogJsonDictionary:response url:service];
@@ -738,7 +742,8 @@
             //                }
             //                ]
             //}
-            int i = 0;
+            
+            int i = 1;
             
             for (NSDictionary *item in actions) {
                 TLog("DownloadAction: %d + %d of %d", j, i++, actions.count);
@@ -854,26 +859,28 @@
                                                                     object:NSStringFromClass([Action class])];
                 
                 
-                [ctx MR_saveToPersistentStoreAndWait];
             } //for
             
-            j += i;
+            j += i - 1;
             
-            if (serverTime && [serverTime intValue] != 0) {
-                if (!sync) {
-                    sync = [SynchronizationBookKeeping MR_createEntityInContext:ctx];
-                    
-                    sync.type = [Action MR_entityName];
-                    sync.context = runId;
-                }
-                sync.lastSynchronization = serverTime;
-            }
+            [ctx MR_saveToPersistentStoreAndWait];
             
-            
-            // Saves any modification made after ManagedObjectFromDictionary.
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-
         } while (token && token.length>0);
+        
+        if (serverTime && [serverTime intValue] != 0) {
+            if (!sync) {
+                sync = [SynchronizationBookKeeping MR_createEntityInContext:ctx];
+                
+                sync.type = [Action MR_entityName];
+                sync.context = runId;
+            }
+            sync.lastSynchronization = serverTime;
+        }
+        
+        [ctx MR_saveToPersistentStoreAndWait];
+        
+        // Saves any modification made after ManagedObjectFromDictionary.
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:ARL_SYNCREADY
