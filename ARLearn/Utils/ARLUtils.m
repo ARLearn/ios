@@ -964,4 +964,113 @@ static BOOL _NO_ = NO;
     return isEnabled ? color : [ARLUtils ColorToGrayScale:color];
 }
 
+/*!
+ *  Create a gradient UIImage.
+ * 
+ *  See http://stackoverflow.com/questions/16788305/how-to-create-uiimage-with-vertical-gradient-using-from-color-and-to-color
+ *  And https://github.com/vilanovi/UIImage-Additions
+ *
+ *  @param topLeftColor     <#topLeftColor description#>
+ *  @param bottomRightColor <#bottomRightColor description#>
+ *  @param width            <#width description#>
+ *  @param height           <#height description#>
+ *
+ *  @return <#return value description#>
+ */
++ (UIImage *)GradientImageFromColors:(UIColor *)topLeftColor
+                    bottomRightColor:(UIColor *)bottomRightColor
+                               width:(int)width
+                              height:(int)height {
+    // Create a graphics context in the required size
+    CGSize size = CGSizeMake(width, height);
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    // Create a colour space
+    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+    
+    // Create Gradient
+    size_t gradientNumberOfLocations = 2;
+    CGFloat gradientLocations[2] = { 0.0, 1.0 };
+    
+    CGFloat r0,g0,b0,a0;
+    CGFloat r1,g1,b1,a1;
+    
+    [topLeftColor getRed:&r0 green:&g0 blue:&b0 alpha:&a0];
+    [bottomRightColor getRed:&r1 green:&g1 blue:&b1 alpha:&a1];
+    
+    CGFloat gradientComponents[8] = {
+        r0, g0, b0, a0,     // Start color
+        r1, g1, b1, a1,     // End color
+    };
+    
+    //    CGGradientRef gradient = CGGradientCreateWithColorComponents (colorspace, gradientComponents, gradientLocations, gradientNumberOfLocations);
+    //
+    // Fill the context with the gradient (vertical)
+    CGGradientRef gradient = CGGradientCreateWithColorComponents(colorspace,
+                                                                 gradientComponents,
+                                                                 gradientLocations,
+                                                                 gradientNumberOfLocations);
+    
+    CGContextDrawLinearGradient(context,
+                                gradient,
+                                CGPointMake(0,0),
+                                CGPointMake(width, height),
+                                kCGGradientDrawsAfterEndLocation);
+    
+    // Create an image from the context
+    UIImage *gradientImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    // Release the gradient, colour space and context
+    //CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorspace);
+    UIGraphicsEndImageContext();
+    
+    return [gradientImage resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+}
+
+/*!
+ *  See http://stackoverflow.com/questions/5677716/how-to-get-the-screen-width-and-height-in-ios
+ *
+ *  @param orientation <#orientation description#>
+ *
+ *  @return <#return value description#>
+ */
++ (CGFloat)ScreenWidthForCurrentOrientation {
+    return [ARLUtils ScreenWidthForOrientation:[UIApplication sharedApplication].statusBarOrientation];
+}
+
++ (CGFloat)ScreenWidthForOrientation:(UIInterfaceOrientation)orientation {
+    switch (orientation) {
+        case UIInterfaceOrientationLandscapeRight:
+        case UIInterfaceOrientationLandscapeLeft:
+            return [UIScreen mainScreen].bounds.size.height;
+        case UIInterfaceOrientationPortrait:
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return [UIScreen mainScreen].bounds.size.width;
+        case UIInterfaceOrientationUnknown:
+            return [UIScreen mainScreen].bounds.size.width;
+    }
+}
+
+/*!
+ *  Make UIColor transparent by replacing the alpha value.
+ *
+ *  @param color <#color description#>
+ *  @param alpha <#alpha description#>
+ *
+ *  @return <#return value description#>
+ */
++ (UIColor *)MakeColorTransparent:(UIColor *)color
+                            alpha:(CGFloat)alpha {
+    CGFloat r,g,b,a;
+    
+    [color getRed:&r green:&g blue:&b alpha:&a];
+    
+    return [UIColor colorWithRed:r
+                           green:g
+                            blue:b
+                           alpha:alpha];
+}
+
 @end

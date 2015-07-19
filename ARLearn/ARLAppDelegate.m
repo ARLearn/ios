@@ -89,6 +89,11 @@ static NSCondition *_theAbortLock;
     
     [self doRegisterForAPN:application];
     
+    // See User Interface Customizatin in iOS 6.0 Ray Wenderlich
+    // See http://www.raywenderlich.com/21703/user-interface-customization-in-ios-6
+    
+    [self customizeAppearance];
+
     return YES;
 }
 
@@ -364,6 +369,128 @@ static NSCondition *_theAbortLock;
 }
 
 #pragma mark - Methods
+
+/*!
+ * See User Interface Customizatin in iOS 6.0 Ray Wenderlich
+ * See http://www.raywenderlich.com/21703/user-interface-customization-in-ios-6 
+ */
+- (void)customizeAppearance
+{
+    {
+        // Create UINavigationBar Gradient
+        //
+       UIImage *gradient = [ARLUtils GradientImageFromColors:[UIColor redColor]
+                                               bottomRightColor:[UIColor yellowColor]
+                                                          width:[ARLUtils ScreenWidthForOrientation:UIInterfaceOrientationPortrait]
+                                                         height:44];
+        // Apply Portrait Gradient
+        //
+        [[UINavigationBar appearance] setBackgroundImage:gradient
+                                           forBarMetrics:UIBarMetricsDefault];
+    }
+    
+    {
+        // Create UINavigationBar Gradient
+        //
+        UIImage *gradient = [ARLUtils GradientImageFromColors:[UIColor redColor]
+                                               bottomRightColor:[UIColor yellowColor]
+                                                          width:[ARLUtils ScreenWidthForOrientation:UIInterfaceOrientationLandscapeLeft]
+                                                         height:32];
+        
+        // Apply Landscape Gradient
+        //
+        [[UINavigationBar appearance] setBackgroundImage:gradient
+                                           forBarMetrics:UIBarMetricsCompact];
+    }
+    
+    {
+        // Customize the title text for *all* UINavigationBars
+        //
+        [[UINavigationBar appearance] setTitleTextAttributes:
+         [NSDictionary dictionaryWithObjectsAndKeys:
+          [UIColor blackColor],                                  UITextAttributeTextColor,
+          
+          //[UIColor blackColor],                                 UITextAttributeTextShadowColor,
+          //[NSValue valueWithUIOffset:UIOffsetMake(0, -1)],      UITextAttributeTextShadowOffset,
+          
+          //[UIFont fontWithName:@"Arial-Bold" size:0.0],         UITextAttributeFont,
+          nil]];
+    }
+    
+    {
+        // Shadow underneath the UINavigationBar.
+        //
+        UIImage *gradient = [ARLUtils GradientImageFromColors:[ARLUtils MakeColorTransparent:[UIColor yellowColor] alpha:0.5]
+                                                   bottomRightColor:[ARLUtils MakeColorTransparent:[UIColor grayColor] alpha:0.0]
+                                                              width:1
+                                                             height:12];
+        
+        [[UINavigationBar appearance] setShadowImage:gradient];
+    }
+    
+    {
+        // Portrait Background Gradient.
+        //
+        UIImage *gradient = [ARLUtils GradientImageFromColors:[UIColor greenColor]
+                                             bottomRightColor:[UIColor yellowColor]
+                                                        width:1
+                                                       height:30];
+        
+        // UIBarButtonItem Background Gradient.
+        //
+        [[UIBarButtonItem appearance] setBackButtonBackgroundImage:[gradient resizableImageWithCapInsets:UIEdgeInsetsMake(0, 13, 0, 5)]
+                                                          forState:UIControlStateNormal
+                                                        barMetrics:UIBarMetricsDefault];
+    }
+    
+    {
+        // Landscape Background Gradient.
+        //
+        UIImage *gradient = [ARLUtils GradientImageFromColors:[UIColor greenColor]
+                                             bottomRightColor:[UIColor yellowColor]
+                                                        width:1
+                                                       height:30];
+        
+        // UIBarButtonItem Background Gradient.
+        //
+        [[UIBarButtonItem appearance] setBackButtonBackgroundImage:[gradient resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 5)]
+
+                                                          forState:UIControlStateNormal
+                                                        barMetrics:UIBarMetricsCompact];
+    }
+    
+    {
+        // UITableView
+        //
+        [[UITableView appearance] setTintColor:[UIColor redColor]];
+        [[UITableView appearance] setSeparatorColor:[UIColor redColor]];
+     
+        // UITableViewItem
+        [[UITableViewCell appearance] setBackgroundColor:[UIColor greenColor]];
+    }
+    
+    {
+        // UITableView
+        //
+        [[UITableView appearance] setTintColor:[UIColor redColor]];
+        [[UITableView appearance] setSeparatorColor:[UIColor redColor]];
+    }
+    
+    {
+        UIImage *gradient = [ARLUtils GradientImageFromColors:[UIColor redColor]
+                                             bottomRightColor:[UIColor yellowColor]
+                                                        width:[ARLUtils ScreenWidthForOrientation:UIInterfaceOrientationPortrait]
+                                                       height:44];
+        
+        [[UIToolbar appearance] setBackgroundImage:gradient
+                                forToolbarPosition:UIBarPositionBottom
+                                        barMetrics:UIBarMetricsDefault];
+    }
+    
+    {
+        // [UIView appearance] setBackgroundColor:<#(UIColor *)#>
+    }
+}
 
 /*!
  *  Setup Magical Records controlled database.

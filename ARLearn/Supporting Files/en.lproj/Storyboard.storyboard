@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="KGA-tg-SR1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="KGA-tg-SR1">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -376,7 +376,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="wB8-7f-707">
                                 <rect key="frame" x="16" y="233" width="288" height="207"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="QuestionItem" id="Xnq-Rs-MW1">
                                         <rect key="frame" x="0.0" y="50" width="288" height="44"/>
@@ -1036,7 +1036,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="MyGamesView" title="My Games" id="vy5-Fq-pYU" userLabel="My Games View Controller" customClass="ARLMyGamesViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="ReR-7V-J8F">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <prototypes>
@@ -1071,19 +1071,19 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="My Games" id="0Lb-EM-Dl3">
-                        <barButtonItem key="backBarButtonItem" title="Home" id="KuZ-Vp-yvC"/>
-                        <barButtonItem key="leftBarButtonItem" title="Home" id="NFI-bh-mcu">
+                    <navigationItem key="navigationItem" title="My Games" id="Ghw-1n-2CG">
+                        <barButtonItem key="leftBarButtonItem" title="Home" id="9Zp-gl-b1g">
                             <connections>
-                                <action selector="backButtonAction:" destination="vy5-Fq-pYU" id="Htt-hE-WTn"/>
+                                <action selector="backButtonAction:" destination="vy5-Fq-pYU" id="jic-Lh-SwX"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="geU-xg-VuH">
                         <autoresizingMask key="autoresizingMask"/>
                     </refreshControl>
                     <connections>
-                        <outlet property="backButton" destination="NFI-bh-mcu" id="pgF-jq-kn3"/>
+                        <outlet property="backButton" destination="9Zp-gl-b1g" id="mTS-yE-c8q"/>
                         <outlet property="logoutButton" destination="TpK-RK-ZMf" id="mZN-nT-WFV"/>
                         <outlet property="table" destination="ReR-7V-J8F" id="D5E-oU-dfb"/>
                     </connections>

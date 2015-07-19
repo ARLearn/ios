@@ -320,7 +320,50 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 
 + (UIColor *)ColorToGrayScale:(UIColor *)color;
 
-+(UIColor *)ColorOrGrayScale:(UIColor *)color
++ (UIColor *)ColorOrGrayScale:(UIColor *)color
                    isEnabled:(BOOL)isEnabled;
+
+/*!
+ *  Create a gradient UIImage.
+ *
+ *  See http://stackoverflow.com/questions/16788305/how-to-create-uiimage-with-vertical-gradient-using-from-color-and-to-color
+ *
+ *  @param topLeftColor     <#topLeftColor description#>
+ *  @param bottomRightColor <#bottomRightColor description#>
+ *  @param width            <#width description#>
+ *  @param height           <#height description#>
+ *
+ *  @return <#return value description#>
+ */
++ (UIImage *)GradientImageFromColors:(UIColor *)topLeftColor
+                    bottomRightColor:(UIColor *)bottomRightColor
+                               width:(int)width
+                              height:(int)height;
+/*!
+ *  Get the screen width corrected for the current device orientation.
+ *
+ *  @return <#return value description#>
+ */
++ (CGFloat)ScreenWidthForCurrentOrientation;
+
+/*!
+ *  Get the screen width corrected for a device orientation.
+ *
+ *  @param orientation <#orientation description#>
+ *
+ *  @return <#return value description#>
+ */
++ (CGFloat)ScreenWidthForOrientation:(UIInterfaceOrientation)orientation;
+
+/*!
+ *  Make UIColor transparent by replacing the alpha value.
+ *
+ *  @param color <#color description#>
+ *  @param alpha <#alpha description#>
+ *
+ *  @return <#return value description#>
+ */
++ (UIColor *)MakeColorTransparent:(UIColor *)color
+                            alpha:(CGFloat)alpha;
 
 @end
