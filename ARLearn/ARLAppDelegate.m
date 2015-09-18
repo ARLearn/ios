@@ -92,7 +92,7 @@ static NSCondition *_theAbortLock;
     // See User Interface Customizatin in iOS 6.0 Ray Wenderlich
     // See http://www.raywenderlich.com/21703/user-interface-customization-in-ios-6
     
-    [self customizeAppearance];
+    // [self customizeAppearance];
 
     return YES;
 }
