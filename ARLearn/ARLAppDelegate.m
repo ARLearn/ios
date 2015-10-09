@@ -51,7 +51,9 @@ static NSCondition *_theAbortLock;
 {
     // Override point for customization after application launch.
     DLog(@"didFinishLaunchingWithOptions");
-    
+     
+    NSSetUncaughtExceptionHandler(&exceptionHandler);
+
     //TODO: Register and Process APN's found in the launchOptions.
     
     [ARLUtils LogGitInfo];
@@ -74,10 +76,11 @@ static NSCondition *_theAbortLock;
     // DLog(@"Logging: %d", [[NSUserDefaults standardUserDefaults] boolForKey:ENABLE_LOGGING]);
     // DLog(@"Logging: %@", [NSNumber numberWithBool:[ARLLog LogOn]]);
     
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
-                                                                           UIRemoteNotificationTypeAlert |
-                                                                           UIRemoteNotificationTypeBadge |UIRemoteNotificationTypeSound
-                                                                           )];
+    //[[UIApplication sharedApplication] registerForRemoteNotificationTypes:(
+    //                                                                           UIRemoteNotificationTypeAlert |
+    //                                                                           UIRemoteNotificationTypeBadge |
+    //                                                                           UIRemoteNotificationTypeSound
+    //                                                                           )];
     
     [self startStandardUpdates];
     
@@ -93,7 +96,7 @@ static NSCondition *_theAbortLock;
     // See http://www.raywenderlich.com/21703/user-interface-customization-in-ios-6
     
     // [self customizeAppearance];
-
+    
     return YES;
 }
 
@@ -196,8 +199,6 @@ static NSCondition *_theAbortLock;
  */
 - (void)doRegisterForAPN:(UIApplication *)application
 {
-#warning APN REGISTRATION CODE ENABLED FOR NOW.
-    
     // See http://stackoverflow.com/questions/24216632/remote-notification-ios-8
     if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
 #ifdef __IPHONE_8_0
@@ -369,6 +370,20 @@ static NSCondition *_theAbortLock;
 }
 
 #pragma mark - Methods
+
+/*!
+ *  See http://stackoverflow.com/questions/10501358/objective-c-getting-line-number-or-full-stack-trace-from-debugger-error
+ *
+ *  @param exception <#exception description#>
+ */
+void exceptionHandler(NSException *exception)
+{
+    Log(@"%@",[exception name]);
+    Log(@"%@",[exception reason]);
+    Log(@"%@",[exception userInfo]);
+    Log(@"%@",[exception callStackSymbols]);
+    Log(@"%@",[exception callStackReturnAddresses]);
+}
 
 /*!
  * See User Interface Customizatin in iOS 6.0 Ray Wenderlich
@@ -575,10 +590,20 @@ static CLLocationCoordinate2D currentCoordinates;
  */
 - (void)startStandardUpdates
 {
+    // GPS Stein   is 50,9743553 - 5,7675690
+    // GPS Heerlen is 50,8746769 - 5,950582172
+    
     // Create the location manager if this object does not
     // already have one.
     if (nil == locationManager) {
         locationManager = [[CLLocationManager alloc] init];
+        
+        // veg 02-10-2015 iOS 8+
+        // see http://nevan.net/2014/09/core-location-manager-changes-in-ios-8/
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [locationManager requestWhenInUseAuthorization];
+        }
     }
     
     if (locationManager && CLLocationManager.locationServicesEnabled) {
@@ -603,6 +628,12 @@ static CLLocationCoordinate2D currentCoordinates;
     // already have one.
     if (nil == locationManager) {
         locationManager = [[CLLocationManager alloc] init];
+        // veg 02-10-2015 iOS 8+
+        // see http://nevan.net/2014/09/core-location-manager-changes-in-ios-8/
+        // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+        if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [locationManager requestWhenInUseAuthorization];
+        }
     }
     
     if (locationManager && CLLocationManager.locationServicesEnabled) {
@@ -710,3 +741,13 @@ static CLLocationCoordinate2D currentCoordinates;
 }
 
 @end
+
+// See http://stackoverflow.com/questions/21025622/http-load-failed-kcfstreamerrordomainssl-9813-in-cordova-app
+//@implementation NSURLRequest(DataController)
+//+ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host
+//{
+//    Log(@"Host=%@", host);
+//    
+//    return YES;
+//}
+//"h@end

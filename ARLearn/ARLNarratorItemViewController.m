@@ -521,7 +521,9 @@ typedef NS_ENUM(NSInteger, responses) {
             }
             
             if (response.fileName) {
-                BOOL http = [[response.fileName lowercaseString] hasPrefix:@"http://"] || [[response.fileName lowercaseString] hasPrefix:@"https://"] ;
+                BOOL http =
+                [[response.fileName lowercaseString] hasPrefix:@"http://"] ||
+                [[response.fileName lowercaseString] hasPrefix:@"https://"] ;
                 
                 // if (http) {
                 CGSize size = [[UIScreen mainScreen] bounds].size;

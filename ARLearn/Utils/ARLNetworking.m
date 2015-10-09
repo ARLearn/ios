@@ -450,6 +450,8 @@ static NSString *_ecoLoginString;
  *  Get and process OAUTH Info from ARLearn server.
  */
 +(void) setupOauthInfo {
+    // for ios 8/9 see http://stackoverflow.com/questions/31254725/transport-security-has-blocked-a-cleartext-http
+    //
     NSData *data = [ARLNetworking sendHTTPGet:@"oauth/getOauthInfo"];
     
     //{
@@ -500,7 +502,14 @@ static NSString *_ecoLoginString;
     
     ELog(error);
     
+    //    for (NSDictionary* dict in [network objectForKey:@"oauthInfoList"]) {
+    //        NSString *redir = [dict objectForKey:@"redirectUri"];
+    //        redir = [redir stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"];
+    //        [dict setValue:redir forKey:@"redirectUri"];
+    //    }
+    
     for (NSDictionary* dict in [network objectForKey:@"oauthInfoList"]) {
+        Log(@"%@=%@", [dict objectForKey:@"providerId"], [dict objectForKey:@"redirectUri"]);
         switch ([(NSNumber*)[dict objectForKey:@"providerId"] intValue]) {
             case FACEBOOK:
                 _facebookLoginString = [NSString stringWithFormat:@"https://graph.facebook.com/oauth/authorize?client_id=%@&display=page&redirect_uri=%@&scope=publish_stream,email",
@@ -529,7 +538,7 @@ static NSString *_ecoLoginString;
                 break;
                 
             case ECO:
-               _ecoLoginString = [NSString stringWithFormat:@"http://idp.ecolearning.eu/authorize?response_type=code&redirect_uri=%@&scope=openid+profile+email&client_id=%@",
+               _ecoLoginString = [NSString stringWithFormat:@"https://idp.ecolearning.eu/authorize?response_type=code&redirect_uri=%@&scope=openid+profile+email&client_id=%@",
                                   [dict objectForKey:@"redirectUri"],
                                   [dict objectForKey:@"clientId"]];
                                   
