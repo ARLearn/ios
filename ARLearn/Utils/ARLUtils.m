@@ -118,8 +118,8 @@ static NSCondition *_theAbortLock;
     
     return [ARLUtils ManagedObjectFromDictionary:dict
                                       entityName:entity
-                                      nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
-                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                      nameFixups:[NSDictionary dictionary]
+                                      dataFixups:[NSDictionary dictionary]
                                   managedContext:ctx];
 }
 
@@ -143,7 +143,7 @@ static NSCondition *_theAbortLock;
     return [ARLUtils ManagedObjectFromDictionary:dict
                                       entityName:entity
                                       nameFixups:fixups
-                                      dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                      dataFixups:[NSDictionary dictionary]
                                   managedContext:ctx];
 }
 
@@ -279,7 +279,7 @@ static NSCondition *_theAbortLock;
  */
 + (NSDictionary *) DictionaryFromManagedObject:(NSManagedObject *)object {
     return [ARLUtils DictionaryFromManagedObject:object
-                                      nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]];
+                                      nameFixups:[NSDictionary dictionary]];
 }
 
 /*!

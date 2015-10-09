@@ -137,7 +137,6 @@ typedef NS_ENUM(NSInteger, services) {
 + (NSString *) googleLoginString;
 + (NSString *) linkedInLoginString;
 + (NSString *) twitterLoginString;
-+ (NSString *) wespotLoginString;
 + (NSString *) ecoLoginString;
 
 + (NSString *) MakeRestUrl:(NSString *) service;

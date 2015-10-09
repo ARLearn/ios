@@ -88,9 +88,8 @@
 
 + (void)processGameDictionaryItem:(NSDictionary *)dict ctx:(NSManagedObjectContext *)ctx
 {
-    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *datafixups = [NSDictionary dictionary];
                                 // Data,                                                        CoreData
-                                nil];
     
     NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
                                 // Json,                        CoreData
@@ -119,15 +118,14 @@
 
 + (void)processRunDictionaryItem:(NSDictionary *)dict ctx:(NSManagedObjectContext *)ctx
 {
-    NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *namefixups = [NSDictionary dictionary];
                                 // Json,                         CoreData
-                                nil];
     
-    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *datafixups = [NSDictionary dictionary];
                                 // Data,                         CoreData
                                 // Relations cannot be done here easily due to context changes.
                                 // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
-                                nil];
+                                // nil];
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"runId==%@", [dict valueForKey:@"runId"]];
     

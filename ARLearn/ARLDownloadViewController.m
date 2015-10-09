@@ -293,9 +293,10 @@ Class _class;
                                 @"description",                 @"richTextDescription",
                                 nil];
     
-    NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *datafixups = [NSDictionary dictionary];
+                                //[NSDictionary dictionaryWithObjectsAndKeys:
                                 // Data,                        CoreData
-                                nil];
+                                //nil];
     
     NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
     

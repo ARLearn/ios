@@ -65,11 +65,11 @@ NSArray *ids;
     // Setting a footer hides empty cels at the bottom.
     self.featuredTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
-    ids = [NSArray arrayWithObjects:
+    ids = [NSArray array]; //WithObjects:
            // [NSNumber numberWithLongLong:13876002],
            // [NSNumber numberWithLongLong:20536006],
            // [NSNumber numberWithLongLong:5248241780129792],
-           nil];
+           //nil];
     
     [self applyConstraints];
 }

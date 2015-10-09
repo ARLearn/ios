@@ -1539,8 +1539,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     Response *response = (Response *)[ARLUtils ManagedObjectFromDictionary:respDict
                                                                 entityName:[Response MR_entityName]
-                                                                nameFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
-                                                                dataFixups:[NSDictionary dictionaryWithObjectsAndKeys:nil]
+                                                                nameFixups:[NSDictionary dictionary]
+                                                                dataFixups:[NSDictionary dictionary]
                                                             managedContext:ctx];
     
     // Fixup object references.

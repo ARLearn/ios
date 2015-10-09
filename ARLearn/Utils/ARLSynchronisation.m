@@ -315,13 +315,13 @@
                                         @"timestamp",                    @"timeStamp",
                                         @"responseValue",                @"value",
                                         nil];
-            
-            NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+        
+            NSDictionary *datafixups = [NSDictionary dictionary]; //dictionaryWithObjectsAndKeys:
                                         // Data,                                                        CoreData
                                         // [NSKeyedArchiver archivedDataWithRootObject:generalItem],       @"json",
                                         // Relations cannot be done here easily due to context changes.
                                         // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"ownerGame",
-                                        nil];
+                                        //nil];
             
             //DONE: Test record deletion.
             //TODO: Find out what to do with linked records in other tables (like GeneralItemVisibility).
@@ -935,15 +935,14 @@
         //        @property (nonatomic, retain) NSSet *messages;
         //        @property (nonatomic, retain) NSSet *responses;
         
-        NSDictionary *namefixups = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    // Json,                         CoreData
-                                    nil];
+        NSDictionary *namefixups = [NSDictionary dictionary];
         
-        NSDictionary *datafixups = [NSDictionary dictionaryWithObjectsAndKeys:
+        NSDictionary *datafixups = [NSDictionary  dictionary];
+                                    //dictionaryWithObjectsAndKeys:
                                     // Data,                                                        CoreData
                                     // Relations cannot be done here easily due to context changes.
                                     // [Game MR_findFirstByAttribute:@"gameId" withValue:self.gameId], @"game",
-                                    nil];
+                                    //nil];
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"runId==%@", [run valueForKey:@"runId"]];
         

@@ -509,7 +509,7 @@ static NSString *_ecoLoginString;
     //    }
     
     for (NSDictionary* dict in [network objectForKey:@"oauthInfoList"]) {
-        Log(@"%@=%@", [dict objectForKey:@"providerId"], [dict objectForKey:@"redirectUri"]);
+        // Log(@"%@=%@", [dict objectForKey:@"providerId"], [dict objectForKey:@"redirectUri"]);
         switch ([(NSNumber*)[dict objectForKey:@"providerId"] intValue]) {
             case FACEBOOK:
                 _facebookLoginString = [NSString stringWithFormat:@"https://graph.facebook.com/oauth/authorize?client_id=%@&display=page&redirect_uri=%@&scope=publish_stream,email",
