@@ -175,9 +175,9 @@
 #pragma mark - UIWebViewDelegate
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    CGRect newBounds = webView.bounds;
-    newBounds.size.height = webView.scrollView.contentSize.height;
-    webView.bounds = newBounds;
+//    CGRect newBounds = webView.bounds;
+//    newBounds.size.height = webView.scrollView.contentSize.height;
+//    webView.bounds = newBounds;
     
     [self applyConstraints];
 }
@@ -320,14 +320,12 @@
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Fix player/descriptionText Vertically.
-    if (self.descriptionText.isHidden) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[playerButton(==70)]"
-                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                          metrics:nil
-                                                                            views:viewsDictionary]];
-    } else {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-[descriptionText(==%f)]-[playerButton(==70)]",
-                                                                                   self.descriptionText.bounds.size.height]
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[playerButton(==70)]-|"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary]];
+    if (!self.descriptionText.isHidden) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText]-[playerButton(==70)]-|"
                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
                                                                           metrics:nil
                                                                             views:viewsDictionary]];
