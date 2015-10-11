@@ -20,6 +20,7 @@
 #import "ARLMyGamesViewController.h"
 #import "ARLAudioPlayer.h"
 #import "ARLSynchronisation.h"
+#import "ARLVideoPlayerViewController.h"
 #import "ARLScanViewController.h"
 
 @interface ARLPlayViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate, NSFetchedResultsControllerDelegate, UINavigationControllerDelegate>

@@ -22,6 +22,7 @@ typedef enum {
     
     // GeneralItems
     AudioObject,            //ok
+    VideoObject,
     GeneralItemList,            //??
     NarratorItem,           //ok
     FileReference,              //??

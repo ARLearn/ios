@@ -99,11 +99,15 @@ typedef NS_ENUM(NSInteger, responses) {
     [super viewDidLoad];
     
     // Setting a footer hides empty cels at the bottom.
+    //self.itemsTable.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     self.itemsTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
     CGRect newBounds =  self.descriptionText.bounds;
     newBounds.size.height = 10;
     self.descriptionText.bounds = newBounds;
+    
+    // see http://stackoverflow.com/questions/2626104/iphone-xcode-programming-make-a-uiwebview-scrollable
+    // self.descriptionText.scalesPageToFit = YES;
     
     if (self.activeItem) {
         if (TrimmedStringLength(self.activeItem.richText) != 0) {
@@ -164,22 +168,7 @@ typedef NS_ENUM(NSInteger, responses) {
     
     if ([jsonDict valueForKey:@"audioFeed"]) {
         NSString *audioFile = [jsonDict valueForKey:@"audioFeed"];
-        NSURL *audioUrl;
-        
-        NSRange index = [audioFile rangeOfString:[self.activeItem.gameId stringValue]];
-        
-        if (index.length != 0) {
-            //https://dl.dropboxusercontent.com/u/20911418/ELENA%20pilot%20october%202013/Audio/Voice0001.aac
-            // index = 0x7ffffff,0
-            NSString *path = [audioFile substringFromIndex:index.location + index.length];
-            path = [path stringByAppendingString:@".mp3"];
-            audioFile = [ARLUtils GenerateResourceFileName:self.activeItem.gameId
-                                                      path:path];
-            
-            audioUrl = [[NSURL alloc] initFileURLWithPath:audioFile];
-        } else {
-            audioUrl = [NSURL URLWithString:audioFile];
-        }
+        NSURL *audioUrl = [ARLUtils convertStringUrl:audioFile fileExt:@".mp3" gameId:self.activeItem.gameId];
         
         //http://stackoverflow.com/questions/3635792/play-audio-from-internet-using-avaudioplayer
         //http://stackoverflow.com/questions/5501670/how-to-play-movie-files-with-no-file-extension-on-ios-with-mpmovieplayercontroll
@@ -193,19 +182,19 @@ typedef NS_ENUM(NSInteger, responses) {
         
         [self resetPlayer];
         
-        //init the Player to get file properties to set the time labels
-        //        self.playerSlider.value = 0.0;
-        //        self.playerSlider.maximumValue = [self.AudioDuration floatValue];
-        //
-        //        //init the current timedisplay and the labels. if a current time was stored
-        //        //for this player then take it and update the time display
-        //        self.elapsedLabel.text = @"0:00";
-        //
-        //        self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
-        
+        self.descriptionText.hidden = YES;
         if (![[jsonDict objectForKey:@"autoPlay"] boolValue]) {
             [self togglePlaying];
         }
+    } else if ([jsonDict valueForKey:@"videoFeed"]) {
+        [self.playerButton setHidden:YES];
+        [self.playerSlider setHidden:YES];
+        [self.durationLabel setHidden:YES];
+        [self.elapsedLabel setHidden:YES];
+
+#pragma warn NOT Implememted yet
+#pragma warn TODO Hide descriptiontext if not downloaded and internet is down (else hide player).
+
     } else {
         [self.playerButton setHidden:YES];
         [self.playerSlider setHidden:YES];
@@ -221,7 +210,6 @@ typedef NS_ENUM(NSInteger, responses) {
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
     
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
@@ -764,9 +752,19 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 #pragma mark - UIWebViewDelegate
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    CGRect newBounds = webView.bounds;
-    newBounds.size.height = webView.scrollView.contentSize.height;
-    webView.bounds = newBounds;
+    CGRect frame = webView.frame;
+    frame.size.height = 1;
+    webView.frame = frame;
+    CGSize fittingSize = [webView sizeThatFits:CGSizeZero];
+    frame.size = fittingSize;
+    frame.origin = CGPointMake(0.0f,0.0f);
+    webView.frame = frame;
+    
+    //see http://stackoverflow.com/questions/2626104/iphone-xcode-programming-make-a-uiwebview-scrollable
+    webView.multipleTouchEnabled = YES;
+    
+    [[webView.subviews objectAtIndex:0] setBounces:YES];
+    [[webView.subviews objectAtIndex:0] setBouncesZoom:NO];
     
     [self applyConstraints];
 }

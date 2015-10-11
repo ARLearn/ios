@@ -60,12 +60,17 @@
     if (self.activeItem) {
         if (TrimmedStringLength(self.activeItem.richText) != 0) {
             self.descriptionText.hidden = NO;
-            [self.descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
+            [self.descriptionText loadHTMLString:[ARLUtils replaceLocalUrlsinHtml:self.activeItem.richText]
+                                         baseURL:nil];
         } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
             self.descriptionText.hidden = NO;
-            [self.descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
+            [self.descriptionText loadHTMLString:[ARLUtils replaceLocalUrlsinHtml:self.activeItem.descriptionText]
+                                         baseURL:nil];
+            
+        } else {
+            self.descriptionText.hidden = YES;
         }
-    }else {
+    } else {
         self.descriptionText.hidden = YES;
     }
     
@@ -86,22 +91,7 @@
     //    UIImage *icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:iconUrl]]];
     
     NSString *audioFile = [json valueForKey:@"audioFeed"];
-    NSURL *audioUrl;
-    
-    NSRange index = [audioFile rangeOfString:[self.activeItem.gameId stringValue]];
-    
-    if (index.length != 0) {
-        //https://dl.dropboxusercontent.com/u/20911418/ELENA%20pilot%20october%202013/Audio/Voice0001.aac
-        // index = 0x7ffffff,0
-        NSString *path = [audioFile substringFromIndex:index.location + index.length];
-        path = [path stringByAppendingString:@".mp3"];
-        audioFile = [ARLUtils GenerateResourceFileName:self.activeItem.gameId
-                                                  path:path];
-
-        audioUrl = [[NSURL alloc] initFileURLWithPath:audioFile];
-    } else {
-        audioUrl = [NSURL URLWithString:audioFile];
-    }
+    NSURL *audioUrl = [ARLUtils convertStringUrl:audioFile fileExt:@".mp3" gameId:self.activeItem.gameId];
     
     //http://stackoverflow.com/questions/3635792/play-audio-from-internet-using-avaudioplayer
     //http://stackoverflow.com/questions/5501670/how-to-play-movie-files-with-no-file-extension-on-ios-with-mpmovieplayercontroll
@@ -113,34 +103,49 @@
     
     self.avPlayer = [AVPlayer playerWithPlayerItem:self.playerItem];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(itemDidFinishPlaying:)
-                                                 name:AVPlayerItemDidPlayToEndTimeNotification
-                                               object:self.avPlayer];
+//    //init the Player to get file properties to set the time labels
+//    self.playerSlider.value = 0.0;
+//    self.playerSlider.maximumValue = [self.AudioDuration floatValue];
+//    
+//    //init the current timedisplay and the labels. if a current time was stored
+//    //for this player then take it and update the time display
+//    self.elapsedLabel.text = @"0:00";
+//    
+//    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(itemDidFailPlaying:)
-                                                 name:AVPlayerItemFailedToPlayToEndTimeNotification
-                                               object:self.avPlayer];
+    [self resetPlayer];
     
-    [self.avPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
-    
-    //init the Player to get file properties to set the time labels
-    self.playerSlider.value = 0.0;
-    self.playerSlider.maximumValue = [self.AudioDuration floatValue];
-    
-    //init the current timedisplay and the labels. if a current time was stored
-    //for this player then take it and update the time display
-    self.elapsedLabel.text = @"0:00";
-    
-    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
-    
+#pragma warn DEBUG CODE. We show Description instead of avplayer if the internet is not available and the media is not downloaded yet.
+    self.descriptionText.hidden = YES;
+
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
     
     if (![[json objectForKey:@"autoPlay"] boolValue]) {
         [self togglePlaying];
+    }
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (self.descriptionText.isHidden) {
+        [self applyConstraints];
+    }
+    
+    if (!self.playerButton.isHidden) {
+        [self.avPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFinishPlaying:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:self.avPlayer];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFailPlaying:)
+                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                   object:self.avPlayer];
     }
 }
 
@@ -213,7 +218,7 @@
 - (NSNumber *)AudioDuration {
     CMTime duration = self.avPlayer.currentItem.asset.duration;
     
-    if (CMTIME_IS_VALID(duration)) {
+    if (CMTIME_IS_VALID(duration) && duration.value != 0) {
         return [NSNumber numberWithFloat:duration.value/duration.timescale];
     }
     return [NSNumber numberWithInt:0];
@@ -373,6 +378,22 @@
  */
 - (void)stopAudio {
     [self.avPlayer pause];
+}
+
+- (void)resetPlayer {
+    [self.timer invalidate];
+    
+    [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
+                                 forState:UIControlStateNormal];
+    
+    self.playerSlider.value = 0.0;
+    self.playerSlider.maximumValue = [self.AudioDuration floatValue];
+    self.CurrentAudioTime = 0.0;
+    
+    self.elapsedLabel.text = @"0:00";
+    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+    
+    self.isPaused = FALSE;
 }
 
 /*

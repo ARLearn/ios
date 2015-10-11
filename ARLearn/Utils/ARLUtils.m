@@ -553,7 +553,12 @@ static NSCondition *_theAbortLock;
     if ([filename isEqualToString:@"/audio"]) {
         filename = [filename stringByAppendingString:@".mp3"];
     }
+    if ([filename isEqualToString:@"/video"]) {
+        filename = [filename stringByAppendingString:@".mov"];
+    }
     NSString *filePath = [NSString stringWithFormat:@"%@%@", cachePath, filename];
+    
+    Log(@"Resource=%@", filePath);
     
     return filePath;
 }
@@ -1071,6 +1076,109 @@ static BOOL _NO_ = NO;
                            green:g
                             blue:b
                            alpha:alpha];
+}
+
+/*!
+ *  Create a regular expression with given string and options.
+ * 
+ *  See http://www.raywenderlich.com/30288/nsregularexpression-tutorial-and-cheat-sheet
+ */
++ (NSRegularExpression *)regularExpressionWithString:(NSString *)string options:(NSDictionary *)options
+{
+    // Create a regular expression
+    BOOL isCaseSensitive = [[options objectForKey:kRWSearchCaseSensitiveKey] boolValue];
+    BOOL isWholeWords = [[options objectForKey:kRWSearchWholeWordsKey] boolValue];
+    
+    NSError *error = NULL;
+    NSRegularExpressionOptions regexOptions = isCaseSensitive ? 0 : NSRegularExpressionCaseInsensitive;
+    
+    NSString *placeholder = isWholeWords ? @"\\b%@\\b" : @"%@";
+    NSString *pattern = [NSString stringWithFormat:placeholder, string];
+    
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:regexOptions error:&error];
+    if (error)
+    {
+        NSLog(@"Couldn't create regex with given string and options");
+    }
+    
+    return regex;
+}
+
+///*!
+// *  Search for a searchString and replace it with the replacementString in the given text view with search options
+// *
+// *  @param searchString      <#searchString description#>
+// *  @param replacementString <#replacementString description#>
+// *  @param textView          <#textView description#>
+// *  @param options           <#options description#>
+// */
+//- (void)searchAndReplaceText:(NSString *)searchString
+//                    withText:(NSString *)replacementString
+//                  inTextView:(UITextView *)textView
+//                     options:(NSDictionary *)options
+//{
+//    // Text before replacement
+//    NSString *beforeText = textView.text;
+//    
+//    // Create a range for it. We do the replacement on the whole
+//    // range of the text view, not only a portion of it.
+//    NSRange range = NSMakeRange(0, beforeText.length);
+//    
+//    // Call the convenient method to create a regex for us with the options we have
+//    NSRegularExpression *regex = [ARLUtils regularExpressionWithString:searchString options:options];
+//    
+//    // Call the NSRegularExpression method to do the replacement for us
+//    NSString *afterText = [regex stringByReplacingMatchesInString:beforeText options:0 range:range withTemplate:replacementString];
+//    
+//    // Update UI
+//    textView.text = afterText;
+//}
+
++ (NSURL *)convertStringUrl:(NSString *)fileName
+                    fileExt:(NSString *)fileExt
+                     gameId:(NSNumber *)gameId
+{
+    NSRange index = [fileName rangeOfString:[gameId stringValue]];
+    
+    //Distinguish between links from arlearn and external url's.
+    //The ones from arlearn contain the gameId and are downloaded when the game downloads.
+    //Thus we need to convert the url to a resource filename based one.
+    
+#pragma warn TODO Hide descriptiontext if not downloaded and internet is down (else hide player).
+    
+    if (index.length != 0) {
+        //http://streetlearn.appspot.com/game/5794474118610944/generalItems/6464887106568192/audio
+        
+        NSString *path = [fileName substringFromIndex:index.location + index.length];
+        path = [path stringByAppendingString:fileExt];
+        
+        NSString *resName = [ARLUtils GenerateResourceFileName:gameId
+                                                 path:path];
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:resName]) {
+            return [[NSURL alloc] initFileURLWithPath:resName];
+        } else {
+            return [NSURL URLWithString:fileName];
+        }
+    } else {
+        //https://dl.dropboxusercontent.com/u/20911418/ELENA%20pilot%20october%202013/Audio/Voice0001.aac
+        return [NSURL URLWithString:fileName];
+    }
+}
+
++ (NSString *)replaceLocalUrlsinHtml:(NSString *)html
+{
+    NSString *pattern = @"<img src=\"game/";
+    NSError *error = nil;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:&error];
+    
+    NSString *newImgTpl = [NSString stringWithFormat:@"<img src=\"file:///%@/", [ARLUtils GenerateTempDirectory]];
+    
+    return [regex stringByReplacingMatchesInString:html options:0
+                                             range:NSMakeRange(0, [html length])
+                                      withTemplate:newImgTpl];
 }
 
 @end

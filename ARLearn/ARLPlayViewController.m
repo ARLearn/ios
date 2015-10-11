@@ -280,7 +280,18 @@ Class _class;
             
 #warning TODO Different Icons for GeneralItem Types (match Android).
             
-            cell.imageView.image = [UIImage imageNamed:@"task-explore"];
+            BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
+            switch (bid) {
+                case VideoObject:
+                    cell.imageView.image = [UIImage imageNamed:@"task-video"];
+                    break;
+                case AudioObject:
+                    cell.imageView.image = [UIImage imageNamed:@"task-record"];
+                    break;
+                default:
+                    cell.imageView.image = [UIImage imageNamed:@"task-explore"];
+                    break;
+            }
             
             // DLog(@"%@=%@",[item.generalItemId stringValue], [self.visibility valueForKey:[item.generalItemId stringValue]]);
             
@@ -367,7 +378,7 @@ Class _class;
                 {
                     // if ([json valueForKey:@"openQuestion"]) {
                     //
-                    ARLNarratorItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"];
+                    ARLNarratorItemViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"NarratorItemPlayer"];
                     
                     if (newViewController) {
                         newViewController.runId = self.runId;
@@ -386,7 +397,27 @@ Class _class;
                     // Contains Audio + openQuestion (or nothing).
                 case AudioObject:
                 {
-                    ARLAudioPlayer *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CollectedDataView"]; //@"AudioPlayer"
+#pragma warn Wrong Name and Class (or is this a more universal one)?
+                    ARLAudioPlayer *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"AudioPlayer"];
+                    
+                    if (newViewController) {
+                        newViewController.runId = self.runId;
+                        newViewController.activeItem  = self.activeItem;
+                        
+                        // Move to another UINavigationController or UITabBarController etc.
+                        // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                        [self.navigationController pushViewController:newViewController animated:YES];
+                        
+                        newViewController = nil;
+                    }
+                }
+                    break;
+                    
+                case VideoObject:
+                {
+#pragma warn TODO - VideoObject
+                    Log("%@ not implemented yet", @"VideoObject");
+                    ARLVideoPlayerViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"VideoPlayer"];
                     
                     if (newViewController) {
                         newViewController.runId = self.runId;
@@ -419,7 +450,7 @@ Class _class;
                     
                 default:
                     //Should not happen
-                    DLog("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
+                    Log("Unhandled GeneralItem type %@", [ARLBeanNames beanIdToBeanName:bid]);
                     break;
             }
             

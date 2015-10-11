@@ -366,4 +366,16 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 + (UIColor *)MakeColorTransparent:(UIColor *)color
                             alpha:(CGFloat)alpha;
 
+#define kRWSearchCaseSensitiveKey @"kRWSearchCaseSensitiveKey"
+#define kRWSearchWholeWordsKey @"kRWSearchWholeWordsKey"
+
++ (NSRegularExpression *)regularExpressionWithString:(NSString *)string
+                                             options:(NSDictionary *)options;
+
++ (NSURL *)convertStringUrl:(NSString *)fileName
+                    fileExt:(NSString *)fileExt
+                     gameId:(NSNumber *)gameId;
+
++ (NSString *)replaceLocalUrlsinHtml:(NSString *)html;
+
 @end

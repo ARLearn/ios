@@ -55,6 +55,7 @@ CGFloat wbheight = 0.1f;
     wbheight = 0.1f;
     
     // Setting a footer hides empty cels at the bottom.
+    // self.answersTable.tableHeaderView = [[UIView alloc] initWithFrame:CGRectZero];
     self.answersTable.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
     
@@ -144,25 +145,51 @@ CGFloat wbheight = 0.1f;
             
             [descriptionText setUserInteractionEnabled:NO];
             
-            // The ContentSize of the UIWebView will only grow so start small.
-            //    CGRect newBounds =  self.descriptionText.bounds;
-            //    newBounds.size.height = 10;
-            //    self.descriptionText.bounds = newBounds;
-            
-            // wbheight = 0.1f;
-            
             if (self.activeItem) {
+                
+                // The ContentSize of the UIWebView will only grow so start small.
+                // CGRect newBounds =  descriptionText.bounds;
+                // newBounds.size.height = 10;
+                descriptionText.bounds = cell.contentView.frame;
+                
+                cell.backgroundColor = [UIColor redColor];
+                
+                // see http://stackoverflow.com/questions/2626104/iphone-xcode-programming-make-a-uiwebview-scrollable
+                // descriptionText.scalesPageToFit = YES;
+                
                 // no nice but te initial 0.1f becomes 0.1000000001 !
                 if (wbheight<0.2f) {
                     descriptionText.delegate = self;
                     
-                    if (TrimmedStringLength(self.activeItem.richText) != 0) {
-                        descriptionText.hidden = NO;
-                        [descriptionText loadHTMLString:self.activeItem.richText baseURL:nil];
-                    } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
-                        descriptionText.hidden = NO;
-                        [descriptionText loadHTMLString:self.activeItem.descriptionText baseURL:nil];
+#pragma warn, can contain urls lile <img src="game/5794474118610944/generalItems/6460249024233472/image" width="100%">
+                    
+                    if (self.activeItem) {
+                        if (TrimmedStringLength(self.activeItem.richText) != 0) {
+                            descriptionText.hidden = NO;
+                            [descriptionText loadHTMLString:[ARLUtils replaceLocalUrlsinHtml:self.activeItem.richText]
+                                                    baseURL:nil];
+                        } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
+                            descriptionText.hidden = NO;
+                            [descriptionText loadHTMLString:[ARLUtils replaceLocalUrlsinHtml:self.activeItem.descriptionText]
+                                                    baseURL:nil];
+                            
+                        } else {
+                            descriptionText.hidden = YES;
+                        }
+                    } else {
+                        descriptionText.hidden = YES;
                     }
+                    
+//                    NSString *html;
+//                    if (TrimmedStringLength(self.activeItem.richText) != 0) {
+//                        descriptionText.hidden = NO;
+//                        html = [ARLUtils replaceLocalUrlsinHtml:self.activeItem.richText];
+//                    } else if (TrimmedStringLength(self.activeItem.descriptionText) != 0) {
+//                        descriptionText.hidden = NO;
+//                        html = [ARLUtils replaceLocalUrlsinHtml:self.activeItem.descriptionText];
+//                    }
+//                    
+//                    [descriptionText loadHTMLString:html baseURL:nil];
                 }
             } else {
                 descriptionText.hidden = YES;
@@ -253,14 +280,12 @@ CGFloat wbheight = 0.1f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Log(@"heightForRowAtIndexPath %@",indexPath);
-    
     CGFloat rh = tableView.rowHeight==-1 ? 44.0f : tableView.rowHeight;
     
     switch (indexPath.section) {
-        case QUESTION:
+        case QUESTION: {
             return MAX(rh, wbheight);
-            
+        }
         case ANSWER:
             return rh;
     }
@@ -284,21 +309,19 @@ CGFloat wbheight = 0.1f;
 #pragma mark - UIWebViewDelegate
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-    CGFloat rh = self.answersTable.rowHeight==-1 ? 44.0f : self.answersTable.rowHeight;
-    
-    CGRect newBounds = webView.bounds;
-    newBounds.size.height = webView.scrollView.contentSize.height;
-    webView.bounds = newBounds;
-    
-    // NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
+    CGRect frame = webView.frame;
+    frame.size.height = 1;
+    webView.frame = frame;
+    CGSize fittingSize = [webView sizeThatFits:CGSizeZero];
+    frame.size = fittingSize;
+    frame.origin = CGPointMake(0.0f,0.0f);
+    webView.frame = frame;
 
-    // Log(@"%@", html);
+    wbheight = fittingSize.height;
     
-    wbheight = rh < webView.scrollView.contentSize.height ? webView.scrollView.contentSize.height : rh;
-    //newBounds.size.height;
-    
-    // [self applyConstraints];
-    // [self.answersTable reloadData];
+    // See http://stackoverflow.com/questions/14066537/is-there-any-way-refresh-cells-height-without-reload-reloadrow
+    [self.answersTable beginUpdates];
+    [self.answersTable endUpdates];
 }
 
 // See http://stackoverflow.com/questions/8490038/open-target-blank-links-outside-of-uiwebview-in-safari

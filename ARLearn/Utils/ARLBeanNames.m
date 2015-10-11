@@ -34,6 +34,7 @@
             @"org.celstec.arlearn2.beans.dependencies.AndDependency": @(AndDependency),
             
             @"org.celstec.arlearn2.beans.generalItem.AudioObject": @(AudioObject),
+            @"org.celstec.arlearn2.beans.generalItem.VideoObject": @(VideoObject),
             @"org.celstec.arlearn2.beans.generalItem.GeneralItemList": @(GeneralItemList),
             @"org.celstec.arlearn2.beans.generalItem.NarratorItem": @(NarratorItem),
             @"org.celstec.arlearn2.beans.generalItem.FileReference": @(FileReference),

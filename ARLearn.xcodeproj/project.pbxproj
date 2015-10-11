@@ -50,6 +50,7 @@
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
 		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
+		8D49CA7F1BC8110400711E0D /* ARLVideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D49CA7E1BC8110400711E0D /* ARLVideoPlayerViewController.m */; settings = {ASSET_TAGS = (); }; };
 		8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53D8181A35A75800A869B0 /* NSString+MD5.m */; };
 		8D53D81C1A35A77C00A869B0 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53D81B1A35A77C00A869B0 /* NSData+MD5.m */; };
 		8D55B28A1975633600C0A56B /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2831975633600C0A56B /* TPKeyboardAvoidingCollectionView.m */; };
@@ -205,6 +206,8 @@
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		8D4233E6196EC5F3007410C3 /* ARLNotificationSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLNotificationSubscriber.h; sourceTree = "<group>"; };
 		8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNotificationSubscriber.m; sourceTree = "<group>"; };
+		8D49CA7D1BC8110400711E0D /* ARLVideoPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLVideoPlayerViewController.h; sourceTree = "<group>"; };
+		8D49CA7E1BC8110400711E0D /* ARLVideoPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLVideoPlayerViewController.m; sourceTree = "<group>"; };
 		8D53D8171A35A75800A869B0 /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		8D53D8181A35A75800A869B0 /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 		8D53D81A1A35A77C00A869B0 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
@@ -433,6 +436,8 @@
 				8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */,
 				8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */,
 				8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */,
+				8D49CA7D1BC8110400711E0D /* ARLVideoPlayerViewController.h */,
+				8D49CA7E1BC8110400711E0D /* ARLVideoPlayerViewController.m */,
 				8D219659196D26080044616A /* ARLViewController.h */,
 				8D21965A196D26080044616A /* ARLViewController.m */,
 				8DA979981AE5400200709E72 /* ARLWebViewController.h */,
@@ -883,6 +888,7 @@
 				8D14130D1993CF1400422510 /* ARLCategoriesViewController.m in Sources */,
 				8D04D2721A41B0A40071582E /* ARLOperations.m in Sources */,
 				8D219A83196D31350044616A /* MagicalRecord+ShorthandSupport.m in Sources */,
+				8D49CA7F1BC8110400711E0D /* ARLVideoPlayerViewController.m in Sources */,
 				8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */,
 				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,
 				8D219A6C196D31350044616A /* NSAttributeDescription+MagicalDataImport.m in Sources */,
