@@ -1,14 +1,14 @@
 //
-//  ARLAudioPlayer.m
+//  ARLVideoPlayerViewController.m
 //  ARLearn
 //
-//  Created by G.W. van der Vegt on 23/04/15.
-//  Copyright (c) 2015 Open University of the Netherlands. All rights reserved.
-//  Based on YMCAudioPlayer / http://www.ymc.ch/en/building-a-simple-audioplayer-in-ios / https://github.com/ymc-thzi/ios-audio-player/
+//  Created by G.W. van der Vegt on 09/10/15.
+//  Copyright © 2015 Open University of the Netherlands. All rights reserved.
+//
 
-#import "ARLAudioPlayer.h"
+#import "ARLVideoPlayerViewController.h"
 
-@interface ARLAudioPlayer ()
+@interface ARLVideoPlayerViewController ()
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 @property (weak, nonatomic) IBOutlet UIWebView *descriptionText;
@@ -23,33 +23,30 @@
 - (IBAction)sliderAction:(UISlider *)sender;
 - (IBAction)isScrubbing:(UISlider *)sender;
 
-//@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
-
-@property (readonly, nonatomic) NSTimeInterval CurrentAudioTime;
-@property (readonly, nonatomic) NSNumber *AudioDuration;
+@property (readonly, nonatomic) NSTimeInterval CurrentVideoTime;
+@property (readonly, nonatomic) NSNumber *VideoDuration;
 
 @property BOOL isPaused;
 @property BOOL scrubbing;
 @property NSTimer *timer;
 
 @property AVURLAsset *avAsset;
+
 @property AVPlayerItem *playerItem;
 @property AVPlayer *avPlayer;
 @property id playbackTimeObserver;
 
 @end
 
-@implementation ARLAudioPlayer
+@implementation ARLVideoPlayerViewController
 
 @synthesize activeItem= _activeItem;
 @synthesize runId;
 
-@synthesize CurrentAudioTime;
-@synthesize AudioDuration;
+@synthesize CurrentVideoTime;
+@synthesize VideoDuration;
 
-#pragma mark - ViewController
-
-- (void)viewDidLoad {
+-(void)viewDidLoad {
     [super viewDidLoad];
     
     // The ContentSize of the UIWebView will only grow so start small.
@@ -80,38 +77,41 @@
                                 activeItem:self.activeItem
                                       verb:read_action];
     
-#warning FIND BETTER WAY TO SEE WETHER FEED IS PART OF GAMEFILES.
-    
     NSDictionary *json = [NSKeyedUnarchiver unarchiveObjectWithData:self.activeItem.json];
     
 #warning what to do with iconUrl field (and it's MD5 hash)?
     
-    //    NSString *iconUrl = [json valueForKey:@"iconUrl"];
+    //NSString *iconUrl = [json valueForKey:@"iconUrl"];
     //
-    //    UIImage *icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:iconUrl]]];
+    //UIImage *icon = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:iconUrl]]];
     
-    NSString *audioFile = [json valueForKey:@"audioFeed"];
-    NSURL *audioUrl = [ARLUtils convertStringUrl:audioFile fileExt:@".mp3" gameId:self.activeItem.gameId];
+    NSString *videoFile = [json valueForKey:@"videoFeed"];
+    NSURL *videoUrl = [ARLUtils convertStringUrl:videoFile fileExt:@".mov" gameId:self.activeItem.gameId];
     
-    //http://stackoverflow.com/questions/3635792/play-audio-from-internet-using-avaudioplayer
-    //http://stackoverflow.com/questions/5501670/how-to-play-movie-files-with-no-file-extension-on-ios-with-mpmovieplayercontroll
+    // see http://stackoverflow.com/questions/1266750/iphone-sdkhow-do-you-play-video-inside-a-view-rather-than-fullscreen
+    self.avPlayer = [AVPlayer playerWithURL:videoUrl];
     
-    self.avAsset = [AVURLAsset URLAssetWithURL:audioUrl
-                                       options:nil];
-  
-    self.playerItem = [AVPlayerItem playerItemWithAsset:self.avAsset];
+    // Add Player to main view.
+    AVPlayerLayer *layer = [AVPlayerLayer layer];
     
-    self.avPlayer = [AVPlayer playerWithPlayerItem:self.playerItem];
- 
+    #pragma warn TODO Correctly Position Player.
+    
+    [layer setPlayer:self.avPlayer];
+    [layer setFrame:CGRectMake(10, 10, 300, 200)];
+    [layer setBackgroundColor:[UIColor clearColor].CGColor];
+    [layer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    
+    [self.view.layer addSublayer:layer];
+
     [self resetPlayer];
     
 #pragma warn DEBUG CODE. We show Description instead of avplayer if the internet is not available and the media is not downloaded yet.
-    // self.descriptionText.hidden = YES;
-
     if (self.descriptionText.isHidden) {
         [self applyConstraints];
     }
     
+    //[self playVideo];
+    self.descriptionText.hidden = YES;
     if (![[json objectForKey:@"autoPlay"] boolValue]) {
         [self togglePlaying];
     }
@@ -142,7 +142,7 @@
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [self stopAudio];
+    [self stopVideo];
     
     [self.avPlayer removeObserver:self forKeyPath:@"rate"];
     
@@ -155,8 +155,7 @@
                                                   object:nil];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
     // Dispose of any resources that can be recreated.
@@ -165,9 +164,9 @@
 #pragma mark - UIWebViewDelegate
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView {
-//    CGRect newBounds = webView.bounds;
-//    newBounds.size.height = webView.scrollView.contentSize.height;
-//    webView.bounds = newBounds;
+    CGRect newBounds = webView.bounds;
+    newBounds.size.height = webView.scrollView.contentSize.height;
+    webView.bounds = newBounds;
     
     [self applyConstraints];
 }
@@ -186,14 +185,14 @@
  * To set the current Position of the
  * playing audio File
  */
-- (void)setCurrentAudioTime:(NSTimeInterval)value {
+- (void)setCurrentVideoTime:(NSTimeInterval)value {
     //[self.avlayer setCurrentTime:value];
     CMTime current = CMTimeMakeWithSeconds(value, 1);
     
     [self.avPlayer seekToTime:current];
 }
 
-- (NSTimeInterval)CurrentAudioTime {
+- (NSTimeInterval)CurrentVideoTime {
     CMTime current = self.avPlayer.currentTime;
     
     if (CMTIME_IS_VALID(current)) {
@@ -203,9 +202,9 @@
 }
 
 /*
- * Get the whole length of the audio file
+ * Get the whole length of the video file
  */
-- (NSNumber *)AudioDuration {
+- (NSNumber *)VideoDuration {
     CMTime duration = self.avPlayer.currentItem.asset.duration;
     
     if (CMTIME_IS_VALID(duration) && duration.value != 0) {
@@ -234,7 +233,6 @@
     return time;
 }
 
-
 - (void)togglePlaying {
     [self.timer invalidate];
     
@@ -249,7 +247,7 @@
                                                     userInfo:nil
                                                      repeats:YES];
         
-        [self playAudio];
+        [self playVideo];
         
         self.isPaused = TRUE;
     } else {
@@ -257,7 +255,7 @@
         [self.playerButton setBackgroundImage:[UIImage imageNamed:@"black_play"]
                                      forState:UIControlStateNormal];
         
-        [self pauseAudio];
+        [self pauseVideo];
         
         self.isPaused = FALSE;
     }
@@ -268,8 +266,10 @@
                                      self.view,             @"view",
                                      
                                      self.backgroundImage,  @"backgroundImage",
-                                     
+                                    
+                                     //self.avPlayer,         @"avPlayer",
                                      //self.itemsTable,       @"itemsTable",
+                                     
                                      self.descriptionText,  @"descriptionText",
                                      self.playerButton,     @"playerButton",
                                      self.playerSlider,     @"playerSlider",
@@ -282,6 +282,7 @@
     // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    //self.avPlayer.translatesAutoresizingMaskIntoConstraints = NO;
     self.descriptionText.translatesAutoresizingMaskIntoConstraints = NO;
     self.playerButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.playerSlider.translatesAutoresizingMaskIntoConstraints = NO;
@@ -298,6 +299,13 @@
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     
+    // Fix player Horizontal.
+    // Not needed as it's in a Layer on top.
+    //    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[avPlayer]-|"
+    //                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+    //                                                                      metrics:nil
+    //                                                                        views:viewsDictionary]];
+
     // Fix descriptionText Horizontal.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
@@ -310,12 +318,14 @@
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Fix player/descriptionText Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[playerButton(==70)]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-    if (!self.descriptionText.isHidden) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText]-[playerButton(==70)]-|"
+    if (self.descriptionText.isHidden) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[playerButton(==70)]-|"
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary]];
+    } else {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[descriptionText(==%f)]-[playerButton(==70)]-|",
+                                                                                   self.descriptionText.bounds.size.height]
                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
                                                                           metrics:nil
                                                                             views:viewsDictionary]];
@@ -345,26 +355,26 @@
                                                            constant:0]];
 }
 
-#pragma mark - Actions.
+#pragma mark - Actions
 
 /*
  * Simply fire the play Event
  */
-- (void)playAudio {
+- (void)playVideo {
     [self.avPlayer play];
 }
 
 /*
  * Simply fire the pause Event
  */
-- (void)pauseAudio {
+- (void)pauseVideo {
     [self.avPlayer pause];
 }
 
 /*
  * Simply fire the stop Event
  */
-- (void)stopAudio {
+- (void)stopVideo {
     [self.avPlayer pause];
 }
 
@@ -375,11 +385,11 @@
                                  forState:UIControlStateNormal];
     
     self.playerSlider.value = 0.0;
-    self.playerSlider.maximumValue = [self.AudioDuration floatValue];
-    self.CurrentAudioTime = 0.0;
+    self.playerSlider.maximumValue = [self.VideoDuration floatValue];
+    self.CurrentVideoTime = 0.0;
     
     self.elapsedLabel.text = @"0:00";
-    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.VideoDuration]];
     
     self.isPaused = FALSE;
 }
@@ -392,12 +402,12 @@
 - (void)updateTime:(NSTimer *)timer {
     //to don't update every second. When scrubber is mouseDown the the slider will not set
     if (!self.scrubbing) {
-        self.playerSlider.value = self.CurrentAudioTime;
+        self.playerSlider.value = self.CurrentVideoTime;
     }
     self.elapsedLabel.text = [NSString stringWithFormat:@"%@",
-                              [self timeFormat:[NSNumber numberWithDouble:self.CurrentAudioTime]]];
+                              [self timeFormat:[NSNumber numberWithDouble:self.CurrentVideoTime]]];
     self.durationLabel.text = [NSString stringWithFormat:@"-%@",
-                               [self timeFormat:@([self.AudioDuration doubleValue] - self.CurrentAudioTime)]];
+                               [self timeFormat:@([self.VideoDuration doubleValue] - self.CurrentVideoTime)]];
 }
 
 /*
@@ -417,7 +427,7 @@
                                    userInfo:nil
                                     repeats:NO];
     
-    self.CurrentAudioTime = self.playerSlider.value;
+    self.CurrentVideoTime = self.playerSlider.value;
     
     self.scrubbing = FALSE;
 }
@@ -435,10 +445,10 @@
                                  forState:UIControlStateNormal];
     
     self.playerSlider.value = 0.0;
-    self.CurrentAudioTime = self.playerSlider.value;
+    self.CurrentVideoTime = self.playerSlider.value;
     
     self.elapsedLabel.text = @"0:00";
-    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+    self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.VideoDuration]];
     
     self.isPaused = FALSE;
 }
@@ -478,10 +488,10 @@
                                              forState:UIControlStateNormal];
                 
                 self.playerSlider.value = 0.0;
-                self.CurrentAudioTime = self.playerSlider.value;
+                self.CurrentVideoTime = self.playerSlider.value;
                 
                 self.elapsedLabel.text = @"0:00";
-                self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.AudioDuration]];
+                self.durationLabel.text = [NSString stringWithFormat:@"-%@", [self timeFormat:self.VideoDuration]];
                 
                 self.isPaused = FALSE;
             }
