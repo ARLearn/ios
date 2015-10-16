@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0F08F0EC2415CFE99D55EB551B1B353F8ADEC0FF",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0F08F0EC2415CFE99D55EB551B1B353F8ADEC0FF" : 0,
+    "EBF4C686972F47126B5742DF62FC5926EBFBDDCB" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "06626F51-D82F-4433-87C1-7444A925AB0A",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0F08F0EC2415CFE99D55EB551B1B353F8ADEC0FF" : "arlearn-ios.arlearnv3",
+    "EBF4C686972F47126B5742DF62FC5926EBFBDDCB" : "arlearn-ios"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ARLearn",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ARLearn.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ARLearn\/ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0F08F0EC2415CFE99D55EB551B1B353F8ADEC0FF"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/code.google.com\/p\/arlearn-ios",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EBF4C686972F47126B5742DF62FC5926EBFBDDCB"
+    }
+  ]
+}
