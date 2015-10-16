@@ -52,10 +52,11 @@ NSArray *ids;
     // Setting a footer hides empty cels at the bottom.
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    ids = [NSArray arrayWithObjects:
-           // [NSNumber numberWithLongLong:10206097],
-           // [NSNumber numberWithLongLong:5248241780129792],
-           nil];
+    ids = [NSArray array];
+    //    ids = [NSArray arrayWithObjects:
+    //           // [NSNumber numberWithLongLong:10206097],
+    //           // [NSNumber numberWithLongLong:5248241780129792],
+    //           nil];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;

@@ -58,7 +58,7 @@ static NSCondition *_theAbortLock;
     
     [ARLUtils LogGitInfo];
     
-    _networkAvailable = NO;
+    _networkAvailable = [NSNumber numberWithBool:NO];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged:)

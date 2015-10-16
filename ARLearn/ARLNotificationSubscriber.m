@@ -152,7 +152,7 @@
                                               returningResponse:&response
                                                           error:&error];
    
-    DLog(@"Status Code: %d",[response statusCode]);
+    DLog(@"Status Code: %ld",(long)[response statusCode]);
     if ([error code]) {
         ELog(error);
     }

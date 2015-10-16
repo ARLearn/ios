@@ -432,8 +432,8 @@
                 
                 if (value) {
                     if ([value objectForKey:@"imageUrl"]) {
-                        item.height = [NSNumber numberWithInt:[[value objectForKey:@"height"] integerValue]];
-                        item.width = [NSNumber numberWithInt:[[value objectForKey:@"width"] integerValue]];
+                        item.height = [NSNumber numberWithInteger:[[value objectForKey:@"height"] integerValue]];
+                        item.width = [NSNumber numberWithInteger:[[value objectForKey:@"width"] integerValue]];
                         item.fileName = [value objectForKey:@"imageUrl"];
                         item.contentType = @"application/jpg";
                         item.responseType = [NSNumber numberWithInt:PHOTO];
@@ -1213,7 +1213,7 @@
     ELog(error);
     
     if (response.statusCode!=200) {
-        DLog(@"%@ %d", response.URL, response.statusCode);
+        DLog(@"%@ %ld", response.URL, (long)response.statusCode);
     }
     
     DLog(@"Uploaded %@ - %@", contentTypeIn, fileName);

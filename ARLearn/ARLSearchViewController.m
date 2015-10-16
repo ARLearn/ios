@@ -192,7 +192,7 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
     
     self.searchResults = self.results;
     
-    DLog(@"Retrieved %d game(s)", self.results.count);
+    DLog(@"Retrieved %lu game(s)", (unsigned long)self.results.count);
     
     [self.table reloadData];
 }
@@ -371,7 +371,7 @@ didReceiveResponse:(NSURLResponse *)response
     self.accumulatedSize = [response expectedContentLength];
     self.accumulatedData = [[NSMutableData alloc]init];
     
-    DLog(@"Got HTTP Response [%d], expect %lld byte(s)", [httpResponse statusCode], self.accumulatedSize);
+    DLog(@"Got HTTP Response [%ld], expect %lld byte(s)", (long)[httpResponse statusCode], self.accumulatedSize);
     
     completionHandler(NSURLSessionResponseAllow);
 }
@@ -452,7 +452,7 @@ didCompleteWithError:(NSError *)error
 #endif //livesearch
     }
     
-    DLog(@"Filtered %d game(s)", self.searchResults.count);
+    DLog(@"Filtered %lu game(s)", (unsigned long)self.searchResults.count);
     
     //    NSPredicate *resultPredicate = [NSPredicate
     //                                    predicateWithFormat:@"SELF g[cd] %@",

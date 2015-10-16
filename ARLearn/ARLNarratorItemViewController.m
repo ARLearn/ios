@@ -252,7 +252,7 @@ typedef NS_ENUM(NSInteger, responses) {
         [self.fetchedResultsController performFetch:&error];
         ELog(error);
         
-        DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+        DLog("Feched %lu Records", (unsigned long)[[self.fetchedResultsController fetchedObjects] count]);
         
         [self.itemsTable reloadData];
         
@@ -847,7 +847,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         
         ELog(error);
         
-        DLog(@"RESPONSES: %d",[self.fetchedResultsController.fetchedObjects count]);
+        DLog(@"RESPONSES: %lu", (unsigned long)[self.fetchedResultsController.fetchedObjects count]);
     } else if ([alertView.message isEqualToString: NSLocalizedString(@"Delete Collected Item?", @"Delete Collected Item?")]) {
         if ([title isEqualToString:NSLocalizedString(@"YES", @"YES")]) {
             NSIndexPath *path = [NSIndexPath indexPathForItem:alertView.tag inSection:RESPONSES];
@@ -1555,7 +1555,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self.fetchedResultsController performFetch:&error];
     ELog(error);
     
-    DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+    DLog("Feched %lu Records", (unsigned long)[[self.fetchedResultsController fetchedObjects] count]);
     
     [self.itemsTable reloadData];
     
@@ -1571,11 +1571,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     float minutes = floor(lroundf([value floatValue])/60);
     float seconds = lroundf([value floatValue]) - (minutes * 60);
     
-    int roundedSeconds = lroundf(seconds);
-    int roundedMinutes = lroundf(minutes);
+    long roundedSeconds = lroundf(seconds);
+    long roundedMinutes = lroundf(minutes);
     
     NSString *time = [[NSString alloc]
-                      initWithFormat:@"%d:%02d",
+                      initWithFormat:@"%ld:%02ld",
                       roundedMinutes, roundedSeconds];
     return time;
 }
@@ -1749,7 +1749,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         [self.fetchedResultsController performFetch:&error];
         ELog(error);
         
-        DLog("Feched %d Records", [[self.fetchedResultsController fetchedObjects] count]);
+        DLog("Feched %lu Records", (unsigned long)[[self.fetchedResultsController fetchedObjects] count]);
         
         [self.itemsTable reloadData];
     } else {

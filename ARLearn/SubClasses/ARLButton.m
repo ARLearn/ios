@@ -97,7 +97,7 @@ const int kTextTopPadding = 2;
     // [self.layer insertSublayer:gradient atIndex:1];
     if (self.layer.sublayers.count>0)
     {
-        [self.layer insertSublayer:gradient atIndex:self.layer.sublayers.count-2];
+        [self.layer insertSublayer:gradient atIndex:(unsigned)self.layer.sublayers.count-2];
     } else {
         [self.layer addSublayer:gradient];
     }

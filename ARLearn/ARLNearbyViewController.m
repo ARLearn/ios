@@ -173,7 +173,7 @@ static const double kRadiansToDegrees = 180.0 / M_PI;
     MKPinAnnotationView *annView=[[MKPinAnnotationView alloc]
                                   initWithAnnotation:annotation reuseIdentifier:@"pin"];
    
-    DLog(@"%d %@", [[self.mapView annotations] indexOfObject:annotation], [annotation title]);
+    DLog(@"%lu %@", (unsigned long)(unsigned long)[[self.mapView annotations] indexOfObject:annotation], [annotation title]);
 
     if ([annotation isKindOfClass:[ARLGamePin class]]) {
         annView.pinColor = (MKPinAnnotationColor)((ARLGamePin *)annotation).pinColor;
@@ -476,7 +476,7 @@ didCompleteWithError:(NSError *)error
         
         self.results = (NSArray *)[json objectForKey:@"games"];
         
-        DLog(@"%d Nearby Games", self.results.count);
+        DLog(@"%lu Nearby Games", (unsigned long)self.results.count);
         
         [self reloadMap];
         
@@ -500,7 +500,7 @@ didCompleteWithError:(NSError *)error
 #define MAX_DEGREES_ARC                 360
     @autoreleasepool {
         NSArray *annotations = map.annotations;
-        int count = [map.annotations count];
+        unsigned long count = [map.annotations count];
         
         if (count == 0) { return; } //bail if no annotations
         

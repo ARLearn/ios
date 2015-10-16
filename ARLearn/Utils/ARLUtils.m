@@ -402,7 +402,7 @@ static NSCondition *_theAbortLock;
 + (void) ShowAbortMessage: (NSError *)error
                fromMethod:(NSString *)func {
     
-    NSString *msg = [NSString stringWithFormat:@"%@\n\nUnresolved error code %d,\n\n%@", func, [error code], [error localizedDescription]];
+    NSString *msg = [NSString stringWithFormat:@"%@\n\nUnresolved error code %ld,\n\n%@", func, (long)[error code], [error localizedDescription]];
     
     [ARLUtils ShowAbortMessage:NSLocalizedString(@"Error", @"Error")
                          withMessage:msg];

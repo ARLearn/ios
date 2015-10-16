@@ -95,7 +95,7 @@ static NSTimer *expireTimer;
             
             NSInteger oldcnt = queryCache.count;
             
-            for (int i=queryCache.count-1;i>=0;i--) {
+            for (int i=(int)queryCache.count-1;i>=0;i--) {
                 ARLQueryCache *item = (ARLQueryCache *)[queryCache objectAtIndex:i];
                 
                 if ([item.stamp compare:then] != NSOrderedDescending) {
@@ -114,10 +114,10 @@ static NSTimer *expireTimer;
                         DLog(@"No Queries Cached");
                         break;
                     case 1:
-                        DLog(@"%d Query Cached", queryCache.count);
+                        DLog(@"%lu Query Cached", (unsigned long)queryCache.count);
                         break;
                     default:
-                        DLog(@"%d Queries Cached", queryCache.count);
+                        DLog(@"%lu Queries Cached", (unsigned long)queryCache.count);
                         break;
                 }
             }

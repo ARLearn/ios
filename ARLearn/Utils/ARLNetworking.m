@@ -426,7 +426,7 @@ static NSString *_ecoLoginString;
     ELog(error);
     
     if (response.statusCode!=200) {
-        DLog(@"%@ %d", response.URL, response.statusCode);
+        DLog(@"%@ %ld", response.URL, (long)response.statusCode);
     }
     
     //error = nil;
@@ -589,7 +589,7 @@ static NSString *_ecoLoginString;
 
 + (void)ShowAbortMessage: (NSError *) error func:(NSString *)func {
     
-    NSString *msg = [NSString stringWithFormat:@"%@\n\nUnresolved error code %d,\n\n%@", func, [error code], [error localizedDescription]];
+    NSString *msg = [NSString stringWithFormat:@"%@\n\nUnresolved error code %ld,\n\n%@", func, (long)[error code], [error localizedDescription]];
     
     [ARLNetworking ShowAbortMessage:NSLocalizedString(@"Error", @"Error")
                          message:msg];

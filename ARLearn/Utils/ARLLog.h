@@ -21,7 +21,7 @@
  *
  *  @param error The NSError to log.
  */
-#define ELog(error) if (ARLLog.LogOn && error) { NSLog(@"[%s:%d] %@ [%d]: %@", __PRETTY_FUNCTION__, __LINE__, NSLocalizedString(@"Error", @"Error"), [error code], [error localizedDescription] ); }
+#define ELog(error) if (ARLLog.LogOn && error) { NSLog(@"[%s:%d] %@ [%ld]: %@", __PRETTY_FUNCTION__, __LINE__, NSLocalizedString(@"Error", @"Error"), (long)[error code], [error localizedDescription] ); }
 
 /*!
  *  Log an error message with date-time stamp using NSLog.
