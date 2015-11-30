@@ -73,7 +73,7 @@
                                              endColor:[ARLUtils ColorOrGrayScale: UIColorFromRGB(0x00bc9c)
                                                                        isEnabled:[self.QrScanButton isEnabled]]];
     
-    [self.NearByButton setEnabled:NO];
+    // [self.NearByButton setEnabled:NO];
     [self.NearByButton makeButtonWithImageAndGradient:@"NearBy"
                                             titleText:NSLocalizedString(@"Settings", @"Settings")
                                            titleColor:[UIColor whiteColor]
@@ -221,6 +221,7 @@
 }
 
 - (IBAction)NearByButtonAction:(ARLButton *)sender {
+    
     DLog(@"");
 }
 

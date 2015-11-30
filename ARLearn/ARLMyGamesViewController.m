@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     // Do any additional setup after loading the view.
     
     self.navigationController.navigationBarHidden = NO;
-    self.navigationController.toolbarHidden = NO;
+    self.navigationController.toolbarHidden = YES;
     
     self.tableView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Background"]];
     
@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     [super viewWillAppear:animated];
     
     self.navigationController.navigationBarHidden = NO;
-    self.navigationController.toolbarHidden = NO;
+    self.navigationController.toolbarHidden = YES;
     
     if ([ARLNetworking networkAvailable]) {
         [self performQuery1];
@@ -448,8 +448,7 @@ didCompleteWithError:(NSError *)error
 #pragma mark Actions
 
 - (IBAction)logoutButtonAction:(UIBarButtonItem *)sender {
-    // UIViewController *newViewController;
-    
+    /*
     if (ARLNetworking.isLoggedIn) {
         ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
         [appDelegate LogOut];
@@ -482,9 +481,7 @@ didCompleteWithError:(NSError *)error
     
 #warning We should use the presentViewController counterpart here as thats how we came here.
     [self.navigationController dismissViewControllerAnimated:NO completion:nil];
-    
-    // newViewController = nil;
-    // }
+     */
 }
 
 - (IBAction)backButtonAction:(UIBarButtonItem *)sender {

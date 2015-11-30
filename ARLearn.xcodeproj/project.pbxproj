@@ -46,11 +46,12 @@
 		8D219A86196D341F0044616A /* Todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8D219A85196D341F0044616A /* Todo.txt */; };
 		8D2F959B1A5AA70E00B57C8B /* GeneralItems.json in Resources */ = {isa = PBXBuildFile; fileRef = 8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */; };
 		8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */; };
+		8D34716E1C0C8D1B00785F5E /* ARLSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D34716D1C0C8D1B00785F5E /* ARLSettingsViewController.m */; };
 		8D3D07D41B0262B000830851 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D3D07D31B0262B000830851 /* CoreMedia.framework */; };
 		8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E0196E900D007410C3 /* InfoPlist.strings */; };
 		8D4233E5196E900D007410C3 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D4233E2196E900D007410C3 /* Localizable.strings */; };
 		8D4233E8196EC5F3007410C3 /* ARLNotificationSubscriber.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D4233E7196EC5F3007410C3 /* ARLNotificationSubscriber.m */; };
-		8D49CA7F1BC8110400711E0D /* ARLVideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D49CA7E1BC8110400711E0D /* ARLVideoPlayerViewController.m */; settings = {ASSET_TAGS = (); }; };
+		8D49CA7F1BC8110400711E0D /* ARLVideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D49CA7E1BC8110400711E0D /* ARLVideoPlayerViewController.m */; };
 		8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53D8181A35A75800A869B0 /* NSString+MD5.m */; };
 		8D53D81C1A35A77C00A869B0 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53D81B1A35A77C00A869B0 /* NSData+MD5.m */; };
 		8D55B28A1975633600C0A56B /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2831975633600C0A56B /* TPKeyboardAvoidingCollectionView.m */; };
@@ -201,6 +202,8 @@
 		8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = GeneralItems.json; sourceTree = "<group>"; };
 		8D2F959C1A5AC90D00B57C8B /* ARLPlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLPlayViewController.h; sourceTree = "<group>"; };
 		8D2F959D1A5AC90D00B57C8B /* ARLPlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLPlayViewController.m; sourceTree = "<group>"; };
+		8D34716C1C0C8D1B00785F5E /* ARLSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLSettingsViewController.h; sourceTree = "<group>"; };
+		8D34716D1C0C8D1B00785F5E /* ARLSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLSettingsViewController.m; sourceTree = "<group>"; };
 		8D3D07D31B0262B000830851 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8D4233E1196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		8D4233E3196E900D007410C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
@@ -390,6 +393,8 @@
 		8D21964A196D26080044616A /* ARLearn */ = {
 			isa = PBXGroup;
 			children = (
+				8D34716C1C0C8D1B00785F5E /* ARLSettingsViewController.h */,
+				8D34716D1C0C8D1B00785F5E /* ARLSettingsViewController.m */,
 				8D219653196D26080044616A /* ARLAppDelegate.h */,
 				8D219654196D26080044616A /* ARLAppDelegate.m */,
 				8D9A1D001AE9060000FCA131 /* ARLAudioPlayer.h */,
@@ -922,6 +927,7 @@
 				8D219A6D196D31350044616A /* NSEntityDescription+MagicalDataImport.m in Sources */,
 				8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */,
 				8D21965B196D26080044616A /* ARLViewController.m in Sources */,
+				8D34716E1C0C8D1B00785F5E /* ARLSettingsViewController.m in Sources */,
 				8D219A6B196D31350044616A /* MagicalImportFunctions.m in Sources */,
 				8DFC0D3B1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m in Sources */,
 				8DE5E5171A0A3B6900A60381 /* NSURLSession+SynchronousTask.m in Sources */,

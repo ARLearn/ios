@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="KGA-tg-SR1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="KGA-tg-SR1">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
     </dependencies>
     <scenes>
         <!--Main Screen-->
@@ -70,7 +70,7 @@
                                 </state>
                                 <connections>
                                     <action selector="NearByButtonAction:" destination="cXa-PM-AH0" eventType="touchUpInside" id="oDc-hj-raY"/>
-                                    <segue destination="A7K-D7-Ua9" kind="push" id="uUE-Vc-p2p"/>
+                                    <segue destination="Jqm-a2-hgf" kind="push" id="mDK-jr-RxA"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -93,6 +93,54 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Ce-I7-sb8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-773" y="-268"/>
+        </scene>
+        <!--Settings-->
+        <scene sceneID="nkX-CI-SKs">
+            <objects>
+                <viewController storyboardIdentifier="SettingsView" title="Settings" id="Jqm-a2-hgf" customClass="ARLSettingsViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fJo-Hz-zD3">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="UUt-rs-tGU">
+                                <rect key="frame" x="-6" y="0.0" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <animations/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log out" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="G8K-4V-dsN">
+                                <rect key="frame" x="20" y="47" width="61" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="yzE-bG-kT4">
+                                <rect key="frame" x="224" y="43" width="76" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <state key="normal" title="Log out"/>
+                                <connections>
+                                    <action selector="LogoutAction:" destination="Jqm-a2-hgf" eventType="touchUpInside" id="OIf-sL-sbH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Settings" id="wY4-zf-TFI"/>
+                    <connections>
+                        <outlet property="Logout" destination="yzE-bG-kT4" id="S1g-2F-70z"/>
+                    </connections>
+                </viewController>
+                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Background" id="abN-FN-OMF">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <animations/>
+                </imageView>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Cgr-BA-QaX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1162" y="973"/>
         </scene>
         <!--Scan Code-->
         <scene sceneID="1Iw-kg-vNo">
@@ -212,7 +260,7 @@
             <objects>
                 <tableViewController id="A7K-D7-Ua9" customClass="ARLViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="8Hl-Vd-A2E">
-                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>

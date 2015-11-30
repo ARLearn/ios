@@ -73,7 +73,7 @@
     
     NSString *urlAsString =request.URL.description;
     
-    // DLog(@"%@", urlAsString);
+    // ßDLog(@"%@", urlAsString);
     
     if (!urlAsString)
     {
