@@ -272,13 +272,13 @@
 
 - (IBAction)CategoryButtonAction:(ARLButton *)sender {
     DLog(@"");
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:sender.titleLabel.text
-                                                    message:[NSString stringWithFormat:@"Index: %ld", (long)sender.tag]
-                                                   delegate:self
-                                          cancelButtonTitle:@"OK1"
-                                          otherButtonTitles:@"OK2",nil];
-    
-    [alert show];
+    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:sender.titleLabel.text
+    //                                                    message:[NSString stringWithFormat:@"Index: %ld", (long)sender.tag]
+    //                                                   delegate:self
+    //                                          cancelButtonTitle:@"OK1"
+    //                                          otherButtonTitles:@"OK2",nil];
+    //
+    //    [alert show];
     
     NSDictionary *dict = (NSDictionary *)[self.results objectAtIndex:sender.tag];
 

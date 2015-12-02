@@ -47,7 +47,9 @@ typedef enum {
     
     // Categories
     CategoryList,
-    Category
+    Category,
+    GameCategoryList,
+    GameCategory
 } BeanIds;
 
 @interface ARLBeanNames : NSObject

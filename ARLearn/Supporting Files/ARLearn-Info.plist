@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>nl.ou.arlearn.ARLearn</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -24,6 +24,23 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>streetlearn.appspot.com</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSLocationUsageDescription</key>
+	<string>This app uses location data when a user uploads collected inquiry data.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses location data when a user uploads collected inquiry data.</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -35,42 +52,5 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    
-    <!-- iOS 8+ -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app uses location data when a user uploads collected inquiry data.</string>
-    
-    <key>NSLocationUsageDescription</key>
-    <string>This app uses location data when a user uploads collected inquiry data.</string>
-    
-    <!-- iOS 8+ -->
-    <!-- see http://stackoverflow.com/questions/30739473/nsurlsession-nsurlconnection-http-load-failed-on-ios-9 -->
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <!-- google just works ? -->
-        <!-- next line fixes facebook and eco -->
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-        <!-- next lines fixes arlearn -->
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>streetlearn.appspot.com</key>
-            <dict>
-                <!--Include to allow subdomains-->
-                <!--
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                -->
-                <!--Include to allow HTTP requests-->
-                <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <!--Include to specify minimum TLS version-->
-                <!--
-                <key>NSTemporaryExceptionMinimumTLSVersion</key>
-                <string>TLSv1.1</string>
-                -->
-            </dict>
-        </dict>
-    </dict>
 </dict>
 </plist>

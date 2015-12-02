@@ -545,7 +545,7 @@
                     <attributedString key="userComments">
                         <fragment content="Shows a (multiple) choice question.">
                             <attributes>
-                                <font key="NSFont" metaFont="toolTip"/>
+                                <font key="NSFont" metaFont="smallSystem"/>
                                 <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                             </attributes>
                         </fragment>
@@ -1425,7 +1425,7 @@
                                 <attributedString key="userComments">
                                     <fragment content="Shows an Audio Player with a introduction text.">
                                         <attributes>
-                                            <font key="NSFont" metaFont="toolTip"/>
+                                            <font key="NSFont" metaFont="smallSystem"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>
@@ -1483,7 +1483,7 @@
                     <attributedString key="userComments">
                         <fragment content="Shows a video player with an introduction text">
                             <attributes>
-                                <font key="NSFont" metaFont="toolTip"/>
+                                <font key="NSFont" metaFont="smallSystem"/>
                                 <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                             </attributes>
                         </fragment>
@@ -1504,7 +1504,6 @@
         <!--Category Games View Controller-->
         <scene sceneID="8hC-bC-JQp">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xXY-90-ZGQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="CategoryGamesView" title="Category Games" id="fG5-Gt-3nv" userLabel="Category Games View Controller" customClass="ARLCategoryGamesViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="A2b-aJ-J0v">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -1540,22 +1539,14 @@
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="My Games" id="OrT-Nu-L6Q">
-                        <barButtonItem key="leftBarButtonItem" title="Home" id="UfL-2g-zuf">
-                            <connections>
-                                <action selector="backButtonAction:" destination="fG5-Gt-3nv" id="5rJ-0c-UIa"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="DT2-s8-xZX">
-                        <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
-                    </refreshControl>
                     <connections>
-                        <outlet property="backButton" destination="UfL-2g-zuf" id="L50-3G-mwk"/>
                         <outlet property="table" destination="A2b-aJ-J0v" id="dMU-vN-Rsp"/>
                     </connections>
                 </tableViewController>
+                <navigationItem id="D2s-vc-f5v">
+                    <barButtonItem key="backBarButtonItem" title="Home" id="dDd-81-Hs8"/>
+                </navigationItem>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xXY-90-ZGQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="980" y="1606"/>
         </scene>

@@ -426,9 +426,11 @@ didCompleteWithError:(NSError *)error
             break;
             
         case GameBean: {
-            //     "type": ,
-            //
-            //    "type": "org.celstec.arlearn2.beans.game.Game",
+            NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+            
+            [ARLCoreDataUtils processGameDictionaryItem:json ctx:ctx];
+            
+            [ctx MR_saveToPersistentStoreAndWait];
             
             self.game = json;
             

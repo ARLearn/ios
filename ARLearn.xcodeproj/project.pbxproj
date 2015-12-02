@@ -773,7 +773,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = ARL;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Open University of the Netherlands";
 				TargetAttributes = {
 					8D219640196D26080044616A = {
@@ -1000,7 +1000,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv7 arm64 i386 armv7s";
 			};
@@ -1046,6 +1046,7 @@
 				GCC_PREFIX_HEADER = "ARLearn/Supporting Files/ARLearn-Prefix.pch";
 				INFOPLIST_FILE = "ARLearn/Supporting Files/ARLearn-Info.plist";
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = nl.ou.arlearn.ARLearn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";
@@ -1068,6 +1069,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ARLearn/Supporting Files/ARLearn-Prefix.pch";
 				INFOPLIST_FILE = "ARLearn/Supporting Files/ARLearn-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = nl.ou.arlearn.ARLearn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)";

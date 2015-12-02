@@ -56,8 +56,10 @@
             
             @"org.celstec.arlearn2.beans.store.CategoryList": @(CategoryList),
             @"org.celstec.arlearn2.beans.store.Category": @(Category),
+            
+            @"org.celstec.arlearn2.beans.store.GameCategoryList": @(GameCategoryList),
+            @"org.celstec.arlearn2.beans.store.GameCategory": @(GameCategory)
             };
-        
     }
     
     return _beanNames;
