@@ -396,10 +396,6 @@
 		8D21964A196D26080044616A /* ARLearn */ = {
 			isa = PBXGroup;
 			children = (
-				8D476E6C1C0F27B600F5B9AE /* ARLCategoryGamesViewController.h */,
-				8D476E6D1C0F27B600F5B9AE /* ARLCategoryGamesViewController.m */,
-				8D34716C1C0C8D1B00785F5E /* ARLSettingsViewController.h */,
-				8D34716D1C0C8D1B00785F5E /* ARLSettingsViewController.m */,
 				8D219653196D26080044616A /* ARLAppDelegate.h */,
 				8D219654196D26080044616A /* ARLAppDelegate.m */,
 				8D9A1D001AE9060000FCA131 /* ARLAudioPlayer.h */,
@@ -412,6 +408,8 @@
 				8DA979901AE53FD400709E72 /* ARLAudioRecorderViewController.m */,
 				8D14130B1993CF1400422510 /* ARLCategoriesViewController.h */,
 				8D14130C1993CF1400422510 /* ARLCategoriesViewController.m */,
+				8D476E6C1C0F27B600F5B9AE /* ARLCategoryGamesViewController.h */,
+				8D476E6D1C0F27B600F5B9AE /* ARLCategoryGamesViewController.m */,
 				8DBFE42A1AE582FA000F61F2 /* ARLDatabase.xcdatamodeld */,
 				8D219A2C196D2F160044616A /* ARLDefines.h */,
 				8DDD7E461A324506004D501B /* ARLDownloadViewController.h */,
@@ -442,6 +440,8 @@
 				8D7A8D0E197D55BA00B37013 /* ARLScanViewController.m */,
 				8D55B2C41976937200C0A56B /* ARLSearchViewController.h */,
 				8D55B2C51976937200C0A56B /* ARLSearchViewController.m */,
+				8D34716C1C0C8D1B00785F5E /* ARLSettingsViewController.h */,
+				8D34716D1C0C8D1B00785F5E /* ARLSettingsViewController.m */,
 				8D8B45E5197517D8001FC6DF /* ARLStoreViewController.h */,
 				8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */,
 				8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */,

@@ -365,6 +365,28 @@ Class _class;
         for (NSDictionary *gameFile in self.gameFiles) {
             NSString *path = [gameFile valueForKey:@"path"];
             
+            //            {
+            //                "type": "org.celstec.arlearn2.beans.game.GameFileList",
+            //                "gameFiles": [
+            //                              {
+            //                                  "type": "org.celstec.arlearn2.beans.game.GameFile",
+            //                                  "path": "/gameThumbnail",
+            //                                  "id": 5340892630089728,
+            //                                  "size": 25105,
+            //                                  "md5Hash": "c73bfa4b390b54d72d0a237c0de104ae"
+            //                              }
+            //                              ]
+            //            }
+            
+#warning SPECIAL FILE PATHS:
+            //  /gameThumbnail
+            //  /gameMessagesHeader
+            //  /gameSplashScreen
+            //  /background
+            //  /map.zip
+            //  /resultBackground
+            Log(@"GameFile: %@", path);
+            
             [dict setValue:[NSNumber numberWithBool:FALSE] forKey:path];
         }
         

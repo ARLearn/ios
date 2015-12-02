@@ -209,6 +209,9 @@ typedef NS_ENUM(NSInteger, ARLCategoryGamesViewControllerGroups) {
                     break;
                 }
             }
+            
+#warning CHECK HOW TO OBTAIN THE ICON OF A GAME!
+            
         }
             break;
         

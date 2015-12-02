@@ -280,6 +280,8 @@ Class _class;
             
 #warning TODO Different Icons for GeneralItem Types (match Android).
             
+#warning USE ICONURL FROM GENERALITEM's JSON IF PRESENT & DOWNLOADED! (check gameThumbnail)?
+            
             BeanIds bid = [ARLBeanNames beanTypeToBeanId:item.type];
             switch (bid) {
                 case VideoObject:
