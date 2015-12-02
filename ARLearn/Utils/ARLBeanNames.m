@@ -53,7 +53,10 @@
             @"org.celstec.arlearn2.beans.run.RunList": @(RunList),
             
             @"org.celstec.arlearn2.beans.run.ResponseList": @(ResponseList),
-        };
+            
+            @"org.celstec.arlearn2.beans.store.CategoryList": @(CategoryList),
+            @"org.celstec.arlearn2.beans.store.Category": @(Category),
+            };
         
     }
     

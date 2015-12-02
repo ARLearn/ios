@@ -14,22 +14,22 @@ typedef enum {
     Invalid,
     
     // Dependencies
-    ActionDependency,       //ok
+    ActionDependency,           //ok
     ProximityDependency,
     TimeDependency,             //??
-    OrDependency,           //ok
-    AndDependency,          //ok
+    OrDependency,               //ok
+    AndDependency,              //ok
     
     // GeneralItems
-    AudioObject,            //ok
+    AudioObject,                //ok
     VideoObject,
     GeneralItemList,            //??
-    NarratorItem,           //ok
+    NarratorItem,               //ok
     FileReference,              //??
     ScanTag,                    //??
     OpenQuestion,               //??
-    SingleChoiceTest,       //ok
-    MultipleChoiceTest,     //ok
+    SingleChoiceTest,           //ok
+    MultipleChoiceTest,         //ok
     MultipleChoiceAnswerItem,
     
     // Game
@@ -44,6 +44,10 @@ typedef enum {
     
     // Response
     ResponseList,
+    
+    // Categories
+    CategoryList,
+    Category
 } BeanIds;
 
 @interface ARLBeanNames : NSObject

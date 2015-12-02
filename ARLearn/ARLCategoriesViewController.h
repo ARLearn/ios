@@ -10,7 +10,11 @@
 
 #import "ARLButton.h"
 #import "ARLNetworking.h"
+#import "ARLUtils.h"
+#import "ARLQueryCache.h"
+#import "ARLBeanNames.h"
+#import "ARLCategoryGamesViewController.h"
 
-@interface ARLCategoriesViewController : UIViewController <UIAlertViewDelegate>
+@interface ARLCategoriesViewController : UIViewController <UIAlertViewDelegate, NSURLSessionDataDelegate>
 
 @end

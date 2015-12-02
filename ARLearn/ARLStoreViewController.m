@@ -85,7 +85,6 @@ NSArray *ids;
                                              endColor:[ARLUtils ColorOrGrayScale:UIColorFromRGB(0xe94a35)
                                                                        isEnabled:[self.SearchButton isEnabled]]];
     
-    [self.CategoryButton setEnabled:NO];
     [self.CategoryButton makeButtonWithImageAndGradient:@"Category"
                                               titleText:NSLocalizedString(@"CategoryLabel", @"CategoryLabel")
                                              titleColor:[UIColor whiteColor]
