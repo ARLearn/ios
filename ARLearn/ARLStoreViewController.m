@@ -169,23 +169,22 @@ NSArray *ids;
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier
                                                                     forIndexPath:indexPath];
             
-#warning Hardcoded Values.
-            
-            switch (indexPath.item) {
-                case 0:
-                    cell.textLabel.text = @"Florence";
-                    cell.detailTextLabel.text = @"Excursie Cultuurwetenschappen";
-                  break;
-                case 1:
-                    cell.textLabel.text = @"Game2";
-                    cell.detailTextLabel.text = @"Starting now";
-                    break;
-                case 2:
-                    cell.textLabel.text = @"B opdrachten bij bronzen deuren - voor wim";
-                    cell.detailTextLabel.text = @"Starting now";
-                   break;
-            }
-            cell.imageView.image = [UIImage imageNamed:@"MyGames"];
+#warning Implement when clear how to obtain these games.
+            //            switch (indexPath.item) {
+            //                case 0:
+            //                    cell.textLabel.text = @"Florence";
+            //                    cell.detailTextLabel.text = @"Excursie Cultuurwetenschappen";
+            //                  break;
+            //                case 1:
+            //                    cell.textLabel.text = @"Game2";
+            //                    cell.detailTextLabel.text = @"Starting now";
+            //                    break;
+            //                case 2:
+            //                    cell.textLabel.text = @"B opdrachten bij bronzen deuren - voor wim";
+            //                    cell.detailTextLabel.text = @"Starting now";
+            //                   break;
+            //            }
+            //            cell.imageView.image = [UIImage imageNamed:@"MyGames"];
             
             return cell;
         }

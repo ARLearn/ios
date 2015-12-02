@@ -447,7 +447,6 @@ didCompleteWithError:(NSError *)error
             if (run) {
                 self.runId = run.runId;
             }else {
-#warning Won't work off-line.
                 [self performQuery2];
             }
         }
