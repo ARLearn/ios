@@ -130,8 +130,9 @@ typedef NS_ENUM(NSInteger, services) {
 + (void) setupOauthInfo;
 
 + (BOOL)networkAvailable;
++ (NSString *) CurrentId;
 + (BOOL)isLoggedIn;
-+ (Account *) CurrentAccount ;
++ (Account *) CurrentAccount;
 
 + (NSString *) facebookLoginString;
 + (NSString *) googleLoginString;
@@ -150,4 +151,7 @@ typedef NS_ENUM(NSInteger, services) {
 + (NSData *) createRun:(NSNumber *)gameId
              withTitle:(NSString *)runTitle;
 
++ (NSData *) addUserToRun:(NSNumber *)gameId
+                    runId:(NSNumber *)runId
+                    account:(Account *)account;
 @end

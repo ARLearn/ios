@@ -256,12 +256,12 @@
  *  Won't work off-line.
  */
 - (void)performQuery {
-    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:@"store/categories/lang/nl"];
+    NSString *cacheIdentifier = [ARLNetworking generateGetDescription:[NSString stringWithFormat:@"store/categories/lang/%@", [ARLAppDelegate deviceLanguage]]];
     
     NSData *response = [[ARLAppDelegate theQueryCache] getResponse:cacheIdentifier];
     
     if (!response) {
-        [ARLNetworking sendHTTPGetWithDelegate:self withService:@"store/categories/lang/nl"];
+        [ARLNetworking sendHTTPGetWithDelegate:self withService:[NSString stringWithFormat:@"store/categories/lang/%@", [ARLAppDelegate deviceLanguage]]];
     } else {
         DLog(@"Using cached query data");
         [self processData:response];
@@ -306,6 +306,7 @@
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
+    Log(@"");
     // NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
     
     self.accumulatedSize = [response expectedContentLength];
@@ -320,6 +321,8 @@ didReceiveResponse:(NSURLResponse *)response
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data
 {
+    Log(@"");
+    
     // DLog(@"Got HTTP Data, %d of %lld byte(s)", [data length], self.accumulatedSize);
     
     // [ARLUtils LogJsonData:data url:[[[dataTask response] URL] absoluteString]];
@@ -335,6 +338,8 @@ didReceiveResponse:(NSURLResponse *)response
               task:(NSURLSessionTask *)task
 didCompleteWithError:(NSError *)error
 {
+    Log(@"");
+    
     // DLog(@"Completed HTTP Task");
     
     if (error == nil)

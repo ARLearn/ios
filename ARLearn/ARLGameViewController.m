@@ -153,20 +153,21 @@ didCompleteWithError:(NSError *)error
  *  @param alertView   <#alertView description#>
  *  @param buttonIndex <#buttonIndex description#>
  */
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView
+clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
     
     if ([title isEqualToString:NSLocalizedString(@"YES", @"YES")]) {
-        NSData *data = [ARLNetworking createRun:self.gameId
+        NSData *data1 = [ARLNetworking createRun:self.gameId
                                       withTitle:@"Personal Run"];
 
-        NSError *error = nil;
+        NSError *error1 = nil;
         
-        NSDictionary *dict = data ? [NSJSONSerialization JSONObjectWithData:data
+        NSDictionary *dict1 = data1 ? [NSJSONSerialization JSONObjectWithData:data1
                                                                     options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
-                                                                      error:&error] : nil;
-        ELog(error);
+                                                                      error:&error1] : nil;
+        ELog(error1);
         
         //{
         //    deleted = 0;
@@ -178,26 +179,59 @@ didCompleteWithError:(NSError *)error
         //    type = "org.celstec.arlearn2.beans.run.Run";
         //}
         
-        if (dict && [dict valueForKey:@"runId"]) {
-            self.runId = [NSNumber numberWithLongLong:[[dict valueForKey:@"runId"] longLongValue]];
+        if (dict1 && [dict1 valueForKey:@"runId"]) {
+            NSNumber *tmprunId = [NSNumber numberWithLongLong:[[dict1 valueForKey:@"runId"] longLongValue]];
             
-            if (self.runId) {
-                NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+            if (tmprunId) {
+                DLog(@"GameID = %@", self.gameId);
+                DLog(@"RunID = %@", tmprunId);
+                DLog(@"LocalID = %@", [ARLNetworking CurrentId]);
+                DLog(@"AcountType = %@", [[ARLNetworking CurrentAccount] accountType]);
                 
-                [ARLCoreDataUtils processRunDictionaryItem:dict ctx:ctx];
+                // Better is to cek first if there is already a user with
+                // user/runId/<id> ? (returns the list of users for run).
+                // and
+                // /createAnonymousContact/"+email+"/"+name, null, Account.class
+                // get user
+                // /runId/"+runId+"/account/"+userEmail, (emal is 2:localId);
+                NSData *data2 = [ARLNetworking addUserToRun:self.gameId
+                                                      runId:tmprunId
+                                                    account:[ARLNetworking CurrentAccount]];
+                NSError *error2 = nil;
                 
-                [ctx MR_saveToPersistentStoreAndWait];
+                NSDictionary *dict2 = data2 ? [NSJSONSerialization JSONObjectWithData:data2
+                                                                              options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                                error:&error2] : nil;
+                ELog(error2);
+                
+                Log(@"JSON:\r%@", dict2);
+                
+                // Only save when we connected the user to the game+run as well.
+                //
+                if (error2==nil) {
+                    NSManagedObjectContext *ctx = [NSManagedObjectContext MR_context];
+                    
+                    [ARLCoreDataUtils processRunDictionaryItem:dict1 ctx:ctx];
+                    
+                    [ctx MR_saveToPersistentStoreAndWait];
+                    
+                    [self.downloadButton setTitle:@"Play" forState:UIControlStateNormal];
 
-                [self.downloadButton setTitle:@"Play" forState:UIControlStateNormal];
+                    self.runId = [dict2 valueForKey:@"runId"];
+                }
             }
-            
-            DLog(@"GameID = %@", self.gameId);
-            DLog(@"RunID = %@", self.runId);
 
-            //[self downloadButtonAction:self.downloadButton];
+            //{
+            //    accountType = 2;
+            //    allowTrackLocation = 0;
+            //    deleted = 0;
+            //    email = "2:103021572104496509774";
+            //    gameId = 5794474118610944;
+            //    localId = 103021572104496509774;
+            //    runId = 5785939846627328;
+            //    type = "org.celstec.arlearn2.beans.run.User";
+            //}
         }
-        
-        // Log(@"%@", dict);
     }
 }
 
@@ -408,9 +442,11 @@ didCompleteWithError:(NSError *)error
         case RunList: {
             for (NSDictionary *run in [json valueForKey:@"runs"]) {
                 if ([[run valueForKey:@"gameId"] longLongValue] == [self.gameId longLongValue]) {
-                    self.runId = [run valueForKey:@"runId"];
-                    DLog(@"runID = %@", self.runId);
-                    break;
+                    if ([[run valueForKey:@"deleted"] boolValue]==FALSE) {
+                        self.runId = [run valueForKey:@"runId"];
+                        DLog(@"runID = %@", self.runId);
+                        break;
+                    }
                 }
             }
             
@@ -498,24 +534,6 @@ didCompleteWithError:(NSError *)error
 - (IBAction)downloadButtonAction:(UIButton *)sender {
     
     if (self.runId) {
-        //        if ([ARLUtils GameHasCache:self.gameId]) {
-        //            ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PlayView"];
-        //
-        //            if (newViewController) {
-        //                // if ([newViewController respondsToSelector:@selector(setGameId:)]) {
-        //                //      [newViewController performSelector:@selector(setGameId:) withObject:self.gameId];
-        //                // }
-        //
-        //                newViewController.gameId = self.gameId;
-        //                newViewController.runId = self.runId;
-        //                [newViewController setBackViewControllerClass:_class];
-        //
-        //                // Move to another UINavigationController or UITabBarController etc.
-        //                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-        //                [self.navigationController pushViewController:newViewController animated:YES];
-        //
-        //                newViewController = nil;
-        //        } else {
         ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
         
         if (newViewController) {

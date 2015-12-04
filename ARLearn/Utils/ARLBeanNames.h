@@ -42,6 +42,9 @@ typedef enum {
     RunBean,
     RunList,
     
+    // User
+    UserBean,
+    
     // Response
     ResponseList,
     

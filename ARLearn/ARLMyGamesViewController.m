@@ -344,45 +344,38 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
         case MYGAMES: {
             Game *game = (Game *)[self.games objectAtIndex:indexPath.row]; // kNSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
             
-            Run *run = [Run MR_findFirstByAttribute:@"gameId"
-                                          withValue:game.gameId];
+            ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
-            if (run) {
-            // ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
-            //
-            //            if (newViewController) {
-            //                NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
-            //
-            //                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
-            //
-            //                // Move to another UINavigationController or UITabBarController etc.
-            //                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-            //                [self.navigationController pushViewController:newViewController animated:NO];
-            //            }
-            
-                Log(@"Selected Run: %@ for Game: %@", run.runId, game.gameId);
+            if (newViewController) {
+                newViewController.gameId = game.gameId;
                 
-                ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
+                Run *run = [Run MR_findFirstByAttribute:@"gameId"
+                                              withValue:game.gameId];
                 
-                if (newViewController) {
-                    newViewController.gameId = game.gameId;
+                if (run) {
+                    // ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
+                    //
+                    //            if (newViewController) {
+                    //                NSDictionary *dict =  (NSDictionary *)[self.results objectAtIndex:indexPath.row];
+                    //
+                    //                newViewController.gameId = (NSNumber *)[dict valueForKey:@"gameId"];
+                    //
+                    //                // Move to another UINavigationController or UITabBarController etc.
+                    //                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                    //                [self.navigationController pushViewController:newViewController animated:NO];
+                    //            }
+                    
+                    Log(@"Selected Run: %@ for Game: %@", run.runId, game.gameId);
                     newViewController.runId = run.runId;
-                    
-                    [newViewController setBackViewControllerClass:[self class]];
-                    
-                    // Move to another UINavigationController or UITabBarController etc.
-                    // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
-                    [self.navigationController pushViewController:newViewController animated:YES];
-                    
-                    newViewController = nil;
                 }
-            } else {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Info", @"Info")
-                                                                message:NSLocalizedString(@"Could not find a run",@"Could not find a run")
-                                                               delegate:self
-                                                      cancelButtonTitle:nil
-                                                      otherButtonTitles:NSLocalizedString(@"OK", @"OK"), nil];
-                [alert show];
+                
+                [newViewController setBackViewControllerClass:[self class]];
+                
+                // Move to another UINavigationController or UITabBarController etc.
+                // See http://stackoverflow.com/questions/14746407/presentmodalviewcontroller-in-ios6
+                [self.navigationController pushViewController:newViewController animated:YES];
+                
+                newViewController = nil;
             }
             break;
         }

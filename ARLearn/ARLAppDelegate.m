@@ -554,7 +554,7 @@ void exceptionHandler(NSException *exception)
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(localId = %@) AND (accountType = %d)",
                               [[NSUserDefaults standardUserDefaults] objectForKey:@"accountLocalId"],
-                              [[[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"]   intValue]];
+                              [[[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"] intValue]];
     
     [ARLQueryCache clearCache];
     
@@ -738,6 +738,11 @@ static CLLocationCoordinate2D currentCoordinates;
     NetworkStatus networkStatus = [reachability currentReachabilityStatus];
     
     return !(networkStatus == NotReachable);
+}
+
++(NSString *)deviceLanguage {
+    return [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0];
+    //return [[NSLocale preferredLanguages] objectAtIndex:0];
 }
 
 @end

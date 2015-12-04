@@ -52,6 +52,8 @@
             @"org.celstec.arlearn2.beans.run.Run": @(RunBean),
             @"org.celstec.arlearn2.beans.run.RunList": @(RunList),
             
+            @"org.celstec.arlearn2.beans.run.User": @(UserBean),
+          
             @"org.celstec.arlearn2.beans.run.ResponseList": @(ResponseList),
             
             @"org.celstec.arlearn2.beans.store.CategoryList": @(CategoryList),

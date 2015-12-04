@@ -558,7 +558,7 @@ static NSCondition *_theAbortLock;
     }
     NSString *filePath = [NSString stringWithFormat:@"%@%@", cachePath, filename];
     
-    Log(@"Resource=%@", filePath);
+    // Log(@"Resource=%@", filePath);
     
     return filePath;
 }

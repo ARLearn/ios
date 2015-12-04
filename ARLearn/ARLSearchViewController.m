@@ -326,6 +326,8 @@ typedef NS_ENUM(NSInteger, ARLSearchViewControllerGroups) {
                 
                 if (run) {
                     newViewController.runId = run.runId;
+                } else {
+                    newViewController.runId = nil;
                 }
                 
                 // Move to another UINavigationController or UITabBarController etc.

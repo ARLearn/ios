@@ -62,6 +62,16 @@ static NSString *_ecoLoginString;
     return details;
 }
 
++ (NSString *) CurrentId {
+    if ([ARLNetworking CurrentAccount]) {
+        return [NSString  stringWithFormat:@"%@:%@",
+                [[NSUserDefaults standardUserDefaults] objectForKey:@"accountType"],
+                [[NSUserDefaults standardUserDefaults] objectForKey:@"accountLocalId"]];
+    }
+    
+    return @"";
+}
+
 /*!
  *  Returns YES if a wifi connection is available.
  *
@@ -616,9 +626,38 @@ static NSString *_ecoLoginString;
                              nil];
     
     NSData *postData = [NSJSONSerialization dataWithJSONObject:runDict options:0 error:nil];
-   
-    
+
     return [self sendHTTPPostWithAuthorization:@"myRuns"
+                                          data:postData
+                                    withAccept:applicationjson
+                               withContentType:applicationjson];
+}
+
++ (NSData *) addUserToRun:(NSNumber *)gameId
+                    runId:(NSNumber *)runId
+                  account:(Account *)account {
+    // NSData *getData = [self sendHTTPGetWithAuthorization:[NSString stringWithFormat:@"selfRegister/runid/%@", runId]];
+    
+    NSError *error = nil;
+    
+    //    NSDictionary *dict = getData ? [NSJSONSerialization JSONObjectWithData:getData
+    //                                                                   options:NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+    //                                                                     error:&error] : nil;
+    //    Log(@"Dict: %@", dict);
+    
+    NSDictionary *runDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                             [ARLBeanNames beanIdToBeanType:UserBean],  @"type",
+                             gameId,                                    @"gameId",
+                             runId,                                     @"runId",
+                             account.accountType,                       @"accountType",
+                             account.localId,                           @"localId",
+                             nil];
+    
+    NSData *postData = [NSJSONSerialization dataWithJSONObject:runDict options:0 error:&error];
+    
+    ELog(error);
+    
+    return [self sendHTTPPostWithAuthorization:@"users"
                                           data:postData
                                     withAccept:applicationjson
                                withContentType:applicationjson];

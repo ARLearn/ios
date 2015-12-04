@@ -50,6 +50,8 @@
 
 - (void) LogOut;
 
++(NSString *)deviceLanguage;
+
 //@property (readonly, strong, nonatomic) NSNumber *isLoggedIn;
 //@property (readonly, strong, nonatomic) NSNumber *networkAvailable;
 //@property (readonly, strong, nonatomic) Account *CurrentAccount;

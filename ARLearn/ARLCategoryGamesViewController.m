@@ -383,7 +383,7 @@ typedef NS_ENUM(NSInteger, ARLCategoryGamesViewControllerGroups) {
             Run *run = [Run MR_findFirstByAttribute:@"gameId"
                                           withValue:game.gameId];
             */
-            ARLDownloadViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"DownloadView"];
+            ARLGameViewController *newViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"GameView"];
             
             if (newViewController) {
                 newViewController.gameId = [dict valueForKey:@"gameId"];
