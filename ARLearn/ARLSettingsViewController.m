@@ -10,7 +10,10 @@
 
 @interface ARLSettingsViewController ()
 
-@property (weak, nonatomic) IBOutlet UIButton *Logout;
+@property (weak, nonatomic) IBOutlet UIButton *logoutButton;
+@property (weak, nonatomic) IBOutlet UIView *logoutView;
+@property (weak, nonatomic) IBOutlet UILabel *logoutLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
 
 - (IBAction)LogoutAction:(UIButton *)sender;
 
@@ -26,17 +29,91 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    self.Logout.layer.cornerRadius = 4;
-    self.Logout.layer.borderWidth = 2;
-    self.Logout.layer.borderColor =  self.Logout.tintColor.CGColor;
+    self.logoutButton.layer.cornerRadius = 4;
+    self.logoutButton.layer.borderWidth = 2;
+    self.logoutButton.layer.borderColor =  self.logoutButton.tintColor.CGColor;
     // (note - may prefer to use the tintColor of the control)
     
-    [self.Logout setEnabled:ARLNetworking.isLoggedIn];
+    [self.logoutButton setEnabled:ARLNetworking.isLoggedIn];
+    
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Methods
+
+- (void) applyConstraints {
+    NSDictionary *viewsDictionary1 = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                      self.view,             @"view",
+                                      
+                                      self.backgroundImage,  @"backgroundImage",
+                                      
+                                      self.logoutView,       @"logoutView",
+                                      
+                                      nil];
+    
+    // See http://stackoverflow.com/questions/17772922/can-i-use-autolayout-to-provide-different-constraints-for-landscape-and-portrait
+    // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
+    
+    self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.logoutView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.logoutLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.logoutButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    // Fix Background.
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:|-[logoutView]-|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"V:|-[logoutView]"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.logoutView,       @"logoutView",
+                                     
+                                     self.logoutLabel,      @"logoutLabel",
+                                     self.logoutButton,     @"logoutButton",
+                                     
+                                     nil];
+    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"V:|-[logoutLabel(==logoutButton)]-|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary]];
+    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:|-[logoutLabel]"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:[logoutButton]-|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary]];
 }
 
 /*
@@ -49,11 +126,13 @@
  }
  */
 
+#pragma mark - Actions
+
 - (IBAction)LogoutAction:(UIButton *)sender {
     ARLAppDelegate *appDelegate = (ARLAppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate LogOut];
     
-    [self.Logout setEnabled:ARLNetworking.isLoggedIn];
+    [self.logoutButton setEnabled:ARLNetworking.isLoggedIn];
 }
 
 @end

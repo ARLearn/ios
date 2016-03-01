@@ -14,6 +14,10 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *playButton;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressBar;
 @property (weak, nonatomic) IBOutlet UIProgressView *phaseBar;
+@property (weak, nonatomic) IBOutlet UILabel *progressLabel;
+@property (weak, nonatomic) IBOutlet UILabel *downloadLabel;
+@property (weak, nonatomic) IBOutlet UIView *progressView;
+@property (weak, nonatomic) IBOutlet UILabel *phaseLabel;
 
 - (IBAction)playButtonAction:(UIBarButtonItem *)sender;
 
@@ -51,6 +55,8 @@ Class _class;
     [self.navigationController setToolbarHidden:YES];
     
     self.navigationItem.title = @"Download";
+    
+    self.progressView.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.3];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(syncProgress:)
@@ -214,13 +220,12 @@ Class _class;
 #pragma mark - Methods
 
 - (void) applyConstraints {
-    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+    NSDictionary *viewsDictionary1 = [[NSDictionary alloc] initWithObjectsAndKeys:
                                      self.view,             @"view",
                                      
                                      self.backgroundImage,  @"backgroundImage",
-                                     
-                                     self.progressBar,      @"progressBar",
-                                     self.phaseBar,         @"phaseBar",
+                         
+                                     self.progressView,     @"progressView",
                                      
                                      nil];
     
@@ -228,35 +233,88 @@ Class _class;
     // See https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TransitionGuide/Bars.html
     
     self.backgroundImage.translatesAutoresizingMaskIntoConstraints = NO;
-    self.progressBar.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.downloadLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.phaseLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.phaseBar.translatesAutoresizingMaskIntoConstraints = NO;
+    self.progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.progressBar.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"V:|[backgroundImage]|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:|[backgroundImage]|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"H:|-[progressView]-|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    
+    [self.view addConstraints:[NSLayoutConstraint
+                               constraintsWithVisualFormat:@"V:[progressView]-(20)-|"
+                               options:NSLayoutFormatDirectionLeadingToTrailing
+                               metrics:nil
+                               views:viewsDictionary1]];
+    
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.progressView,     @"progressView",
+                                    
+                                     self.downloadLabel,    @"downloadLabel",
+                                     self.progressLabel,    @"progressLabel",
+                                     self.phaseLabel,       @"phaseLabel",
+                                     
+                                     self.progressBar,      @"progressBar",
+                                     self.phaseBar,         @"phaseBar",
+                                     
+                                     nil];
+    
+    [self.progressView addConstraints:[NSLayoutConstraint
+                                       constraintsWithVisualFormat:@"H:|-[downloadLabel]-|"
+                                       options:NSLayoutFormatDirectionLeadingToTrailing
+                                       metrics:nil
+                                       views:viewsDictionary]];
     
     // Fix ProgressBar Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[progressBar]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+    [self.progressView addConstraints:[NSLayoutConstraint
+                                       constraintsWithVisualFormat:@"H:|-[progressLabel]-|"
+                                       options:NSLayoutFormatDirectionLeadingToTrailing
+                                       metrics:nil
+                                       views:viewsDictionary]];
+    [self.progressView addConstraints:[NSLayoutConstraint
+                                       constraintsWithVisualFormat:@"H:|-[progressBar]-|"
+                                       options:NSLayoutFormatDirectionLeadingToTrailing
+                                       metrics:nil
+                                       views:viewsDictionary]];
     
     // Fix phaseBar Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[phaseBar]-|"
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+    [self.progressView addConstraints:[NSLayoutConstraint
+                                       constraintsWithVisualFormat:@"H:|-[phaseLabel]-|"
+                                       options:NSLayoutFormatDirectionLeadingToTrailing
+                                       metrics:nil
+                                       views:viewsDictionary]];
+    
+    [self.progressView addConstraints:[NSLayoutConstraint
+                                       constraintsWithVisualFormat:@"H:|-[phaseBar]-|"
+                                       options:NSLayoutFormatDirectionLeadingToTrailing
+                                       metrics:nil
+                                       views:viewsDictionary]];
     // Fix ProgressBar and phaseBar Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[phaseBar]-[progressBar]-(%f)-|", self.navigationController.toolbar.frame.size.height + 4.0f]
-                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
-                                                                      metrics:nil
-                                                                        views:viewsDictionary]];
+    [self.progressView addConstraints:[NSLayoutConstraint
+                                       constraintsWithVisualFormat:@"V:|-(4)-[downloadLabel]-[phaseLabel]-3-[phaseBar(4)]-[progressLabel]-3-[progressBar(4)]-(4)-|"
+                                       options:NSLayoutFormatDirectionLeadingToTrailing
+                                       metrics:nil
+                                       views:viewsDictionary]];
+    //self.navigationController.toolbar.frame.size.height + 4.0f
 }
 
 /*!

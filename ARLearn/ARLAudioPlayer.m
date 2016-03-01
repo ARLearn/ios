@@ -18,6 +18,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *durationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *elapsedLabel;
+@property (weak, nonatomic) IBOutlet UIView *playerView;
 
 - (IBAction)playerAction:(UIButton *)sender;
 - (IBAction)sliderAction:(UISlider *)sender;
@@ -107,10 +108,10 @@
     
 #pragma warn DEBUG CODE. We show Description instead of avplayer if the internet is not available and the media is not downloaded yet.
     // self.descriptionText.hidden = YES;
-
-    if (self.descriptionText.isHidden) {
-        [self applyConstraints];
-    }
+    
+    //  if (self.descriptionText.isHidden) {
+    [self applyConstraints];
+    //}
     
     if (![[json objectForKey:@"autoPlay"] boolValue]) {
         [self togglePlaying];
@@ -264,10 +265,12 @@
 }
 
 - (void) applyConstraints {
-    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+    NSDictionary *viewsDictionary1 = [[NSDictionary alloc] initWithObjectsAndKeys:
                                      self.view,             @"view",
                                      
                                      self.backgroundImage,  @"backgroundImage",
+                                      
+                                     self.playerView,       @"playerView",
                                      
                                      //self.itemsTable,       @"itemsTable",
                                      self.descriptionText,  @"descriptionText",
@@ -287,56 +290,83 @@
     self.playerSlider.translatesAutoresizingMaskIntoConstraints = NO;
     self.durationLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.elapsedLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.playerView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Fix Background.
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[backgroundImage]|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
-                                                                        views:viewsDictionary]];
+                                                                        views:viewsDictionary1]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[backgroundImage]|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
-                                                                        views:viewsDictionary]];
+                                                                        views:viewsDictionary1]];
     
-    // Fix descriptionText Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[playerView]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
-                                                                        views:viewsDictionary]];
+                                                                        views:viewsDictionary1]];
     
+    // Fix playerView Horizontal.
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[playerView]"
+                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                      metrics:nil
+                                                                        views:viewsDictionary1]];
+    // Fix descriptionText Horizontal.
+    if (![self.descriptionText isHidden]) {
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[descriptionText]-|"
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary1]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[playerView]-[descriptionText(200)]"
+                                                                          options:NSLayoutFormatDirectionLeadingToTrailing
+                                                                          metrics:nil
+                                                                            views:viewsDictionary1]];
+    }
+    
+    NSDictionary *viewsDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     self.playerView,        @"playerView",
+                                      
+                                      self.playerButton,     @"playerButton",
+                                      self.playerSlider,     @"playerSlider",
+                                      self.durationLabel,    @"durationLabel",
+                                      self.elapsedLabel,     @"elapsedLabel",
+                                      
+                                      nil];
+
     // Fix player Horizontal.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[playerButton(==70)]-[durationLabel]-[playerSlider]-[elapsedLabel]-|"
+    [self.playerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[playerButton(==50)]-[durationLabel]-[playerSlider]-[elapsedLabel]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     // Fix player/descriptionText Vertically.
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[playerButton(==70)]-|"
+    [self.playerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[playerButton(==50)]-|"
                                                                       options:NSLayoutFormatDirectionLeadingToTrailing
                                                                       metrics:nil
                                                                         views:viewsDictionary]];
     if (!self.descriptionText.isHidden) {
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[descriptionText]-[playerButton(==70)]-|"
+        [self.playerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[playerButton(==50)]-|"
                                                                           options:NSLayoutFormatDirectionLeadingToTrailing
                                                                           metrics:nil
                                                                             views:viewsDictionary]];
     }
     
     // Vertical Center rest of player.
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
+    [self.playerView addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
                                                           attribute:NSLayoutAttributeCenterY
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.durationLabel
                                                           attribute:NSLayoutAttributeCenterY
                                                          multiplier:1
                                                            constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
+    [self.playerView addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
                                                           attribute:NSLayoutAttributeCenterY
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.playerSlider
                                                           attribute:NSLayoutAttributeCenterY
                                                          multiplier:1
                                                            constant:0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
+    [self.playerView addConstraint:[NSLayoutConstraint constraintWithItem:self.playerButton
                                                           attribute:NSLayoutAttributeCenterY
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.elapsedLabel

@@ -73,9 +73,11 @@ Class _class;
     [super viewWillAppear:animated];
     
     self.navigationItem.leftBarButtonItem.title = @"BACK";
-
+    
     self.navigationController.navigationBarHidden=NO;
     self.navigationController.toolbarHidden=NO;
+    
+    [self.summaryText setHidden:YES];
     
     [self performQuery1];
 }
@@ -472,7 +474,13 @@ clickedButtonAtIndex:(NSInteger)buttonIndex
             
             self.titleLabel.text = [self.game objectForKey:@"title"];
             self.languageLabel.text = [self.game objectForKey:@"language"];
-            [self.summaryText loadHTMLString:[self.game objectForKey:@"description"] baseURL:nil];
+            NSString *description =[self.game objectForKey:@"description"];
+            if (TrimmedStringLength(description)==0) {
+                [self.summaryText setHidden:YES];
+            }else {
+                [self.summaryText setHidden:NO];
+                [self.summaryText loadHTMLString:[self.game objectForKey:@"description"] baseURL:nil];
+            }
             self.releaseLabel.text = [NSString stringWithFormat:@"Release datum %@", [ARLUtils formatDate:[self.game objectForKey:@"lastModificationDate"]]];
             
             DLog(@"Title of the Game shown is : '%@'",[self.game objectForKey:@"title"]);

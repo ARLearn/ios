@@ -71,13 +71,15 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
     
     // _query = @"";
     self.predicate = [NSPredicate predicateWithFormat:@"correspondingRuns.@count!=%d",0];
-    self.games = [Game MR_findAllWithPredicate:self.predicate];
-
+    //self.games = [Game MR_findAllWithPredicate:self.predicate];
+    self.games = [Game MR_findAllSortedBy:@"title"
+                                ascending:YES
+                            withPredicate:self.predicate];
     [self.table reloadData];
     
     //[self.refreshControl addTarget:self
     //                        action:@selector(refresh:)
-      //            forControlEvents:UIControlEventValueChanged];
+    //              forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -188,7 +190,11 @@ typedef NS_ENUM(NSInteger, ARLMyGamesViewControllerGroups) {
             
             [self.table setUserInteractionEnabled:NO];
             {
-                self.games = [Game MR_findAll];
+                self.predicate = [NSPredicate predicateWithFormat:@"correspondingRuns.@count!=%d",0];
+                self.games = [Game MR_findAllSortedBy:@"title"
+                                            ascending:YES
+                                        withPredicate:self.predicate];
+                // self.games = [Game MR_findAll];
                 
                 [self.table reloadData];
             }
