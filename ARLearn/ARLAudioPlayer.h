@@ -12,6 +12,7 @@
 
 #include "ARLCoreDataUtils.h"
 #include "ARLBeanNames.h"
+#include "ARLAudioPlayerControl.h"
 
 @interface ARLAudioPlayer : UIViewController <UIWebViewDelegate>
 

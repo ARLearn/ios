@@ -29,8 +29,9 @@
         
         NSDictionary *viewsDictionary =
         [[NSDictionary alloc] initWithObjectsAndKeys:
-         self.leftButton, @"leftButton",
-         self.rightButton, @"rightButton", nil];
+         self.leftButton,  @"leftButton",
+         self.rightButton, @"rightButton",
+         nil];
         
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:@"V:|-0-[leftButton(==70)]"

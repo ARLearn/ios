@@ -61,6 +61,8 @@
 		8D55B28D1975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2891975633600C0A56B /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
 		8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B28F1976759300C0A56B /* ARLNetworking.m */; };
 		8D55B2C61976937200C0A56B /* ARLSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D55B2C51976937200C0A56B /* ARLSearchViewController.m */; };
+		8D65F4331C89BEE1001B5731 /* ARLAudioPlayerControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D65F4321C89BEE1001B5731 /* ARLAudioPlayerControl.m */; };
+		8D65F4351C89C156001B5731 /* ARLAudioPlayerControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D65F4341C89C156001B5731 /* ARLAudioPlayerControl.xib */; };
 		8D6FB70C1A0A43C20085ABA5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6FB70B1A0A43C20085ABA5 /* Reachability.m */; };
 		8D6FB70F1A0A65760085ABA5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */; };
 		8D6FB7121A1221220085ABA5 /* ARLLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D6FB7111A1221220085ABA5 /* ARLLoginViewController.m */; };
@@ -81,6 +83,7 @@
 		8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45DD19740BCA001FC6DF /* ARLMainViewController.m */; };
 		8D8B45E11974162A001FC6DF /* UIViewController+UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E01974162A001FC6DF /* UIViewController+UI.m */; };
 		8D8B45E7197517D8001FC6DF /* ARLStoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D8B45E6197517D8001FC6DF /* ARLStoreViewController.m */; };
+		8D9146601C8B5B9D000D13F9 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DC418AA19878AF300054466 /* Storyboard.storyboard */; };
 		8D9A1D021AE9060000FCA131 /* ARLAudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D9A1D011AE9060000FCA131 /* ARLAudioPlayer.m */; };
 		8DA9798B1AE53DC700709E72 /* ARLNarratorItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9798A1AE53DC700709E72 /* ARLNarratorItemViewController.m */; };
 		8DA9798E1AE53FC900709E72 /* ARLAudioRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9798D1AE53FC900709E72 /* ARLAudioRecorder.m */; };
@@ -96,7 +99,6 @@
 		8DBFE42E1AE582FA000F61F2 /* ARLDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8DBFE42A1AE582FA000F61F2 /* ARLDatabase.xcdatamodeld */; };
 		8DBFE4301AE59094000F61F2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBFE42F1AE59094000F61F2 /* MobileCoreServices.framework */; };
 		8DBFE4321AE590AD000F61F2 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DBFE4311AE590AD000F61F2 /* MediaPlayer.framework */; };
-		8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DC418AA19878AF300054466 /* Storyboard.storyboard */; };
 		8DC418AE19878F8000054466 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC418AD19878F8000054466 /* QuartzCore.framework */; };
 		8DC418B11987C14900054466 /* ARLMyGamesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DC418B01987C14900054466 /* ARLMyGamesViewController.m */; };
 		8DC69664196D500E00FA1505 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8DC69663196D500E00FA1505 /* Settings.bundle */; };
@@ -115,6 +117,8 @@
 		8DDECF421976AABA007CECB4 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF411976AABA007CECB4 /* Message.m */; };
 		8DDECF451976AABA007CECB4 /* Account.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DDECF441976AABA007CECB4 /* Account.m */; };
 		8DE5E5171A0A3B6900A60381 /* NSURLSession+SynchronousTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DE5E5161A0A3B6900A60381 /* NSURLSession+SynchronousTask.m */; };
+		8DE972DE1C89F775004A0ADC /* ARLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DE972DD1C89F775004A0ADC /* ARLTest.m */; };
+		8DE972E01C89F783004A0ADC /* ARLTest.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8DE972DF1C89F783004A0ADC /* ARLTest.xib */; };
 		8DEE589819828BFA00C2283F /* ARLGamePin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DEE589719828BFA00C2283F /* ARLGamePin.m */; };
 		8DFC0D3B1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFC0D3A1998FCDC001BD6E4 /* ARLTopGamesTableViewController.m */; };
 /* End PBXBuildFile section */
@@ -230,6 +234,9 @@
 		8D55B28F1976759300C0A56B /* ARLNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLNetworking.m; sourceTree = "<group>"; };
 		8D55B2C41976937200C0A56B /* ARLSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLSearchViewController.h; sourceTree = "<group>"; };
 		8D55B2C51976937200C0A56B /* ARLSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLSearchViewController.m; sourceTree = "<group>"; };
+		8D65F4311C89BEE1001B5731 /* ARLAudioPlayerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLAudioPlayerControl.h; sourceTree = "<group>"; };
+		8D65F4321C89BEE1001B5731 /* ARLAudioPlayerControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLAudioPlayerControl.m; sourceTree = "<group>"; };
+		8D65F4341C89C156001B5731 /* ARLAudioPlayerControl.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ARLAudioPlayerControl.xib; sourceTree = "<group>"; };
 		8D6FB70A1A0A43C20085ABA5 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		8D6FB70B1A0A43C20085ABA5 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		8D6FB70E1A0A65760085ABA5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -326,6 +333,9 @@
 		8DDECF441976AABA007CECB4 /* Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Account.m; sourceTree = "<group>"; };
 		8DE5E5151A0A3B6900A60381 /* NSURLSession+SynchronousTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSession+SynchronousTask.h"; sourceTree = "<group>"; };
 		8DE5E5161A0A3B6900A60381 /* NSURLSession+SynchronousTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSession+SynchronousTask.m"; sourceTree = "<group>"; };
+		8DE972DC1C89F775004A0ADC /* ARLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLTest.h; sourceTree = "<group>"; };
+		8DE972DD1C89F775004A0ADC /* ARLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLTest.m; sourceTree = "<group>"; };
+		8DE972DF1C89F783004A0ADC /* ARLTest.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ARLTest.xib; sourceTree = "<group>"; };
 		8DEE589619828BFA00C2283F /* ARLGamePin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLGamePin.h; sourceTree = "<group>"; };
 		8DEE589719828BFA00C2283F /* ARLGamePin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ARLGamePin.m; sourceTree = "<group>"; };
 		8DFC0D391998FCDC001BD6E4 /* ARLTopGamesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARLTopGamesTableViewController.h; sourceTree = "<group>"; };
@@ -452,6 +462,7 @@
 				8D21965A196D26080044616A /* ARLViewController.m */,
 				8DA979981AE5400200709E72 /* ARLWebViewController.h */,
 				8DA979991AE5400200709E72 /* ARLWebViewController.m */,
+				8D65F4271C897AF7001B5731 /* Controls */,
 				8D4233DF196E900D007410C3 /* en.lproj */,
 				8D87A50E198648F600842BC6 /* Extensions */,
 				8D2F959A1A5AA70E00B57C8B /* GeneralItems.json */,
@@ -639,6 +650,19 @@
 			path = TPKeyboardAvoiding;
 			sourceTree = "<group>";
 		};
+		8D65F4271C897AF7001B5731 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				8D65F4311C89BEE1001B5731 /* ARLAudioPlayerControl.h */,
+				8D65F4321C89BEE1001B5731 /* ARLAudioPlayerControl.m */,
+				8D65F4341C89C156001B5731 /* ARLAudioPlayerControl.xib */,
+				8DE972DC1C89F775004A0ADC /* ARLTest.h */,
+				8DE972DD1C89F775004A0ADC /* ARLTest.m */,
+				8DE972DF1C89F783004A0ADC /* ARLTest.xib */,
+			);
+			name = Controls;
+			sourceTree = "<group>";
+		};
 		8D6FB7091A0A43C20085ABA5 /* Reachability */ = {
 			isa = PBXGroup;
 			children = (
@@ -804,12 +828,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D65F4351C89C156001B5731 /* ARLAudioPlayerControl.xib in Resources */,
 				8D219A86196D341F0044616A /* Todo.txt in Resources */,
+				8D9146601C8B5B9D000D13F9 /* Storyboard.storyboard in Resources */,
+				8DE972E01C89F783004A0ADC /* ARLTest.xib in Resources */,
 				8D4233E4196E900D007410C3 /* InfoPlist.strings in Resources */,
 				8D4233E5196E900D007410C3 /* Localizable.strings in Resources */,
 				8D21965D196D26080044616A /* Images.xcassets in Resources */,
 				8D2F959B1A5AA70E00B57C8B /* GeneralItems.json in Resources */,
-				8DC418AC19878AF300054466 /* Storyboard.storyboard in Resources */,
 				8DC69664196D500E00FA1505 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -865,6 +891,7 @@
 				8D9A1D021AE9060000FCA131 /* ARLAudioPlayer.m in Sources */,
 				8D8B45DE19740BCA001FC6DF /* ARLMainViewController.m in Sources */,
 				8D219A80196D31350044616A /* MagicalRecord+iCloud.m in Sources */,
+				8D65F4331C89BEE1001B5731 /* ARLAudioPlayerControl.m in Sources */,
 				8D6FB7151A1225AB0085ABA5 /* ARLOauthWebViewController.m in Sources */,
 				8DCCBB281AE66E0F0004359A /* Response.m in Sources */,
 				8D2F959E1A5AC90D00B57C8B /* ARLPlayViewController.m in Sources */,
@@ -902,6 +929,7 @@
 				8D53D8191A35A75800A869B0 /* NSString+MD5.m in Sources */,
 				8D55B2901976759300C0A56B /* ARLNetworking.m in Sources */,
 				8D219A6C196D31350044616A /* NSAttributeDescription+MagicalDataImport.m in Sources */,
+				8DE972DE1C89F775004A0ADC /* ARLTest.m in Sources */,
 				8D87A51819869CD400842BC6 /* ARLButton.m in Sources */,
 				8D219A76196D31350044616A /* NSManagedObject+MagicalRequests.m in Sources */,
 				8D219A7F196D31350044616A /* MagicalRecord+ErrorHandling.m in Sources */,

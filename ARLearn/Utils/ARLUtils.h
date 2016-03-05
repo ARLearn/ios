@@ -378,4 +378,7 @@ typedef NS_ENUM (NSInteger, ResponseTypes) {
 
 + (NSString *)replaceLocalUrlsinHtml:(NSString *)html;
 
+// Block Parameter for Completion Signalling.
+typedef void(^ARLCompletion)(BOOL);
+
 @end

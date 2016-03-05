@@ -87,7 +87,6 @@ typedef NS_ENUM(NSInteger, responses) {
 
 @synthesize activeItem = _activeItem;
 @synthesize runId = _runId;
-@synthesize run;
 
 @synthesize CurrentAudioTime;
 @synthesize AudioDuration;
